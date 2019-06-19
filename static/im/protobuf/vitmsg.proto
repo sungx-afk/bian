@@ -1,0 +1,1388 @@
+package chips_c;
+
+enum RequestType {
+	EHelloReq 					= 0x00000001;
+	EHelloResp 					= 0x01000001;
+	
+	ELoginReq 					= 0x00000002;
+	ELoginResp					= 0x01000002;
+	
+	EOnlineReq					= 0x00000003;
+	EOnlineResp					= 0x01000003;
+	
+	EHeartBeatReq 				= 0x00000004;
+	EHeartBeatResp 				= 0x01000004;	 
+	
+	EGetUserStatusReq			= 0x00000005;
+	EGetUserStatusResp 			= 0x01000005;
+	
+	EChangeUserStatusReq 			= 0x00000006;
+	EChangeUserStatusResp 			= 0x01000006;
+	
+	ELogoutReq 				= 0x00000007;
+	ELogoutResp 				= 0x01000007;
+	
+	EChatPriReq 				= 0x00000008;
+	EChatPriResp 				= 0x01000008;
+	
+	EChatGrpReq 				= 0x00000009;
+	EChatGrpResp 				= 0x01000009;
+	
+	ERemindReq 				= 0x0000000A;
+	ERemindResp 				= 0x0100000A;
+
+	EGroupNewReq				= 0x0000000B;
+	EGroupNewResp				= 0x0100000B;
+	
+	EGroupUpdateReq				= 0x0000000C;
+	EGroupUpdateResp			= 0x0100000C;
+	
+	EGroupDeleteReq				= 0x0000000D;
+	EGroupDeleteResp			= 0x0100000D;
+
+	EGroupDetailGetReq			= 0x0000000E;
+	EGroupDetailGetResp			= 0x0100000E;
+
+	EGroupMemberGetReq			= 0x0000000F;
+	EGroupMemberGetResp			= 0x0100000F;
+
+	EGroupMemberAddReq			= 0x00000010;
+	EGroupMemberAddResp			= 0x01000010;
+
+	EGroupMemberDeleteReq			= 0x00000011;
+	EGroupMemberDeleteResp			= 0x01000011;
+
+	EGroupListGetReq			= 0x00000012;
+	EGroupListGetResp			= 0x01000012;
+
+	EGroupDetailMemberGetReq		= 0x00000013;
+	EGroupDetailMemberGetResp		= 0x01000013;
+
+	ETokenSetReq                    	= 0x00000014;
+	ETokenSetResp                   	= 0x01000014;
+
+	EMobilePushSettingReq                   = 0x00000015;
+	EMobilePushSettingResp                  = 0x01000015;
+
+	EIMGroupMessageDeleteReq		= 0x00000016;
+	EIMGroupMessageDeleteResp		= 0x01000016;
+
+	EIMMessageReadedPriReq			= 0x00000021;
+	EIMMessageReadedPriResp			= 0x01000021;
+
+	EIMMessageReadedGrpReq			= 0x00000022;
+	EIMMessageReadedGrpResp			= 0x01000022;
+
+	EIMMessagePriGetUnReadedReq		= 0x00000023;
+	EIMMessagePriGetUnReadedResp		= 0x01000023;
+
+	EIMMessageGrpGetUnReadedReq		= 0x00000024;
+	EIMMessageGrpGetUnReadedResp		= 0x01000024;
+	
+	EGroupExitReq				= 0x00000025;
+	EGroupExitResp				= 0x01000025;
+
+	EGroupCheckReq				= 0x00000026;
+	EGroupCheckResp				= 0x01000026;
+
+	EGroupHandOverReq			= 0x00000027;
+	EGroupHandOverResp			= 0x01000027;
+
+	EGroupSettingReq			= 0x00000028;
+	EGroupSettingResp			= 0x01000028;
+
+	ECSStartWorkReq				= 0x00000029;
+	ECSStartWorkResp			= 0x01000029;
+
+	ECSChatMessageReq			= 0x00000030;
+	ECSChatMessageResp			= 0x01000030;
+
+	ECSAskCustomerReq			= 0x00000031;
+	ECSAskCustomerResp			= 0x01000031;
+
+	ECSOffWorkReq				= 0x00000032;
+	ECSOffWorkResp				= 0x01000032;
+	
+	EIMMessageReadedReq			= 0x00000033;
+	EIMMessageReadedResp		= 0x01000033;
+	
+	ESessionSettingReq			= 0x00000034;
+	ESessionSettingResp			= 0x01000034;
+	
+	ELoginWithTokenReq			= 0x00000035;
+	ELoginWithTokenResp			= 0x01000035;
+
+	EUserStatusChangePushNotify 		= 0x02000001;
+	
+	EChatPriNotify 				= 0x02000002;
+	
+	EChatGrpNotify 				= 0x02000003;
+	
+	ETaskPushNotify 			= 0x02000004;
+	
+	ECommentPushNotify 			= 0x02000005;
+	
+	EUserPushNotify 			= 0x02000006;
+
+	EOtherPlaceLogin            		= 0x02000007;
+
+	ETaskSimpReadPushNotify         	= 0x02000008;
+
+	ETaskSortReadPushNorify         	= 0x02000009;
+
+	EReportPushNotify               	= 0x0200000A;
+
+	EHopeWordPushNotify             	= 0x0200000B;
+
+	EPostPushNotify                 	= 0x0200000C;
+
+	EGroupPushNotify			= 0x0200000D;
+	
+	EGroupRelPushNotify			= 0x0200000F;
+
+	EDeptPushNotify				= 0x02000010;
+
+	EDeptUserRelPushNotify			= 0x02000011;
+
+	EBatchImportPushNotify			= 0x02000012;
+
+	EIMMessagePriReadedNotify		= 0X02000013;
+	
+	EIMMessageGrpReadedNotify		= 0X02000014;
+
+	EPostNoAtPushNotify			= 0x02000015;
+
+	ECSChatMsgNotify                        = 0X02000016;
+
+	EApplyJoinCompPushNotify		= 0x02000017;
+
+	ECompanyPushNotify			= 0x02000018;
+	
+	EChatNotify					= 0x02000019;
+	
+	EIMMessageReadedNotify		= 0x2000001A;
+	ESpecialPushNotify			= 0x2000001B;
+	
+	ERecverReadPushNotify		= 0x2000001C;
+	
+	EPraisePushNotify			= 0x2000001D;
+	
+	EMailPushNotify				= 0x2000001E;
+	ESessionSettingNotify		= 0x2000001F;
+	ECommonPushNotify			= 0x20000020;
+	EUniversalPushNotify		= 0x20000021;
+	
+	ETimeout				= 0x10000001;	// timeout message
+}
+
+enum LoginType {
+	NAME	= 1;
+	PHONE	= 2;
+	EMAIL	= 3;
+}
+
+enum OnlineStat{
+	OFFLINE	= 0;
+	ONLINE	= 1;
+	STEALTH = 2;
+	BUSY	= 3;
+	LEAVE	= 4;
+	MOBILE_BACKGROUND = 5;
+}
+
+enum DeviceType {
+	DEV_UNKNOWN	= 0;
+	DEV_PC      	= 1;
+    DEV_MACOSX  	= 2;
+	DEV_ANDROID	= 3;
+	DEV_IPHONE	= 4;
+	DEV_IPAD	= 5;
+	DEV_WX	= 100;
+}
+
+enum ChagMsgType {
+	TEXT = 1;
+	VOICE = 2;
+	IMAGE = 3;
+	SHAKE = 4;
+	TRANSFER = 5;
+	SHARE = 6;
+	LINK = 7;
+	OA = 8;
+	
+	TEXT_V2 = 100001;
+	VOICE_V2 = 200001;
+	FILE = 500001;
+
+	SYSGROUPNOTIFY = 10000;
+	SYSNOTIFY	   = 10001;
+}
+
+enum RemindType {
+	REMIND_SHAKE = 1;
+	REMIND_MOBILEPUSH = 2;
+}
+
+enum GroupType {
+	GROUP_NONE = 0;
+	GROUP_NORMAL = 1;
+	GROUP_TEMP = 2;
+	GROUP_TASK = 3;
+
+	GROUP_DEPT = 100;
+}
+
+enum GroupMemRole {
+	GROUP_ROLE_CREATOR = 0;
+	GROUP_ROLE_MANAGER = 1;
+	GROUP_ROLE_MEMBER = 2;
+}
+
+enum IMSessionType {
+	IM_SESSION_NONE = 0;
+	IM_SESSION_PRIVATE_NORMAL = 10001;
+	IM_SESSION_GROUP_NORMAL = 20001;
+	IM_SESSION_GROUP_DEPT	= 20002;
+	IM_SESSION_OA_NORMAL	= 30001;
+	IM_SESSION_APP_NORMAL	= 40001;
+}
+
+// message timeout
+message TimeoutMsg {
+	required uint32		id = 1;
+	required RequestType    type = 2;
+}
+
+// hello request message
+message HelloReq {
+	required uint32		id 		= 1;
+	required int64		param1 	= 2;
+	required int64		param2 	= 3;
+}
+
+// hello response message
+message HelloResp {
+	required uint32		id 		= 1;
+	required int32		errorno 	= 2;
+	optional string		msg 	= 3;
+}
+
+// login request message
+message LoginReq {
+	required uint32		id			= 1;
+	required string		identifier	= 2;
+	required string		password	= 3;
+	required LoginType 	login_type 	= 4;
+}
+
+// login response message
+message LoginResp {
+	required uint32		id		= 1;
+	required int32		errorno 	= 2;
+	optional string		msg		= 3;
+        optional int32		http_result 	= 4;
+}
+
+//
+message LoginWithTokenReq {
+	required uint32 id = 1;
+	required string token = 2;
+	required string user_uuid = 3;
+}
+
+message LoginWithTokenResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional int32 http_result = 3;
+	optional string msg = 4;
+}
+
+// online request message
+message OnlineReq {
+	required uint32		id			= 1;
+	required string		comp_uuid	= 2;
+	required string		identifier 	= 3;
+	required string 	user_uuid	= 4;
+	required OnlineStat	status		= 5;
+	required DeviceType	device_type	= 6;
+	required string		user_name	= 7;	// user name used for push notify
+	optional string		token		= 8;
+        optional string         app_version     = 9;
+        optional string         token_type      = 10;
+}
+
+// online response message
+message OnlineResp {
+	required uint32		id	  = 1;
+	required int32		errorno = 2;
+	optional string		msg   = 3;
+	optional string 	access_token = 4;
+}
+
+// heartbeat request message
+message HeartBeatReq {
+	required uint32		id 			= 1;
+}
+
+// heartbeat response message
+message HeartBeatResp {
+	required uint32		id		= 1;
+	required int32		errorno 	= 2;
+	optional string		msg		= 3;
+}
+
+// getuserstatus request message 
+message GetUserStatusReq {
+	required uint32 id = 1;
+}
+
+// getuserstatus response message
+message GetUserStatusResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	
+	message UserStatus {
+		required string user_uuid = 1;
+		required OnlineStat status = 2;
+		required DeviceType device_type = 3;
+	}
+	
+	repeated UserStatus status = 4;
+}
+
+// setuserstatus request message 
+message ChangeUserStatusReq {
+	required uint32 id = 1;
+	required OnlineStat status = 2;	
+}
+
+// setuserstatus response message
+message ChangeUserStatusResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+// logout request message
+message LogoutReq {
+	required uint32 id = 1;
+}
+
+// logout response message
+message LogoutResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 4;
+}
+
+// chatpri request message
+message ChatPriReq {
+        required uint32 id = 1;
+	optional IMSessionType session_type = 2;
+	required DeviceType device_type = 3;
+	required string user_uuid = 4;
+	required string chat_obj_uuid = 5;
+	required ChagMsgType msg_type = 6;
+	required string msg_content = 7;
+	required string msg_uuid = 8;
+	optional string user_name = 9;
+	optional string font = 10;
+}
+
+// chatgrp response message
+message ChatPriResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	required string msg_uuid = 4;
+	required uint64 msg_time = 5;
+	required uint64 msg_version = 6;
+	required uint64 msg_pre_version = 7;
+	optional int32 unread_number = 8;
+}
+
+// chatgroup request message
+message ChatGrpReq {
+	required uint32 id = 1;
+	optional IMSessionType session_type = 2;
+	required DeviceType device_type = 3;
+	required string user_uuid = 4;
+	required string chat_obj_uuid = 5;
+	required ChagMsgType msg_type = 6;
+	required string msg_content = 7;
+	required string msg_uuid = 8;
+    	optional string user_name = 9;
+	optional string member_check = 11;
+	optional bool is_comp = 12;
+	optional string font = 13;
+
+}
+
+// chatgroup response message
+message ChatGrpResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	required string msg_uuid = 4;
+	required uint64 msg_time = 5;
+	required uint64 msg_version = 6;
+	required uint64 msg_pre_version = 7;
+	optional int32 member_check_result = 10;
+	optional int32 unread_number = 11;
+}
+
+// remind request message
+message RemindReq {
+	required uint32 id = 1;
+	required string user_uuid = 2;
+	required string recver_uuid = 3;
+	required RemindType remind_type = 4;
+	optional string remind_msg = 5;
+	optional int32 remind_rnd = 6;
+	required DeviceType device_type = 7;
+}
+
+// remind response message
+message RemindResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+// user status change notify
+message UserStatusChangePushNotify {
+	required uint32 id = 1;
+	required string user_uuid = 2;
+	required OnlineStat status = 3;
+	required DeviceType device_type = 4;
+	optional int32 stattype = 5; 		// ????????????????????
+}
+
+// chatpri notify message
+message ChatPriNotify {
+	required uint32 id = 1;	
+	required string msg_uuid = 4;
+	required uint64 msg_version = 5;
+}
+
+// chatgrp notify message
+message ChatGrpNotify {
+	required uint32 id = 1;
+	required string msg_id = 4;
+	required uint64 msg_version = 5;
+}
+
+// chat notify message
+message ChatNotify {
+	required uint32 id = 1;
+	required string msg_uuid = 2;
+	required uint64 msg_version = 3;
+	required IMSessionType session_type = 4;
+}
+
+// taskpush notify message
+message TaskPushNotify {
+	required uint32 id = 1;
+    	required string task_mgr_uuid = 2;
+    	required string task_name = 3;
+    	required uint64 task_plan_end_time = 4;
+    	required uint32 task_prg_percent = 5;
+    	required string task_show_id = 6;
+    	required string task_status = 7;
+    	required string task_uuid = 8;
+    	required uint64 task_version = 9;
+
+    	required string push_id = 10;
+	required string descrip = 11;
+	required string operation = 12;
+	required string operator_id = 13;
+    	required string operator_name = 14;
+}
+
+// task simple_read notify message
+message TaskSimpReadPushNotify {
+	required uint32 id = 1;
+	repeated string task_ids = 2;
+	required string plat = 3;
+
+	required string push_id = 4;
+	required string descrip = 5;
+	required string operation = 6;
+	required string operator_id = 7;
+	required string operator_name = 8;
+}
+
+// task sort_read notify message
+message TaskSortReadPushNotify {
+	required uint32 id = 1;
+	required string sort_type = 2;
+	required string plat = 3;
+
+	required string push_id = 4;
+	required string descrip = 5;
+	required string operation = 6;
+	required string operator_id = 7;
+	required string operator_name = 8;
+}
+
+// comment notify message
+message CommentPushNotify {
+	required uint32 id = 1;
+
+	required string cmmt_summary = 2;
+	required string cmmt_uuid = 3;
+	required uint64 cmmt_version = 4;
+
+	required string res_name = 5;
+	required string res_type = 6;
+	required string res_uuid = 7;
+	required uint64 res_version = 8;
+
+	required string push_id = 9;
+	required string descrip = 10;
+	required string operation = 11;
+	required string operator_id = 12;
+	required string operator_name = 13;
+}
+
+// user notify message 
+message UserPushNotify {
+	required uint32 id = 1;
+
+	required uint64 user_birthday = 2;
+	required uint64 user_create_time = 3;
+	required int32 user_delete = 4;
+	required string user_email = 5;
+	required string user_ico = 6;
+	required string user_id = 7;
+	required uint64 user_last_up_date = 8;
+	required string user_login_name = 9;
+	required string user_mobile = 10;
+	required string user_nick_name = 11;
+	required int32 user_sex = 12;
+	required string user_summary = 13;
+	required string user_uuid = 14;
+	required uint64 user_version = 15;
+	required int32 user_status = 16;
+
+	required string push_id = 17;
+	required string descrip = 18;
+	required string operation = 19;
+	required string operator_id = 20;
+	required string operator_name = 21;
+}
+
+message ReportPushNotify {
+	required uint32 id = 1;
+	required string report_uuid = 2;
+	required string report_name = 3;
+	required string report_status = 4;
+	required string report_type = 5;
+
+	required string push_id = 6;
+	required string descrip = 7;
+	required string operation = 8;
+	required string operator_id = 9;
+	required string operator_name = 10;
+}
+
+message HopeWordPushNotify {
+	required uint32 id = 1;
+	required string hope_uuid = 2;
+	required string hope_content = 3;
+	required string hope_speaker_id = 4;
+	required string hope_speaker_name = 5;
+	required string hope_speaker_job = 6;
+
+	required string push_id = 7;
+	required string descrip = 8;
+	required string operation = 9;
+	required string operator_id = 10;
+	required string operator_name = 11;
+}
+
+message PostPushNotify {
+	required uint32 id = 1;
+	required string post_uuid = 2;
+	required string post_name = 3;
+
+	required string push_id = 4;
+	required string descrip = 5;
+	required string operation = 6;
+	required string operator_id = 7;
+	required string operator_name = 8;
+}
+
+message PostNoAtPushNotify {
+	required uint32 id = 1;
+	required string post_uuid = 2;
+	required string post_name = 3;
+	
+	required string push_id = 4;
+	required string descrip = 5;
+	required string operation = 6;
+	required string operator_id = 7;
+	required string operator_name = 8;
+}
+
+message GroupPushNotify {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+	required string operation = 3;
+	required string operator_id = 4;
+}
+
+message GroupRelPushNotify {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+	required string operation = 3;
+	required string operator_id = 4;
+}
+
+message DeptPushNotify {
+	required uint32 id = 1;
+	required string dept_uuid = 2;
+	
+	required string push_id = 3;
+	required string descrip = 4;
+	required string operation = 5;
+	required string operator_id = 6;
+}
+
+message DeptUserRelPushNotify {
+	required uint32 id = 1;
+
+	required string push_id = 3;
+	required string descrip = 4;
+	required string operation = 5;
+	required string operator_id = 6;
+	
+	optional string comp_id = 7;
+        repeated string user_ids = 8;
+        required string source_uuid = 9;
+        required string source_type = 10;
+        required string dest_uuid = 11;
+        required string dest_type = 12;
+}
+
+message BatchImportPushNotify {
+	required uint32 id = 1;
+	required string comp_id = 2;
+	
+	required string push_id = 3;
+	required string descrip = 4;
+	required string operation = 5;
+	required string operator_id = 6;
+}
+
+message SpecialPushNotify {
+	required uint32 id = 1;
+	
+	required string group = 2;
+	required string push_id = 3;
+	required string descrip = 4;
+	required string operation = 5;
+	required string operator_id = 6;
+	
+	optional string data = 7;
+}
+
+message RecverReadPushNotify {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required int32 session_type = 3;
+}
+
+// group detail define
+message GroupDetail {
+	required string uuid = 1;
+	required string creator_uuid = 2;
+	required uint64 version = 3;
+	required string name = 4;
+	required string ico = 5;
+	required GroupType type = 6;
+	required string summary = 7;
+	optional uint64 create_date = 8;
+	optional uint64 last_up_date = 9;
+}
+
+message GroupMemberRel {
+	required string user_uuid = 1;
+	required GroupMemRole role = 2;
+	optional uint64 create_date = 3;
+	optional uint64 last_up_date = 4;
+}
+
+message GroupNewReq {
+	required uint32 id = 1;
+	required string name = 2;
+	required string ico = 3;
+	required string summary = 4;
+	required GroupType type = 5;
+	repeated string members = 6;
+}
+
+message GroupNewResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional GroupDetail detail = 3;
+	optional string msg = 4;
+}
+
+message GroupUpdateReq {
+	required uint32 id = 1;
+    	required string group_uuid = 2;
+    	required string name = 3;
+	required string ico = 4;
+	required string summary = 5;
+	required GroupType type = 6;
+}
+
+message GroupUpdateResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional GroupDetail detail = 3;
+	optional string msg = 4;
+}
+
+message GroupDeleteReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+}
+
+message GroupDeleteResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg= 3;
+}
+
+message GroupDetailGetReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+}
+
+enum GroupStat {
+	GS_NO_EXISTS	= 1;
+	GS_EXISTS	= 2;
+	GS_HISTORY	= 3;
+}
+
+message GroupHistory {
+	required string group_uuid = 1;
+	required string group_name = 2;
+}
+
+message GroupDetailGetResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional GroupDetail detail = 3;
+	optional string msg = 4;
+	required GroupStat stat = 5;
+	optional GroupHistory history = 6;
+}
+
+message GroupMemberGetReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+}
+
+message GroupMemberGetResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	repeated GroupMemberRel rel = 3;
+	optional string msg = 4;
+}
+
+message GroupMemberAddReq {
+	required uint32 id = 1;
+    	required string group_uuid = 2;
+	repeated string members = 3;
+}
+
+message GroupMemberAddResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	optional uint64 group_version = 4;
+}
+
+message GroupMemberDeleteReq {
+	required uint32 id = 1;
+    	required string group_uuid = 2;
+	repeated string members = 3;
+}
+
+message GroupMemberDeleteResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	optional uint64 group_version = 4;
+}
+
+message GroupExitReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+}
+
+message GroupExitResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	optional uint64 group_version = 4;
+}
+
+message GroupListGetReq {
+	required uint32 id = 1;
+	required string user_uuid = 2;
+	required uint64 version = 3;
+}
+
+message GroupListDetail {
+        required string uuid = 1;
+        required uint64 version = 3;
+        required string name = 4;
+	optional string setting = 20;
+}
+message GroupListGetResp {
+	required uint32 id = 1;
+        repeated GroupListDetail details = 2;
+	required int32 errorno = 3;
+	optional uint64 version = 4;
+	optional string msg = 5;
+}
+
+message GroupDetailMemberGetReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+}
+
+message GroupDetailMemberGetResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	optional GroupDetail detail = 4;
+	repeated GroupMemberRel rel = 5; 
+	required GroupStat stat = 6;
+	optional GroupHistory history = 7;
+}
+
+message GroupHandOverReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+	required string object_id = 3;
+}
+
+message GroupHandOverResp {
+	required uint32 id = 1;
+	required int32 errorno  = 2;
+	optional string msg = 3;
+}
+
+message OtherPlaceLogin {
+	required uint32 id = 1;
+	required string user_uuid = 2;
+	required DeviceType device_type = 3;
+}
+
+message TokenSetReq {
+	required uint32 id = 1;
+	required string user_uuid = 2;
+	required string token = 3;
+	optional string token_type = 4;
+}
+
+message TokenSetResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+
+message MobilePushSettingReq{
+	required uint32 id = 1;
+	required string push_setting = 2;
+}
+
+message MobilePushSettingResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message IMGroupMessageDeleteReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+	repeated string members = 3;
+}
+
+message IMGroupMessageDeleteResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message MessagePri {
+	required string message_id = 1;
+	required string message_old_uuid = 2;
+	required string chat_object_id = 3;
+	required int32 chat_object_type = 4;
+	required ChagMsgType message_type = 5;
+	required DeviceType device_type = 6;
+	required string message_content = 7;
+	required uint64 create_time = 8;
+	required int32 message_readed = 9;
+	required uint64 version = 10;
+}
+
+message MessageGrp {
+	required string message_id = 1;
+	required string message_old_uuid = 2;
+	required string group_id = 3;
+	required GroupType group_type = 4;
+	required string sender_id = 5;
+	required ChagMsgType message_type = 6;
+	required DeviceType device_type = 7;
+	required string message_content = 8;
+	required int32 message_readed = 9;
+	required uint64 create_time = 10;
+	required uint64 version = 11;
+}
+
+message ContactPri {
+	required string message_id = 1;
+	required string message_old_uuid = 2;
+	required string chat_object_id = 3;
+	required int32 chat_object_type = 4;
+	required ChagMsgType message_type = 5;
+	required DeviceType device_type = 6;
+	required string message_content = 7;
+	required uint64 create_time = 8;
+	required int32 message_readed = 9;
+	required uint64 message_version = 10;
+	required uint64 pre_version = 11;
+	required int32 un_readed_number = 12;
+}
+
+message ContactGrp {
+	required string message_id = 1;
+	required string message_old_uuid = 2;
+	required string group_id = 3;
+	required GroupType group_type = 4;
+	required string sender_id = 5;
+	required ChagMsgType message_type = 6;
+	required DeviceType device_type = 7;
+	required string message_content = 8;
+	required uint64 create_time = 9;
+	required int32 message_readed = 10;
+	required uint64 message_version = 11;
+	required uint64 prev_version = 12;
+	required int32 un_readed_number = 13;
+}
+
+message IMSyncAllPriReq {
+	required uint32 id = 1;
+	required uint64 version = 2;
+}
+
+message IMSyncAllPriResp {
+	required uint32 id = 1;
+	repeated MessagePri msg_list = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+}
+
+message IMSyncBetweenPriReq {
+	required uint32 id = 1;
+	required string chat_object_id = 2;
+	required uint64 left_version = 3;
+	required uint64 right_version = 4;
+	required int32 limit = 5;
+}
+
+message IMSyncBetweenPriResp {
+	required uint32 id = 1;
+	repeated MessagePri msg_list = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+	optional uint64 prev_version = 5;
+}
+
+message IMSyncDeleteOneMsgPriReq {
+	required uint32 id = 1;
+	required string message_id = 2;
+	required string chat_object_id = 3;
+}
+
+message IMSyncDeleteOneMsgPriResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message IMSyncDeleteOneContactPriReq {
+	required uint32 id = 1;
+	required string chat_object_id = 2;
+}
+
+message IMSyncDeleteOneContactPriResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message IMSyncContactPriReq {
+	required uint32 id = 1;
+	required uint64 version = 2;
+}
+
+message IMSyncContactPriResp {
+	required uint32 id = 1;
+	repeated ContactPri contact_list = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+}
+
+message IMSyncAllGrpReq {
+	required uint32 id = 1;
+	required uint64 version = 2;
+}
+
+message IMSyncAllGrpResp {
+	required uint32 id = 1;
+	repeated MessageGrp msg_list = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+}
+
+message IMSyncBetweenGrpReq {
+	required uint32 id = 1;
+	required string group_id = 2;
+	required uint64 left_version = 3;
+	required uint64 right_version = 4;
+	required int32 limit = 5;
+}
+
+message IMSyncBetweenGrpResp {
+	required uint32 id = 1;
+	repeated MessageGrp msg_list = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+	optional uint64 prev_version = 5;
+}
+
+message IMSyncDeleteOneMsgGrpReq {
+	required uint32 id = 1;
+	required string message_id = 2;
+	required string group_id = 3;
+}
+
+message IMSyncDeleteOneMsgGrpResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message IMSyncDeleteOnContactGrpReq {
+	required uint32 id = 1;
+	required string group_id = 2;
+}
+
+message IMSyncDeleteOnContactGrpResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message IMSyncContactGrpReq {
+	required uint32 id = 1;
+	required uint64 version = 2;
+}
+
+message IMSyncContactGrpResp {
+	required uint32 id = 1;
+	repeated ContactGrp contact_list = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;	
+}
+
+// 消息已读同步处理
+// 私聊已读设置请求
+message IMMessageReadedPriReq {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required uint64 version = 3;
+}
+
+message IMMessageReadedPriResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+//群组已读设置请求
+message IMMessageReadedGrpReq {
+	required uint32 id = 1;
+	required string group_id = 2;
+	required uint64 version = 3;
+}
+
+message IMMessageReadedGrpResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+//私聊已读通知
+message IMMessagePriReadedNotify {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required int32 readed_number = 3;
+	optional uint64 version = 4;
+}
+//群组已读通知
+message IMMessageGrpReadedNotify {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required int32 readed_number = 3;
+	optional uint64 version = 4;
+}
+
+message IMMessageReadedReq {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required uint64 version = 3;
+	required int32 session_type = 4;
+}
+
+message IMMessageReadedResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message IMMessageReadedNotify {
+	required uint32 id = 1;
+	required string  contact_id = 2;
+	required int32 readed_number = 3;
+	optional uint64 version = 4;
+	required int32 session_type = 5;
+}
+
+message IMUnReadedNumber {
+	required string contact_id = 1;
+	required int32 count = 2;
+}
+//获取私聊已读数量请求
+message IMMessagePriGetUnReadedReq {
+	required uint32 id = 1;
+	repeated string contacts = 2;
+}
+
+message IMMessagePriGetUnReadedResp {
+	required uint32 id = 1;
+	repeated IMUnReadedNumber nums = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+}
+//获取群组已读数量请求
+message IMMessageGrpGetUnReadedReq {
+	required uint32 id = 1;
+	repeated string contacts = 2;
+}
+
+message IMMessageGrpGetUnReadedResp {
+	required uint32 id = 1;
+	repeated IMUnReadedNumber nums = 2;
+	required int32 errorno = 3;
+	optional string msg = 4;
+}
+
+message GroupSetting {
+	optional bool no_disturb = 1;
+	optional bool place_top = 2;
+	optional uint64 place_top_time = 3;
+}
+
+message GroupSettingReq {
+	required uint32 id = 1;
+	required string group_uuid = 2;
+	required GroupSetting setting = 3;
+}
+
+message GroupSettingResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+//客服系统
+message CSStartWorkReq
+{
+    required uint32      id = 1;
+    required string      cs_user_uuid = 2;
+    required string      cs_uuid = 3;
+}
+message CSStartWorkResp {
+        required uint32 id = 1;
+        required int32 errorno = 2;
+        optional string msg = 3;
+}
+
+message CSOffWorkReq
+{
+    required uint32      id = 1;
+    required string      cs_user_uuid = 2;
+    required string      cs_uuid = 3;
+}
+message CSOffWorkResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+}
+
+message CSChatMessageReq{
+    required uint32      id = 1;
+    required string      user_uuid = 2;
+    required string      cs_uuid = 3;
+    required string      cs_team_uuid = 4;
+    required string      cs_staff_uuid = 5;
+    required ChagMsgType msg_type = 6;
+    required string       msg_content = 7;
+    required string      msg_uuid = 8;
+    required string      sender_type = 9;
+}
+
+message CSChatMessageResp {
+    required uint32 id = 1;
+    required int32 errorno = 2;
+    optional string msg = 3;
+    required string msg_uuid = 4;
+    required uint64 msg_time = 5;
+    required uint64 msg_version = 6;
+}
+
+message CSChatMsgNotify {
+	required uint32 id = 1;
+	required string msg_uuid = 4;
+	required uint64 msg_version = 5;
+}
+
+enum CSCustomerStat{
+	CS_OK			= 0;
+	CS_BUSY			= 1;
+	CS_OUT_TIME_RANGE	= 2;
+}
+
+message CSAskCustomerReq
+{
+    required uint32      id = 1;
+    required string      cs_uuid = 2;
+    required string      cs_team_uuid = 3;
+    required uint32      comp_uuid = 4;
+    required uint32      comp_name = 5;
+}
+message CSAskCustomerResp
+{
+    required uint32 id = 1;
+    required int32  errorno = 2;
+    required int32  cs_stat = 3;
+    optional string cs_staff_uuid = 4;
+    optional string cs_staff_name = 5;
+    optional string msg = 10;
+}
+
+message ApplyJoinCompPushNotify {
+	required uint32 id = 1;
+
+	required string user_uuid = 2;
+	required string user_name = 3;
+	required string comp_id = 4;
+	required int32 status = 5;
+
+	required string push_id = 6;
+	required string descrip = 7;
+	required string operation = 8;
+	required string operator_id = 9;
+	required string operator_name = 10;
+}
+
+message CompanyPushNotify {
+	required uint32 id = 1;
+	
+	required int32 simple_id = 2;
+	required string comp_id = 3;
+	required string comp_name = 4;
+
+	required string push_id = 5;
+	required string descrip = 6;
+	required string operation = 7;
+	required string operator_id = 8;
+	required string operator_name = 9;
+}
+
+message PraisePushNotify {
+	required uint32 id = 1;
+	
+	required string res_uuid = 2;
+	required string res_type = 3;
+	required uint64 res_version = 4;
+	required string res_name = 5;
+	required bool liked = 6;
+	optional string res_owner_id = 7;
+	
+	required string target_id = 8;
+	required string target_name = 9;
+	required string target_type = 10;
+	
+	required string push_id = 11;
+	required string descrip = 12;
+	required string operation = 13;
+	required string operator_id = 14;
+	required string operator_name = 15;
+}
+
+message MailPushNotify {
+	required uint32 id = 1;
+	required string mail_id = 2;
+	required string summary = 3;
+	required string from = 4;
+	
+	required string push_id = 11;
+	required string descrip = 12;
+	required string operation = 13;
+}
+
+message SessionSettingReq {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required IMSessionType session_type = 3;
+	required string common = 4;	// 必须有 即使为空
+	optional string pc = 5;
+	optional string mobile = 6;
+}
+
+message SessionSettingResp {
+	required uint32 id = 1;
+	required int32 errorno = 2;
+	optional string msg = 3;
+	optional uint64 version = 4;
+}
+
+message SessionSettingNotify {
+	required uint32 id = 1;
+	required string contact_id = 2;
+	required IMSessionType session_type = 3;
+	required uint64 version = 4;
+}
+
+message CommonPushNotify {
+	required uint32 id = 1;
+	required string msg_body = 2;
+}
+
+message UniversalPushNotify {
+	required uint32 id = 1;
+	required string ntfy_id = 2;
+	required string msg_body = 3;
+}
+
+

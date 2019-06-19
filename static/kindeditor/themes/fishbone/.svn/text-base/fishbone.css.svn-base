@@ -1,0 +1,16 @@
+.ke-container{ border: 1px solid #cecdcd; border-left: none; border-right:0;}
+.ke-toolbar{ background: #fafafa; border-bottom: none; padding: 6px 5px;}
+.ke-toolbar .ke-outline{ border: 1px solid #fafafa;}
+
+.ke-toolbar .ke-on {border: 1px solid #5690D2; }
+.ke-toolbar .ke-selected {border: 1px solid #5690D2; background-color: #E9EFF6; }
+.ke-toolbar .ke-disabled {cursor: default; }
+.ke-toolbar .ke-separator {height: 16px; margin: 2px 3px; border-left: 1px solid #A0A0A0; border-right: 1px solid #FFFFFF; border-top:0; border-bottom:0; width: 0; font-size: 0; line-height: 0; overflow: hidden; display: block; float: left; }
+.ke-toolbar .ke-hr {overflow: hidden; height: 1px; clear: both; }
+
+
+.ke-statusbar {position: relative; background-color: #fafafa; border-top: 1px solid #cecdcd; font-size: 0; line-height: 0; overflow: hidden; text-align: center; cursor: s-resize; }
+
+.ke-statusbar-right-icon{ display: none;}
+.ke-dialog-fishbone .tab1 .ke-dialog-row:not(:first-child){display: none;}
+.ke-dialog-fishbone .tab1 .ke-dialog-row .ke-button-common{display:none;}

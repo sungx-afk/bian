@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect
+END
+effect.js
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect/effect.js
+END
+gaussianblureffect.js
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect/gaussianblureffect.js
+END
+convolvematrixeffect.js
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect/convolvematrixeffect.js
+END
+compositeeffect.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect/compositeeffect.js
+END
+colormatrixeffect.js
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect/colormatrixeffect.js
+END
+offseteffect.js
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/fishbone/!svn/ver/25702/yugu_vue/static/kityminder/bower_components/kity/src/filter/effect/offseteffect.js
+END

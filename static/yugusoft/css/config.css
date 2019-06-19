@@ -1,0 +1,16 @@
+*{
+	-webkit-overflow-scrolling:touch;
+	/*font-family: DFPKingGothicSC,SegoeUI,"Microsoft yahei","Helvetica Neue",Helvetica,Arial,sans-serif !important;*/
+	font-family:SimSun !important;
+}
+
+*.fa{
+	font-family: 'FontAwesome' !important;
+}
+
+
+input[type="text"],input[type="number"]{ color: #5e5e5e; height: 28px; border: 1px solid #d2d2d2; border-radius: 2px; text-indent: 6px;}
+input[type="password"]{ color: #5e5e5e; width: 236px; height: 28px; border: 1px solid #d2d2d2; border-radius: 2px; text-indent: 6px;}
+input[type="text"]:focus,input[type="number"]:focus,input[type="password"]:focus{ border: 1px solid #a4cffa; outline: 0; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6); box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);}
+input[type="text"]:disabled,input[type="text"][disabled],input[type="password"]:disabled,input[type="password"][disabled]{ color: #000; border: 1px solid #d2d2d2; border-radius: 3px; background: #f5f5f5;}
+

@@ -1,0 +1,20 @@
+/* 设置滚动条的样式 */
+::-webkit-scrollbar{width:8px;height:8px;}
+/*滚动条 小三角 decrement：递减increment：递增
+:horizontal – horizontal伪类应用于水平方向的滚动条
+:vertical – vertical伪类应用于竖直方向的滚动条*/
+::-webkit-scrollbar-button:vertical:decrement{height:8px;background:url(../images/scroll_up.png) no-repeat;}
+::-webkit-scrollbar-button:vertical:decrement:hover {background:url(../images/scroll_up_hover.png) no-repeat;}
+::-webkit-scrollbar-button:vertical:increment{height:8px;background:url(../images/scroll_down.png) no-repeat;}
+::-webkit-scrollbar-button:vertical:increment:hover {background:url(../images/scroll_down_hover.png) no-repeat;}
+::-webkit-scrollbar-button:horizontal:decrement{width:8px;background:url(../images/scroll_left.png) no-repeat;}
+::-webkit-scrollbar-button:horizontal:decrement:hover {background:url(../images/scroll_left_hover.png) no-repeat;}
+::-webkit-scrollbar-button:horizontal:increment{width:8px;background:url(../images/scroll_right.png) no-repeat;}
+::-webkit-scrollbar-button:horizontal:increment:hover {background:url(../images/scroll_right_hover.png) no-repeat;}
+/* 滚动槽 */
+::-webkit-scrollbar-track{/*box-shadow: inset 0 0 6px red; */border-radius: 6px;}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb{border-radius:6px;background:#ccc;/* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);*/}
+::-webkit-scrollbar-thumb:window-inactive {background:#ccc;}
+::-webkit-scrollbar-corner{background:#ededed;}
+::-webkit-scrollbar-corner:window-inactive{background:#ededed;}
