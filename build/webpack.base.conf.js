@@ -29,8 +29,8 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/ftask/**': { //设置webpack代理
-          target: 'http://app01.yugusoft.com',
+      '/**': { //设置webpack代理
+          target: 'https://ba.yugusoft.com',
           changeOrigin: true,
           secure: false
       }

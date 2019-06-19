@@ -21,11 +21,6 @@
 </template>
 
 <script>
-	import ActionSheet from '@/modules/widget/action-sheet'
-	import PreviewImg from '@/modules/widget/preview-img'
-	import Dialog from '@/modules/widget/dialog'
-  	import {callClient} from '@/config/utils'
-
 
 	export default {
 		props: {
@@ -48,79 +43,23 @@
 		},
 		methods: {
 			operate(){
-				// let itemList = ['打开'];
-				// if(!this.hideBtn){
-				// 	itemList.push('删除')
-				// }
-        //
-				// ActionSheet({
-	      // 	itemList: itemList,
-	      // 	callback: index => {
-	      // 		if(index == 0){
-	      // 			// const expand = this.item.expand.toLowerCase();
-	      // 			// if(expand == 'jpg' || expand == 'jpeg' || expand == 'gif' || expand == 'bmp' || expand == 'png' || expand == 'jpe' || expand == 'cur'|| expand == 'svg' || expand == 'svgz' || expand == 'tif' || expand == 'tiff' || expand == 'ico'){
-	      // 			// 	PreviewImg({
-	      // 			// 		url: this.item.url
-	      // 			// 	})
-	      // 			// }else{
-	      // 			// 	window.open(this.item.url);
-	      // 			// }
-	      // 			var plat = getPlat();
-	      // 			if(plat == 'android' || plat == 'iphone'){
-	      // 				var apiName = 'view_task_files';
-	      //               var params = {
-	      //                   "url": this.item.url,
-	      //                   "name":this.item.name,
-	      //                   "size":this.item.size
-	      //               }
-	      //               callClient(apiName,params)
-	      // 			}else{
-	      // 				window.open(this.item.url)
-	      // 			}
-        //
-        //
-        //
-        //
-        //
-        //
-	      // 		} else if (index == 1){
-	      // 			Dialog({
-	      // 				content: '确认删除该文件？',
-	      // 				callback: () => {
-	      // 					this.delete(this.index)
-	      // 				}
-	      // 			})
-	      // 		}
-	      // 	}
-	      // })
-        var plat = getPlat();
-        if(plat == 'android' || plat == 'iphone'){
-          var apiName = 'view_task_files';
-          var params = {
-            "url": this.item.url,
-            "name":this.item.name,
-            "size":this.item.size
-          }
-          callClient(apiName,params)
-        }else{
-          window.open(this.item.url)
-        }
+        window.open(this.item.url)
 			},
       deleteFile(){
         let itemList = ['删除'];
-        ActionSheet({
-          itemList: itemList,
-          callback: index => {
-            if (index === 0){
-              Dialog({
-                content: '确认删除该文件？',
-                callback: () => {
-                  this.delete(this.index)
-                }
-              })
-            }
-          }
-        })
+        // ActionSheet({
+        //   itemList: itemList,
+        //   callback: index => {
+        //     if (index === 0){
+        //       Dialog({
+        //         content: '确认删除该文件？',
+        //         callback: () => {
+        //           this.delete(this.index)
+        //         }
+        //       })
+        //     }
+        //   }
+        // })
       },
 		},
 		computed: {
@@ -150,11 +89,6 @@
     		}
 			},
 		},
-		// data(){
-		// 	return {
-		// 		touchTime: null,
-		// 	}
-		// }
 	}
 </script>
 

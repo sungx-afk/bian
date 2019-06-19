@@ -1,6 +1,5 @@
 import axios from 'axios'
 import Home from './modules/home/api/home'
-import Dialog from '@/modules/widget/dialog'
 
 import store from './store/index';
 
@@ -12,7 +11,6 @@ axios.interceptors.request.use(config => {
   return Promise.reject(error)
 })
 
-// axios.defaults.baseURL = 'http://localhost:8092/';
 axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
@@ -27,11 +25,9 @@ global.getRequestParam = function() {
     if(storeParam){
       param = JSON.stringify(storeParam);
     }else{
-      param = JSON.stringify({plat:'web',build:'999999'})
+      param = JSON.stringify({plat:'wechat',build:'999999',token:'48dd8cc7-7c23-4a90-a40e-308b30cba24c',platVersion:'1.0.0'})
     }
   }
-  // console.log(param)
-
   return JSON.parse(param);
 }
 
@@ -58,14 +54,12 @@ global.$axios.interceptors.response.use((response) => {
       return response
     }else{
       let msg = response.data.msg || "",content="";
-      // if(response.config && response.config.url){
-      //   content = '错误地址：'+ response.config.url;
-      // }
-      Dialog({
-        title:msg,
-        cancelShow:false,
-        content:content
-      })
+      // Dialog({
+      //   title:msg,
+      //   cancelShow:false,
+      //   content:content
+      // })
+      //TODO
     }
   }
 }, (error) => {
@@ -77,9 +71,6 @@ global.$axios.interceptors.response.use((response) => {
   }
 })
 
-
-
-// $req.use(unauthorizedRedirect)
 global.$API = {
   home:Home,
 }

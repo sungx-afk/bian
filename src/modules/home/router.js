@@ -1,9 +1,9 @@
-const HomePage= () => import(/* webpackChunkName: "home-page" */ './components/HomePage');
+const Home = () => import(/* webpackChunkName: "home" */ './components/Home');
 
 
 const routes = [
 	{
-		path: '/home', component: HomePage
+		path: '/home', component: Home
 	}
 ]
 

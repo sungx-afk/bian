@@ -1,4 +1,3 @@
-import Toast from '@/modules/widget/toast'
 /*路由跳转*/
 export const Link = (url, query,replace) => {
   const router = {
@@ -274,11 +273,6 @@ export class lock {
       else if(this.total == this.list.length)//加载完
       {
         this.lock = true;
-          Toast({
-            type:"warn",
-            content:"没有更多数据了",
-            duration:3000,
-          });
       }
     }
   }
@@ -325,27 +319,6 @@ export function callClient(apiName,params){
 }
 /*客户端对接 end*/
 
-
-
-export const filterTaskShowId = (str) => {
-  var isCode = str.indexOf('<pre');
-  var isBase64 = str.indexOf('base64');
-  //// console.log(isCode);
-  if(isCode < 0 && isBase64 < 0){
-    var box = str.split(/<a[^>]*?>[^<]*?<\/a>/gi);
-    if(box.length > 0){
-      for(var i=0;i<box.length;i++){
-        var temp = changeShowId(box[i]);
-        str = str.replace(box[i],temp);
-      }
-      return str;
-    }else{
-      return changeShowId(str);
-    }
-  }else{
-    return str;
-  }
-}
 
 export const changeShowId = (str) => {
   var str2 = str.replace(/>([\s\S]*?)</g,function(word){
