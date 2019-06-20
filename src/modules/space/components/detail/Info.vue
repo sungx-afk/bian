@@ -16,10 +16,10 @@
     <div class="avatar-area">
       <div v-for="user in space.spaceUsers" :key="user.id">
         <img v-if="user.avatarUrl" class="image" :src="user.avatarUrl" />
-        <view class="tombstone" v-else>
-          <image class="tombstone-image" src="~@/modules/images/tombstone.png"></image>
-          <view class="tombstone-text">{{user.name}}</view>
-        </view>
+        <div class="tombstone" v-else>
+          <img class="tombstone-image" src="~@/modules/images/tombstone.png" />
+          <div class="tombstone-text">{{user.name}}</div>
+        </div>
       </div>
     </div>
     <div class="lifetime-area">
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+  import {Link} from '@/config/utils'
     export default {
       name: "Main",
       props:{
@@ -85,6 +86,12 @@
           type:Boolean,
           default: false
         }
+      },
+      methods:{
+        goSpaceManage(){
+          Link(`/space/manage/${this.space.id}`)
+        }
+
       }
     }
 </script>
@@ -149,7 +156,7 @@
           top:50px;
           left:60px;
           font-size: 14px;
-          writing-mode: vertical-lr
+          writing-mode: vertical-lr;
         }
       }
     }
