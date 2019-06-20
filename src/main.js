@@ -16,6 +16,10 @@ Vue.use(VueScroller)
 import vfinger from 'v-finger-mk42'
 Vue.use(vfinger)
 
+import Vant from 'vant';
+import 'vant/lib/index.css';
+
+Vue.use(Vant);
 
 import store from './store/index';
 

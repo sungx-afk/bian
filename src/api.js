@@ -1,5 +1,6 @@
 import axios from 'axios'
-import Home from './modules/home/api/home'
+import Home from './modules/home/api/index'
+import Space from './modules/space/api/index'
 
 import store from './store/index';
 
@@ -44,23 +45,10 @@ global.$axios = axios.create({
 
 global.$axios.interceptors.response.use((response) => {
   /*新增拦截器，处理服务器返回*/
-  if(response && response.data.result == 0){
+  if(response){
     return response
   }else{
-    if(response && response.data.result == 4){//资源不存在
-      const url = '#/error?content='+response.data.msg || "资源丢失了";
-      window.location.replace(url);
-    }else if(response && (response.data.result == -20009 || response.data.result == -20001 || response.data.result == -20002)){//登录失败
-      return response
-    }else{
-      let msg = response.data.msg || "",content="";
-      // Dialog({
-      //   title:msg,
-      //   cancelShow:false,
-      //   content:content
-      // })
-      //TODO
-    }
+    //TODO
   }
 }, (error) => {
   if (error.response && error.response.data && error.response.data.location) {
@@ -73,4 +61,5 @@ global.$axios.interceptors.response.use((response) => {
 
 global.$API = {
   home:Home,
+  space:Space
 }
