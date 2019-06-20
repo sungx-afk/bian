@@ -1,5 +1,6 @@
 const Space = () => import(/* webpackChunkName: "space" */ './components/Space');
 const SpaceCreate = () => import(/* webpackChunkName: "space_create" */ './components/SpaceCreate')
+const SpaceDetail = () => import(/* webpackChunkName: "space_detail" */ './components/SpaceDetail')
 
 const routes = [
 	{
@@ -8,6 +9,9 @@ const routes = [
       {
         path: 'create',
         component: SpaceCreate
+      },{
+        path: 'detail/:id',
+        component: SpaceDetail
       }]
 	}
 ]

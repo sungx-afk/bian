@@ -88,8 +88,8 @@
       createSpace(){
         Link('space/create')
       },
-      goSpaceDetail(e){
-
+      goSpaceDetail(item){
+        Link(`space/detail/${item.id}`)
       },
       moreSpaceVisitedMenu(){
         this.menuList = [ {
@@ -232,11 +232,6 @@
       &.x-bottom{
         bottom:55px;
       }
-    }
-    .menu{
-      padding: 15px 20px;
-      min-width: 200px;
-      border-bottom: 1px solid @BORDER_COLOR_2;
     }
   }
 

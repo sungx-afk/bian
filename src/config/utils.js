@@ -38,9 +38,7 @@ export const Link = (url, query,replace) => {
 */
 export const removeWidget = ({key,title,cb}) => {
   let OldTitle = document.title;
-  // if(title){
-      setPageTitle(title);
-  // }
+  setPageTitle(title);
   if(window.location.hash.indexOf('#'+key) < 0){
         window.location.hash = window.location.hash + '#'+key;
     }else{
@@ -61,15 +59,10 @@ export const removeWidget = ({key,title,cb}) => {
     })
     return () => {
       window.removeEventListener('hashchange', remove);
-      // var re = new RegExp('#'+key,"gim");
       if(window.location.hash.indexOf('#'+key) >= 0){
         window.history.back();
       }
-      // console.log("ddddd");
-      // if(title){
-        setPageTitle(OldTitle);
-      // }
-      // window.location.hash = window.location.hash.replace(re, '');
+      setPageTitle(OldTitle);
     };
 }
 
@@ -78,11 +71,6 @@ export const removeWidget = ({key,title,cb}) => {
 *利用iframe的onload事件刷新页面，否则title可设置成功，但页面不刷新
 */
 export const setPageTitle = (title) => {
-
-  if (isThirdPlatformVersion()){
-    document.title = '鱼骨';
-    return
-  }
 
   setTimeout(function(){
       //利用iframe的onload事件刷新页面
@@ -98,36 +86,6 @@ export const setPageTitle = (title) => {
       };
       document.body.appendChild(iframe);
   },0);
-
-
-  // document.title = title;
-  // const iframe = document.createElement('iframe');
-  // iframe.style.cssText = 'display: none; width: 0; height: 0;';
-  // iframe.src = '';
-  // //iframe.src = require('./img/text_delete.png');
-
-  // const listener = () => {
-  //     setTimeout(() => {
-  //         iframe.removeEventListener('load', listener);
-  //         setTimeout(() => {
-  //             document.body.removeChild(iframe);
-  //         }, 0);
-  //     }, 0);
-  // };
-  // iframe.addEventListener('load', listener);
-  // document.body.appendChild(iframe);
-
-  // var $body = $('body')
-  // document.title = title;
-  // // hack在微信等webview中无法修改document.title的情况
-  // var $iframe = $('<iframe src="/favicon.ico"></iframe>').on('load', function() {
-  //   setTimeout(function() {
-  //     $iframe.off('load').remove()
-  //   }, 0)
-  // }).appendTo($body)
-
-
-
 }
 
 export const cronToTimes = (cron) => {
@@ -305,32 +263,7 @@ export class lock {
 
 export const addZero = (v) => {if (v < 10) return '0' + v;return v.toString();}
 
-/*客户端对接 start*/
-export function callClient(apiName,params){
-  iydf.bridge.prepare("");
-  var event = {
-    apiName: apiName,
-    params: params,
-    cb: function(str) {
-    },
-    fakeret: "fail"
-  };
-  iydf.bridge.call(event);
-}
-/*客户端对接 end*/
 
-
-export const changeShowId = (str) => {
-  var str2 = str.replace(/>([\s\S]*?)</g,function(word){
-    return word.replace(/(([a-z]|[A-Z])[0-9]{3,8})/g,'<span class="get_showid_info" title="">$1</span>');
-  });
-  var box = str.split(/<|>/g);
-  str2 = str2.replace(box[0],box[0].replace(/(([a-z]|[A-Z])[0-9]{3,8})/g,'<span class="get_showid_info" title="">$1</span>'));
-  if(box.length > 1){
-    str2 = str2.replace(box[box.length-1],box[box.length-1].replace(/(([a-z]|[A-Z])[0-9]{3,8})/g,'<span class="get_showid_info" title="">$1</span>'));
-  }
-  return str2;
-}
 
 export const filterLink = (str) => {
   var isCode = str.indexOf('<pre');
@@ -356,36 +289,6 @@ export const filterLink = (str) => {
 }
 
 
-export const imHttpAgent = (url, requestType, param, successCb,erroCb) => {
-  $.ajax({
-    url:url,
-    async:true,
-    type:requestType,
-    data:param,
-    success:function(result) {
-      if (result.success == true) {
-        if(result.result)
-          successCb(result.result);
-      } else {
-        erroCb();
-      }
-    },
-    error:function(xhr, ajaxOptions,thrownError) {
-    }
-  });
-}
-
-
-
-
-
-
-
-
-
-
-//TAPD测试地址
-// https://www.tapd.cn/tapdm/20482521/workitems/story/1120482521001000029?from=worktable#
 
 /*base64 start*/
 var base64encodechars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

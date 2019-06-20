@@ -69,7 +69,17 @@
   .clearfix:after {display: block; content: ''; clear: both; }
 
 
-
+  .van-popup--center{
+    width: 300px;
+    border-radius: 10px;
+    .menu{
+      padding: 15px 20px;
+      border-bottom: 1px solid @BORDER_COLOR_2;
+      &:last-child{
+        border-bottom: none;
+      }
+    }
+  }
 
 
 </style>
