@@ -8,20 +8,6 @@ export default {
       errorCb &&  errorCb(error)
     });
   },
-
-  fetchIssueList({sid,start,limit,type},successCb, errorCb) {
-    let param = {
-      start,
-      limit,
-      type
-    }
-
-    $axios.get(`/subject/${sid}/comments?`+qs.stringify(param, { indices: false })).then(function (response) {
-      successCb && successCb(response.data)
-    }).catch(function (error) {
-      errorCb && errorCb(error)
-    });
-  },
   deleteIssue({sid,cid},successCb, errorCb) {
     $axios.post(`/subject/${args.sid}/comments/${args.cid}`, qs.stringify({_method: 'DELETE'})).then(response => {
       successCb && successCb(response.data)
@@ -79,4 +65,60 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  postIssue({sid,data},successCb, errorCb) {
+
+    let param = {
+      data
+    }
+    $axios.post(`/subject/${sid}/comments`, qs.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  fetchIssueList({sid,start,limit,type},successCb, errorCb) {
+    let param = {
+      start,
+      limit,
+      type
+    }
+
+    $axios.get(`/subject/${sid}/comments?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
+
+  filesQiniuUploadTicket({ reqType, name, expand, size, resId }, successCb, errorCb) {
+    const params = {
+      req_type: reqType,
+      name: name,
+      expand: expand,
+      size: size
+    }
+    if(!!resId){
+      params.res_id = resId;
+    }
+
+    $axios.get(`files/qiniu/token`, { params }).then((response) => {
+      successCb && successCb(response.data)
+    }).catch((error) => {
+      errorCb && errorCb(error)
+    })
+  },
+
+  mkFileRequest({url,data,headers},successCb, errorCb){
+    let config = {
+      method: 'POST',
+      url: url,
+      headers:headers,
+      data:data
+    }
+    $axios(config).then((response) => {
+      successCb && successCb(response.data)
+    }).catch((error) => {
+      errorCb && errorCb(error)
+    });
+  }
 }

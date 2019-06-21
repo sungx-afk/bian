@@ -29,6 +29,9 @@
 </template>
 
 <script>
+
+  import {Link} from '@/config/utils'
+
   import Item from './IssueItem'
   import NoData from '@/modules/widget/space/NoData'
 
@@ -143,7 +146,7 @@
           }
         },
         goAddIssue(){
-
+          Link(`/space/issue/create?space_id=${this.space.id}&type=${this.type}`)
         },
         deleteIssue(item){
           let that = this
