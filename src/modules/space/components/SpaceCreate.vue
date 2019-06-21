@@ -95,7 +95,6 @@
     overflow-y: auto;
 
     .info {
-      height: 100%;
       .type-cell{
         background-color: white;
         .type-radio-group{
