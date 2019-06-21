@@ -30,6 +30,7 @@
   @import "~@/config/config.less";
 
   .private-container{
+    height: 100%;
     .private-tip{
       font-size:14px;
       padding:10px;
