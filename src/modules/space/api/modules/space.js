@@ -62,7 +62,18 @@ export default {
       _method:'PUT'
     };
 
-    $axios.post(`/spaces/${args.sid}/config`, qs.stringify(param)).then(response => {
+    $axios.post(`/spaces/${sid}/config`, qs.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  deleteSpace({sid},successCb, errorCb) {
+    let param = {
+      _method:'DELETE'
+    };
+
+    $axios.post(`/spaces/${sid}`, qs.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

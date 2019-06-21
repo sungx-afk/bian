@@ -17,7 +17,7 @@
                 <img class="avatar" :src="item.avatarUrl" />
                 <div class="title">{{item.name}}</div>
               </div>
-              <div class="right-content" @click.stop="showMoreMenu">
+              <div class="right-content" @click.stop="showMoreMenu(item)">
                 <i class="more iconfont icon-gengduo"></i>
               </div>
             </div>
@@ -65,7 +65,7 @@
             this.loading = false
           })
         },
-        showMoreMenu(){
+        showMoreMenu(item){
           this.menuList = [ {
             id:'moveout',
             name: '移出黑名单',

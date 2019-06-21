@@ -14,7 +14,7 @@
     </van-switch-cell>
     <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
     <van-cell title="追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
-    <van-cell title="删除纪念馆" @click.stop="deleteSpace"></van-cell>
+    <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
   </div>
 </template>
 
@@ -62,9 +62,27 @@
         goMemorialMeeting(){
 
         },
-        deleteSpace(){
-
-        }
+        deleteSpace(e){
+          let that = this
+          this.$dialog.confirm({
+            className:'my-delete-dialog',
+            confirmButtonText:'取消',
+            cancelButtonText:'删除',
+            message: `确认删除该纪念馆?`
+          }).then(() => {
+            // cancel //删除操作特殊处理到左侧按钮
+          }).catch(() => {
+            $API.space.deleteSpace({
+              sid:that.spaceId,
+              success:rsp=>{
+                //TODO
+              },
+              fail:error=>{
+                this.$toast('删除失败，请稍后重试')
+              }
+            })
+          })
+        },
       },
       created() {
         if (this.space){
@@ -74,6 +92,19 @@
     }
 </script>
 
-<style scoped>
+<style rel="stylesheet/less" lang="less" scoped>
+  @import "~@/config/config.less";
+  .setting-container{
 
+  }
+
+</style>
+
+<style>
+  .my-delete-dialog .van-dialog__footer .van-dialog__cancel{
+    color: red !important;
+  }
+  .my-delete-dialog .van-dialog__footer .van-dialog__confirm{
+    color: #666666 !important;
+  }
 </style>
