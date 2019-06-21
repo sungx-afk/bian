@@ -76,12 +76,7 @@
               return o
             })
             if (start === 0){
-              let list = []
-              for (let i = 0; i < 30; i++) {
-                let item = rsp[0]
-                list.push(JSON.parse(JSON.stringify(item)))
-              }
-              this.list = list
+              this.list = rsp
             }else{
               this.list = this.list.concat(rsp)
             }
@@ -134,11 +129,8 @@
         }
       }
       .right-content{
-        height:20px;
         margin-left: auto;
         .more{
-          width: 20px;
-          height: 20px;
         }
       }
     }

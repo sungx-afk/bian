@@ -4,22 +4,27 @@
       <no-data></no-data>
     </template>
     <template v-else>
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多数据了">
-        <van-cell
-          v-for="item in blacklist"
-          :key="item.id">
-          <div class="left-content">
-            <img class="avatar" :src="item.avatarUrl" />
-            <div class="title">{{item.name}}</div>
-          </div>
-          <div class="right-content" @click.stop="showMoreMenu">
-            <i class="more iconfont icon-gengduo"></i>
-          </div>
-        </van-cell>
-      </van-list>
+      <div class="blacklist-list">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多数据了">
+          <van-cell
+            v-for="item in blacklist"
+            :key="item.id">
+            <div class="list-item">
+              <div class="left-content">
+                <img class="avatar" :src="item.avatarUrl" />
+                <div class="title">{{item.name}}</div>
+              </div>
+              <div class="right-content" @click.stop="showMoreMenu">
+                <i class="more iconfont icon-gengduo"></i>
+              </div>
+            </div>
+          </van-cell>
+        </van-list>
+      </div>
+
     </template>
     <van-popup v-model="isShowMoreMenu">
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
@@ -111,7 +116,11 @@
   @import "~@/config/config.less";
   .blacklist-container{
     .blacklist-list{
+      height: 100%;
+      overflow-y: scroll;
       .list-item{
+        display: flex;
+        align-items: center;
         .left-content{
           display: flex;
           align-items: center;
@@ -125,11 +134,8 @@
           }
         }
         .right-content{
-          height:20px;
-          margin-top:5px;
+          margin-left: auto;
           .more{
-            width: 20px;
-            height: 20px;
           }
         }
       }
