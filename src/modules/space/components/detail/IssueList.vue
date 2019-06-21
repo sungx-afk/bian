@@ -187,6 +187,7 @@
 
   .issue-list-container{
     height: 100%;
+    overflow-y: scroll;
     .add-issue-btn{
       position:fixed;
       bottom:60px;

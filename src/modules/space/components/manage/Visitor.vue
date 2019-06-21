@@ -1,5 +1,5 @@
 <template>
-  <div class="visitor-container">
+  <div class="visitor-container" v-bind:style="{ 'height': containerHeight + 'px' }">
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -49,9 +49,13 @@
           loading:false,
           finished:false,
           noData:false,
+          containerHeight:0
         }
       },
       methods:{
+        initContainerHeight(){
+          this.containerHeight = document.body.clientHeight - 44
+        },
         getVisitorList(start){
           let that = this
           let limit = LIMIT
@@ -72,7 +76,12 @@
               return o
             })
             if (start === 0){
-              this.list = rsp
+              let list = []
+              for (let i = 0; i < 30; i++) {
+                let item = rsp[0]
+                list.push(JSON.parse(JSON.stringify(item)))
+              }
+              this.list = list
             }else{
               this.list = this.list.concat(rsp)
             }
@@ -94,6 +103,7 @@
         }
       },
       created() {
+        this.initContainerHeight()
         if (this.space){
           this.getVisitorList(0)
         }
@@ -104,6 +114,7 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .visitor-container{
+    overflow-y: scroll;
     .list-item{
       display: flex;
       align-items: center;

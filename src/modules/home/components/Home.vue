@@ -137,7 +137,8 @@
         }
       },
       goFeedback(){
-
+        let url = 'https://support.qq.com/product/63016'
+        window.open(url)
       },
       deleteSpaceVisited(space){
 

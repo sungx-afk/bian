@@ -1,5 +1,5 @@
 <template>
-  <div class="event-list-container">
+  <div class="event-list-container" v-bind:style="{ 'height': containerHeight + 'px' }">
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -56,9 +56,13 @@
           loading:false,
           finished:false,
           noData:false,
+          containerHeight:0
         }
       },
       methods:{
+        initContainerHeight(){
+          this.containerHeight = document.body.clientHeight - 44
+        },
         getSpaceEvents(start){
           let that = this
           let limit = LIMIT
@@ -119,6 +123,9 @@
             this.getSpaceEvents(start)
           }
         }
+      },
+      created() {
+        this.initContainerHeight()
       }
     }
 </script>
@@ -126,7 +133,7 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .event-list-container{
-    height: 100%;
+    overflow-y: scroll;
     .event{
       display: flex;
       flex-direction: column;
