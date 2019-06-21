@@ -21,6 +21,8 @@
 <script>
   import {Link} from '@/config/utils'
 
+  import constant from '@/config/constant'
+
     export default {
       name: "Setting",
       props:{
@@ -36,25 +38,48 @@
         }
       },
       methods:{
-        initSetting(){
-          let space = this.space
-          if (space.config){
-            if (space.config.viewScope){
-              this.viewScopeCheck = space.config.viewScope == 'member'
+        getSpaceConfig(){
+          $API.space.getSpaceDetail({
+            sid:this.space.id
+          },rsp=>{
+            this.initSetting(rsp.config)
+          })
+        },
+        initSetting(config){
+          if (config){
+            if (config.viewScope){
+              this.viewScopeCheck = config.viewScope == 'member'
             }
-            if (space.config.commentScope){
-              this.commentScopeCheck = space.config.commentScope == 'member'
+            if (config.commentScope){
+              this.commentScopeCheck = config.commentScope == 'member'
             }
           }
         },
         viewScopeChanged(e){
-          this.updateSetting()
+          let scope = 'all'
+          if (e){
+            scope = 'member'
+          }
+
+          this.updateSetting('viewScope',scope)
         },
         commentScopeChanged(e){
-          this.updateSetting()
+          let scope = 'all'
+          if (e){
+            scope = 'member'
+          }
+          this.updateSetting('commentScope',scope)
         },
-        updateSetting(){
-          //TODO
+        updateSetting(key,value){
+          let param = {
+            sid:this.space.id
+          }
+          param[key] = value
+          $API.space.updateSpaceConfig(param,rsp=>{
+
+          },error=>{
+
+          })
         },
         goBlackList(){
           Link(`/space/blacklist/${this.space.id}`)
@@ -73,20 +98,19 @@
             // cancel //删除操作特殊处理到左侧按钮
           }).catch(() => {
             $API.space.deleteSpace({
-              sid:that.spaceId,
-              success:rsp=>{
-                //TODO
-              },
-              fail:error=>{
+                sid:that.space.id
+              }, rsp=>{
+                eventHub.$emit(constant.EVENT_DELETE_SPACE_SUCCESS,that.space.id)
+              this.$router.go(-2)
+              }, error=>{
                 this.$toast('删除失败，请稍后重试')
-              }
             })
           })
         },
       },
       created() {
         if (this.space){
-          this.initSetting()
+          this.getSpaceConfig()
         }
       }
     }

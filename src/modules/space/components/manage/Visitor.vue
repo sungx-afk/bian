@@ -99,9 +99,6 @@
       },
       created() {
         this.initContainerHeight()
-        if (this.space){
-          this.getVisitorList(0)
-        }
       }
     }
 </script>

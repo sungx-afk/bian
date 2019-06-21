@@ -43,7 +43,7 @@
 <script>
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
-
+  import constant from '@/config/constant'
   import Item from '@/modules/widget/space/Item'
 
   export default{
@@ -145,11 +145,19 @@
       },
       clearSpaceVisited(){
 
+      },
+      registerEvent(){
+        eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
+        eventHub.$on(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
       }
     },
     created() {
+      this.registerEvent()
       this.getSpaceList()
       this.getSpacesVisited()
+    },
+    beforeDestroy() {
+      eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
     }
   }
 </script>

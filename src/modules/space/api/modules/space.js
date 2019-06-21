@@ -48,18 +48,44 @@ export default {
       _method:'PUT'
     };
 
-    $axios.post(`/spaces/${sid}/config`, qs.stringify(param)).then(response => {
+    $axios.post(`/spaces/${sid}/config`, qs.stringify(param,{ indices: false })).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  createSpace({name,users},successCb, errorCb) {
+    let param = {
+      name,
+      spaceUsers:users
+    }
+
+    $axios.post(`/spaces`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
     })
   },
   deleteSpace({sid},successCb, errorCb) {
-    let param = {
-      _method:'DELETE'
-    };
+    $axios.delete(`/spaces/${sid}`).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  updateSpaceConfig({sid,viewScope,commentScope},successCb, errorCb){
 
-    $axios.post(`/spaces/${sid}`, qs.stringify(param)).then(response => {
+    let param = {}
+
+    if (viewScope) {
+      param.viewScope = viewScope
+    }
+
+    if (commentScope) {
+      param.commentScope = commentScope;
+    }
+
+    $axios.put(`/spaces/${sid}/config`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

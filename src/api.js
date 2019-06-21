@@ -13,8 +13,7 @@ axios.interceptors.request.use(config => {
 })
 
 axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+axios.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8'; //默认是JSON格式
 /**
  * 公共上行信息
  * @type {{}}

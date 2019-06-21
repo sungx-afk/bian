@@ -1,21 +1,32 @@
 <template>
   <div class="users-info" v-if="user">
-    <van-field v-model="name" label="逝者姓名:" placeholder="请输入逝者姓名" maxlength="25" input-align="right"></van-field>
-    <van-cell title="出生日期:" is-link :value="birthday?dateText(birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
-    <van-cell title="逝世日期:" is-link :value="dieDay?dateText(dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
-    <van-field v-model="birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-    <van-field v-model="dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-field v-model="user.name" label="逝者姓名:" placeholder="请输入逝者姓名" maxlength="25" input-align="right"></van-field>
+    <van-cell title="出生日期:" is-link :value="user.birthday?dateText(user.birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
+    <van-cell title="逝世日期:" is-link :value="user.dieDay?dateText(user.dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
+    <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
 
     <van-cell title="性 别:">
-      <van-radio-group v-model="currentSex" class="sex-radio-group">
+      <van-radio-group v-model="user.sex" class="sex-radio-group">
         <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
       </van-radio-group>
     </van-cell>
 
-    <van-cell title="遗 像:" is-link :value="avatarUrl?'已选择':'请选择'" @click.stop="selectAvatar"></van-cell>
-    <div class="avatar-preview" v-if="avatarUrl">
-      <img :src="item.avatarUrl" @click.stop="selectAvatar" />
+    <van-cell title="遗 像:" is-link :value="user.avatarUrl?'已选择':'请选择'" @click.stop="selectAvatar"></van-cell>
+    <div class="avatar-preview" v-if="user.avatarUrl">
+      <img :src="user.avatarUrl" @click.stop="selectAvatar" />
     </div>
+    <van-popup v-model="showDatePicker" position="bottom" @closed="datePickerClosed">
+      <van-datetime-picker
+        v-model="currentPickerDate"
+        type="date"
+        :min-date="minPickerDate"
+        :max-date="maxPickerDate"
+        @cancel="datePickerCancel"
+        @confirm="datePickerConfirm">
+      </van-datetime-picker>
+
+    </van-popup>
   </div>
 </template>
 
@@ -26,35 +37,65 @@
       props:{
         user:{
           type:Object,
-          default:null
+          default:null,
+          twoWay:true
         }
       },
       data(){
         return{
-          name: '',
-          birthday:'',         //诞辰
-          birthAddress: '',    //出生地
-          dieDay: '',         //忌日
-          dieAddress: '',     //安葬地点
-          sex: 0,
-          nation: '',         //民族
-          avatarUrl: '',      //遗像地址
+          pickerType:0,
+          showDatePicker:false,
+          currentPickerDate:'',
+          minPickerDate:'',
+          maxPickerDate:'',
           sexList: [
             { name: '男', value: 0 },
             { name: '女', value: 1 }
-          ],
-          currentSex:0
+          ]
         }
       },
       methods:{
         dateText(timestamp){
           return timesToDate(timestamp,'yyyy年MM月dd日')
         },
+        initMinMaxDate(){
+          let now = new Date()
+          this.maxPickerDate = now
+          this.minPickerDate = new Date(1900,0,1)
+        },
         selectBirthday(){
-
+          this.initMinMaxDate()
+          this.showDatePicker = true
+          this.pickerType = 0
+          if (this.user.birthday){
+            this.currentPickerDate = new Date(this.user.birthday)
+          }else{
+            this.currentPickerDate = new Date(1900,0,1)
+          }
         },
         selectDieDay(){
-
+          this.initMinMaxDate()
+          this.showDatePicker = true
+          this.pickerType = 1
+          if (this.user.dieDay){
+            this.currentPickerDate = new Date(this.user.dieDay)
+          }else{
+            this.currentPickerDate = new Date()
+          }
+        },
+        datePickerClosed(){
+          this.showDatePicker = false
+        },
+        datePickerCancel(){
+          this.showDatePicker = false
+        },
+        datePickerConfirm(date){
+          if (this.pickerType == 0){
+            this.user.birthday = date.getTime()
+          }else if(this.pickerType == 1){
+            this.user.dieDay = date.getTime()
+          }
+          this.showDatePicker = false
         },
         selectAvatar(){
 

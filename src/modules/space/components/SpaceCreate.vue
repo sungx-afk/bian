@@ -23,6 +23,7 @@
 <script>
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
+  import constant from '@/config/constant'
 
   import UserInfo from './userinfo/UserInfo'
 
@@ -72,6 +73,52 @@
             avatarUrl: '',
           })
         }
+      },
+      create() {
+        //判断所有的dead
+        let empty = false
+        this.users.forEach(item=>{
+          if (!item.name){
+            empty = true
+            return false
+          }
+        })
+        if (empty) {
+          this.$toast('请填写逝者姓名');
+          return;
+        }
+
+        if (!this.isAgreementChecked) {
+          this.$toast('请先阅读服务协议');
+          return;
+        }
+
+        let spaceName = ''
+
+        this.users.forEach((item,index)=>{
+          spaceName += item.name
+          if (index !== this.users.length - 1){
+            spaceName += '和'
+          }
+        })
+        spaceName += '的纪念馆'
+
+        $API.space.createSpace({
+            name: spaceName,
+            users: this.users
+          }, rsp => {
+            eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
+            this.$toast({
+              message:'创建成功',
+              type:'success',
+              duration:1500,
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+        }, error => {
+          this.$toast.fail('创建失败，请稍后重试')
+        })
       },
       readAgreement(){
         Link('/agreement')
@@ -127,6 +174,7 @@
       height: 30px;
       align-items: center;
       margin-top: 20px;
+      margin-bottom: 20px;
 
       .text {
         height: 30px;
