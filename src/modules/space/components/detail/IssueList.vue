@@ -146,7 +146,7 @@
           }
         },
         goAddIssue(){
-          Link(`/space/issue/create?space_id=${this.space.id}&type=${this.type}`)
+          Link(`/issue/create?space_id=${this.space.id}&type=${this.type}`)
         },
         deleteIssue(item){
           let that = this

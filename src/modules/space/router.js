@@ -5,6 +5,7 @@ const SpaceDetail = () => import(/* webpackChunkName: "space_detail" */ './compo
 const SpaceManage = () => import(/* webpackChunkName: "space_manage" */ './components/SpaceManage')
 const Blacklist = () => import(/* webpackChunkName: "blacklist" */ './components/blacklist/Blacklist')
 const IssueCreate = () => import(/* webpackChunkName: "issue_create" */ './components/issue/IssueCreate')
+const Agreement = () => import(/* webpackChunkName: "agreement" */ './components/agreement/Agreement')
 
 const routes = [
 	{
@@ -23,13 +24,17 @@ const routes = [
       {
         path: 'blacklist/:id',
         component: Blacklist
-      },
-      {
-        path: 'issue/create',
-        component: IssueCreate
       }
     ]
-	}
+	},
+  {
+    path: '/issue/create',
+    component: IssueCreate
+  },
+  {
+    path: '/agreement',
+    component: Agreement
+  },
 ]
 
 export default routes;
