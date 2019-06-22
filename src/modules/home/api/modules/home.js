@@ -17,4 +17,18 @@ export default {
       errorCb && errorCb(error)
     });
   },
+  deleteSpaceVisited({sid},successCb,errorCb) {
+    $axios.delete(`/spaces/visited/${sid}`).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  clearSpaceVisited(successCb,errorCb) {
+    $axios.delete('/spaces/visited/all').then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
 }

@@ -103,10 +103,10 @@
           id:'create',
           name: '创建纪念馆',
         },
-          {
-            id:'feedback',
-            name: '意见与反馈',
-          }]
+        {
+          id:'feedback',
+          name: '意见与反馈',
+        }]
         this.isShowMoreMenu = true
       },
       showMoreMenu(item){
@@ -141,10 +141,27 @@
         window.open(url)
       },
       deleteSpaceVisited(space){
-
+        let that = this
+        $API.home.deleteSpaceVisited({
+          sid: space.id
+        },rsp=>{
+          let index = that.visitedList.findIndex(some=>{
+            return space.id === some.id
+          })
+          if (index > -1){
+            that.visitedList.splice(index,1)
+          }
+        }, error=>{
+            this.$toast('删除失败，请稍后重试')
+        })
       },
       clearSpaceVisited(){
-
+        let that = this
+        $API.home.clearSpaceVisited(rsp=>{
+            that.visitedList = []
+          }, error=>{
+            this.$toast('操作失败，请稍后重试')
+        })
       },
       registerEvent(){
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
