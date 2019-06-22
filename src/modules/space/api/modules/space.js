@@ -73,6 +73,17 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  renameSpace({sid,name},successCb, errorCb) {
+    let param = {
+      name
+    }
+
+    $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   updateSpaceConfig({sid,viewScope,commentScope},successCb, errorCb){
 
     let param = {}

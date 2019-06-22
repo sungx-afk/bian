@@ -71,6 +71,9 @@
 
 <script>
   import {Link} from '@/config/utils'
+
+  import ModifyText from '@/modules/widget/modify-text'
+
     export default {
       name: "Main",
       props:{
@@ -88,6 +91,26 @@
         }
       },
       methods:{
+        goRenameSpace(){
+          let that = this
+          ModifyText({
+            placeholder:'请输入新馆名',
+            callback:data=>{
+              that.modifySpaceName(data)
+            }
+          })
+        },
+        modifySpaceName(name){
+          let that = this
+          $API.space.renameSpace({
+              sid:that.space.id,
+              name:name
+            }, rsp=>{
+              that.space.name = name
+            }, error=>{
+
+            })
+        },
         goSpaceManage(){
           Link(`/space/manage/${this.space.id}`)
         }

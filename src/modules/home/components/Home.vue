@@ -166,33 +166,10 @@
   @import "~@/config/config.less";
 
   .main-container {
-    display: flex;
     height: 100%;
+    overflow-y: auto;
+    display: flex;
     flex-direction: column;
-    .notice-area {
-      margin-bottom:5px;
-      background-color: red;
-      width:100%;
-      height:30px;
-      padding:0;
-      display:flex;
-      align-items:center;
-      flex-shrink:0;
-      .notice-text {
-        font-size:15px;
-        color:white;
-        height:30px;
-        line-height:30px;
-        align-content:center;
-        text-align:center;
-        margin:0 0 0 10%;
-      }
-      .close{
-        color: #ffffff;
-        margin-left:auto;
-        margin-right:20px;
-      }
-    }
 
     .container-top {
       height: 220px;
@@ -203,6 +180,7 @@
     }
     .container-bottom {
       flex-grow: 1;
+      margin-bottom: 100px;
       .list {
         .visited-header{
           display:flex;

@@ -2,29 +2,29 @@ import Vue from 'vue';
 import Main from './main.vue'
 import {removeWidget} from '@/config/utils'
 
-const SelectNationConstructor = Vue.extend(Main);
+const ModifyTextConstructor = Vue.extend(Main);
 
 let instance;
 
 
-const SelectNation = options => {
+const ModifyText = options => {
   options = options || {};
   if (typeof options === 'string') {
     options = {
-      SelectNation: options
+      ModifyText: options
     }
   }
 
-  instance = new SelectNationConstructor({
+  instance = new ModifyTextConstructor({
     data: options
   });
 
-  let title = options.title || '选择民族';
-  instance.closeEnd = removeWidget({key:'select_nation',title,cb:() => {
+  let title = options.title || '修改文本';
+  instance.closeEnd = removeWidget({key:'modify_text',title,cb:() => {
       instance.close();
     }})
   document.getElementById('app').appendChild(instance.$mount().$el);
 
 }
 
-export default SelectNation;
+export default ModifyText;
