@@ -64,8 +64,8 @@
         canComment(){
           let result = true
           let currentUserId = this.user.id
-          if (this.detail && currentUserId !== this.detail.creatorId && this.detail.config.commentScope == 'member' ){
-            let index = this.detail.config.friendIds.findIndex(item=>item === currentUserId)
+          if (this.space && currentUserId !== this.space.creatorId && this.space.config.commentScope == 'member' ){
+            let index = this.space.config.friendIds.findIndex(item=>item === currentUserId)
             if (index === -1){ //如果没有找到，说明不在好友列表
               result = false
             }
@@ -75,16 +75,16 @@
         isSpaceCreator(){
           let result = false
           let currentUserId = this.user.id
-          if (this.detail && currentUserId === this.detail.creatorId){
+          if (this.space && currentUserId === this.space.creatorId){
             result = true
           }
           return result
         },
         isSpaceMember(){
           let result = false
-          if (!this.isSpaceCreator && this.detail){
+          if (!this.isSpaceCreator && this.space){
             let currentUserId = this.user.id
-            let index = this.detail.config.friendIds.findIndex(item=>item === currentUserId)
+            let index = this.space.config.friendIds.findIndex(item=>item === currentUserId)
             if (index > -1){
               result = true
             }

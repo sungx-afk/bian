@@ -107,7 +107,7 @@
         isSpaceCreator(){
           let result = false
           let currentUserId = this.user.id
-          if (this.detail && currentUserId === this.detail.creatorId){
+          if (this.space && currentUserId === this.space.creatorId){
             result = true
           }
           return result
@@ -194,6 +194,12 @@
           if (index > -1){
             this.space.spaceUsers.splice(index,1,user)
           }
+        },
+        goMemorialMeeting(){
+          Link(`/space/meeting/${this.space.id}`)
+        },
+        closeMemorialMeeting(){
+
         },
         registerEvent(){
           eventHub.$on(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)

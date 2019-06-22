@@ -85,7 +85,7 @@
           Link(`/space/blacklist/${this.space.id}`)
         },
         goMemorialMeeting(){
-
+          Link(`/space/meeting/${this.space.id}`)
         },
         deleteSpace(e){
           let that = this

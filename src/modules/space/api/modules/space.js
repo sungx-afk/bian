@@ -175,5 +175,16 @@ export default {
     }).catch((error) => {
       errorCb && errorCb(error)
     });
-  }
+  },
+  getWxQrCode({scene},successCb, errorCb) {
+
+    let param = {
+      scene
+    }
+    $axios.get(`/wx/qrcode/create?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
 }

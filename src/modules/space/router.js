@@ -5,7 +5,7 @@ const SpaceDetail = () => import(/* webpackChunkName: "space_detail" */ './compo
 const SpaceManage = () => import(/* webpackChunkName: "space_manage" */ './components/SpaceManage')
 const Blacklist = () => import(/* webpackChunkName: "blacklist" */ './components/blacklist/Blacklist')
 const FriendsManage = () => import(/* webpackChunkName: "friends-manage" */ './components/friends/FriendsManage')
-
+const Meeting = () => import(/* webpackChunkName: "meeting" */ './components/meeting/Meeting')
 const IssueCreate = () => import(/* webpackChunkName: "issue_create" */ './components/issue/IssueCreate')
 const Agreement = () => import(/* webpackChunkName: "agreement" */ './components/agreement/Agreement')
 const EditUserInfo = () => import(/* webpackChunkName: "edit_user" */ './components/userinfo/EditUserInfo')
@@ -31,6 +31,10 @@ const routes = [
       {
         path: 'friends/:id',
         component: FriendsManage
+      },
+      {
+        path: 'meeting/:id',
+        component: Meeting
       }
     ]
 	},
