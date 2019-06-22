@@ -77,6 +77,8 @@
 <script>
   import {Link} from '@/config/utils'
 
+  import constant from '@/config/constant'
+
   import ModifyText from '@/modules/widget/modify-text'
 
     export default {
@@ -144,7 +146,8 @@
           let user = item.data
 
           if (menu === 'base'){
-
+            localStorage.setItem(constant.KEY_EDIT_USER_INFO,JSON.stringify(user))
+            Link(`/user_edit?space_id=${this.space.id}`)
           }else if (menu === 'summary'){
             ModifyText({
               content:user.summary,
@@ -166,7 +169,25 @@
             }, error=>{
               this.$toast('修改失败，请稍后重试')
           })
+        },
+        updateSpaceUser(user){
+          let spaceUsers = this.space.spaceUsers
+          let index = spaceUsers.findIndex(item=>{
+            return item.id === user.id
+          })
+          if (index > -1){
+            this.space.spaceUsers.splice(index,1,user)
+          }
+        },
+        registerEvent(){
+          eventHub.$on(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)
         }
+      },
+      created() {
+        this.registerEvent()
+      },
+      beforeDestroy() {
+        eventHub.$off(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)
       }
     }
 </script>

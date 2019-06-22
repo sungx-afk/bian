@@ -6,6 +6,7 @@ const SpaceManage = () => import(/* webpackChunkName: "space_manage" */ './compo
 const Blacklist = () => import(/* webpackChunkName: "blacklist" */ './components/blacklist/Blacklist')
 const IssueCreate = () => import(/* webpackChunkName: "issue_create" */ './components/issue/IssueCreate')
 const Agreement = () => import(/* webpackChunkName: "agreement" */ './components/agreement/Agreement')
+const EditUserInfo = () => import(/* webpackChunkName: "edit_user" */ './components/userinfo/EditUserInfo')
 
 const routes = [
 	{
@@ -27,6 +28,10 @@ const routes = [
       }
     ]
 	},
+  {
+    path: '/user_edit',
+    component: EditUserInfo
+  },
   {
     path: '/issue/create',
     component: IssueCreate

@@ -110,6 +110,15 @@
 
   .users-info{
     margin-bottom:10px;
+    .avatar-preview{
+      display: flex;
+      justify-content: center;
+      padding: 10px 0px;
+      img{
+        width: 140px;
+        height: 140px;
+      }
+    }
     .sex-radio-group{
       display: flex;
       justify-content: flex-end;
