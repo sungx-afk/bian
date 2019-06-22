@@ -117,7 +117,7 @@
               }
             })
         }, error => {
-          this.$toast.fail('创建失败，请稍后重试')
+          this.$toast('创建失败，请稍后重试')
         })
       },
       readAgreement(){

@@ -3,11 +3,23 @@
     <div class="box-wrapper" v-show="show">
       <div class="bg_cover" @click.stop="close"></div>
       <div class="item-box">
-        <van-field
-          v-model="content"
-          :placeholder="placeholder"
-          :border="true">
-        </van-field>
+        <template v-if="multiline">
+          <van-field
+            v-model="content"
+            type="textarea"
+            :placeholder="placeholder"
+            :rows="rows"
+            :autosize="{ maxHeight: maxH, minHeight: minH }">
+          </van-field>
+        </template>
+        <template v-else>
+          <van-field
+            v-model="content"
+            :placeholder="placeholder"
+            :border="true">
+          </van-field>
+        </template>
+
         <div class="bottom-button">
           <van-button type="default" size="large" @click.tap="btnPressed">{{btnText}}</van-button>
         </div>
@@ -26,7 +38,10 @@
         callback:null,
         content:'',
         placeholder:'请输入文本',
-        btnText:'确定'
+        btnText:'确定',
+        multiline:false,
+        maxH:800,
+        minH:400
       }
     },
     methods: {

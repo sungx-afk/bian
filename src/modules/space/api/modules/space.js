@@ -84,6 +84,17 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  updateSpaceUser({sid,user},successCb, errorCb) {
+
+    let userId = user.id
+    delete user.id
+
+    $axios.put(`/spaces/${sid}/space_users/${userId}`, JSON.stringify(user)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   updateSpaceConfig({sid,viewScope,commentScope},successCb, errorCb){
 
     let param = {}

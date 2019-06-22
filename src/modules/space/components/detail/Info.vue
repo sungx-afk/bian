@@ -26,7 +26,7 @@
       <div class="lifetime-content" v-for="user in space.spaceUsers" :key="user.id">
         <div class="lifetime-top">
           <div class="name">{{user.name}}</div>
-          <i class="edit iconfont icon-bianji" @tap.stop="editMenu(user)"></i>
+          <i class="edit iconfont icon-bianji" @click.stop="editMenu(user)"></i>
         </div>
         <div class="lifetime-bottom">
           <div class="base-info">
@@ -43,10 +43,10 @@
           </div>
           <div class="summary-area">
             <template v-if="user.summary && user.summary.length > 0">
-              <view class="title">生平介绍:</view>
-              <view class="summary">
+              <div class="title">生平介绍:</div>
+              <div class="summary">
                 <textarea :value="user.summary" disabled maxlength='10000' auto-height/>
-              </view>
+              </div>
             </template>
             <template v-else>
               暂无生平介绍
@@ -66,6 +66,11 @@
       </div>
     </template>
     <div class="split-space"></div>
+    <van-action-sheet
+      v-model="showAction"
+      :actions="actions"
+      @select="onActionSelect">
+    </van-action-sheet>
   </div>
 </template>
 
@@ -88,6 +93,12 @@
         showMeeting:{
           type:Boolean,
           default: false
+        }
+      },
+      data(){
+        return{
+          actions:[],
+          showAction:false,
         }
       },
       methods:{
@@ -113,8 +124,49 @@
         },
         goSpaceManage(){
           Link(`/space/manage/${this.space.id}`)
-        }
+        },
+        editMenu(user){
+          this.actions = [{
+            name: '逝者基本信息',
+            id:'base',
+            data:user
+          },{
+            name: '逝者生平',
+            id:'summary',
+            data:user
+          },]
+          this.showAction = true
+        },
+        onActionSelect(item){
+          this.showAction = false
 
+          let menu = item.id
+          let user = item.data
+
+          if (menu === 'base'){
+
+          }else if (menu === 'summary'){
+            ModifyText({
+              content:user.summary,
+              multiline:true,
+              placeholder:'请输入生平简介',
+              callback:data=>{
+                this.modifySummary(user,data)
+              }
+            })
+          }
+        },
+        modifySummary(user,summary){
+          user.summary = summary
+          $API.space.updateSpaceUser({
+              sid:this.space.id,
+              user:user
+            }, rsp=>{
+
+            }, error=>{
+              this.$toast('修改失败，请稍后重试')
+          })
+        }
       }
     }
 </script>
