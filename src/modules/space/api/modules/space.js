@@ -45,10 +45,9 @@ export default {
 
     let param = {
       blackListIds: list,
-      _method:'PUT'
     };
 
-    $axios.post(`/spaces/${sid}/config`, qs.stringify(param,{ indices: false })).then(response => {
+    $axios.put(`/spaces/${sid}/config`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
