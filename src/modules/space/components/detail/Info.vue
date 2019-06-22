@@ -5,7 +5,7 @@
         <div class="space-name" @click.stop="goRenameSpace">
           {{space.name}}
         </div>
-        <div class="operate" v-if="operate">
+        <div class="operate" v-if="canOperate">
           <i class="setting iconfont icon-shezhi1" @click.stop="goSpaceManage"></i>
         </div>
       </div>
@@ -58,7 +58,7 @@
     <template v-if="showMeeting">
       <div class="memorial-meeting" @click.stop="goMemorialMeeting">
         <div class="meeting">追悼会</div>
-        <template v-if="operate">
+        <template v-if="canOperate">
           <div class="operate" @click.stop="closeMemorialMeeting">
             <i class="close-image iconfont icon-close"></i>
           </div>
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
 
   import constant from '@/config/constant'
@@ -88,10 +89,6 @@
           type:Object,
           default:null
         },
-        operate:{
-          type:Boolean,
-          default: false
-        },
         showMeeting:{
           type:Boolean,
           default: false
@@ -103,8 +100,27 @@
           showAction:false,
         }
       },
+      computed:{
+        ...mapGetters({
+          user: 'userStore/user',
+        }),
+        isSpaceCreator(){
+          let result = false
+          let currentUserId = this.user.id
+          if (this.detail && currentUserId === this.detail.creatorId){
+            result = true
+          }
+          return result
+        },
+        canOperate(){
+          return this.isSpaceCreator
+        }
+      },
       methods:{
         goRenameSpace(){
+          if (!this.canOperate){
+            return
+          }
           let that = this
           ModifyText({
             placeholder:'请输入新馆名',

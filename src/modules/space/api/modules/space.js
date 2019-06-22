@@ -94,6 +94,14 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  deleteFriend({sid,userId},successCb, errorCb){
+
+    $axios.post(`/spaces/${sid}/config/friends?_method=delete`,JSON.stringify([userId])).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   updateSpaceConfig({sid,viewScope,commentScope},successCb, errorCb){
 
     let param = {}

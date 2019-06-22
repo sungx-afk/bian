@@ -3,7 +3,7 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 0">
         <!--首页-->
-        <info v-if="detail" :space="detail" :showMeeting="true" :operate="true"></info>
+        <info v-if="detail" :space="detail" :showMeeting="true"></info>
       </template>
       <template v-if="tabActive == 1">
         <!--留言-->
@@ -20,7 +20,7 @@
     </div>
     <template v-if="!inputFocus">
       <van-tabbar v-model="tabActive" active-color="#825621" @change="onTabChange">
-        <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" custom-class="tabbar-item">{{tabBar.name}}</van-tabbar-item>
+        <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" style="font-size: 16px;">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
     </template>
     <div class='send-comment-area' v-if="postComment && false">
@@ -90,15 +90,42 @@
       Private
     },
     computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+      }),
       isIPhoneX(){
         return false
       },
+      canComment(){
+        let result = true
+        let currentUserId = this.user.id
+        if (this.detail && currentUserId !== this.detail.creatorId && this.detail.config.commentScope == 'member' ){
+          let index = this.detail.config.friendIds.findIndex(item=>item === currentUserId)
+          if (index === -1){ //如果没有找到，说明不在好友列表
+            result = false
+          }
+        }
+        return result
+      },
       isSpaceCreator(){
-        return true
+        let result = false
+        let currentUserId = this.user.id
+        if (this.detail && currentUserId === this.detail.creatorId){
+          result = true
+        }
+        return result
       },
       isSpaceMember(){
-        return false
-      }
+        let result = false
+        if (!this.isSpaceCreator && this.detail){
+          let currentUserId = this.user.id
+          let index = this.detail.config.friendIds.findIndex(item=>item === currentUserId)
+          if (index > -1){
+            result = true
+          }
+        }
+        return result
+      },
     },
     methods:{
       onTabChange(e){
@@ -151,7 +178,7 @@
         let result = 0
         //如果是开启了仅亲属进入，同时当前用户又不在亲属空间返回-1
         //如果没有开启仅亲属进入，判断当前用户是否在黑名单用户，如果是返回-2
-        let currentUserId = 1000738
+        let currentUserId = this.user.id
         if (currentUserId === space.creatorId){ //创建者永远能进入
           result = 0
         }else if (space.config.viewScope == 'member'){

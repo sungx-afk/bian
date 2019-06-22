@@ -16,6 +16,8 @@
 
 <script>
   import IssueList from './IssueList'
+  import {Link} from '@/config/utils'
+
     export default {
       name: "Friends",
       props:{
@@ -33,7 +35,7 @@
       },
       methods:{
         goMemberManage(){
-
+          Link(`/space/friends/${this.space.id}`)
         }
       }
     }

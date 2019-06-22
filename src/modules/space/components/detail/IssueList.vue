@@ -12,7 +12,7 @@
         <van-cell
           v-for="item in list"
           :key="item.id">
-          <item :item.sync="item" :type.sync="type" :canOperate="true" :canComment="true" v-on:click-menu="clickOperateMenu"></item>
+          <item :item.sync="item" :type.sync="type" :canOperate="item.canOperate" :canComment="canComment" v-on:click-menu="clickOperateMenu"></item>
         </van-cell>
       </van-list>
     </template>
@@ -30,6 +30,7 @@
 
 <script>
 
+  import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
 
   import Item from './IssueItem'
@@ -54,12 +55,42 @@
         NoData
       },
       computed:{
-        canComment(){
-          return true
-        },
+        ...mapGetters({
+          user: 'userStore/user',
+        }),
         isIPhoneX(){
           return false
-        }
+        },
+        canComment(){
+          let result = true
+          let currentUserId = this.user.id
+          if (this.detail && currentUserId !== this.detail.creatorId && this.detail.config.commentScope == 'member' ){
+            let index = this.detail.config.friendIds.findIndex(item=>item === currentUserId)
+            if (index === -1){ //如果没有找到，说明不在好友列表
+              result = false
+            }
+          }
+          return result
+        },
+        isSpaceCreator(){
+          let result = false
+          let currentUserId = this.user.id
+          if (this.detail && currentUserId === this.detail.creatorId){
+            result = true
+          }
+          return result
+        },
+        isSpaceMember(){
+          let result = false
+          if (!this.isSpaceCreator && this.detail){
+            let currentUserId = this.user.id
+            let index = this.detail.config.friendIds.findIndex(item=>item === currentUserId)
+            if (index > -1){
+              result = true
+            }
+          }
+          return result
+        },
       },
       data(){
         return{
@@ -118,7 +149,7 @@
         },
         canOperateIssue(issue){
           let result = false
-          let currentUserId = 1000738
+          let currentUserId = this.user.id
           if (currentUserId === this.space.creatorId){
             result = true
           }else if(currentUserId === issue.creatorId){
