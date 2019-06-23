@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import IssueList from './IssueList'
+  import IssueList from '../issue/IssueList'
     export default {
       name: "Private",
       props:{

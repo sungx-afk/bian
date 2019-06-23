@@ -185,7 +185,7 @@
           }
         },
         clickIssueItem(item){
-
+          Link(`/issue/detail/${item.id}?space_id=${this.space.id}`)
         },
         clickIssueImage(index,issue){
           let images = issue.photos.map(item=>{

@@ -144,6 +144,14 @@ export default {
       errorCb && errorCb(error)
     });
   },
+  getIssueDetail({sid,cid},successCb, errorCb){
+
+    $axios.get(`/subject/${sid}/comments/${cid}`).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
 
   filesQiniuUploadTicket({ reqType, name, expand, size, resId }, successCb, errorCb) {
     const params = {

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import IssueList from './IssueList'
+  import IssueList from '../issue/IssueList'
   import {Link} from '@/config/utils'
 
     export default {

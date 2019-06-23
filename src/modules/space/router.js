@@ -6,9 +6,13 @@ const SpaceManage = () => import(/* webpackChunkName: "space_manage" */ './compo
 const Blacklist = () => import(/* webpackChunkName: "blacklist" */ './components/blacklist/Blacklist')
 const FriendsManage = () => import(/* webpackChunkName: "friends-manage" */ './components/friends/FriendsManage')
 const Meeting = () => import(/* webpackChunkName: "meeting" */ './components/meeting/Meeting')
-const IssueCreate = () => import(/* webpackChunkName: "issue_create" */ './components/issue/IssueCreate')
+
 const Agreement = () => import(/* webpackChunkName: "agreement" */ './components/agreement/Agreement')
 const EditUserInfo = () => import(/* webpackChunkName: "edit_user" */ './components/userinfo/EditUserInfo')
+
+const Issue = () => import(/* webpackChunkName: "issue" */ './components/issue/Issue')
+const IssueCreate = () => import(/* webpackChunkName: "issue_create" */ './components/issue/IssueCreate')
+const IssueDetail = () => import(/* webpackChunkName: "issue_detail" */ './components/issue/IssueDetail')
 
 const routes = [
 	{
@@ -43,8 +47,15 @@ const routes = [
     component: EditUserInfo
   },
   {
-    path: '/issue/create',
-    component: IssueCreate
+    path: '/issue', component: Issue,
+    children: [
+      {
+        path: 'create',
+        component: IssueCreate
+      },{
+        path: 'detail/:id',
+        component: IssueDetail
+      }]
   },
   {
     path: '/agreement',
