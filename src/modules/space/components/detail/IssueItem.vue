@@ -19,100 +19,100 @@
     <template v-if='item.photos && item.photos.length > 0'>
       <div @click.stop='previewImages'>
         <div v-if="item.photos.length===1">
-          <img class='t1-1' :src="item.photos[0].thumbnailUrl || item.photos[0].url" @click.top='imagePressed' />
+          <img class='t1-1' :src="item.photos[0].thumbnailUrl || item.photos[0].url" @click.top='imagePressed(0)' />
         </div>
         <div v-else-if="item.photos.length===2">
           <div class='t2-1-view'>
-            <img class='t2-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
-            <img class='t2-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
+            <img class='t2-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
+            <img class='t2-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
           </div>
         </div>
         <div v-else-if="item.photos.length===3">
           <div class='t3-2-view'>
-            <img class='t3-2-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
+            <img class='t3-2-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
             <div class='t3-2-right'>
-              <img class='t3-2-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
-              <img class='t3-2-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed' />
+              <img class='t3-2-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
+              <img class='t3-2-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
             </div>
           </div>
         </div>
         <div v-else-if="item.photos.length===4">
           <div class='t4-1-view'>
             <div class='t4-1-top'>
-              <img class='t4-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
-              <img class='t4-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
+              <img class='t4-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
+              <img class='t4-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
             </div>
             <div class='t4-1-bottom'>
-              <img class='t4-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed' />
-              <img class='t4-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed' />
+              <img class='t4-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
+              <img class='t4-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
             </div>
           </div>
         </div>
         <div v-else-if="item.photos.length===5">
           <div class='t5-1-view'>
-            <img class='t5-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
-            <img class='t5-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
-            <img class='t5-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed' />
-            <img class='t5-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed' />
-            <img class='t5-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed' />
+            <img class='t5-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
+            <img class='t5-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
+            <img class='t5-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
+            <img class='t5-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
+            <img class='t5-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed(4)' />
           </div>
         </div>
         <div v-else-if="item.photos.length===6">
           <div class='t6-1-view'>
             <div class='t6-1-left'>
-              <img class='t6-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
+              <img class='t6-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
               <view class='t6-1-top'>
-                <img class='t6-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
-                <img class='t6-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed' />
+                <img class='t6-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
+                <img class='t6-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
               </view>
             </div>
             <div class='t6-1-right'>
-              <img class='t6-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed' />
-              <img class='t6-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed' />
-              <img class='t6-1-image6' :src='item.photos[5].thumbnailUrl || item.photos[5].url' @click.stop='imagePressed' />
+              <img class='t6-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
+              <img class='t6-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed(4)' />
+              <img class='t6-1-image6' :src='item.photos[5].thumbnailUrl || item.photos[5].url' @click.stop='imagePressed(5)' />
             </div>
           </div>
         </div>
         <div v-else-if="item.photos.length===7">
           <div class='t7-1-view'>
             <div class='t7-1-left'>
-              <img class='t7-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
-              <img class='t7-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
+              <img class='t7-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
+              <img class='t7-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
             </div>
             <div class='t7-1-right'>
               <div class='t7-1-top'>
-                <img class='t7-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed' />
-                <img class='t7-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed' />
+                <img class='t7-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
+                <img class='t7-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
               </div>
               <div class='t7-1-middle'>
-                <img class='t7-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed' />
-                <img class='t7-1-image6' :src='item.photos[5].thumbnailUrl || item.photos[5].url' @click.stop='imagePressed' />
+                <img class='t7-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed(4)' />
+                <img class='t7-1-image6' :src='item.photos[5].thumbnailUrl || item.photos[5].url' @click.stop='imagePressed(5)' />
               </div>
-              <img class='t7-1-image7' :src='item.photos[6].thumbnailUrl || item.photos[6].url' @click.stop='imagePressed' />
+              <img class='t7-1-image7' :src='item.photos[6].thumbnailUrl || item.photos[6].url' @click.stop='imagePressed(6)' />
             </div>
           </div>
         </div>
         <div v-else-if="item.photos.length===8">
           <div class='t8-1-view'>
             <div class='t8-1-left'>
-              <img class='t8-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed' />
-              <img class='t8-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed' />
-              <img class='t8-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed' />
+              <img class='t8-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
+              <img class='t8-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
+              <img class='t8-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
             </div>
             <div class='t8-1-middle'>
-              <img class='t8-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed' />
-              <img class='t8-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed' />
+              <img class='t8-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
+              <img class='t8-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed(4)' />
             </div>
             <div class='t8-1-right'>
-              <img class='t8-1-image6' :src='item.photos[5].thumbnailUrl || item.photos[5].url' @click.stop='imagePressed' />
-              <img class='t8-1-image7' :src='item.photos[6].thumbnailUrl || item.photos[6].url' @click.stop='imagePressed' />
-              <img class='t8-1-image8' :src='item.photos[7].thumbnailUrl || item.photos[7].url' @click.stop='imagePressed' />
+              <img class='t8-1-image6' :src='item.photos[5].thumbnailUrl || item.photos[5].url' @click.stop='imagePressed(5)' />
+              <img class='t8-1-image7' :src='item.photos[6].thumbnailUrl || item.photos[6].url' @click.stop='imagePressed(6)' />
+              <img class='t8-1-image8' :src='item.photos[7].thumbnailUrl || item.photos[7].url' @click.stop='imagePressed(7)' />
             </div>
           </div>
         </div>
         <div v-else-if="item.photos.length===9">
           <div class='t9-1-view'>
-            <div class='t9-1' v-for="photo in item.photos" :key='photo.url'  @click.stop='imagePressed'>
+            <div class='t9-1' v-for="(photo,index) in item.photos" :key='photo.url'  @click.stop='imagePressed(index)'>
               <img class='t9-1-image' :src='photo.thumbnailUrl || photo.url' />
             </div>
           </div>
@@ -180,6 +180,12 @@
       methods:{
         clickOperateMenu(e){
           this.$emit('click-menu',this.item)
+        },
+        itemPressed(){
+          this.$emit('click-item',this.item)
+        },
+        imagePressed(index){
+          this.$emit('click-image',index,this.item)
         }
       }
     }

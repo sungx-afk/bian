@@ -12,7 +12,11 @@
         <van-cell
           v-for="item in list"
           :key="item.id">
-          <item :item.sync="item" :type.sync="type" :canOperate="item.canOperate" :canComment="canComment" v-on:click-menu="clickOperateMenu"></item>
+          <item :item.sync="item" :type.sync="type" :canOperate="item.canOperate" :canComment="canComment"
+                v-on:click-menu="clickOperateMenu"
+                v-on:click-item="clickIssueItem"
+                v-on:click-image="clickIssueImage">
+          </item>
         </van-cell>
       </van-list>
     </template>
@@ -35,6 +39,10 @@
 
   import Item from './IssueItem'
   import NoData from '@/modules/widget/space/NoData'
+
+  import Vue from 'vue'
+  import { ImagePreview } from 'vant';
+  Vue.use(ImagePreview);
 
   const LIMIT = 20
 
@@ -175,6 +183,21 @@
               this.deleteIssue(menu.data)
               break
           }
+        },
+        clickIssueItem(item){
+
+        },
+        clickIssueImage(index,issue){
+          let images = issue.photos.map(item=>{
+            return item.url
+          })
+          ImagePreview({
+            images: images,
+            startPosition: index,
+            onClose() {
+              // do something
+            }
+          });
         },
         goAddIssue(){
           Link(`/issue/create?space_id=${this.space.id}&type=${this.type}`)
