@@ -17,7 +17,7 @@
     </div>
     <!-- 图片 -->
     <template v-if='item.photos && item.photos.length > 0'>
-      <div @click.stop='previewImages'>
+      <div>
         <div v-if="item.photos.length===1">
           <img class='t1-1' :src="item.photos[0].thumbnailUrl || item.photos[0].url" @click.top='imagePressed(0)' />
         </div>
@@ -143,7 +143,7 @@
       <div class='inter-area' v-if=' item.recently && item.recently.length > 0'>
         <!-- 评论列表 -->
         <div class='comment-list' v-for="comment in item.recently" :key='comment.id'>
-          <div class='comment-area' @click.stop="commentPressed">
+          <div class='comment-area' @click.stop="commentPressed(comment)">
             <span class='comment-name'>{{comment.creator && comment.creator.name}}
               <span v-if="comment.reply" style="color: #808080;">回复</span>
               <span class="comment-name" v-if="comment.reply">{{comment.reply.creator && comment.reply.creator.name}}</span>
@@ -186,6 +186,12 @@
         },
         imagePressed(index){
           this.$emit('click-image',index,this.item)
+        },
+        postCommentEvent(e){
+          this.$emit('comment',this.item)
+        },
+        commentPressed(comment){
+          this.$emit('comment-reply',{issue:this.item,comment:comment})
         }
       }
     }
@@ -281,9 +287,6 @@
         }
       }
       .inter-area{
-        margin-left:15px;
-        margin-right: 10px;
-        margin-bottom:10px;
         padding:10px;
         background-color:@BG_GRAY;
         .comment-list {

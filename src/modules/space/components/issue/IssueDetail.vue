@@ -3,9 +3,19 @@
     <template v-if="issue && space">
       <item :item.sync="issue" :type.sync="issue.type" :canOperate="canOperate" :canComment="canComment"
             v-on:click-menu="clickOperateMenu"
-            v-on:click-image="clickIssueImage">
+            v-on:click-image="clickIssueImage"
+            v-on:comment="comment"
+            v-on:comment-reply="commentReply">
       </item>
     </template>
+    <div class='send-comment-area' v-if="postComment">
+      <div class='comment-input-container'>
+        <van-field class='comment-input' v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
+      </div>
+      <div class='send-btn-area'>
+        <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
+      </div>
+    </div>
     <van-popup v-model="isShowMoreMenu">
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
@@ -27,7 +37,11 @@
           issue:null,
           space:null,
           menuList:[],
-          isShowMoreMenu:false
+          isShowMoreMenu:false,
+          postComment:false,
+          inputFocus:false,
+          commentContent:'',
+          currentComment:null
         }
       },
       computed:{
@@ -93,6 +107,8 @@
           this.isShowMoreMenu = false
           if (menu.id === 'delete') {
             this.deleteIssue()
+          }else if(menu.id === 'delete_comment'){
+            this.doDeleteComment(menu.data)
           }
         },
         deleteIssue(){
@@ -112,6 +128,102 @@
           }).catch(() => {
 
           })
+        },
+        comment(issue){
+          this.postComment = true
+          this.inputFocus = true
+        },
+        commentReply(data){
+          this.currentComment = data.comment
+          if (this.checkMyComment(this.currentComment)){
+            this.deleteComment(this.currentComment)
+          }else {
+            //如果不能评论，则弹提示
+            if (!this.canComment){
+              this.$toast("该馆已禁止访客留言或评论")
+              return
+            }
+            this.postComment = true
+            this.inputFocus = true
+          }
+        },
+        sendCommentDelay(){
+          setTimeout(()=>{
+            this.sendComment()
+          },200)
+        },
+        sendComment() {
+          let that = this
+          let content = that.commentContent
+
+          if (!content){
+            return
+          }
+
+          let data = {}
+          if (that.currentComment){
+            let reply = {}
+            reply.commentId = that.currentComment.id
+            data.reply = reply
+          }
+
+          data.type = 'COMMENT' //发表评论
+          data.content = content
+          data.status = 'PASS'
+
+          $API.space.sendComment({
+            sid: that.issue.id,
+            data: data
+            }, rsp=> {
+              that.updateComment(rsp)
+              that.clearLastData()
+            }, error=>{
+              console.log(error)
+            })
+        },
+        updateComment(comment){
+          //如果是评论，直接放到recently中
+          let that = this
+          that.issue.recently.unshift(comment)
+        },
+        checkMyComment(comment){
+          let result = false
+          let currentUserId = this.user.id
+          if (comment.creatorId === currentUserId){
+            result = true
+          }
+          return result
+        },
+        deleteComment(comment){
+          let name = '删除该评论'
+          this.menuList = [
+            {
+              id:'delete_comment',
+              name:name,
+              data:comment
+            }]
+          this.isShowMoreMenu = true
+        },
+        doDeleteComment(comment){
+          let that = this
+          let sid = that.spaceId
+          let cid = comment.id
+          $API.space.deleteComment({
+              sid,
+              cid
+            }, rsp=>{
+              let index = that.issue.recently.findIndex(item=>item.id === cid)
+              if (index > -1){
+                that.issue.recently.splice(index,1)
+              }
+            }, error=>{
+
+          })
+        },
+        clearLastData() {
+          this.postComment = false
+          this.currentComment = null
+          this.commentContent = ''
         },
         messageTypeText() {
           let result = '动态'
@@ -143,5 +255,40 @@
   @import "~@/config/config.less";
   .issue-detail-container{
     padding: 0px 15px;
+    .send-comment-area{
+      position:fixed;
+      width:100%;
+      height:70px;
+      left:0px;
+      bottom:0px;
+      background-color:white;
+      display:flex;
+      align-items:center;
+      border-top:solid 1px @BORDER_COLOR_1;
+      .comment-input-container{
+        width:75%;
+        height:45px;
+        border:solid 1px @BORDER_COLOR_1;
+        border-radius:4px;
+        background-color:white;
+        margin: 0 10px;
+        .comment-input{
+          font-size: 14px;
+        }
+      }
+      .send-btn-area{
+        width: 65px;
+        height:100%;
+        display:flex;
+        align-items:center;
+        .send-btn{
+          color: white;
+          height:30px;
+          line-height:30px;
+          font-size: 14px;
+          background-color: @MAIN_THEME_COLOR;
+        }
+      }
+    }
   }
 </style>

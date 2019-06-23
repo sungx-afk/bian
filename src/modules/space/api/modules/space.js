@@ -153,6 +153,22 @@ export default {
     });
   },
 
+  sendComment({sid,data},successCb, errorCb) {
+    $axios.post(`/subject/${sid}/comments`, JSON.stringify(data)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+
+  deleteComment({sid,cid},successCb, errorCb) {
+    $axios.delete(`/subject/${sid}/comments/${cid}`).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+
   filesQiniuUploadTicket({ reqType, name, expand, size, resId }, successCb, errorCb) {
     const params = {
       req_type: reqType,

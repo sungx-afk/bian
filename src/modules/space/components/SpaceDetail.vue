@@ -18,24 +18,11 @@
         <private v-if="detail" :space="detail" type="PRIVATE"></private>
       </template>
     </div>
-    <template v-if="!inputFocus">
+    <template v-if="true">
       <van-tabbar v-model="tabActive" active-color="#825621" @change="onTabChange">
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" style="font-size: 16px;">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
     </template>
-    <div class='send-comment-area' v-if="postComment && false">
-      <div class='comment-input-container'>
-        <input class='comment-input' value='commentContent' type='text' focus='inputFocus' bindblur='bindCommentBlurEvent' cursor-spacing='80px' placeholder='说点什么吧...'></input>
-      </div>
-      <div class='send-btn-area'>
-        <button class='send-btn' @click.stop='sendCommentDelay'>发送</button>
-      </div>
-    </div>
-    <van-action-sheet
-      v-model="showAction"
-      :actions="actions"
-      @select="onActionSheetSelect"
-    ></van-action-sheet>
   </div>
 </template>
 <script>
@@ -74,13 +61,7 @@
         noIssueData:false,
         noMoreData:false,
         loadingMore:false,
-        currentIssue:null,
-        currentComment:null,//用来实现回复评论
         postComment: false,
-        inputFocus: false,
-        commentContent:'',
-        showAction:false,
-        actions:[],
       }
     },
     components: {
@@ -205,17 +186,6 @@
       registerEvent(){
 
       },
-      onActionSheetSelect(e){
-        this.showAction = false
-        let menu = e.detail.id
-        let user = e.detail.data
-
-        if (menu === 'base'){
-
-        }else if (menu === 'summary'){
-
-        }
-      },
     },
     created() {
       if(this.$route.params.id){
@@ -302,44 +272,6 @@
         padding:10px;
         background:white;
         color: @MAIN_THEME_COLOR;
-      }
-    }
-    .send-comment-area{
-      position:fixed;
-      width:100%;
-      height:60px;
-      left:0px;
-      bottom:0px;
-      background-color:white;
-      display:flex;
-      align-items:center;
-      border-top:solid 1px @BORDER_COLOR_1;
-      .comment-input-container{
-        width:70%;
-        height:30px;
-        border:solid 1px @BORDER_COLOR_1;
-        border-radius:4px;
-        background-color:white;
-        margin: 0 10px;
-        padding-left:10px;
-        padding-top:6px;
-        .comment-input{
-          margin-bottom: 50px;
-          font-size: 14px;
-        }
-      }
-      .send-btn-area{
-        width: 65px;
-        height:100%;
-        display:flex;
-        align-items:center;
-        .send-btn{
-          color: white;
-          height:30px;
-          line-height:30px;
-          font-size: 14px;
-          background-color: @MAIN_THEME_COLOR;
-        }
       }
     }
   }
