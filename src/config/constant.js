@@ -15,6 +15,7 @@ module.exports = {
   KEY_TOKEN:'token',
   KEY_MEMORIAL_MEETING_SHOW:'memorial_meeting_show',
   KEY_EDIT_USER_INFO:'edit_user_info',
+  KEY_CROPPER_IMAGE_DATA:'cropper_image_data',
 
   IMAGE_LIMIT:9
 }

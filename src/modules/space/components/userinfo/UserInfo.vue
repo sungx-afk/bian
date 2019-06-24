@@ -12,9 +12,15 @@
       </van-radio-group>
     </van-cell>
 
-    <van-cell title="遗 像:" is-link :value="user.avatarUrl?'已选择':'请选择'" @click.stop="selectAvatar"></van-cell>
+    <van-cell title="遗 像:" is-link>
+      <van-uploader :after-read="afterSelectPhoto">
+        <span>请选择</span>
+      </van-uploader>
+    </van-cell>
     <div class="avatar-preview" v-if="user.avatarUrl">
-      <img :src="user.avatarUrl" @click.stop="selectAvatar" />
+      <van-uploader :after-read="afterSelectPhoto">
+        <img :src="user.avatarUrl" />
+      </van-uploader>
     </div>
     <van-popup v-model="showDatePicker" position="bottom" @closed="datePickerClosed">
       <van-datetime-picker
@@ -31,7 +37,9 @@
 </template>
 
 <script>
-  import {timesToDate} from '@/config/utils'
+  import constant from '@/config/constant'
+  import {timesToDate,Link} from '@/config/utils'
+
     export default {
       name: "UserInfo",
       props:{
@@ -97,9 +105,20 @@
           }
           this.showDatePicker = false
         },
-        selectAvatar(){
-
+        afterSelectPhoto(photo){
+          localStorage.setItem(constant.KEY_CROPPER_IMAGE_DATA,photo.content)
+          Link(`/cropper`)
+        },
+        updateAvatarData(data){
+          debugger
+          //TODO 上传七牛
         }
+      },
+      created() {
+        eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+      },
+      beforeDestroy() {
+        eventHub.$off(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
       }
     }
 </script>
@@ -110,6 +129,13 @@
 
   .users-info{
     margin-bottom:10px;
+    .van-cell{
+      .van-uploader{
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
     .avatar-preview{
       display: flex;
       justify-content: center;
