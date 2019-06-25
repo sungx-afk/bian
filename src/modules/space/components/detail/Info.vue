@@ -45,7 +45,12 @@
             <template v-if="user.summary && user.summary.length > 0">
               <div class="title">生平介绍:</div>
               <div class="summary">
-                <textarea :value="user.summary" disabled maxlength='10000' auto-height/>
+                <van-field
+                  v-model="user.summary"
+                  type="textarea"
+                  :rows="10"
+                  :autosize="{ maxHeight: 300, minHeight: 50 }">
+                </van-field>
               </div>
             </template>
             <template v-else>
@@ -218,6 +223,7 @@
   @import "~@/config/config.less";
   .main-container{
     height: 100%;
+    overflow-y: scroll;
     .space-area{
       display: flex;
       flex-direction:column;

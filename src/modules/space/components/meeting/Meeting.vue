@@ -1,9 +1,22 @@
 <template>
   <div class="meeting-container">
-    <div class="tip" v-if="!posterMaking">
-      温馨提示：为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。
-    </div>
-    <div class="poster-html" id="posterHtml">
+    <template v-if="showPoster">
+      <div class="poster-mask"></div>
+      <div class="poster-area">
+        <i class="iconfont icon-guanbi close" @click="closePoster"></i>
+        <img id="logo" src="~@/modules/images/logo.png" style="display: none;"/>
+        <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
+        <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
+        <div class="footer">
+          温馨提示：长按图片进行转发
+        </div>
+      </div>
+
+    </template>
+    <template v-else>
+      <div class="tip">
+        温馨提示：为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。
+      </div>
       <div class="report-area">
         <div class="report-header">
           <div class="title">讣告</div>
@@ -13,46 +26,42 @@
           type="textarea"
           placeholder="请填写讣告内容"
           :rows="rows"
-          :autosize="{ maxHeight: maxH, minHeight: minH }">
+          :autosize="{ maxHeight: maxH, minHeight: minH }"
+          @blur="noticeInputBlur">
         </van-field>
       </div>
-      <div class="poster-area">
-        <div class="poster-left-content">
-          <img class="logo" src="~@/modules/images/logo.png">
-          <div class="app-name-area">
-            <div class="app-name">彼岸纪念</div>
-            <div class="app-tip">识别二维码在线祭奠</div>
-          </div>
-        </div>
-        <div class="poster-right-content" v-if="qrCodeUrl">
-          <img class="qrcode" :src="qrCodeUrl">
-        </div>
+      <div class="poster-btn">
+        <van-button @click.stop="makePoster" type="default">发到朋友圈</van-button>
       </div>
-    </div>
-    <div id="myCanvas"></div>
-    <div class="poster-btn" v-if="!posterMaking">
-      <van-button @click.stop="makePoster" type="default">发到朋友圈</van-button>
-    </div>
+    </template>
+
   </div>
 </template>
 
 <script>
   import {mapGetters} from 'vuex';
 
-  import html2canvas from 'html2canvas'
-  import Canvas2Image from '@/config/canvas2image'
+  const FONT = "px Pingfang SC,STHeiti,Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,SimSun,sans-serif"
 
     export default {
       name: "Meeting",
       data(){
         return{
           spaceId:'',
+          spaceDetail:null,
           deathNotice:'',
           qrCodeUrl:'',
           rows:10,
           maxH:400,
           minH:200,
-          posterMaking:false
+          posterW:0,
+          posterH:0,
+          context:null,
+          ratio:1,
+          showPoster:false,
+          logoDrawDone:false,
+          qrCodeDrawDone:false,
+          posterDone:false
         }
       },
       computed: {
@@ -60,9 +69,60 @@
           user: 'userStore/user',
         }),
       },
+      watch:{
+        logoDrawDone(newVal,oldVal){
+          if (!newVal){
+            return
+          }
+          if (this.qrCodeDrawDone){
+            this.generateImage()
+          }
+          this.generateImage()
+        },
+        qrCodeDrawDone(newVal,oldVal){
+          if (!newVal){
+            return
+          }
+          if (this.logoDrawDone){
+            this.generateImage()
+          }
+        },
+      },
       methods:{
-        getSpaceDetail(){
+        getSpaceDetail(cb){
+          $API.space.getSpaceDetail({
+            sid:this.spaceId
+          }, rsp=>{
+            this.spaceDetail = rsp
+            cb && cb()
+          })
+        },
+        initDeathNotice(){
+          let notice = ''
+          if (this.spaceDetail && this.spaceDetail.spaceUsers && this.spaceDetail.spaceUsers.length > 0){
+            if (this.spaceDetail.spaceUsers[0].deathNotice){
+              notice = this.spaceDetail.spaceUsers[0].deathNotice
+            }
+          }
+          if (!notice){
+            this.deathNotice = `xxx同志因xx不幸于xxxx年xx月xx日在xx市逝世，终年xx岁。葬礼遵xxx遗愿，一切从简，特此讣告。
+            xxx`
+          }else{
+            this.deathNotice = notice
+          }
+        },
+        noticeInputBlur(){
+          this.updateDeathNotice()
+        },
+        updateDeathNotice(){
+          let userId = this.spaceDetail.spaceUsers[0].id
+          $API.space.updateSpaceUserNotice({
+            sid: this.spaceId,
+            userId: userId,
+            deathNotice: this.deathNotice,
+          }, rsp=>{
 
+          })
         },
         getWxQrCode(){
           let scene = `meeting_${this.spaceId}_${this.user.id}`
@@ -74,59 +134,191 @@
 
           })
         },
+        initPosterWH(){
+          this.posterW = document.documentElement.clientWidth - 50
+          this.posterH = document.documentElement.clientHeight - 150
+        },
         makePoster(){
-          this.posterMaking = true
-          const domObj = document.getElementById("posterHtml");
-
-          let width = document.documentElement.clientWidth;
-          let height = document.documentElement.clientHeight;
-          let scale = window.devicePixelRatio;
-          let canvas = document.createElement("canvas");
-
-          canvas.width = width * scale;
-          canvas.height = height * scale;
-          canvas.getContext('2d').scale(scale, scale);
-
-          let opts = {
-            canvas: canvas,
-            width: width,
-            height: height,
-            scale,
-            logging: true,
-            useCORS: true,
-            allowTaint: false,
-            letterRendering: true,
-          };
-
-          html2canvas(domObj, opts).then(function(canvas) {
-            let context = canvas.getContext("2d");
-            // 关闭抗锯齿形
-            context.mozImageSmoothingEnabled = false;
-            context.webkitImageSmoothingEnabled = false;
-            context.msImageSmoothingEnabled = false;
-            context.imageSmoothingEnabled = false;
-
-            let img = Canvas2Image.convertToImage(
-              canvas,
-              canvas.width,
-              canvas.height
-            );
-
-            img.style.width = canvas.width / scale + 'px'
-            img.style.height = canvas.height / scale + 'px'
-            img.style.position = 'absolute'
-            img.style.top = '0px'
-            img.style.left = '0px'
-
-
-            document.getElementById("myCanvas").appendChild(img);
+          this.showPoster = true
+          this.initPosterWH()
+          this.$nextTick(()=>{
+            this.drawPoster()
           })
+        },
+        closePoster(){
+          this.showPoster = false
+          this.logoDrawDone = false
+          this.qrCodeDrawDone = false
+          this.posterDone = false
+          this.context = null
+        },
+        drawPoster(){
+          let that = this
+
+          let canvas = document.getElementById('myCanvas')
+
+          if (!that.context){
+            that.context = canvas.getContext('2d')
+          }
+          that.ratio = that.getRatio(that.context) || 1; // 屏幕分辨率
+
+          canvas.width = that.posterW * that.ratio;
+          canvas.height = that.posterH * that.ratio;
+
+          canvas.style.width = that.posterW + "px";
+          canvas.style.height = that.posterH + "px";
+
+          that.context.scale(that.ratio, that.ratio);
+
+          that.drawBg()
+          that.drawTitle()
+          that.drawContent()
+          that.drawLogo()
+          that.drawTip()
+          //that.drawQrCode()
+        },
+        drawBg(){
+          this.context.fillStyle = '#ffffff'
+          this.context.fillRect(0, 0, this.posterW, this.posterH)
+        },
+        drawTitle(){
+          let title = '讣告'
+          let tx = (this.posterW - 20)/2 - 10
+          let ty = 50
+          let fontSize = 16
+          if (this.ratio > 1){
+            fontSize = 20
+          }
+          this.context.font = fontSize + FONT
+          this.context.fillStyle = '#000000'
+          this.context.fillText(title, tx, ty);
+        },
+        drawContent(){
+          if (this.deathNotice){
+            let fontSize = 14
+            if (this.ratio > 1){
+              fontSize = 16
+            }
+            this.context.font = fontSize + FONT
+            this.context.fillStyle = '#333333'
+
+            let content = this.deathNotice
+            let lines = content.split('\n')
+            let prevY = 60
+            for (let i = 0; i < lines.length; i++) {
+              let line = lines[i]
+              let x = 40/2
+              let y = 30 + prevY
+              let maxWidth = this.posterW - 40
+              let lineHeight = 30
+
+              prevY = this.drawMultiLine(this.context,line,x,y,maxWidth,lineHeight)
+            }
+          }
+        },
+        drawMultiLine(context, text, x, y, maxWidth, lineHeight) {
+          let arrText = text.split('');
+          let line = '';
+          for (let n = 0; n < arrText.length; n++) {
+            let mtLine = line + arrText[n];
+            let metrics = context.measureText(mtLine);
+            let testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+              context.fillText(line, x, y);
+              line = arrText[n];
+              y += lineHeight;
+            } else {
+              line = mtLine;
+            }
+          }
+          context.fillText(line, x, y);
+          return y
+        },
+        drawLogo(){
+          let lw = 35
+          let lh = 35
+          let lx = 30
+          let ly = this.posterH - lh - 28
+
+          let that = this
+
+          let img = document.getElementById('logo')
+          img.onload = ()=>{
+            this.context.drawImage(img,lx,ly,lw, lh)
+            that.logoDrawDone = true
+          }
+        },
+        drawTip(){
+          let name = '彼岸纪念'
+          let nx =70
+          let ny = this.posterH - 50
+
+          let fontSize = 16
+          if (this.ratio > 1){
+            fontSize = 16
+          }
+          this.context.font = fontSize + FONT
+
+          this.context.fillStyle = '#000000'
+
+          this.context.fillText(name, nx, ny);
+
+          let tip = '识别二维码在线祭奠'
+          let tx = 70
+          let ty = this.posterH - 30
+
+          fontSize = 12
+          if (this.ratio > 1){
+            fontSize = 14
+          }
+
+          this.context.font = fontSize + FONT
+          this.context.fillStyle = '#666666'
+          this.context.fillText(tip, tx, ty);
+        },
+        drawQrCode(){
+          let qw = 50
+          let qh = 50
+          let qx = this.posterW - qw - 30
+          let qy = this.posterH - qh - 20
+
+          let that = this
+          let img = new Image();
+          img.setAttribute("crossOrigin",'Anonymous')
+          img.src= this.qrCodeUrl;
+
+          img.onload = ()=>{
+            this.context.drawImage(img,qx,qy,qw, qh)
+            that.qrCodeDrawDone = true
+          }
+        },
+        generateImage(){
+
+          setTimeout(()=>{
+            this.posterDone = true
+            let canvas = document.getElementById('myCanvas')
+            let image = document.getElementById('poster');
+            image.src = canvas.toDataURL("image/png");
+
+          })
+        },
+        getRatio(context) {
+          let devicePixelRatio = window.devicePixelRatio || 1;
+          let backingStorePixelRatio = context.webkitBackingStorePixelRatio ||
+            context.mozBackingStorePixelRatio ||
+            context.msBackingStorePixelRatio ||
+            context.oBackingStorePixelRatio ||
+            context.backingStorePixelRatio || 1;
+          let ratio = devicePixelRatio / backingStorePixelRatio;
+          return ratio;
         }
       },
       created() {
         if(this.$route.params.id){
           this.spaceId = this.$route.params.id
-          this.getSpaceDetail()
+          this.getSpaceDetail(()=>{
+            this.initDeathNotice()
+          })
           this.getWxQrCode()
         }
       }
@@ -146,57 +338,19 @@
       padding:10px;
       color:#666666;
     }
-    .poster-html{
+    .report-area{
       width: 100%;
-      .report-area{
-        width: 100%;
-        background:@BG_WHITE;
-        margin-top:10px;
-        .report-header{
-          position: relative;
-          height:40px;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          .title{
-            font-size: 16px;
-            font-weight: bold;
-          }
-        }
-      }
-      .poster-area{
-        display: flex;
-        align-items: center;
-        width: 100%;
-        justify-content: center;
-        margin-top: 20px;
-        .poster-left-content{
-          display: flex;
-          align-items: center;
-          .logo{
-            width: 40px;
-            height: 40px;
-          }
-          .app-name-area{
-            display: flex;
-            flex-direction: column;
-            margin: 0px 10px;
-            .app-name{
-              font-size: 16px;
-              font-weight: bold;
-              color: @FONT_SECOND_COLOR;
-            }
-            .app-tip{
-              font-size: 14px;
-              color: @FONT_THIRD_COLOR;
-            }
-          }
-        }
-        .poster-right-content{
-          .qrcode{
-            width: 60px;
-            height: 60px;
-          }
+      background:@BG_WHITE;
+      margin-top:10px;
+      .report-header{
+        position: relative;
+        height:40px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        .title{
+          font-size: 16px;
+          font-weight: bold;
         }
       }
     }
@@ -210,6 +364,45 @@
         height: 40px;
         line-height: 38px;
         margin:0px 10px;
+      }
+    }
+    .poster-mask{
+      position: fixed;
+      z-index: 1000;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .poster-area{
+      position: fixed;
+      z-index: 1001;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #FFFFFF;
+      text-align: center;
+      overflow: hidden;
+      box-sizing: border-box;
+      .canvas{
+        margin: 0 auto;
+      }
+      .close{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #a9a9a9;
+      }
+      .poster-hidden{
+        display: none;
+      }
+      .footer{
+        display: flex;
+        padding: 0px 15px 15px;
+        justify-content: center;
+        font-size: 14px;
+        color: @FONT_THIRD_COLOR;
       }
     }
   }

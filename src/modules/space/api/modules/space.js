@@ -94,6 +94,18 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  updateSpaceUserNotice({sid,userId,deathNotice},successCb, errorCb) {
+
+    let data = {
+      deathNotice:deathNotice
+    }
+
+    $axios.put(`/spaces/${sid}/space_users/${userId}/death_notice`, JSON.stringify(data)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   deleteFriend({sid,userId},successCb, errorCb){
 
     $axios.post(`/spaces/${sid}/config/friends?_method=delete`,JSON.stringify([userId])).then(response => {
