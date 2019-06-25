@@ -9,7 +9,7 @@ export default {
     });
   },
   deleteIssue({sid,cid},successCb, errorCb) {
-    $axios.post(`/subject/${args.sid}/comments/${args.cid}`, qs.stringify({_method: 'DELETE'})).then(response => {
+    $axios.delete(`/subject/${sid}/comments/${cid}`).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
@@ -121,11 +121,7 @@ export default {
     })
   },
   postIssue({sid,data},successCb, errorCb) {
-
-    let param = {
-      data
-    }
-    $axios.post(`/subject/${sid}/comments`, qs.stringify(param)).then(response => {
+    $axios.post(`/subject/${sid}/comments`, JSON.stringify(data)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
@@ -184,7 +180,7 @@ export default {
     })
   },
 
-  filesQiniuUpload({data,token,info},successCb, errorCb){
+  filesQiniuUpload({data,token},successCb, errorCb){
     let url = "http://upload.qiniup.com/putb64/-1/"
 
     data = data.substring(23); //截掉base64前面头

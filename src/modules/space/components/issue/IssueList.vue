@@ -54,6 +54,8 @@
   import { ImagePreview } from 'vant';
   Vue.use(ImagePreview);
 
+  import constant from '@/config/constant'
+
   const LIMIT = 20
 
     export default {
@@ -168,6 +170,9 @@
           }
           let start = this.list.length
           this.fetchIssueList(start)
+        },
+        updateList(){
+          this.fetchIssueList(0)
         },
         canOperateIssue(issue){
           let result = false
@@ -360,7 +365,10 @@
       },
 
       created() {
-
+        eventHub.$on(constant.EVENT_POST_ISSUE_SUCCESS,this.updateList)
+      },
+      beforeDestroy() {
+        eventHub.$on(constant.EVENT_POST_ISSUE_SUCCESS,this.updateList)
       }
     }
 </script>

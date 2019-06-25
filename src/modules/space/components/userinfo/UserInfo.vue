@@ -128,7 +128,6 @@
             $API.space.filesQiniuUpload({
               data:cropperData,
               token:resp.uptoken,
-              info:info
             },rsp=>{
               that.user.avatarUrl = rsp.url
             },error=>{
