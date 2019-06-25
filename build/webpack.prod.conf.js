@@ -16,7 +16,7 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 var qiniu = {
   bucket: 'static-app01',
   // domain: 'https://static-app01.yugusoft.com/'
-  domain: 'https://static-qq-app01.yugusoft.com/'
+  domain: '/'
 
 };
 
@@ -129,13 +129,13 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
 
     // copy custom static assets
-    // new CopyWebpackPlugin([
-    //   {
-    //     from: path.resolve(__dirname, '../static'),
-    //     to: config.build.assetsSubDirectory,
-    //     ignore: ['.*']
-    //   }
-    // ])
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: config.build.assetsSubDirectory,
+        ignore: ['.*']
+      }
+    ])
   ]
 })
 

@@ -54,8 +54,8 @@ module.exports = {
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'fbmobile2.0/dist',
-    assetsPublicPath: './',
+    assetsSubDirectory: 'bian',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps
