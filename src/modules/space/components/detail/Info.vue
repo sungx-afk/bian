@@ -311,7 +311,6 @@
           padding: 15px;
           font-size: 14px;
           color: @FONT_THIRD_COLOR;
-          max-height: 400px;
           overflow-y: auto;
           .base-info{
             .date-info{
@@ -327,7 +326,9 @@
               margin-bottom: 10px;
             }
             .summary{
-
+              .van-field{
+                padding: 10px 0px;
+              }
             }
           }
         }
