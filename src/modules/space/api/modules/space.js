@@ -169,18 +169,32 @@ export default {
     })
   },
 
-  filesQiniuUploadTicket({ reqType, name, expand, size, resId }, successCb, errorCb) {
+  filesQiniuUploadTicket({ reqType, name, expand, size }, successCb, errorCb) {
     const params = {
       req_type: reqType,
       name: name,
       expand: expand,
       size: size
     }
-    if(!!resId){
-      params.res_id = resId;
-    }
 
     $axios.get(`files/qiniu/token`, { params }).then((response) => {
+      successCb && successCb(response.data)
+    }).catch((error) => {
+      errorCb && errorCb(error)
+    })
+  },
+
+  filesQiniuUpload({data,token,info},successCb, errorCb){
+    let url = "http://upload.qiniup.com/putb64/-1/"
+
+    data = data.substring(23); //截掉base64前面头
+
+    $axios.post(url,data,{
+      headers: {
+        'Authorization': 'UpToken ' + token,
+        'Content-Type': 'application/octet-stream'
+      }
+    }).then((response) => {
       successCb && successCb(response.data)
     }).catch((error) => {
       errorCb && errorCb(error)

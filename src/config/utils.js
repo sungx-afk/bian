@@ -426,28 +426,6 @@ export const utf8to16=(str)=>{
 };
 /*base64 end*/
 
-export const filterCrmType=(type)=> {
-  let key = "";
-  switch(type){
-    case 'CHANCE_SOURCE': key = '商机来源'; break;
-    case 'CHANCE_TYPE': key = '商机类型'; break;
-    case 'CHANCE_LOSS_REASON': key = '输单原因'; break;
-    case 'CONTRACT_STATUS': key = '合同状态'; break;
-    case 'CONTRACT_TYPE': key = '合同类型'; break;
-    case 'CUSTOMER_LEVEL': key = '客户分级'; break;
-    case 'CUSTOMER_LOSS_REASON': key = '客户流失原因'; break;
-    case 'CUSTOMER_SOURCE': key = '客户来源'; break;
-    case 'CUSTOMER_STATUS': key = '客户分类'; break;
-    case 'OPEN_SEA': key = '公海'; break;
-    case 'PAY_TYPE': key = '付款方式'; break;
-    case 'PRODUCT_STATUS': key = '产品状态'; break;
-    case 'PRODUCT_TYPE': key = '产品分类'; break;
-    case 'PRODUCT_UNIT': key = '产品单位'; break;
-    case 'SALE_STATE': key = '销售阶段'; break;
-  }
-  return key;
-};
-
 export const validateMobile = (mobile) => {
   var result = false
   if (mobile != '') {

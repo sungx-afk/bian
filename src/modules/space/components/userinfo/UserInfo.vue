@@ -14,7 +14,7 @@
 
     <van-cell title="遗 像:" is-link>
       <van-uploader :after-read="afterSelectPhoto">
-        <span>请选择</span>
+        <div style="width: 250px;">请选择</div>
       </van-uploader>
     </van-cell>
     <div class="avatar-preview" v-if="user.avatarUrl">
@@ -106,12 +106,35 @@
           this.showDatePicker = false
         },
         afterSelectPhoto(photo){
-          localStorage.setItem(constant.KEY_CROPPER_IMAGE_DATA,photo.content)
+          let data = {}
+          data.content = photo.content
+          data.name = photo.file.name
+          data.size = photo.file.size
+          data.type = photo.file.type
+          data.lastModified = photo.file.lastModified
+          localStorage.setItem(constant.KEY_CROPPER_IMAGE_DATA,JSON.stringify(data))
           Link(`/cropper`)
         },
-        updateAvatarData(data){
-          debugger
-          //TODO 上传七牛
+        updateAvatarData(result){
+          let cropperData = result.cropperData
+          let info = result.info
+          let that = this
+          $API.space.filesQiniuUploadTicket({
+            reqType: 'general_file',
+            name: info.name,
+            expand: info.name.replace(/.+\./, ''),
+            size: info.size,
+          }, resp => {
+            $API.space.filesQiniuUpload({
+              data:cropperData,
+              token:resp.uptoken,
+              info:info
+            },rsp=>{
+              that.user.avatarUrl = rsp.url
+            },error=>{
+
+            })
+          })
         }
       },
       created() {
