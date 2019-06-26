@@ -29,7 +29,7 @@
     </template>
     <div class='send-comment-area' v-if="postComment">
       <div class='comment-input-container'>
-        <van-field class='comment-input' ref="comment" v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
+        <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
       </div>
       <div class='send-btn-area'>
         <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
@@ -185,6 +185,9 @@
           return result
         },
         clickOperateMenu(item){
+          if (this.postComment){
+            return
+          }
           let name = '删除' + this.messageTypeText()
           this.menuList = [
             {
@@ -206,9 +209,15 @@
           }
         },
         clickIssueItem(item){
+          if (this.postComment){
+            return
+          }
           Link(`/issue/detail/${item.id}?space_id=${this.space.id}`)
         },
         clickIssueImage(index,issue){
+          if (this.postComment){
+            return
+          }
           let images = issue.photos.map(item=>{
             return item.url
           })
@@ -243,6 +252,11 @@
 
           })
         },
+        commentBlur(){
+          setTimeout(()=>{
+            this.clearLastData()
+          },200)
+        },
         comment(issue){
           this.currentIssue = issue
           this.postComment = true
@@ -251,16 +265,19 @@
           })
         },
         commentReply(data){
-          this.currentIssue = data.issue
-          this.currentComment = data.comment
-          if (this.checkMyComment(this.currentComment)){
-            this.deleteComment(this.currentComment)
+          if (this.checkMyComment(data.comment)){
+            if (this.postComment){
+              return
+            }
+            this.deleteComment(data.comment)
           }else {
             //如果不能评论，则弹提示
             if (!this.canComment){
               this.$toast("该馆已禁止访客留言或评论")
               return
             }
+            this.currentIssue = data.issue
+            this.currentComment = data.comment
             this.postComment = true
             this.$nextTick(()=>{
               this.$refs.comment.focus()

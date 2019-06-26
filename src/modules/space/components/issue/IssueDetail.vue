@@ -10,7 +10,7 @@
     </template>
     <div class='send-comment-area' v-if="postComment">
       <div class='comment-input-container'>
-        <van-field class='comment-input' ref="comment" v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
+        <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
       </div>
       <div class='send-btn-area'>
         <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
@@ -24,7 +24,12 @@
 
 <script>
   import {mapGetters} from 'vuex';
-  import Item from './IssueItem'
+  import Item from './IssueItem';
+
+  import Vue from 'vue';
+  import { ImagePreview } from 'vant';
+  Vue.use(ImagePreview);
+
     export default {
       name: "IssueDetail",
       components:{
@@ -91,6 +96,9 @@
           })
         },
         clickOperateMenu(){
+          if (this.postComment){
+            return
+          }
           let name = '删除' + this.messageTypeText()
           this.menuList = [
             {
@@ -99,8 +107,20 @@
             }]
           this.isShowMoreMenu = true
         },
-        clickIssueImage(){
-
+        clickIssueImage(index){
+          if (this.postComment){
+            return
+          }
+          let images = this.issue.photos.map(item=>{
+            return item.url
+          })
+          ImagePreview({
+            images: images,
+            startPosition: index,
+            onClose() {
+              // do something
+            }
+          });
         },
         moreMenuPressed(menu){
           this.isShowMoreMenu = false
@@ -128,6 +148,11 @@
 
           })
         },
+        commentBlur(){
+          setTimeout(()=>{
+            this.clearLastData()
+          },200)
+        },
         comment(issue){
           this.postComment = true
           this.$nextTick(()=>{
@@ -135,8 +160,10 @@
           })
         },
         commentReply(data){
-          this.currentComment = data.comment
-          if (this.checkMyComment(this.currentComment)){
+          if (this.checkMyComment(data.comment)){
+            if (this.postComment){
+              return
+            }
             this.deleteComment(this.currentComment)
           }else {
             //如果不能评论，则弹提示
@@ -144,6 +171,7 @@
               this.$toast("该馆已禁止访客留言或评论")
               return
             }
+            this.currentComment = data.comment
             this.postComment = true
             this.$nextTick(()=>{
               this.$refs.comment.focus()
