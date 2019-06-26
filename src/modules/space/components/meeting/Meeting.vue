@@ -127,17 +127,38 @@
         getWxQrCode(){
           let that = this
           let scene = `meeting_${this.spaceId}_${this.user.id}`
-          $API.space.getWxQrCode({
-            scene: scene
-          }, rsp => {
-            that.convertBlobToBase64(new Blob([rsp],{type: 'image/jpeg'})).then((data)=>{
-              this.qrCode = data
-            }).catch(error=>{
+          // $API.space.getWxQrCode({
+          //   scene: scene
+          // }, rsp => {
 
-            })
-          }, error => {
-            this.$toast('获取二维码失败，请稍后重试')
-          })
+            let image = document.createElement("img");
+            image.src = "http://localhost:8080/wx/qrcode/create?scene=meeting_1000187_1000738&with_image=1&plat=wechat&build=999999&token=014eb57b-0715-4572-8376-8478d779b666&platVersion=1";
+            document.body.appendChild(image);
+            image.setAttribute("crossOrigin",'Anonymous');
+            image.onload = function () {
+              console.log(image, image.width, image.height);
+              let canvas = document.createElement("canvas");
+              canvas.width = image.width;
+              canvas.height = image.height;
+              console.log(canvas.width, canvas.height);
+              canvas.getContext("2d").drawImage(image, 0, 0);
+              console.log('xxxxx', canvas.toDataURL('image/png'));
+              this.qrCode = canvas.toDataURL('image/png');
+            }
+
+
+
+
+
+            // that.convertBlobToBase64(new Blob([rsp],{type: 'image/jpeg'})).then((data)=>{
+            //   this.qrCode = data
+            // }).catch(error=>{
+            //
+            // })
+          // }, error => {
+          //   console.log(error);
+          //   this.$toast('获取二维码失败，请稍后重试')
+          // })
         },
         convertBlobToBase64(blob){
           return new Promise((resolve, reject) => {
@@ -306,7 +327,6 @@
           }
         },
         generateImage(){
-
           setTimeout(()=>{
             this.posterDone = true
             let canvas = document.getElementById('myCanvas')
