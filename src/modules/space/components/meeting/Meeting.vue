@@ -7,7 +7,7 @@
         <img id="logo" src="~@/modules/images/logo.png" style="display: none;"/>
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
-        <div class="footer">
+        <div class="footer" v-if="posterDone">
           温馨提示：长按图片进行转发
         </div>
       </div>
@@ -159,6 +159,12 @@
 
           that.context.scale(that.ratio, that.ratio);
 
+          this.$toast.loading({
+            duration: 0,       // 持续展示 toast
+            forbidClick: true, // 禁用背景点击
+            loadingType: 'spinner',
+            message: '生成图片中...'
+          })
           that.drawBg()
           that.drawTitle()
           that.drawContent()
@@ -286,10 +292,10 @@
         generateImage(){
           setTimeout(()=>{
             this.posterDone = true
+            this.$toast.clear()
             let canvas = document.getElementById('myCanvas')
             let image = document.getElementById('poster');
             image.src = canvas.toDataURL("image/png");
-
           })
         },
         getRatio(context) {
