@@ -77,7 +77,6 @@
           if (this.qrCodeDrawDone){
             this.generateImage()
           }
-          this.generateImage()
         },
         qrCodeDrawDone(newVal,oldVal){
           if (!newVal){
@@ -122,52 +121,6 @@
             deathNotice: this.deathNotice,
           }, rsp=>{
 
-          })
-        },
-        getWxQrCode(){
-          let that = this
-          let scene = `meeting_${this.spaceId}_${this.user.id}`
-          // $API.space.getWxQrCode({
-          //   scene: scene
-          // }, rsp => {
-
-            let image = document.createElement("img");
-            image.src = "http://localhost:8080/wx/qrcode/create?scene=meeting_1000187_1000738&with_image=1&plat=wechat&build=999999&token=014eb57b-0715-4572-8376-8478d779b666&platVersion=1";
-            document.body.appendChild(image);
-            image.setAttribute("crossOrigin",'Anonymous');
-            image.onload = function () {
-              console.log(image, image.width, image.height);
-              let canvas = document.createElement("canvas");
-              canvas.width = image.width;
-              canvas.height = image.height;
-              console.log(canvas.width, canvas.height);
-              canvas.getContext("2d").drawImage(image, 0, 0);
-              console.log('xxxxx', canvas.toDataURL('image/png'));
-              this.qrCode = canvas.toDataURL('image/png');
-            }
-
-
-
-
-
-            // that.convertBlobToBase64(new Blob([rsp],{type: 'image/jpeg'})).then((data)=>{
-            //   this.qrCode = data
-            // }).catch(error=>{
-            //
-            // })
-          // }, error => {
-          //   console.log(error);
-          //   this.$toast('获取二维码失败，请稍后重试')
-          // })
-        },
-        convertBlobToBase64(blob){
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader;
-            reader.onerror = reject;
-            reader.onload = () => {
-              resolve(reader.result);
-            };
-            reader.readAsDataURL(blob);
           })
         },
         initPosterWH(){
@@ -320,7 +273,11 @@
 
           let that = this
           let img = new Image();
-          img.src = this.qrCode;
+          let scene = `meeting_${this.spaceId}_${this.user.id}`
+          let param = getRequestParam()
+          let url = `https://ba.yugusoft.com/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          img.setAttribute("crossOrigin",'Anonymous');
+          img.src = url
           img.onload = ()=>{
             this.context.drawImage(img,qx,qy,qw, qh)
             that.qrCodeDrawDone = true
@@ -352,7 +309,6 @@
           this.getSpaceDetail(()=>{
             this.initDeathNotice()
           })
-          this.getWxQrCode()
         }
       }
     }
