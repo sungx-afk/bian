@@ -19,15 +19,16 @@ axios.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8'; //é»
  * @type {{}}
  */
 global.getRequestParam = function() {
-  let param = localStorage.getItem("requestParam");
-  let storeParam = store.getters['userStore/requestParam'];
-  if (!param){
-    if(storeParam){
-      param = JSON.stringify(storeParam);
-    }else{
-      param = JSON.stringify({plat:'wechat',build:'999999',token:'48dd8cc7-7c23-4a90-a40e-308b30cba24c',platVersion:'1.0.0'})
-    }
-  }
+  // let param = localStorage.getItem("requestParam");
+  // let storeParam = store.getters['userStore/requestParam'];
+  // if (!param){
+  //   if(storeParam){
+  //     param = JSON.stringify(storeParam);
+  //   }else{
+  //     param = JSON.stringify({plat:'wechat',build:'999999',token:'014eb57b-0715-4572-8376-8478d779b666',platVersion:'1.0.1'})
+  //   }
+  // }
+  let param = JSON.stringify({plat:'wechat',build:'999999',token:'014eb57b-0715-4572-8376-8478d779b666',platVersion:'1.0.1'})
   return JSON.parse(param);
 }
 

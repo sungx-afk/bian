@@ -50,7 +50,7 @@
           spaceId:'',
           spaceDetail:null,
           deathNotice:'',
-          qrCodeUrl:'',
+          qrCode:'',
           rows:10,
           maxH:400,
           minH:200,
@@ -125,13 +125,28 @@
           })
         },
         getWxQrCode(){
+          let that = this
           let scene = `meeting_${this.spaceId}_${this.user.id}`
           $API.space.getWxQrCode({
             scene: scene
           }, rsp => {
-            this.qrCodeUrl = rsp.url
-          }, error => {
+            that.convertBlobToBase64(new Blob([rsp],{type: 'image/jpeg'})).then((data)=>{
+              this.qrCode = data
+            }).catch(error=>{
 
+            })
+          }, error => {
+            this.$toast('获取二维码失败，请稍后重试')
+          })
+        },
+        convertBlobToBase64(blob){
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader;
+            reader.onerror = reject;
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.readAsDataURL(blob);
           })
         },
         initPosterWH(){
@@ -175,7 +190,7 @@
           that.drawContent()
           that.drawLogo()
           that.drawTip()
-          //that.drawQrCode()
+          that.drawQrCode()
         },
         drawBg(){
           this.context.fillStyle = '#ffffff'
@@ -284,9 +299,7 @@
 
           let that = this
           let img = new Image();
-          img.setAttribute("crossOrigin",'Anonymous')
-          img.src= this.qrCodeUrl;
-
+          img.src = this.qrCode;
           img.onload = ()=>{
             this.context.drawImage(img,qx,qy,qw, qh)
             that.qrCodeDrawDone = true

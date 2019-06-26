@@ -225,7 +225,8 @@ export default {
   getWxQrCode({scene},successCb, errorCb) {
 
     let param = {
-      scene
+      scene,
+      with_image:1
     }
     $axios.get(`/wx/qrcode/create?`+qs.stringify(param, { indices: false })).then(function (response) {
       successCb && successCb(response.data)
