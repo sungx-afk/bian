@@ -17,7 +17,7 @@
     </div>
     <!-- 图片 -->
     <template v-if='item.photos && item.photos.length > 0'>
-      <div>
+      <div class="photo-area">
         <div v-if="item.photos.length===1">
           <img class='t1-1' :src="item.photos[0].thumbnailUrl || item.photos[0].url" @click.top='imagePressed(0)' />
         </div>
@@ -324,11 +324,13 @@
         width:50%;
         height:150px;
         margin-right: 3px;
+        object-fit: cover;
       }
       .t2-1-image2 {
         width:50%;
         height:150px;
         margin-left:3px;
+        object-fit: cover;
       }
     }
 
@@ -338,6 +340,7 @@
       .t3-2-image1 {
         width:54%;
         height:340px;
+        object-fit: cover;
       }
       .t3-2-right {
         width:46%;
@@ -347,10 +350,12 @@
       .t3-2-image2 {
         width:100%;
         height:120px;
+        object-fit: cover;
       }
       .t3-2-image3 {
         width:100%;
         height:220px;
+        object-fit: cover;
       }
     }
 
@@ -362,11 +367,13 @@
           width: 50%;
           height: 175px;
           margin-right:3px;
+          object-fit: cover;
         }
         .t4-1-image2 {
           width: 50%;
           height: 175px;
           margin-left:3px;
+          object-fit: cover;
         }
       }
       .t4-1-bottom {
@@ -376,12 +383,14 @@
           width: 50%;
           height: 175px;
           margin-right:3px;
+          object-fit: cover;
         }
 
         .t4-1-image4 {
           width: 50%;
           height: 175px;
           margin-left:3px;
+          object-fit: cover;
         }
       }
     }
@@ -393,6 +402,7 @@
         width:122px;
         height:230px;
         position:relative;
+        object-fit: cover;
       }
       .t5-1-image2 {
         left:6px;
@@ -400,6 +410,7 @@
         bottom:122px;
         height:107px;
         position:relative;
+        object-fit: cover;
       }
 
       .t5-1-image3 {
@@ -408,6 +419,7 @@
         width:117px;
         height:117px;
         position:relative;
+        object-fit: cover;
       }
 
       .t5-1-image4 {
@@ -416,6 +428,7 @@
         width:125px;
         height:230px;
         position:relative;
+        object-fit: cover;
       }
 
       .t5-1-image5 {
@@ -423,6 +436,7 @@
         width:246px;
         height:107px;
         position:relative;
+        object-fit: cover;
       }
     }
 
@@ -435,6 +449,7 @@
         .t6-1-image1 {
           width:100%;
           height:242px;
+          object-fit: cover;
         }
         .t6-1-top {
           height:110px;
@@ -442,12 +457,14 @@
             width:45%;
             height:110px;
             margin-right:3px;
+            object-fit: cover;
           }
 
           .t6-1-image3 {
             width:52.4%;
             height:110px;
             margin-left:3px;
+            object-fit: cover;
           }
         }
 
@@ -458,16 +475,19 @@
         .t6-1-image4 {
           width: 100%;
           height: 110px;
+          object-fit: cover;
         }
 
         .t6-1-image5 {
           width: 100%;
           height: 126px;
+          object-fit: cover;
         }
 
         .t6-1-image6 {
           width: 100%;
           height: 110px;
+          object-fit: cover;
         }
       }
     }
@@ -484,11 +504,13 @@
         .t7-1-image1 {
           width:100%;
           height:200px;
+          object-fit: cover;
         }
 
         .t7-1-image2 {
           width:100%;
           height:137px;
+          object-fit: cover;
         }
       }
       .t7-1-right {
@@ -502,11 +524,13 @@
             width:50%;
             height:110px;
             margin-right:6px;
+            object-fit: cover;
           }
 
           .t7-1-image4 {
             width: 50%;
             height: 110px;
+            object-fit: cover;
           }
         }
         .t7-1-middle {
@@ -517,16 +541,19 @@
             width: 50%;
             height: 110px;
             margin-right:6px;
+            object-fit: cover;
           }
 
           .t7-1-image6 {
             width: 50%;
             height: 110px;
+            object-fit: cover;
           }
         }
         .t7-1-image7 {
           width: 100%;
           height: 111px;
+          object-fit: cover;
         }
       }
     }
@@ -540,16 +567,19 @@
         .t8-1-image1 {
           width:100%;
           height:110px;
+          object-fit: cover;
         }
 
         .t8-1-image2 {
           width:100%;
           height:118px;
+          object-fit: cover;
         }
 
         .t8-1-image3 {
           width:100%;
           height:110px;
+          object-fit: cover;
         }
       }
 
@@ -559,11 +589,13 @@
         .t8-1-image4 {
           width: 100%;
           height: 172px;
+          object-fit: cover;
         }
 
         .t8-1-image5 {
           width:100%;
           height:172px;
+          object-fit: cover;
         }
       }
 
@@ -572,16 +604,19 @@
         .t8-1-image6 {
           width:100%;
           height:110px;
+          object-fit: cover;
         }
 
         .t8-1-image7 {
           width:100%;
           height:118px;
+          object-fit: cover;
         }
 
         .t8-1-image8 {
           width:100%;
           height:110px;
+          object-fit: cover;
         }
       }
     }
@@ -602,6 +637,7 @@
         .t9-1-image {
           width: 100%;
           height: 100%;
+          object-fit: cover;
         }
       }
     }
