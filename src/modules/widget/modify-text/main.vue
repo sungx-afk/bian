@@ -5,6 +5,7 @@
       <div class="item-box">
         <template v-if="multiline">
           <van-field
+            ref="input"
             v-model="content"
             type="textarea"
             :placeholder="placeholder"
@@ -14,6 +15,7 @@
         </template>
         <template v-else>
           <van-field
+            ref="input"
             v-model="content"
             :placeholder="placeholder"
             :border="true">
@@ -41,7 +43,9 @@
         btnText:'确定',
         multiline:false,
         maxH:800,
-        minH:400
+        minH:400,
+        rows:10,
+        oldContent:''
       }
     },
     methods: {
@@ -53,7 +57,9 @@
         this.closeEnd();
       },
       close(){
-        this.callback && this.callback(this.content)
+        if (this.oldContent !== this.content){
+          this.callback && this.callback(this.content)
+        }
         this.show = false;
       },
       btnPressed(){
@@ -62,10 +68,12 @@
     },
     mounted() {
       this.$nextTick(() => {
-        this.show = true;
+        this.$refs.input.focus()
       });
     },
     created(){
+      this.show = true
+      this.oldContent = this.content
     }
   }
 </script>

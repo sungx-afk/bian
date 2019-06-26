@@ -10,7 +10,7 @@
     </template>
     <div class='send-comment-area' v-if="postComment">
       <div class='comment-input-container'>
-        <van-field class='comment-input' v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
+        <van-field class='comment-input' ref="comment" v-model="commentContent" placeholder="说点什么吧..." maxlength="1000"></van-field>
       </div>
       <div class='send-btn-area'>
         <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
@@ -39,7 +39,6 @@
           menuList:[],
           isShowMoreMenu:false,
           postComment:false,
-          inputFocus:false,
           commentContent:'',
           currentComment:null
         }
@@ -131,7 +130,9 @@
         },
         comment(issue){
           this.postComment = true
-          this.inputFocus = true
+          this.$nextTick(()=>{
+            this.$refs.comment.focus()
+          })
         },
         commentReply(data){
           this.currentComment = data.comment
@@ -144,7 +145,9 @@
               return
             }
             this.postComment = true
-            this.inputFocus = true
+            this.$nextTick(()=>{
+              this.$refs.comment.focus()
+            })
           }
         },
         sendCommentDelay(){

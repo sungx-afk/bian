@@ -147,8 +147,8 @@
             <span class='comment-name'>{{comment.creator && comment.creator.name}}
               <span v-if="comment.reply" style="color: #808080;">回复</span>
               <span class="comment-name" v-if="comment.reply">{{comment.reply.creator && comment.reply.creator.name}}</span>
-            </span>
-            <span class='comment-content'>:{{comment.content}}</span>
+            </span>:
+            <span class='comment-content'>{{comment.content}}</span>
           </div>
         </div>
       </div>

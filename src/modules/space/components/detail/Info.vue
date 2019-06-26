@@ -26,7 +26,7 @@
       <div class="lifetime-content" v-for="user in space.spaceUsers" :key="user.id">
         <div class="lifetime-top">
           <div class="name">{{user.name}}</div>
-          <i class="edit iconfont icon-bianji" @click.stop="editMenu(user)"></i>
+          <i class="edit iconfont icon-bianji" v-if="canOperate" @click.stop="editMenu(user)"></i>
         </div>
         <div class="lifetime-bottom">
           <div class="base-info">
@@ -48,7 +48,7 @@
                 <van-field
                   v-model="user.summary"
                   type="textarea"
-                  :rows="10"
+                  readonly
                   :autosize="{ maxHeight: 300, minHeight: 50 }">
                 </van-field>
               </div>
@@ -186,7 +186,8 @@
               sid:this.space.id,
               user:user
             }, rsp=>{
-
+              //找到对应编辑的人，更新简介
+              this.updateSpaceUser(user)
             }, error=>{
               this.$toast('修改失败，请稍后重试')
           })

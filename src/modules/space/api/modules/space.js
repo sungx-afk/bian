@@ -85,10 +85,7 @@ export default {
   },
   updateSpaceUser({sid,user},successCb, errorCb) {
 
-    let userId = user.id
-    delete user.id
-
-    $axios.put(`/spaces/${sid}/space_users/${userId}`, JSON.stringify(user)).then(response => {
+    $axios.put(`/spaces/${sid}/space_users/${user.id}`, JSON.stringify(user)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
