@@ -204,7 +204,7 @@
     .issue-header {
       height: 46px;
       display:flex;
-      margin-top:10px;
+      margin:10px 0px;
       align-items:center;
       position: relative;
       .header-avatar {
@@ -238,8 +238,7 @@
       color:@FONT_SECOND_COLOR;
       font-size:16px;
       height:100%;
-      margin: 5px 15px 5px 0px;
-      padding-top: 10px;
+      margin: 5px 0px;
       word-wrap:break-word;
     }
     .issue-video {
