@@ -3,9 +3,6 @@
     <navigation>
       <router-view></router-view>
     </navigation>
-    <audio id="bgMusic" preload hidden>
-      <source :src="bgm" type="audio/mpeg">
-    </audio>
   </div>
 </template>
 
@@ -14,7 +11,7 @@
     name: 'app',
     data() {
       return {
-        bgm: `/ftask/web/voice2.m4a`
+
       }
     }
   }

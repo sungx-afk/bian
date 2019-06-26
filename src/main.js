@@ -33,12 +33,6 @@ import {Link} from '@/config/utils'
 
 Vue.mixin({
   methods: {
-    playBgm(){
-      var audio = document.getElementById('bgMusic');
-      if(audio !== null){
-        audio.play();
-      }
-    },
     viewIndexPage(replace){
       let linkReplace = replace || false;
       Link(url,{},linkReplace)

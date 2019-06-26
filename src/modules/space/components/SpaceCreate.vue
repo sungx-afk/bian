@@ -93,6 +93,18 @@
           return;
         }
 
+        let invalidAvatar = false
+        this.users.forEach(item=>{
+          if (item.avatarUrl && (item.avatarUrl.indexOf("http://") === -1 && item.avatarUrl.indexOf("https://") === -1)){
+            invalidAvatar = true
+            return false
+          }
+        })
+        if (invalidAvatar) {
+          this.$toast('遗像未正确上传，请重新选择');
+          return;
+        }
+
         let spaceName = ''
 
         this.users.forEach((item,index)=>{

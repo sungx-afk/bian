@@ -14,7 +14,10 @@
 
     <van-cell title="遗 像:" is-link>
       <van-uploader :after-read="afterSelectPhoto">
-        <div style="width: 250px;">请选择</div>
+        <div style="width: 250px;">
+          <span v-if="user.avatarUrl">已选择</span>
+          <span v-else>请选择</span>
+        </div>
       </van-uploader>
     </van-cell>
     <div class="avatar-preview" v-if="user.avatarUrl">
@@ -113,10 +116,13 @@
           data.type = photo.file.type
           data.lastModified = photo.file.lastModified
           localStorage.setItem(constant.KEY_CROPPER_IMAGE_DATA,JSON.stringify(data))
-          Link(`/cropper`)
+          this.$nextTick(()=>{
+            Link(`/cropper`)
+          })
         },
         updateAvatarData(result){
           let cropperData = result.cropperData
+          this.user.avatarUrl = result.cropperData
           let info = result.info
           let that = this
           $API.space.filesQiniuUploadTicket({
@@ -131,8 +137,10 @@
             },rsp=>{
               that.user.avatarUrl = rsp.url
             },error=>{
-
+              alert('filesQiniuUpload:',error)
             })
+          },error=>{
+            alert('filesQiniuUploadTicket:',error)
           })
         }
       },

@@ -209,19 +209,6 @@ export default {
     })
   },
 
-  mkFileRequest({url,data,headers},successCb, errorCb){
-    let config = {
-      method: 'POST',
-      url: url,
-      headers:headers,
-      data:data
-    }
-    $axios(config).then((response) => {
-      successCb && successCb(response.data)
-    }).catch((error) => {
-      errorCb && errorCb(error)
-    });
-  },
   getWxQrCode({scene},successCb, errorCb) {
 
     let param = {
