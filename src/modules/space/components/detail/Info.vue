@@ -93,14 +93,11 @@
         space:{
           type:Object,
           default:null
-        },
-        showMeeting:{
-          type:Boolean,
-          default: false
         }
       },
       data(){
         return{
+          showMeeting:false,
           actions:[],
           showAction:false,
         }
@@ -121,7 +118,25 @@
           return this.isSpaceCreator
         }
       },
+      watch:{
+        space(){
+          this.initShowMeeting()
+        }
+      },
       methods:{
+        initShowMeeting(){
+          if (this.space){
+            let show = false
+            if (!this.isSpaceCreator){
+              return show
+            }
+            let value = localStorage.getItem(constant.KEY_MEMORIAL_MEETING_SHOW+this.space.id)
+            if (value === 'show'){
+              show = true
+            }
+            this.showMeeting = show
+          }
+        },
         goRenameSpace(){
           if (!this.canOperate){
             return
@@ -205,7 +220,10 @@
           Link(`/space/meeting/${this.space.id}`)
         },
         closeMemorialMeeting(){
-
+          this.showMeeting = false
+          if (this.space){
+            localStorage.setItem(constant.KEY_MEMORIAL_MEETING_SHOW+this.space.id,'show')
+          }
         },
         registerEvent(){
           eventHub.$on(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)

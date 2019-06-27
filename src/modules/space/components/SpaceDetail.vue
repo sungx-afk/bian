@@ -3,7 +3,7 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 0">
         <!--首页-->
-        <info v-if="detail" :space="detail" :showMeeting="true"></info>
+        <info v-if="detail" :space="detail"></info>
       </template>
       <template v-if="tabActive == 1">
         <!--留言-->
