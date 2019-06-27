@@ -34,7 +34,7 @@ global.getRequestParam = function() {
 
 
 global.$axios = axios.create({
-  baseURL: '/',
+  baseURL: '/api/v1',
   validateStatus: function(status) {
     return status < 400;
   },
