@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>祭拜</title>
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="http://www.17sucai.com/preview/1474877/2018-12-20/h/js/pixi.min.js"></script>
+</head>
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background: black;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    body {
+        background: url("./images/bg.png");
+        background-size: 100% 100%;
+    }
+
+    .xiang_kuang {
+        background: url("./images/item_xiang_kuang_black.png");
+        background-size: cover;
+        width: 400px;
+        height: 467px;
+        padding: 0;
+        margin: 0 auto;
+        margin-top: 12vh;
+        position: relative;
+    }
+
+    #yi_xiang {
+        position: absolute;
+        left: 48px;
+        right: 59px;
+        top: 45px;
+        bottom: 53px;
+        background-size: cover !important;
+    }
+
+    .view1-box {
+        background: url(./images/001.png);
+        width: 108px;
+        height: 108px;
+        position: absolute;
+        bottom: 328px;
+        left: 200px;
+    }
+
+    .file-01 {
+        width: 60px;
+        height: 60px;
+        touch-action: none;
+        cursor: inherit;
+        position: absolute;
+        left: 24px;
+        top: -38px;
+    }
+
+    #dui_lian_box {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        color: white;
+        text-align: left;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .inner {
+        flex: 1;
+        position: relative;
+        padding: 0px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .dui_lian {
+        background: #f0eadd;
+        color: black;
+        height: auto;
+        writing-mode: vertical-rl;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 40px;
+        padding: 20px 15px;
+        letter-spacing: 8px;
+        box-sizing: border-box;
+        position: relative;
+        box-shadow: 4px 6px 9px rgba(1, 1, 1, 0.61);
+    }
+
+    #big-fire {
+        animation: fade-in 2000ms 1000ms forwards;
+        /*background: #000;*/
+        /*background: radial-gradient( circle at 50% 75%, #311, #000 );*/
+        border-radius: 50%;
+        /*box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.05);*/
+        left: 0;
+        margin: 0 auto;
+        bottom: 340px;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+    }
+
+    @keyframes fade-in {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fade-in2 {
+        to {
+            opacity: 0.06;
+        }
+    }
+
+    #main-box{
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        height: 100vw;
+        /*background: red;*/
+        display: flex;
+    }
+
+
+    #item_hua_bg {
+        background: url("./images/item_hua_bg.png");
+        background-size: 100% 100%;
+        width: 100vw;
+        height: 70vw;
+        position: absolute;
+        bottom: 15vh;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        display: flex;
+    }
+
+    #hua_box{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .hua{
+        background: url("./images/item_hua_quan.png");
+        height: 15vw;
+        background-size: 100% 100%;
+        width: 15vw;
+    }
+
+    #item_zuo_zi_box {
+        position: absolute;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 0px;
+        text-align: center;
+        left: 0px;
+        right: 0px;
+        top: 506px;
+        height: 400px;
+    }
+
+    #item_zuo_zi_box_inner {
+        flex: 1;
+        position: relative;
+        padding: 2vw;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+
+    #item_zuo_zi .inner, #item_zuo_zi_2 .inner{
+        display: flex;
+        flex-direction: row;
+        vertical-align: top;
+        justify-items: center;
+        position: absolute;
+        top: -75px;
+        text-align: center;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #item_zuo_zi_box_2 {
+        position: absolute;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 0px;
+        text-align: center;
+        left: 0px;
+        right: 0px;
+        top: 506px;
+        height: 400px;
+    }
+
+    #item_zuo_zi_box_inner_2 {
+        flex: 1;
+        position: relative;
+        padding: 2vw;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+
+    #item_zuo_zi, #item_zuo_zi_2 {
+        background: url("./images/item_zuo_zi.png");
+        background-size: 100% 100%;
+        width: 100%;
+        height: 23vw;
+        margin: 0 auto;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #item_zuo_zi .inner .item,  #item_zuo_zi_2 .inner .item{
+        width: 80px;
+        height: 100px;
+        margin-right: 8px;
+        background-size: 100% 100%;
+        position: relative;
+    }
+
+    .item.item-01{
+        background-image: url("./images/item_pan_bing.png") !important;
+    }
+
+    .item.item-02{
+        background-image: url("./images/item_pan_ya.png") !important;
+    }
+
+    .item.item-03{
+        background-image: url("./images/item_hua_01.png") !important;
+    }
+
+    .item.item-04{
+        background-image: url("./images/item_jiu_01.png") !important;
+    }
+
+    .item.item-05{
+        background-image: url("./images/item_jiu_02.png") !important;
+    }
+
+    .item-la-zu{
+        background-image: url("./images/item_la_zhu.png") !important;
+    }
+
+    .item-la-zu canvas{
+        position: absolute;
+        left: 10px;
+        right: 0;
+        top: -50px;
+        visibility: hidden;
+    }
+
+
+
+    .buttons{
+        display: flex;
+        flex-direction: row;
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        box-sizing: border-box;
+        padding: 15px 25px;
+    }
+
+    .button{
+        background: #C58233;
+        padding: 15px;
+        margin: 5px;
+        flex: 1;
+        box-sizing: border-box;
+        text-align: center;
+        color: white;
+        font-size: 26px;
+    }
+
+
+
+
+
+</style>
+<body>
+
+<script id="flame-frag" type="x-shader/x-vertex">
+
+  /**
+   * Original shader by @kuvkar (https://www.shadertoy.com/view/4tXXRn)
+   */
+
+  varying vec2 vTextureCoord;
+
+  uniform sampler2D uSampler;
+  uniform sampler2D mapSampler;
+  uniform vec4 filterArea;
+  uniform vec2 dimensions;
+  uniform float time;
+
+  float rand(vec2 co) {
+    return fract(sin(dot(co.xy ,vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
+  mat2 rotz(float angle) {
+    mat2 m;
+    m[0][0] = cos(angle); m[0][1] = -sin(angle);
+    m[1][0] = sin(angle); m[1][1] = cos(angle);
+    return m;
+  }
+
+  // Fractal Brownian Motion
+  float fbm(vec2 uv) {
+
+    float n = (texture2D(mapSampler, uv).r - 0.5) * 0.5;
+    n += (texture2D(mapSampler, uv * 2.0).r - 0.5) * 0.5 * 0.5;
+    n += (texture2D(mapSampler, uv * 3.0).r - 0.5) * 0.5 * 0.5 * 0.5;
+    return n + 0.5;
+  }
+
+  void main() {
+
+    vec2 uv = (vTextureCoord * filterArea.xy) / dimensions;
+    uv.y = 1.0 - uv.y;
+
+    vec2 _uv = uv;
+    uv -= vec2(0.5);
+    uv.y /= dimensions.x / dimensions.y;
+
+    vec2 centerUV = uv;
+
+    // height variation from fbm
+    float variationH = fbm(vec2(time * 0.3)) * 1.1;
+
+    // flame "speed"
+    vec2 offset = vec2(0.0, -time * 0.05);
+
+    // flame turbulence
+    float f = fbm(uv * 0.1 + offset); // rotation from fbm
+    float l = max(0.1, length(uv)); // rotation amount normalized over distance
+	  uv += rotz(((f - 0.5) / l) * smoothstep(-0.2, 0.4, _uv.y) * 0.45) * uv;
+
+    // flame thickness
+    float flame = 1.3 - length(uv.x) * 5.0;
+
+    // bottom of flame
+    float blueflame = pow(flame * 0.9, 15.0);
+    blueflame *= smoothstep(0.2, -1.0, _uv.y);
+    blueflame /= abs(uv.x * 2.0);
+    blueflame = clamp(blueflame, 0.0, 1.0);
+
+    // flame
+    flame *= smoothstep(1.0, variationH * 0.5, _uv.y);
+	  flame = clamp(flame, 0.0, 1.0);
+    flame = pow(flame, 3.0);
+    flame /= smoothstep(1.1, -0.1, _uv.y);
+
+    // colors
+    vec4 col = mix(vec4(1.0, 1.0, 0.0, 0.0), vec4(1.0, 1.0, 0.6, 0.0), flame);
+    col = mix(vec4(1.0, 0.0, 0.0, 0.0), col, smoothstep(0.0, 1.6, flame));
+    gl_FragColor = col;
+
+	  // a bit blueness on the bottom
+    vec4 bluecolor = mix(vec4(0.0, 0.0, 1.0, 0.0), gl_FragColor, 0.95);
+    gl_FragColor = mix(gl_FragColor, bluecolor, blueflame);
+
+    // clear bg outside of the flame
+    gl_FragColor *= flame;
+    gl_FragColor.a = flame;
+
+    // bg halo
+    float haloSize = 0.5;
+    float centerL = 1.0 - (length(centerUV + vec2(0.0, 0.1)) / haloSize);
+    vec4 halo = vec4(0.8, 0.3, 0.3, 0.0) * 1.0 * fbm(vec2(time * 0.035)) * centerL + 0.02;
+    vec4 finalCol = mix(halo, gl_FragColor, gl_FragColor.a);
+    gl_FragColor = finalCol;
+
+    // just a hint of noise
+    gl_FragColor *= mix(rand(uv) + rand(uv * 0.45), 1.0, 0.9);
+    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
+  }
+
+</script>
+
+<canvas id="big-fire"></canvas>
+
+<div class="xiang_kuang">
+    <div id="yi_xiang" style="background: url('./images/item_yi_xiang.png')"></div>
+</div>
+
+<div id="dui_lian_box">
+    <div class="inner" style="padding: 80px 120px 0px 120px;">
+        <div class="dui_lian" style="float: left;">一生俭朴留典范 半世勤芝传嘉风</div>
+        <div class="dui_lian" style="float: right;">勤俭度日遵遗训 努力工作报余恩</div>
+    </div>
+</div>
+
+
+
+<div id="main-box">
+    <div class="inner">
+        <div id="item_hua_bg">
+            <div class="inner" style="padding-top: 280px; padding-left: 5vw;padding-right: 5vw;">
+                <div id="hua_box">
+                    <div class="hua"></div>
+                    <div class="hua"></div>
+                    <div class="hua"></div>
+                    <div class="hua"></div>
+                    <div class="hua"></div>
+                    <div class="hua"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item_zuo_zi_box">
+            <div id="item_zuo_zi_box_inner" style="padding: 0em 4em">
+                <div id="item_zuo_zi">
+                    <div class="inner">
+                        <div class="item item-01"></div>
+                        <div class="item item-02"></div>
+                        <div class="item item-03"></div>
+                        <div class="item item-04"></div>
+                        <div class="item item-01"></div>
+                        <div class="item item-02"></div>
+                        <div class="item item-03"></div>
+                        <div class="item item-04"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item_zuo_zi_box_2" style="top: 630px;">
+            <div id="item_zuo_zi_box_inner_2">
+                <div id="item_zuo_zi_2">
+                    <div class="inner">
+                        <div class="item item-01"></div>
+                        <div class="item item-02"></div>
+                        <div class="item item-03"></div>
+                        <div class="item item-la-zu"><canvas id="zu-huo-1" style="width: 60px; height: 60px;"></canvas></div>
+                        <div class="item item-xiang"></div>
+                        <div class="item item-la-zu"><canvas id="zu-huo-2" style="width: 60px; height: 60px;"></canvas></div>
+                        <div class="item item-03"></div>
+                        <div class="item item-04"></div>
+                        <div class="item item-01"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <div class="button" onclick="jibai()">上香祭拜</div>
+            <div class="button">行礼</div>
+            <div class="button">送花</div>
+            <div class="button" onclick="dianlazu()">点蜡烛</div>
+            <div class="button">更多</div>
+        </div>
+    </div>
+</div>
+
+
+<div id="jibai" style="width: 100%;text-align: center; position: absolute;left: 0;right: 0;bottom: 0;height: 500px;z-index: 11; visibility: hidden;">
+    <img  src="./images/baifo.gif" style="width: 250px;height: 366px;"/>
+</div>
+
+<script>
+    var jibai =function () {
+        var dom = document.getElementById("jibai");
+        console.log(dom);
+        dom.style.visibility = 'visible'
+        setTimeout(function () {
+            dom.style.visibility = 'hidden';
+        }, 3000)
+    }
+
+    var dianlazu =function () {
+        var dom1 = document.getElementById("zu-huo-1");
+        var dom2 = document.getElementById("zu-huo-2");
+        dom1.style.visibility = 'visible'
+        dom2.style.visibility = 'visible'
+        setTimeout(function () {
+            dom1.style.visibility = 'hidden';
+            dom2.style.visibility = 'hidden';
+        }, 3000)
+    }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        console.clear();
+
+        const flameFrag = document.querySelector("#flame-frag").textContent;
+        const baseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/106114/";
+
+        const manifest = [
+            {name: "noise", url: "noise-texture-11.png?v=9"}
+        ];
+
+
+//
+// FLAME FILTER
+// ===========================================================================
+        class FlameFilter extends PIXI.Filter {
+
+            constructor(texture, time = 0.0) {
+                super(null, flameFrag);
+
+                this.uniforms.dimensions = new Float32Array(2);
+                this.texture = texture;
+                this.time = time;
+            }
+
+            get texture() {
+                return this.uniforms.mapSampler;
+            }
+
+            set texture(texture) {
+                texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+                this.uniforms.mapSampler = texture;
+            }
+
+            apply(filterManager, input, output, clear) {
+
+                this.uniforms.dimensions[0] = input.sourceFrame.width;
+                this.uniforms.dimensions[1] = input.sourceFrame.height;
+                this.uniforms.time = this.time;
+
+                filterManager.applyFilter(this, input, output, clear);
+            }
+        }
+
+
+//
+// APPLICATION
+// ===========================================================================
+        class Application extends PIXI.Application {
+
+            constructor(config) {
+
+                if (window.devicePixelRatio > 1) {
+                    PIXI.settings.RESOLUTION = 2;
+                }
+
+                PIXI.settings.PRECISION_FRAGMENT = "highp";
+
+                super({
+                    view: config.view,
+                    width: 60,
+                    height: 60,
+                    backgroundColor: 0x000000,
+                    autoResize: true,
+                    antialias: false,
+                    transparent: true
+                });
+
+                this.isResized = true;
+                this.loader.baseUrl = baseUrl;
+            }
+
+            load(manifest) {
+                var that = this;
+                that.loader
+                    .add(manifest)
+                    .load(function (l, r) {
+                        that.init(r)
+                    });
+            }
+
+            init(resources) {
+                var that = this;
+                this.flame = new FlameFilter(resources.noise.texture);
+                this.stage.filterArea = this.screen;
+                this.stage.filters = [this.flame];
+                this.ticker.add(this.update, this);
+                window.addEventListener("resize", function () {
+                        that.isResized = true
+                    }
+                )
+            }
+
+            update(delta) {
+
+                if (this.isResized) {
+                    this.renderer.resize(60, 60);
+                    this.isResized = false;
+                }
+
+                this.flame.time += 0.1 * delta;
+            }
+        }
+
+        const app1 = new Application({
+            view: document.querySelector("#zu-huo-1"),
+        });
+        const app2 = new Application({
+            view: document.querySelector("#zu-huo-2"),
+        });
+        app1.load(manifest);
+        app2.load(manifest);
+
+    });
+</script>
+
+<script>
+    'use strict';
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    console.clear();
+
+    var $ = {};
+
+    $.PI = Math.PI;
+    $.TAU = $.PI * 2;
+
+    $.rand = function (min, max) {
+        return Math.random() * (max - min) + min;
+    };
+
+    $.hsla = function (h, s, l, a) {
+        return 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
+    };
+
+    $.baseRange = function (base, range) {
+        return base + $.rand(-range, range);
+    };
+
+    $.Pool = function () {
+        function _class(base, preallocateAmount) {
+            _classCallCheck(this, _class);
+
+            this.base = base;
+            this.preallocateAmount = preallocateAmount || 0;
+            this.alive = [];
+            this.dead = [];
+            this.length = 0;
+            this.deadLength = 0;
+            if (this.preallocateAmount) {
+                this.preallocate();
+            }
+        }
+
+        _createClass(_class, [{
+            key: 'preallocate',
+            value: function preallocate() {
+                for (var i = 0; i < this.preallocateAmount; i++) {
+                    this.dead.push(new this.base());
+                    this.deadLength++;
+                }
+            }
+        }, {
+            key: 'create',
+            value: function create(opt) {
+                if (this.deadLength) {
+                    var obj = this.dead.pop();
+                    obj.init(opt);
+                    this.alive.push(obj);
+                    this.deadLength--;
+                    this.length++;
+                    return obj;
+                } else {
+                    var newItem = new this.base();
+                    newItem.init(opt);
+                    this.alive.push(newItem);
+                    this.length++;
+                    return newItem;
+                }
+            }
+        }, {
+            key: 'release',
+            value: function release(obj) {
+                var i = this.alive.indexOf(obj);
+                if (i > -1) {
+                    this.dead.push(this.alive.splice(i, 1)[0]);
+                    this.length--;
+                    this.deadLength++;
+                }
+            }
+        }, {
+            key: 'empty',
+            value: function empty() {
+                this.alive.length = 0;
+                this.dead.length = 0;
+                this.length = 0;
+                this.deadLength = 0;
+            }
+        }, {
+            key: 'each',
+            value: function each(action, asc) {
+                var i = this.length;
+                while (i--) {
+                    this.alive[i][action](i);
+                }
+            }
+        }]);
+
+        return _class;
+    }();
+
+    $.Particle = function () {
+        function _class2() {
+            _classCallCheck(this, _class2);
+        }
+
+        _createClass(_class2, [{
+            key: 'init',
+            value: function init(opt) {
+                Object.assign(this, opt);
+                this.life = 1;
+            }
+        }, {
+            key: 'step',
+            value: function step() {
+                this.velocity += this.acceleration;
+                this.angle += $.rand(-this.wander, this.wander);
+                this.x += Math.cos(this.angle) * this.velocity;
+                this.y += Math.sin(this.angle) * this.velocity;
+                this.life -= this.decay;
+                this.alpha = this.fade ? this.life * 1.5 : 1;
+                if (this.life < 0) {
+                    this.parent.particles.release(this);
+                }
+            }
+        }, {
+            key: 'draw',
+            value: function draw() {
+                $.ctx.beginPath();
+                $.ctx.arc(this.x, this.y, this.radius, 0, $.TAU);
+                $.ctx.fillStyle = $.hsla(this.hue, this.saturation, this.lightness, this.alpha);
+                $.ctx.fill();
+            }
+        }]);
+
+        return _class2;
+    }();
+
+    $.ParticleEmitter = function () {
+        function _class3(opt) {
+            _classCallCheck(this, _class3);
+
+            Object.assign(this, opt);
+            this.particles = new $.Pool($.Particle, 100);
+        }
+
+        _createClass(_class3, [{
+            key: 'step',
+            value: function step() {
+                if ($.tick % this.interval === 0) {
+                    this.particles.create({
+                        parent: this,
+                        x: $.baseRange(this.x.base, this.x.range),
+                        y: $.baseRange(this.y.base, this.y.range),
+                        radius: $.baseRange(this.radius.base, this.radius.range),
+                        angle: $.baseRange(this.angle.base, this.angle.range),
+                        velocity: $.baseRange(this.velocity.base, this.velocity.range),
+                        acceleration: $.baseRange(this.acceleration.base, this.acceleration.range),
+                        decay: $.baseRange(this.decay.base, this.decay.range),
+                        hue: $.baseRange(this.hue.base, this.hue.range),
+                        saturation: $.baseRange(this.saturation.base, this.saturation.range),
+                        lightness: $.baseRange(this.lightness.base, this.lightness.range),
+                        wander: this.wander,
+                        fade: this.fade
+                    });
+                }
+                this.particles.each('step');
+            }
+        }, {
+            key: 'draw',
+            value: function draw() {
+                $.ctx.globalCompositeOperation = this.blend;
+                this.particles.each('draw');
+            }
+        }]);
+
+        return _class3;
+    }();
+
+    $.init = function () {
+        $.c = document.getElementById('big-fire');
+        $.ctx = $.c.getContext('2d');
+        $.w = $.c.width = 400;
+        $.h = $.c.height = 400;
+        $.particleEmitters = [];
+        $.tick = 1;
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: $.w * 0.5,
+                range: 20
+            },
+            y: {
+                base: $.h,
+                range: 20
+            },
+            radius: {
+                base: 0.75,
+                range: 0.4
+            },
+            angle: {
+                base: -$.PI * 0.5,
+                range: $.PI * 0.01
+            },
+            velocity: {
+                base: 0.5,
+                range: 0.5
+            },
+            acceleration: {
+                base: 0.01,
+                range: 0.01
+            },
+            decay: {
+                base: 0.005,
+                range: 0.001
+            },
+            hue: {
+                base: 30,
+                range: 30
+            },
+            saturation: {
+                base: 80,
+                range: 20
+            },
+            lightness: {
+                base: 80,
+                range: 20
+            },
+            wander: 0.06,
+            blend: 'lighter',
+            fade: true,
+            interval: 5
+        }));
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: $.w - 100,
+                range: 25
+            },
+            y: {
+                base: $.h,
+                range: 5
+            },
+            radius: {
+                base: 20,
+                range: 10
+            },
+            angle: {
+                base: -$.PI * 0.55,
+                range: $.PI * 0.05
+            },
+            velocity: {
+                base: 2,
+                range: 0
+            },
+            acceleration: {
+                base: 0.02,
+                range: 0.01
+            },
+            decay: {
+                base: 0.001,
+                range: 0
+            },
+            hue: {
+                base: 0,
+                range: 0
+            },
+            saturation: {
+                base: 0,
+                range: 0
+            },
+            lightness: {
+                base: 0,
+                range: 0
+            },
+            wander: 0.05,
+            blend: 'destination-out',
+            fade: false,
+            interval: 1
+        }));
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: 100,
+                range: 25
+            },
+            y: {
+                base: $.h,
+                range: 5
+            },
+            radius: {
+                base: 20,
+                range: 10
+            },
+            angle: {
+                base: -$.PI * 0.45,
+                range: $.PI * 0.05
+            },
+            velocity: {
+                base: 2,
+                range: 0
+            },
+            acceleration: {
+                base: 0.02,
+                range: 0.01
+            },
+            decay: {
+                base: 0.001,
+                range: 0
+            },
+            hue: {
+                base: 0,
+                range: 0
+            },
+            saturation: {
+                base: 0,
+                range: 0
+            },
+            lightness: {
+                base: 0,
+                range: 0
+            },
+            wander: 0.05,
+            blend: 'destination-out',
+            fade: false,
+            interval: 1
+        }));
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: $.w * 0.5,
+                range: 20
+            },
+            y: {
+                base: $.h,
+                range: 20
+            },
+            radius: {
+                base: 15,
+                range: 5
+            },
+            angle: {
+                base: -$.PI * 0.5,
+                range: $.PI * 0.05
+            },
+            velocity: {
+                base: 1.5,
+                range: 0
+            },
+            acceleration: {
+                base: 0.02,
+                range: 0.01
+            },
+            decay: {
+                base: 0.0075,
+                range: 0
+            },
+            hue: {
+                base: 60,
+                range: 0
+            },
+            saturation: {
+                base: 100,
+                range: 0
+            },
+            lightness: {
+                base: 70,
+                range: 0
+            },
+            wander: 0.01,
+            blend: 'source-over',
+            fade: false,
+            interval: 2
+        }));
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: $.w * 0.5,
+                range: 20
+            },
+            y: {
+                base: $.h - 20,
+                range: 20
+            },
+            radius: {
+                base: 2,
+                range: 1
+            },
+            angle: {
+                base: -$.PI * 0.5,
+                range: $.PI * 0.001
+            },
+            velocity: {
+                base: 0.5,
+                range: 0
+            },
+            acceleration: {
+                base: 0.02,
+                range: 0.02
+            },
+            decay: {
+                base: 0.0075,
+                range: 0
+            },
+            hue: {
+                base: 60,
+                range: 0
+            },
+            saturation: {
+                base: 90,
+                range: 0
+            },
+            lightness: {
+                base: 100,
+                range: 0
+            },
+            wander: 0.025,
+            blend: 'source-over',
+            fade: false,
+            interval: 3
+        }));
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: $.w * 0.5,
+                range: 20
+            },
+            y: {
+                base: $.h - 20,
+                range: 15
+            },
+            radius: {
+                base: 25,
+                range: 5
+            },
+            angle: {
+                base: -$.PI * 0.5,
+                range: $.PI * 0.025
+            },
+            velocity: {
+                base: 2,
+                range: 0.25
+            },
+            acceleration: {
+                base: 0.01,
+                range: 0.01
+            },
+            decay: {
+                base: 0.0075,
+                range: 0
+            },
+            hue: {
+                base: 30,
+                range: 0
+            },
+            saturation: {
+                base: 90,
+                range: 0
+            },
+            lightness: {
+                base: 50,
+                range: 0
+            },
+            wander: 0.01,
+            blend: 'source-over',
+            fade: false,
+            interval: 2
+        }));
+
+        $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+                base: $.w * 0.5,
+                range: 30
+            },
+            y: {
+                base: $.h - 20,
+                range: 15
+            },
+            radius: {
+                base: 35,
+                range: 10
+            },
+            angle: {
+                base: -$.PI * 0.5,
+                range: $.PI * 0.025
+            },
+            velocity: {
+                base: 2,
+                range: 0.25
+            },
+            acceleration: {
+                base: 0.01,
+                range: 0.01
+            },
+            decay: {
+                base: 0.0075,
+                range: 0
+            },
+            hue: {
+                base: 0,
+                range: 0
+            },
+            saturation: {
+                base: 90,
+                range: 0
+            },
+            lightness: {
+                base: 50,
+                range: 0
+            },
+            wander: 0.01,
+            blend: 'source-over',
+            fade: false,
+            interval: 2
+        }));
+
+        $.gradient = $.ctx.createLinearGradient(0, 0, 0, $.h * 0.75);
+        $.gradient.addColorStop(0, $.hsla(0, 0, 0, 1));
+        $.gradient.addColorStop(1, $.hsla(0, 0, 0, 0));
+
+        $.loop();
+    };
+
+    $.step = function () {
+        var i = $.particleEmitters.length;
+        while (i--) {
+            $.particleEmitters[i].step();
+        }
+        $.tick++;
+    };
+
+    $.draw = function () {
+        $.ctx.clearRect(0, 0, $.w, $.h);
+        var i = $.particleEmitters.length;
+        while (i--) {
+            $.particleEmitters[i].draw();
+        }
+
+        $.ctx.globalCompositeOperation = 'destination-out';
+        $.ctx.fillStyle = $.gradient;
+        $.ctx.fillRect(0, 0, $.w, $.h);
+
+        $.ctx.beginPath();
+        $.ctx.globalCompositeOperation = 'source-over';
+        $.ctx.arc($.w * 0.5, $.h + 40, 63, 0, $.TAU);
+        $.ctx.fillStyle = '#f00';
+        $.ctx.fill();
+
+        $.ctx.beginPath();
+        $.ctx.globalCompositeOperation = 'source-over';
+        $.ctx.arc($.w * 0.5, $.h + 40, 60, 0, $.TAU);
+        $.ctx.fillStyle = '#000';
+        $.ctx.fill();
+    };
+
+    $.loop = function () {
+        requestAnimationFrame($.loop);
+        $.step();
+        $.draw();
+    };
+
+    $.init();
+</script>
+</body>
+</html>
