@@ -170,8 +170,10 @@
           let start = this.list.length
           this.fetchIssueList(start)
         },
-        updateList(){
-          this.fetchIssueList(0)
+        updateList(data){
+          if (this.type === data.type){
+            this.fetchIssueList(0)
+          }
         },
         canOperateIssue(issue){
           let result = false
@@ -388,7 +390,7 @@
         eventHub.$on(constant.EVENT_POST_ISSUE_SUCCESS,this.updateList)
       },
       beforeDestroy() {
-        eventHub.$on(constant.EVENT_POST_ISSUE_SUCCESS,this.updateList)
+        eventHub.$off(constant.EVENT_POST_ISSUE_SUCCESS,this.updateList)
       }
     }
 </script>
