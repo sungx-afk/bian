@@ -1,26 +1,26 @@
 <template>
   <div class="container">
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
-      <template v-if="tabActive == 0">
+      <template v-if="tabActive == 'main'">
         <!--首页-->
         <info v-if="detail" :space="detail"></info>
       </template>
-      <template v-if="tabActive == 1">
+      <template v-if="tabActive == 'message'">
         <!--留言-->
         <message v-if="detail" :space="detail" type="PUBLIC"></message>
       </template>
-      <template v-if="tabActive == 2">
+      <template v-if="tabActive == 'friends'">
         <!--亲属空间-->
         <friends v-if="detail" :space="detail" type="SPACE"></friends>
       </template>
-      <template v-if="tabActive == 3">
+      <template v-if="tabActive == 'secret'">
         <!--私语-->
         <private v-if="detail" :space="detail" type="PRIVATE"></private>
       </template>
     </div>
     <template v-if="true">
-      <van-tabbar v-model="tabActive" active-color="#825621" @change="onTabChange">
-        <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" style="font-size: 16px;">{{tabBar.name}}</van-tabbar-item>
+      <van-tabbar @change="onTabChange">
+        <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
     </template>
   </div>
@@ -43,17 +43,20 @@
           id:'main',
           name:'首页'
         },{
+          id:'sacrifice',
+          name:'祭拜'
+        },{
           id:'message',
           name:'留言'
         },{
-          id:'relatives',
+          id:'friends',
           name:'亲属空间'
         },{
           id:'secret',
           name:'私语'
         }],
         messageType:'PUBLIC', //PUBLIC, PRIVATE, SPACE;
-        tabActive:0,
+        tabActive:'main',
         menuList:[],
         currentImageIndex:0,
         isShowMoreMenu:false,
@@ -110,19 +113,31 @@
     },
     methods:{
       onTabChange(e){
-        if (e.detail === 2){ //亲属空间加判断
+        if (e === 'sacrifice'){
+          this.goSacrifice()
+          return
+        }
+        if (e.detail === 'friends'){ //亲属空间加判断
           if (!this.isSpaceMember && !this.isSpaceCreator){
             this.$toast("您当前还不是该馆亲属成员")
             return
           }
         }
+        this.tabActive = e
         let messageType = 'PUBLIC'
-        if (this.tabActive == 2){//留言
+        if (this.tabActive == 'message'){//留言
           messageType = 'SPACE'
-        }else if(this.tabActive == 3){ //私语
+        }else if(this.tabActive == 'secret'){ //私语
           messageType = 'PRIVATE'
         }
         this.messageType = messageType
+      },
+      styleTabBar(tab){
+        let color = '#7d7e80'
+        if (this.tabActive === tab.id){
+          color = '#825621'
+        }
+        return color
       },
       getDetail(cb){
         if (!this.spaceId){
@@ -180,8 +195,8 @@
         }
         return result
       },
-      initShowMemorialMeeting(){
-
+      goSacrifice(){
+        Link(`/space/sacrifice/${this.spaceId}`)
       },
       registerEvent(){
 
