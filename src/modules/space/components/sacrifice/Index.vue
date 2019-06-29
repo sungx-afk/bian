@@ -9,7 +9,7 @@
     </div>
 
     <div id="dui_lian_box">
-      <div class="inner" style="padding: 80px 120px 0px 120px;">
+      <div class="inner" style="padding: 30px 15px 0px;">
         <div class="dui_lian" style="float: left;">一生俭朴留典范 半世勤芝传嘉风</div>
         <div class="dui_lian" style="float: right;">勤俭度日遵遗训 努力工作报余恩</div>
       </div>
@@ -18,7 +18,7 @@
     <div id="main-box">
       <div class="inner">
         <div id="item_hua_bg">
-          <div class="inner" style="padding-top: 280px; padding-left: 5vw;padding-right: 5vw;">
+          <div class="inner" style="padding-top: 30vw; padding-left: 5vw;padding-right: 5vw;">
             <div id="hua_box">
               <div class="hua"></div>
               <div class="hua"></div>
@@ -31,7 +31,7 @@
         </div>
 
         <div id="item_zuo_zi_box">
-          <div id="item_zuo_zi_box_inner" style="padding: 0em 4em">
+          <div id="item_zuo_zi_box_inner" style="padding: 0em 4vw">
             <div id="item_zuo_zi">
               <div class="inner">
                 <div class="item item-01"></div>
@@ -47,16 +47,20 @@
           </div>
         </div>
 
-        <div id="item_zuo_zi_box_2" style="top: 630px;">
+        <div id="item_zuo_zi_box_2" style="top:62vw;">
           <div id="item_zuo_zi_box_inner_2">
             <div id="item_zuo_zi_2">
-              <div class="inner">
+              <div class="inner" style="top: -7vw;">
                 <div class="item item-01"></div>
                 <div class="item item-02"></div>
                 <div class="item item-03"></div>
-                <div class="item item-la-zu"><canvas id="zu-huo-1" style="width: 60px; height: 60px;"></canvas></div>
+                <div class="item item-la-zu">
+                  <canvas id="zu-huo-1" style="width: 60px; height: 60px;"></canvas>
+                </div>
                 <div class="item item-xiang"></div>
-                <div class="item item-la-zu"><canvas id="zu-huo-2" style="width: 60px; height: 60px;"></canvas></div>
+                <div class="item item-la-zu">
+                  <canvas id="zu-huo-2" style="width: 60px; height: 60px;"></canvas>
+                </div>
                 <div class="item item-03"></div>
                 <div class="item item-04"></div>
                 <div class="item item-01"></div>
@@ -76,8 +80,9 @@
     </div>
 
 
-    <div id="jibai" style="width: 100%;text-align: center; position: absolute;left: 0;right: 0;bottom: 0;height: 500px;z-index: 11; visibility: hidden;">
-      <img  src="./images/baifo.gif" style="width: 250px;height: 366px;"/>
+    <div id="jibai"
+         style="width: 100%;text-align: center; position: absolute;left: 0;right: 0;bottom: 0;height: 500px;z-index: 11; visibility: hidden;">
+      <img src="./images/baifo.gif" style="width: 250px;height: 366px;"/>
     </div>
   </div>
 </template>
@@ -85,21 +90,13 @@
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
 
-  export default{
-    data(){
-      return {
-
-      }
+  export default {
+    data() {
+      return {}
     },
-    components: {
-
-    },
-    computed:{
-
-    },
-    methods:{
-
-    },
+    components: {},
+    computed: {},
+    methods: {},
     created() {
 
     }
@@ -108,10 +105,10 @@
 
 <style rel="stylesheet/less" lang="less">
   @import "~@/config/config.less";
+
   .sacrifice {
     //
   }
-
 
   html, body {
     width: 100%;
@@ -176,6 +173,7 @@
     text-align: left;
     padding: 0px;
     margin: 0px;
+    display: flex;
   }
 
   .inner {
@@ -193,11 +191,12 @@
     writing-mode: vertical-rl;
     text-align: center;
     vertical-align: middle;
-    font-size: 40px;
-    padding: 20px 15px;
+    font-size: 14px;
+    padding: 15px 10px;
     letter-spacing: 8px;
     box-sizing: border-box;
     position: relative;
+    font-weight: bold;
     box-shadow: 4px 6px 9px rgba(1, 1, 1, 0.61);
   }
 
@@ -227,7 +226,7 @@
     }
   }
 
-  #main-box{
+  #main-box {
     position: absolute;
     left: 0px;
     right: 0px;
@@ -236,7 +235,6 @@
     /*background: red;*/
     display: flex;
   }
-
 
   #item_hua_bg {
     background: url("./images/item_hua_bg.png");
@@ -251,12 +249,12 @@
     display: flex;
   }
 
-  #hua_box{
+  #hua_box {
     display: flex;
     flex-direction: row;
   }
 
-  .hua{
+  .hua {
     background: url("./images/item_hua_quan.png");
     height: 15vw;
     background-size: 100% 100%;
@@ -271,8 +269,9 @@
     text-align: center;
     left: 0px;
     right: 0px;
-    top: 506px;
+    top: 46vw;
     height: 400px;
+    transform: scale(0.9);
   }
 
   #item_zuo_zi_box_inner {
@@ -283,14 +282,13 @@
     box-sizing: border-box;
   }
 
-
-  #item_zuo_zi .inner, #item_zuo_zi_2 .inner{
+  #item_zuo_zi .inner, #item_zuo_zi_2 .inner {
     display: flex;
     flex-direction: row;
     vertical-align: top;
     justify-items: center;
     position: absolute;
-    top: -75px;
+    top: -8vw;
     text-align: center;
     margin: 0 auto;
     left: 0;
@@ -319,7 +317,6 @@
     box-sizing: border-box;
   }
 
-
   #item_zuo_zi, #item_zuo_zi_2 {
     background: url("./images/item_zuo_zi.png");
     background-size: 100% 100%;
@@ -328,51 +325,41 @@
     margin: 0 auto;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  #item_zuo_zi .inner .item,  #item_zuo_zi_2 .inner .item{
-    width: 80px;
-    height: 100px;
-    margin-right: 8px;
+  #item_zuo_zi .inner .item, #item_zuo_zi_2 .inner .item {
+    width: 10vw;
+    height: 10vw;
+    margin-right: 0px;
     background-size: 100% 100%;
     position: relative;
   }
 
-  .item.item-01{
+  .item.item-01 {
     background-image: url("./images/item_pan_bing.png") !important;
+    background-position: 0px 3px;
   }
 
-  .item.item-02{
+  .item.item-02 {
     background-image: url("./images/item_pan_ya.png") !important;
+    background-position: 0px 3px;
   }
 
-  .item.item-03{
+  .item.item-03 {
     background-image: url("./images/item_hua_01.png") !important;
   }
 
-  .item.item-04{
+  .item.item-04 {
     background-image: url("./images/item_jiu_01.png") !important;
   }
 
-  .item.item-05{
+  .item.item-05 {
     background-image: url("./images/item_jiu_02.png") !important;
   }
 
-  .item-la-zu{
+  .item-la-zu {
     background-image: url("./images/item_la_zhu.png") !important;
   }
 
-  .item-la-zu canvas{
+  .item-la-zu canvas {
     position: absolute;
     left: 10px;
     right: 0;
@@ -380,9 +367,7 @@
     visibility: hidden;
   }
 
-
-
-  .buttons{
+  .buttons {
     display: flex;
     flex-direction: row;
     position: fixed;
@@ -390,17 +375,21 @@
     left: 0px;
     right: 0px;
     box-sizing: border-box;
-    padding: 15px 25px;
+    padding: 5px;
   }
 
-  .button{
+  .button {
     background: #C58233;
-    padding: 15px;
-    margin: 5px;
+    padding: 2px 2px;
+    margin-right: 2px;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     text-align: center;
     color: white;
-    font-size: 26px;
+    font-size: 14px;
+    font-weight: bold;
   }
 </style>
