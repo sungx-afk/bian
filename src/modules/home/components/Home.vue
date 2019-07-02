@@ -210,20 +210,19 @@
         if (token){
           this.fetchMyInfo(token)
         }else {
-          this.getLoginCode()
+          this.authWechat()
         }
       },
       fetchMyInfo(token){
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
-      getLoginCode(){
-        let url = 'https://ba.yugusoft.com/index.html#/home'
+      authWechat(){
+        let url = 'https://ba.yugusoft.com/login.html'
         url = encodeURIComponent(url)
-        $API.user.getLoginCode({url},rsp=>{
+        let appid = 'wxdb43de2e1083005a'
+        url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
 
-        },error=>{
-
-        })
+        window.location.href = url
       },
       loginWithCode(){
         this.$store.dispatch('userStore/loginWithCode', {code})
@@ -235,7 +234,7 @@
       },
       tokenExpire(){
         //token过期了，重新尝试授权登录
-        this.getLoginCode()
+        this.authWechat()
       }
     },
     created() {
@@ -244,7 +243,7 @@
     activated(){
       let query = this.$route.query
       let code = ''
-      if(query && query.code && query.state === 'mystate'){
+      if(query && query.code && query.state === 'wechat_state'){
         code = query.code
       }
       if (code){
