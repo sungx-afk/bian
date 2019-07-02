@@ -222,7 +222,7 @@
         let appid = 'wxdb43de2e1083005a'
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
 
-        window.location.href = url
+        window.location.replace(url)
       },
       loginWithCode(code){
         this.$store.dispatch('userStore/loginWithCode', {code})
@@ -238,9 +238,6 @@
       }
     },
     created() {
-      this.registerEvent()
-    },
-    activated(){
       let query = this.$route.query
       let code = ''
       if(query && query.code && query.state === 'wechat_state'){
@@ -251,6 +248,7 @@
       }else{
         this.tryLogin()
       }
+      this.registerEvent()
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
