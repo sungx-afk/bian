@@ -43,6 +43,7 @@ const mutations = {
         param = JSON.parse(param)
         param.token = data.token
         localStorage.setItem("bian-requestParam",JSON.stringify(param))
+        $axios.defaults.params = param;//重新修改全局联网配置
       }
     }
   },
@@ -53,6 +54,7 @@ const mutations = {
         param = JSON.parse(param)
         param.token = ''
         localStorage.setItem("bian-requestParam",JSON.stringify(param))
+        $axios.defaults.params = param;//重新修改全局联网配置
       }
       state.expire = true
       return
@@ -66,6 +68,7 @@ const mutations = {
       param = JSON.parse(param)
       param.token = data.token
       localStorage.setItem("bian-requestParam",JSON.stringify(param))
+      $axios.defaults.params = param;//重新修改全局联网配置
     }
   },
 }

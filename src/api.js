@@ -3,10 +3,6 @@ import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
 import User from './modules/user/api/index'
 
-import store from './store/index';
-
-
-
 axios.interceptors.request.use(config => {
   return config
 }, error => {
@@ -14,7 +10,6 @@ axios.interceptors.request.use(config => {
 })
 
 axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
-// axios.defaults.headers.common['uid'] = '100000';
 axios.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8'; //默认是JSON格式
 /**
  * 公共上行信息
