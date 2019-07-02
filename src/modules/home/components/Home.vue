@@ -46,6 +46,12 @@
   import constant from '@/config/constant'
   import Item from '@/modules/widget/space/Item'
 
+  var LoginState = {
+    UNDO: 0,
+    DOING: 1,
+    DONE: 2,
+  };
+
   export default{
     data(){
       return {
@@ -53,14 +59,29 @@
         visitedList:[],
         isShowMoreMenu:false,
         menuList:[],
+        loginState:LoginState.UNDO
       }
     },
     components: {
       Item
     },
     computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+        expire:'userStore/expire'
+      }),
       isIPhoneX(){
         return false
+      }
+    },
+    watch:{
+      user(){
+        this.userChanged()
+      },
+      expire(newVal,oldVal){
+        if (newVal){
+          this.tokenExpire()
+        }
       }
     },
     methods:{
@@ -166,12 +187,64 @@
       registerEvent(){
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
+      },
+      tryLogin(){
+        if (this.loginState !== LoginState.UNDO){
+          return
+        }
+        this.loginState = LoginState.DOING
+        //先找本地有没有保存token
+        let param = localStorage.getItem("bian-requestParam");
+        let token = ''
+        do{
+          if (param){
+            param = JSON.parse(param)
+            if (param.token){
+              token = param.token
+              break
+            }
+          }
+        }while (0)
+
+        //token存在，则直接获取信息
+        if (token){
+          this.fetchMyInfo(token)
+        }else {
+          this.login()
+        }
+      },
+      fetchMyInfo(token){
+        this.$store.dispatch('userStore/fetchMyInfo',{token})
+      },
+      login(){
+        let url = 'https://ba.yugusoft.com/index.html#/home'
+        url = encodeURIComponent(url)
+        this.$store.dispatch('userStore/login', {url})
+      },
+      userChanged(){
+        this.loginState = LoginState.DONE //完成登录
+        this.getSpaceList()
+        this.getSpacesVisited()
+      },
+      tokenExpire(){
+        //token过期了，重新尝试授权登录
+        this.login()
       }
     },
     created() {
       this.registerEvent()
-      this.getSpaceList()
-      this.getSpacesVisited()
+    },
+    activated(){
+      let query = this.$route.query
+      let token = ''
+      if(query && query.token){
+        token = query.token
+      }
+      if (token){
+        this.fetchMyInfo(token)
+      }else{
+        this.tryLogin()
+      }
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
