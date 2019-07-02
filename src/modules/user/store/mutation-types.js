@@ -1,2 +1,2 @@
-export const LOGIN = 'LOGIN'
+export const LOGIN_WITH_CODE = 'LOGIN_WITH_CODE'
 export const FETCH_MY_INFO = 'FETCH_MY_INFO'

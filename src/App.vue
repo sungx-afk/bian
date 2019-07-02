@@ -33,6 +33,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background: @BG_WHITE;
   }
 
   * {
@@ -42,9 +43,6 @@
   li {
     list-style-type: none;
   }
-
-
-
 
   /**公共样式**/
 

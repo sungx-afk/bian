@@ -210,16 +210,23 @@
         if (token){
           this.fetchMyInfo(token)
         }else {
-          this.login()
+          this.getLoginCode()
         }
       },
       fetchMyInfo(token){
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
-      login(){
+      getLoginCode(){
         let url = 'https://ba.yugusoft.com/index.html#/home'
         url = encodeURIComponent(url)
-        this.$store.dispatch('userStore/login', {url})
+        $API.user.getLoginCode({url},rsp=>{
+
+        },error=>{
+
+        })
+      },
+      loginWithCode(){
+        this.$store.dispatch('userStore/loginWithCode', {code})
       },
       userChanged(){
         this.loginState = LoginState.DONE //完成登录
@@ -228,7 +235,7 @@
       },
       tokenExpire(){
         //token过期了，重新尝试授权登录
-        this.login()
+        this.getLoginCode()
       }
     },
     created() {
@@ -236,12 +243,12 @@
     },
     activated(){
       let query = this.$route.query
-      let token = ''
-      if(query && query.token){
-        token = query.token
+      let code = ''
+      if(query && query.code && query.state === 'mystate'){
+        code = query.code
       }
-      if (token){
-        this.fetchMyInfo(token)
+      if (code){
+        this.loginWithCode(code)
       }else{
         this.tryLogin()
       }
