@@ -119,9 +119,7 @@
         }
       },
       watch:{
-        space(){
-          this.initShowMeeting()
-        }
+
       },
       methods:{
         initShowMeeting(){
@@ -130,9 +128,10 @@
             if (!this.isSpaceCreator){
               return show
             }
+            show = true
             let value = localStorage.getItem(constant.KEY_MEMORIAL_MEETING_SHOW+this.space.id)
-            if (value === 'show'){
-              show = true
+            if (value === 'false'){
+              show = false
             }
             this.showMeeting = show
           }
@@ -222,7 +221,7 @@
         closeMemorialMeeting(){
           this.showMeeting = false
           if (this.space){
-            localStorage.setItem(constant.KEY_MEMORIAL_MEETING_SHOW+this.space.id,'show')
+            localStorage.setItem(constant.KEY_MEMORIAL_MEETING_SHOW+this.space.id,'false')
           }
         },
         registerEvent(){
@@ -231,6 +230,7 @@
       },
       created() {
         this.registerEvent()
+        this.initShowMeeting()
       },
       beforeDestroy() {
         eventHub.$off(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)
