@@ -1,18 +1,6 @@
 import qs from 'qs'
-import axios from 'axios'
 
 export default {
-
-  getLoginCode({url},successCb, errorCb){
-    let appid = 'wxdb43de2e1083005a'
-
-    url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=mystate#wechat_redirect`
-    axios.get(url).then(function (response) {
-        successCb && successCb(response)
-      }).catch(function (error) {
-        errorCb && errorCb(error)
-      });
-  },
 
   loginWithCode({code},successCb, errorCb){
     let param = {

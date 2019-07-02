@@ -224,7 +224,7 @@
 
         window.location.href = url
       },
-      loginWithCode(){
+      loginWithCode(code){
         this.$store.dispatch('userStore/loginWithCode', {code})
       },
       userChanged(){
