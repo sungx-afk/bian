@@ -7,7 +7,6 @@
     <meta name="viewport" content="target-densitydpi=device-dpi,width=device-width, user-scalable=no">
     <meta name="viewport" content="width=device-width , initial-scale=1.0 , user-scalable=no">
     <title>彼岸纪念</title>
-    <script type="text/javascript" src="/bian/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -23,7 +22,7 @@
     },
     initParam:function(){
       let url = ''
-      let request = getRequest()
+      let request = this.getRequest()
       let state = request['state']
       if (state == 'wechat_state'){
       	let code = request['code']
@@ -34,6 +33,22 @@
     },
     browserRedirect:function() {
         return 'wechat'
+    },
+    getRequest:function(key){
+      var url = location.search; //获取url中"?"符后的字串
+      var request = new Object();
+      if (url.indexOf("?") != -1) {
+      var str = url.substr(1);
+      strs = str.split("&");
+      for(var i = 0; i < strs.length; i ++) {
+        request[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+      }
+      }
+      if(key){
+        return request[key];
+      }else{
+        return request;
+      }
     }
   }
 
