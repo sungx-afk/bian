@@ -17,6 +17,7 @@ export function wechatShare(shareData) {
       let data = { ...defaultData, ...shareData }
       //等待后台返回签名
       let url = window.location.href
+      console.log("auth signature url:",url)
       let ret = await getJsAuthSignature(url)
       //后台返回成功后，配置微信的API
       let config = Object.assign({
