@@ -217,7 +217,7 @@
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
       authWechat(){
-        let url = 'https://ba.yugusoft.com/login.html'
+        let url = 'https://ba.yugusoft.com/index.html/home'
         url = encodeURIComponent(url)
         let appid = 'wxdb43de2e1083005a'
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`

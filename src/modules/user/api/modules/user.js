@@ -18,5 +18,16 @@ export default {
     }).catch(function (error) {
       errorCb &&  errorCb(error)
     });
+  },
+  getJsAuthSignature({url},successCb, errorCb){
+    url = encodeURIComponent(url)
+    let param = {
+      url
+    }
+    $axios.get(`/users/oauth2/wechat/service/js_auth_signature?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb &&  errorCb(error)
+    });
   }
 }
