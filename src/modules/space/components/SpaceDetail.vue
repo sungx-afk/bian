@@ -201,6 +201,14 @@
       registerEvent(){
 
       },
+      initShare(){
+        this.wechatShare({
+          title: '彼岸纪念',
+          success: () => { //你重置分享成功后的回调
+
+          }
+        })
+      }
     },
     created() {
       if(this.$route.params.id){
@@ -212,6 +220,7 @@
           }
         })
         this.registerEvent()
+        this.initShare()
       }
     }
   }
