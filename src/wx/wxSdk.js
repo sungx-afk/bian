@@ -34,6 +34,7 @@ export function wechatShare(shareData) {
       //处理验证成功后的信息
       wx.ready(function () {
         if (configError){
+          console.log("configError return")
           return
         }
         wx.updateTimelineShareData({ //分享到朋友圈

@@ -20,7 +20,7 @@ export default {
     });
   },
   getJsAuthSignature({url},successCb, errorCb){
-    url = encodeURIComponent(url)
+    // url = encodeURIComponent(url)
     let param = {
       url
     }
