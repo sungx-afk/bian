@@ -40,6 +40,7 @@
       },
       created() {
         let value = localStorage.getItem(constant.KEY_EXTRA_DATA)
+        localStorage.removeItem(constant.KEY_EXTRA_DATA)
         if (value){
           this.extra = JSON.parse(value)
         }

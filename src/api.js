@@ -52,6 +52,7 @@ global.$axios.interceptors.response.use((response) => {
   if (error.response && error.response.data && error.response.data.location) {
     window.location = error.response.data.location
   } else {
+    localStorage.setItem("axios_error",JSON.stringify(error.response.data))
     window.location.href = '/error';
     return Promise.reject(error)
   }
