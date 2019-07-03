@@ -115,8 +115,12 @@
             },rsp=>{
               cb && cb({result:0,url:rsp.url})
             },error=>{
+              alert(error.msg)
               cb && cb({result:1,msg:error.msg})
             })
+          },error=>{
+            alert(error.msg)
+            cb && cb({result:1,msg:error.msg})
           })
         },
         doPostIssue() {

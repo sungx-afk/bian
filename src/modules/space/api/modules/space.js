@@ -189,8 +189,8 @@ export default {
       expand: expand,
       size: size
     }
-
-    $axios.get(`files/qiniu/token`, { params }).then((response) => {
+    
+    $axios.get(`/files/qiniu/token`, { params }).then((response) => {
       successCb && successCb(response.data)
     }).catch((error) => {
       errorCb && errorCb(error)
