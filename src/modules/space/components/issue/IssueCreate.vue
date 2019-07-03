@@ -115,11 +115,11 @@
             },rsp=>{
               cb && cb({result:0,url:rsp.url})
             },error=>{
-              alert(error.msg)
+              alert(error.toString())
               cb && cb({result:1,msg:error.msg})
             })
           },error=>{
-            alert(error.msg)
+            alert(error.toString())
             cb && cb({result:1,msg:error.msg})
           })
         },
@@ -172,6 +172,9 @@
             this.type = query.type
           }
         }
+      },
+      beforeDestroy() {
+        this.$toast.clear()
       }
     }
 </script>
