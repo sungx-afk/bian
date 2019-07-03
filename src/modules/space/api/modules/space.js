@@ -198,7 +198,7 @@ export default {
   },
 
   filesQiniuUpload({data,token},successCb, errorCb){
-    let url = "http://upload.qiniup.com/putb64/-1/"
+    let url = "https://upload.qiniup.com/putb64/-1/"
 
     data = data.substring(23); //截掉base64前面头
 
