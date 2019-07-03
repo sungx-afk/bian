@@ -29,7 +29,7 @@ export function wechatShare(shareData) {
       let ret = await getJsAuthSignature(url)
       //后台返回成功后，配置微信的API
       let config = Object.assign({
-        debug: true,
+        debug: false,
         jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData']
       }, {
         appId: ret.appid, //公众号的唯一标识

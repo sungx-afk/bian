@@ -58,14 +58,14 @@
       padding: 40px 20px;
       .share-top-text{
         display: flex;
-        font-size: 12px;
+        font-size: 14px;
         flex-direction: column;
       }
       .share-top-image{
         margin-left: auto;
         img{
-          width: 60px;
-          height: 60px;
+          width: 70px;
+          height: 70px;
         }
       }
     }
