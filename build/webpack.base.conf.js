@@ -29,7 +29,7 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/**': { //设置webpack代理
+      '/api/**': { //设置webpack代理
           target: 'https://ba.yugusoft.com',
           changeOrigin: true,
           secure: false

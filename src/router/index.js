@@ -9,6 +9,11 @@ import Space from '@/modules/space/router'
 Vue.use(Router)
 
 const router = new Router({
+  saveScrollPosition: true,
+  transitionOnLoad: true,
+  hashbang: false,
+  history: true,
+  mode: 'history', //'hash'则一切正常
   routes: [
     ...Home,
     ...Space
