@@ -272,10 +272,15 @@
         if (this.query){
           let from = this.query.origin_from
           let spaceId = this.query.space_id
+          let inviteUserId = this.query.invite_user_id
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){
-            this.addMemberToSpace(spaceId)
+            if (inviteUserId === this.user.id){ //如果链接是当前用户发起的，直接进入即可
+              Link(`/space/detail/${spaceId}`)
+            }else{
+              this.addMemberToSpace(spaceId)
+            }
           }
           this.query = '' //把query置空
         }

@@ -67,5 +67,9 @@
 
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
+  .space-manage-container{
+    height: 100%;
+    background: @BG_WHITE;
+  }
 
 </style>

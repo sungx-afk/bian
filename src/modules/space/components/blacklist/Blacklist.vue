@@ -115,6 +115,8 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .blacklist-container{
+    height: 100%;
+    background: @BG_WHITE;
     .blacklist-list{
       height: 100%;
       overflow-y: scroll;
