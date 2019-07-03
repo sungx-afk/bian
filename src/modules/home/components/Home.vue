@@ -228,6 +228,9 @@
       loginWithCode(code){
         this.$store.dispatch('userStore/loginWithCode', {code})
       },
+      loginWithUid(uid){
+        this.$store.dispatch('userStore/loginWithUid', {uid})
+      },
       userChanged(){
         this.loginState = LoginState.DONE //完成登录
         this.dispatchWithQuery()
@@ -241,8 +244,19 @@
       initLogin(){
         let query = this.$route.query
         let code = ''
-        if(query && query.code && query.state === 'wechat_state'){
-          code = query.code
+        let uid = ''
+        if(query){
+          if (query.code && query.state === 'wechat_state'){
+            code = query.code
+          }
+          if (query.uid){
+            uid = query.uid
+          }
+        }
+        //特殊处理
+        if (uid){
+          this.loginWithUid(uid)
+          return
         }
         if (code){
           this.loginWithCode(code)

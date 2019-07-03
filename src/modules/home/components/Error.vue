@@ -17,7 +17,7 @@
         timestamp:{{response.timestamp}}
       </p>
     </div>
-    <div v-else>
+    <div v-else class="empty">
       没有可用错误信息
     </div>
   </div>
@@ -56,6 +56,10 @@
         word-break: break-all;
         margin: 10px 0px;
       }
+    }
+    .empty{
+      padding: 20px;
+      color: @FONT_THIRD_COLOR;
     }
   }
 </style>

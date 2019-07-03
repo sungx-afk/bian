@@ -12,6 +12,16 @@ export default {
       errorCb &&  errorCb(error)
     });
   },
+  loginWithUid({uid},successCb, errorCb){
+    let param = {
+      uid
+    }
+    $axios.get(`/user/sessions/uid?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb &&  errorCb(error)
+    });
+  },
   fetchMyInfo({},successCb, errorCb){
     $axios.get(`/users/my`).then(function (response) {
       successCb && successCb(response.data)
