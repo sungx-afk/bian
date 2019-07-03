@@ -2,7 +2,7 @@
   <div class="friends-container" v-if="friends">
     <div class="header">
       <span class="count-info">亲属成员{{friends.length}}个</span>
-      <div class='invite'>
+      <div class='invite' @click.stop="goInviteFriends">
         马上去邀请 >
       </div>
     </div>
@@ -39,6 +39,9 @@
 <script>
   import {mapGetters} from 'vuex';
   import NoData from '@/modules/widget/space/NoData'
+  import {Link} from '@/config/utils'
+
+  import constant from '@/config/constant'
 
     export default {
       name: "FriendsManage",
@@ -167,8 +170,20 @@
           }).catch(() => {
             // on cancel
           })
-        }
+        },
+        goInviteFriends(){
+          let extra = {}
 
+          extra.from = 'add_friends'
+          extra.invite_user_id = this.user.id
+          extra.space_id = this.spaceId
+
+          extra = JSON.stringify(extra)
+
+          localStorage.setItem(constant.KEY_EXTRA_DATA,extra)
+
+          Link(`/share`)
+        }
       },
       created() {
         if(this.$route.params.id){

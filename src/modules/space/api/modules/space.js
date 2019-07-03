@@ -1,4 +1,5 @@
 import qs from 'qs'
+import axios from 'axios'
 
 export default {
   getSpaceDetail({sid},successCb, errorCb){
@@ -103,6 +104,13 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  addFriend({sid,userId},successCb, errorCb){
+    $axios.post(`/spaces/${sid}/config/friends`,JSON.stringify([userId])).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   deleteFriend({sid,userId},successCb, errorCb){
 
     $axios.post(`/spaces/${sid}/config/friends?_method=delete`,JSON.stringify([userId])).then(response => {
@@ -194,16 +202,18 @@ export default {
 
     data = data.substring(23); //截掉base64前面头
 
-    $axios.post(url,data,{
-      headers: {
-        'Authorization': 'UpToken ' + token,
-        'Content-Type': 'application/octet-stream'
-      }
-    }).then((response) => {
-      successCb && successCb(response.data)
-    }).catch((error) => {
-      errorCb && errorCb(error)
-    })
+    axios.post(url, data,{
+        headers: {
+          'Authorization': 'UpToken ' + token,
+          'Content-Type': 'application/octet-stream'
+        }
+      })
+      .then(function (response) {
+        successCb && successCb(response.data)
+      })
+      .catch(function (error) {
+        errorCb && errorCb(error)
+      });
   },
 
   getWxQrCode({scene},successCb, errorCb) {

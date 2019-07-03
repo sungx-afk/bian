@@ -44,6 +44,7 @@
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
+  import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
 
   var LoginState = {
@@ -217,7 +218,7 @@
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
       authWechat(){
-        let url = 'https://ba.yugusoft.com/login.html'
+        let url = `${config_server.domain}/login.html`
         url = encodeURIComponent(url)
         let appid = 'wxdb43de2e1083005a'
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
@@ -229,25 +230,50 @@
       },
       userChanged(){
         this.loginState = LoginState.DONE //完成登录
+        this.dispatchWithQuery()
         this.getSpaceList()
         this.getSpacesVisited()
       },
       tokenExpire(){
         //token过期了，重新尝试授权登录
         this.authWechat()
+      },
+      initLogin(){
+        let query = this.$route.query
+        let code = ''
+        if(query && query.code && query.state === 'wechat_state'){
+          code = query.code
+        }
+        if (code){
+          this.loginWithCode(code)
+        }else{
+          this.tryLogin()
+        }
+      },
+      dispatchWithQuery(){
+        let query = this.$route.query
+        if (query){
+          let from = query.from
+          let spaceId = query.space_id
+          if (from === 'space_detail'){
+            Link(`/space/detail/${spaceId}`)
+          }else if(from === 'add_friends'){
+            this.addMemberToSpace(spaceId)
+          }
+        }
+      },
+      addMemberToSpace(spaceId){
+        let userId = this.user.id
+        $API.space.addFriend({
+            sid:spaceId,
+            userId:userId,
+          }, rsp=>{
+            Link(`/space/detail/${spaceId}`)
+          })
       }
     },
     created() {
-      let query = this.$route.query
-      let code = ''
-      if(query && query.code && query.state === 'wechat_state'){
-        code = query.code
-      }
-      if (code){
-        this.loginWithCode(code)
-      }else{
-        this.tryLogin()
-      }
+      this.initLogin()
       this.registerEvent()
     },
     beforeDestroy() {

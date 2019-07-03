@@ -1,3 +1,7 @@
+
+import qs from 'qs'
+import config_server from '@/config/config'
+
 export function wechatShare(shareData) {
   return new Promise(async function(resolve, reject) {
     try {
@@ -6,10 +10,14 @@ export function wechatShare(shareData) {
         return resolve('您目前所处的并不是微信内置浏览器')
       }
       //设置默认的分享标题、描述、网页、图片，以及分享成功后的回调
+      let link = `${config_server.domain}/home`
+      if (shareData.extra){
+        link = link + '?'+qs.stringify(shareData.extra,{indices:false});
+      }
       let defaultData = {
         title: '彼岸纪念',
         desc: '逝者已矣，生者如斯',
-        link: 'https://ba.yugusoft.com/home',
+        link: link,
         imgUrl: '../modules/images/index_header.jpg',
         success: function (res) {}
       }
