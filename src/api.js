@@ -1,10 +1,7 @@
 import axios from 'axios'
 import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
-
-import store from './store/index';
-
-
+import User from './modules/user/api/index'
 
 axios.interceptors.request.use(config => {
   return config
@@ -13,23 +10,23 @@ axios.interceptors.request.use(config => {
 })
 
 axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
-axios.defaults.headers.common['uid'] = '100000';
 axios.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8'; //默认是JSON格式
 /**
  * 公共上行信息
  * @type {{}}
  */
 global.getRequestParam = function() {
-  // let param = localStorage.getItem("requestParam");
-  // let storeParam = store.getters['userStore/requestParam'];
-  // if (!param){
-  //   if(storeParam){
-  //     param = JSON.stringify(storeParam);
-  //   }else{
-  //     param = JSON.stringify({plat:'wechat',build:'999999',token:'014eb57b-0715-4572-8376-8478d779b666',platVersion:'1.0.1'})
-  //   }
-  // }
-  let param = JSON.stringify({plat:'wechat',build:'999999',token:'014eb57b-0715-4572-8376-8478d779b666',platVersion:'1.0.1'})
+  let param = localStorage.getItem("bian-requestParam");
+  if (!param){
+    param = {
+      plat:'wechat',
+      build:'999999',
+      token:'',
+      platVersion:'1.0.1'
+    }
+    param = JSON.stringify(param)
+    localStorage.setItem("bian-requestParam",param)
+  }
   return JSON.parse(param);
 }
 
@@ -62,5 +59,6 @@ global.$axios.interceptors.response.use((response) => {
 
 global.$API = {
   home:Home,
-  space:Space
+  space:Space,
+  user:User
 }
