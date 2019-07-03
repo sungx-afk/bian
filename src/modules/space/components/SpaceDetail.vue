@@ -203,7 +203,7 @@
       },
       initShare(){
         let extra = {}
-        extra.from = 'space_detail'
+        extra.origin_from = 'space_detail'
         extra.invite_user_id = this.user.id
         extra.space_id = this.spaceId
 

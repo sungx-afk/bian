@@ -60,7 +60,8 @@
         visitedList:[],
         isShowMoreMenu:false,
         menuList:[],
-        loginState:LoginState.UNDO
+        loginState:LoginState.UNDO,
+        query:'', //记录进入时的query
       }
     },
     components: {
@@ -252,6 +253,9 @@
           if (query.uid){
             uid = query.uid
           }
+          if (query.origin_from){
+            this.query = query
+          }
         }
         //特殊处理
         if (uid){
@@ -265,15 +269,15 @@
         }
       },
       dispatchWithQuery(){
-        let query = this.$route.query
-        if (query){
-          let from = query.from
-          let spaceId = query.space_id
+        if (this.query){
+          let from = this.query.origin_from
+          let spaceId = this.query.space_id
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){
             this.addMemberToSpace(spaceId)
           }
+          this.query = '' //把query置空
         }
       },
       addMemberToSpace(spaceId){

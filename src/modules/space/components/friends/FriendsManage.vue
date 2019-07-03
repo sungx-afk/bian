@@ -174,7 +174,7 @@
         goInviteFriends(){
           let extra = {}
 
-          extra.from = 'add_friends'
+          extra.origin_from = 'add_friends'
           extra.invite_user_id = this.user.id
           extra.space_id = this.spaceId
 
