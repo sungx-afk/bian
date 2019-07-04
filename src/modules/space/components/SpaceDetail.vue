@@ -3,7 +3,7 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
-        <info v-if="detail" :space="detail"></info>
+        <info ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged"></info>
       </template>
       <template v-if="tabActive == 'message'">
         <!--留言-->
@@ -18,6 +18,12 @@
         <private v-if="detail" :space="detail" type="PRIVATE"></private>
       </template>
     </div>
+    <van-action-sheet
+      v-model="showAction"
+      :actions="actions"
+      @select="onActionSelect"
+      @click-overlay="onActionClose">
+    </van-action-sheet>
     <template v-if="true">
       <van-tabbar @change="onTabChange">
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
@@ -65,6 +71,8 @@
         noMoreData:false,
         loadingMore:false,
         postComment: false,
+        showAction:false,
+        actions:[]
       }
     },
     components: {
@@ -138,6 +146,21 @@
           color = '#825621'
         }
         return color
+      },
+      actionChanged(data){
+        if (data.showAction === false){
+          this.showAction = false
+          this.actions = []
+        }else {
+          this.showAction = true
+          this.actions = data.actions
+        }
+      },
+      onActionSelect(item){
+        this.$refs.info.onActionSelect(item)
+      },
+      onActionClose(){
+        this.$refs.info.onActionClose()
       },
       getDetail(cb){
         if (!this.spaceId){
