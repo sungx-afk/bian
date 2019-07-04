@@ -115,7 +115,7 @@
           data.size = photo.file.size
           data.type = photo.file.type
           data.lastModified = photo.file.lastModified
-          localStorage.setItem(constant.KEY_CROPPER_IMAGE_DATA,JSON.stringify(data))
+          this.$store.dispatch('spaceStore/setCropImageData',data)
           this.$nextTick(()=>{
             Link(`/cropper`)
           })

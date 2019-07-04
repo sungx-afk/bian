@@ -23,7 +23,7 @@
 
 <script>
   import constant from '@/config/constant'
-
+  import {mapGetters} from 'vuex'
   import { VueCropper }  from 'vue-cropper'
 
   export default {
@@ -36,16 +36,21 @@
         info:null,
       }
     },
+    computed:{
+      ...mapGetters({
+        cropData: 'spaceStore/cropData',
+      }),
+    },
     methods:{
       initImgData(){
-        let value = localStorage.getItem(constant.KEY_CROPPER_IMAGE_DATA)
-        if (value){
-          this.info = JSON.parse(value)
-        }
-        localStorage.removeItem(constant.KEY_CROPPER_IMAGE_DATA)
+        this.info = this.cropData
+      },
+      goBack(){
+        this.$store.dispatch('spaceStore/resetCropImageData')
+        this.$router.go(-1)
       },
       cancel(){
-        this.$router.go(-1)
+        this.goBack()
       },
       select(photo){
         let info = {}
@@ -60,7 +65,7 @@
       confirm(){
         this.$refs.cropper.getCropData((data) => {
           eventHub.$emit(constant.EVENT_IMAGE_CROP_COMPLETE,{cropperData:data,info:this.info})
-          this.$router.go(-1)
+          this.goBack()
         })
       }
     },
