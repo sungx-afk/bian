@@ -10,8 +10,8 @@
 
     <div id="dui_lian_box">
       <div class="inner" style="padding: 30px 15px 0px;">
-        <div class="dui_lian" style="float: left;">一生俭朴留典范 半世勤芝传嘉风</div>
-        <div class="dui_lian" style="float: right;">勤俭度日遵遗训 努力工作报余恩</div>
+        <div class="dui_lian" style="float: left;">仿佛音容犹如梦</div>
+        <div class="dui_lian" style="float: right;">依稀笑语痛伤心</div>
       </div>
     </div>
 
@@ -55,11 +55,11 @@
                 <div class="item item-02"></div>
                 <div class="item item-03"></div>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-1" style="width: 60px; height: 60px;"></canvas>
+                  <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
                 <div class="item item-xiang"></div>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-2" style="width: 60px; height: 60px;"></canvas>
+                  <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
                 <div class="item item-03"></div>
                 <div class="item item-04"></div>
@@ -70,19 +70,20 @@
         </div>
 
         <div class="buttons">
-          <div class="button" onclick="jibai()">上香祭拜</div>
-          <div class="button">行礼</div>
-          <div class="button">送花</div>
-          <div class="button" onclick="dianlazu()">点蜡烛</div>
+          <div class="button" @click="jibai()">上香祭拜</div>
+          <div class="button" @click="flower()">送花</div>
+          <div class="button" @click="dianlazu()">点蜡烛</div>
           <div class="button">更多</div>
         </div>
       </div>
-    </div>
 
 
-    <div id="jibai"
-         style="width: 100%;text-align: center; position: absolute;left: 0;right: 0;bottom: 0;height: 500px;z-index: 11; visibility: hidden;">
-      <img src="./images/baifo.gif" style="width: 250px;height: 366px;"/>
+      <div id="jibai"
+           style="width: 100%;text-align: center; position: absolute;left: 0;right: 0;bottom: 0vw;height: 360px;z-index: 11; visibility: hidden;">
+        <img src="./images/baifo.gif" style="width: 250px;height: 366px;"/>
+      </div>
+
+      <div id="flower"></div>
     </div>
   </div>
 </template>
@@ -96,8 +97,153 @@
     },
     components: {},
     computed: {},
-    methods: {},
+    methods: {
+      //祭拜
+      jibai() {
+        var dom = document.getElementById("jibai");
+        console.log(dom);
+        dom.style.visibility = 'visible'
+        setTimeout(function () {
+          dom.style.visibility = 'hidden';
+        }, 3000)
+      },
+      //点烛
+      dianlazu() {
+        var dom1 = document.getElementById("zu-huo-1");
+        var dom2 = document.getElementById("zu-huo-2");
+        dom1.style.visibility = 'visible'
+        dom2.style.visibility = 'visible'
+        setTimeout(function () {
+          dom1.style.visibility = 'hidden';
+          dom2.style.visibility = 'hidden';
+        }, 3000)
+      },
+      //送花
+      flower(){
+        var dom = document.getElementById("flower");
+        dom.style.animationName='flowerIn';
+        setTimeout(function () {
+          dom.style.animationName = '';
+        }, 5000)
+      }
+    },
     created() {
+    },
+    mounted() {
+      console.clear();
+
+      const flameFrag = document.querySelector("#flame-frag").textContent;
+      const baseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/106114/";
+
+      const manifest = [
+        {name: "noise", url: "noise-texture-11.png?v=9"}
+      ];
+
+
+//
+// FLAME FILTER
+// ===========================================================================
+      class FlameFilter extends PIXI.Filter {
+
+        constructor(texture, time = 0.0) {
+          super(null, flameFrag);
+
+          this.uniforms.dimensions = new Float32Array(2);
+          this.texture = texture;
+          this.time = time;
+        }
+
+        get texture() {
+          return this.uniforms.mapSampler;
+        }
+
+        set texture(texture) {
+          texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+          this.uniforms.mapSampler = texture;
+        }
+
+        apply(filterManager, input, output, clear) {
+
+          this.uniforms.dimensions[0] = input.sourceFrame.width;
+          this.uniforms.dimensions[1] = input.sourceFrame.height;
+          this.uniforms.time = this.time;
+
+          filterManager.applyFilter(this, input, output, clear);
+        }
+      }
+
+
+//
+// APPLICATION
+// ===========================================================================
+
+      let width = document.body.clientWidth;
+      let itemWidth = width / 10;
+
+      class Application extends PIXI.Application {
+
+        constructor(config) {
+
+          if (window.devicePixelRatio > 1) {
+            PIXI.settings.RESOLUTION = 2;
+          }
+
+          PIXI.settings.PRECISION_FRAGMENT = "highp";
+
+          super({
+            view: config.view,
+            width: itemWidth,
+            height: itemWidth,
+            backgroundColor: 0x000000,
+            autoResize: true,
+            antialias: false,
+            transparent: true
+          });
+
+          this.isResized = true;
+          this.loader.baseUrl = baseUrl;
+        }
+
+        load(manifest) {
+          var that = this;
+          that.loader
+            .add(manifest)
+            .load(function (l, r) {
+              that.init(r)
+            });
+        }
+
+        init(resources) {
+          var that = this;
+          this.flame = new FlameFilter(resources.noise.texture);
+          this.stage.filterArea = this.screen;
+          this.stage.filters = [this.flame];
+          this.ticker.add(this.update, this);
+          window.addEventListener("resize", function () {
+              that.isResized = true
+            }
+          )
+        }
+
+        update(delta) {
+
+          if (this.isResized) {
+            this.renderer.resize(itemWidth, itemWidth);
+            this.isResized = false;
+          }
+
+          this.flame.time += 0.1 * delta;
+        }
+      }
+
+      const app1 = new Application({
+        view: document.querySelector("#zu-huo-1"),
+      });
+      const app2 = new Application({
+        view: document.querySelector("#zu-huo-2"),
+      });
+      app1.load(manifest);
+      app2.load(manifest);
 
     }
   }
@@ -361,9 +507,13 @@
 
   .item-la-zu canvas {
     position: absolute;
-    left: 10px;
+    left: 0px;
     right: 0;
-    top: -50px;
+    top: -31px;
+    touch-action: none;
+    cursor: inherit;
+    width: 10vw;
+    height: 10vw;
     visibility: hidden;
   }
 
@@ -380,8 +530,8 @@
 
   .button {
     background: #C58233;
-    padding: 2px 2px;
-    margin-right: 2px;
+    padding: 6px 2px;
+    margin-right: 4px;
     -webkit-box-flex: 1;
     -ms-flex: 1;
     flex: 1;
@@ -391,5 +541,46 @@
     color: white;
     font-size: 14px;
     font-weight: bold;
+  }
+
+  #flower {
+    background-image: url("./images/item_hua_01.png") !important;
+    background-size: 100% 100%;
+    width: 10vw;
+    height: 10vw;
+    position: absolute;
+    margin-left: -5vw;
+    left: 50%;
+    bottom: 0vw;
+    transition: all 5s  ease 1s;
+    animation-duration: 5s;
+    animation-timing-function: ease;
+    animation-fill-mode: both;
+    visibility: hidden;
+  }
+
+  @keyframes flowerIn {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+      visibility: visible;
+    }
+    15% {
+      transform: scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+    85% {
+      transform: scale(1.25);
+      opacity: 1;
+      bottom: 75vw;
+      visibility: visible;
+    }
+    100% {
+      transform: scale(0);
+      opacity: 0;
+      bottom: 75vw;
+      visibility: visible;
+    }
   }
 </style>
