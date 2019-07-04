@@ -114,9 +114,9 @@
         calcHeight(){
           let result = ''
           if (this.type === 'SPACE'){
-            result = 'calc(100% - 74px)'
+            result = 'calc(100% - 80px)'
           }else if (this.type === 'PRIVATE'){
-            result = 'calc(100% - 40px)'
+            result = 'calc(100% - 20px)'
           }else {
             result = '100%'
           }
@@ -411,7 +411,6 @@
   @import "~@/config/config.less";
 
   .issue-list-container{
-    overflow-y: scroll;
     .add-issue-btn{
       position:fixed;
       bottom:60px;

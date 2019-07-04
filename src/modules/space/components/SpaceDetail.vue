@@ -262,7 +262,6 @@
     box-sizing: border-box;
     background-color: #f6f6f6;
     overflow-x: hidden;
-    overflow-y: auto;
     .container-content{
       height: ~'calc(100% - 50px)';
       &.iphonex-height{
