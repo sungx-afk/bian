@@ -71,11 +71,6 @@
       </div>
     </template>
     <div class="split-space"></div>
-    <van-action-sheet
-      v-model="showAction"
-      :actions="actions"
-      @select="onActionSelect">
-    </van-action-sheet>
   </div>
 </template>
 
@@ -93,7 +88,7 @@
         space:{
           type:Object,
           default:null
-        }
+        },
       },
       data(){
         return{
@@ -173,9 +168,11 @@
             data:user
           },]
           this.showAction = true
+          this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
         },
         onActionSelect(item){
           this.showAction = false
+          this.$emit('action-changed',{showAction:this.showAction})
 
           let menu = item.id
           let user = item.data
@@ -193,6 +190,10 @@
               }
             })
           }
+        },
+        onActionClose(){
+          this.showAction = false
+          this.$emit('action-changed',{showAction:this.showAction})
         },
         modifySummary(user,summary){
           user.summary = summary

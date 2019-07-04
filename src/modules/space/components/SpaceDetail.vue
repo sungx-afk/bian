@@ -3,7 +3,7 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
-        <info v-if="detail" :space="detail"></info>
+        <info ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged"></info>
       </template>
       <template v-if="tabActive == 'message'">
         <!--留言-->
@@ -18,6 +18,12 @@
         <private v-if="detail" :space="detail" type="PRIVATE"></private>
       </template>
     </div>
+    <van-action-sheet
+      v-model="showAction"
+      :actions="actions"
+      @select="onActionSelect"
+      @click-overlay="onActionClose">
+    </van-action-sheet>
     <template v-if="true">
       <van-tabbar @change="onTabChange">
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
@@ -65,6 +71,8 @@
         noMoreData:false,
         loadingMore:false,
         postComment: false,
+        showAction:false,
+        actions:[]
       }
     },
     components: {
@@ -139,6 +147,21 @@
         }
         return color
       },
+      actionChanged(data){
+        if (data.showAction === false){
+          this.showAction = false
+          this.actions = []
+        }else {
+          this.showAction = true
+          this.actions = data.actions
+        }
+      },
+      onActionSelect(item){
+        this.$refs.info.onActionSelect(item)
+      },
+      onActionClose(){
+        this.$refs.info.onActionClose()
+      },
       getDetail(cb){
         if (!this.spaceId){
           return
@@ -201,17 +224,30 @@
       registerEvent(){
 
       },
+      initShare(){
+        let extra = {}
+        extra.origin_from = 'space_detail'
+        extra.invite_user_id = this.user.id
+        extra.space_id = this.spaceId
+
+        this.wechatShare({
+          title: '彼岸纪念',
+          extra:extra,
+          success: () => { //你重置分享成功后的回调
+
+          }
+        })
+      }
     },
     created() {
       if(this.$route.params.id){
         this.spaceId = this.$route.params.id
         console.log(this.spaceId)
         this.getDetail(()=>{
-          if (this.detail){
-            this.initShowMemorialMeeting()
-          }
+
         })
         this.registerEvent()
+        this.initShare()
       }
     }
   }

@@ -43,7 +43,7 @@
         btnText:'确定',
         multiline:false,
         maxH:800,
-        minH:400,
+        minH:300,
         rows:10,
         oldContent:''
       }

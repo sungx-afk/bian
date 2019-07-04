@@ -26,6 +26,8 @@ import store from './store/index';
 import './api'
 import './config/config'
 
+import { wechatShare } from './wx/wxSdk'
+Vue.prototype.wechatShare  = wechatShare
 
 Vue.config.productionTip = false
 

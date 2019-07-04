@@ -1,4 +1,6 @@
 import qs from 'qs'
+import axios from 'axios'
+import base64 from 'js-base64'
 
 export default {
   getSpaceDetail({sid},successCb, errorCb){
@@ -103,6 +105,13 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  addFriend({sid,userId},successCb, errorCb){
+    $axios.post(`/spaces/${sid}/config/friends`,JSON.stringify([userId])).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   deleteFriend({sid,userId},successCb, errorCb){
 
     $axios.post(`/spaces/${sid}/config/friends?_method=delete`,JSON.stringify([userId])).then(response => {
@@ -182,28 +191,34 @@ export default {
       size: size
     }
 
-    $axios.get(`files/qiniu/token`, { params }).then((response) => {
+    $axios.get(`/files/qiniu/token`, { params }).then((response) => {
       successCb && successCb(response.data)
     }).catch((error) => {
       errorCb && errorCb(error)
     })
   },
 
-  filesQiniuUpload({data,token},successCb, errorCb){
-    let url = "http://upload.qiniup.com/putb64/-1/"
+  filesQiniuUpload({data,token,key},successCb, errorCb){
 
-    data = data.substring(23); //截掉base64前面头
+    let base64Key = base64.Base64.encode(key)
+    base64Key = base64Key.replace(/\+/g, '-') // Convert '+' to '-'
+      .replace(/\//g, '_') // Convert '/' to '_'
 
-    $axios.post(url,data,{
-      headers: {
-        'Authorization': 'UpToken ' + token,
-        'Content-Type': 'application/octet-stream'
-      }
-    }).then((response) => {
-      successCb && successCb(response.data)
-    }).catch((error) => {
-      errorCb && errorCb(error)
-    })
+    let url = `https://upload.qiniup.com/putb64/-1/key/${base64Key}`
+    data = data.replace(/^data:image\/\w+;base64,/, "");//截掉base64前面头
+
+    axios.post(url, data,{
+        headers: {
+          'Authorization': 'UpToken ' + token,
+          'Content-Type': 'application/octet-stream'
+        }
+      })
+      .then(function (response) {
+        successCb && successCb(response.data)
+      })
+      .catch(function (error) {
+        errorCb && errorCb(error)
+      });
   },
 
   getWxQrCode({scene},successCb, errorCb) {

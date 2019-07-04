@@ -17,6 +17,8 @@ const ImageCropper = () => import(/* webpackChunkName: "image_cropper" */ './com
 
 const Sacrifice = () => import(/* webpackChunkName: "space_manage" */ './components/sacrifice/Index')
 
+const Share = () => import(/* webpackChunkName: "share" */ './components/share/Share')
+
 const routes = [
   {
     path: '/space', component: Space,
@@ -70,6 +72,10 @@ const routes = [
   {
     path: '/cropper',
     component: ImageCropper
+  },
+  {
+    path: '/share',
+    component: Share
   },
 ]
 

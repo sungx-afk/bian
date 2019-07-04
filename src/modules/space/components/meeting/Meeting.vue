@@ -40,6 +40,7 @@
 
 <script>
   import {mapGetters} from 'vuex';
+  import config_server from '@/config/config'
 
   const FONT = "px Pingfang SC,STHeiti,Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,SimSun,sans-serif"
 
@@ -281,7 +282,7 @@
           let img = new Image();
           let scene = `meeting_${this.spaceId}_${this.user.id}`
           let param = getRequestParam()
-          let url = `https://ba.yugusoft.com/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          let url = `${config_server.domain}/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
           img.setAttribute("crossOrigin",'Anonymous');
           img.src = url
           img.onload = ()=>{

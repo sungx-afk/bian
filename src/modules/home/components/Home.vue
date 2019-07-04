@@ -44,6 +44,7 @@
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
+  import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
 
   var LoginState = {
@@ -59,7 +60,8 @@
         visitedList:[],
         isShowMoreMenu:false,
         menuList:[],
-        loginState:LoginState.UNDO
+        loginState:LoginState.UNDO,
+        query:'', //记录进入时的query
       }
     },
     components: {
@@ -217,7 +219,7 @@
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
       authWechat(){
-        let url = 'https://ba.yugusoft.com/login.html'
+        let url = `${config_server.domain}/login.html`
         url = encodeURIComponent(url)
         let appid = 'wxdb43de2e1083005a'
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
@@ -227,27 +229,74 @@
       loginWithCode(code){
         this.$store.dispatch('userStore/loginWithCode', {code})
       },
+      loginWithUid(uid){
+        this.$store.dispatch('userStore/loginWithUid', {uid})
+      },
       userChanged(){
         this.loginState = LoginState.DONE //完成登录
+        this.dispatchWithQuery()
         this.getSpaceList()
         this.getSpacesVisited()
       },
       tokenExpire(){
         //token过期了，重新尝试授权登录
         this.authWechat()
+      },
+      initLogin(){
+        let query = this.$route.query
+        let code = ''
+        let uid = ''
+        if(query){
+          if (query.code && query.state === 'wechat_state'){
+            code = query.code
+          }
+          if (query.uid){
+            uid = query.uid
+          }
+          if (query.origin_from){
+            this.query = query
+          }
+        }
+        //特殊处理
+        if (uid){
+          this.loginWithUid(uid)
+          return
+        }
+        if (code){
+          this.loginWithCode(code)
+        }else{
+          this.tryLogin()
+        }
+      },
+      dispatchWithQuery(){
+        if (this.query){
+          let from = this.query.origin_from
+          let spaceId = this.query.space_id
+          let inviteUserId = this.query.invite_user_id
+          if (from === 'space_detail'){
+            Link(`/space/detail/${spaceId}`)
+          }else if(from === 'add_friends'){
+            if (inviteUserId === this.user.id){ //如果链接是当前用户发起的，直接进入即可
+              Link(`/space/detail/${spaceId}`)
+            }else{
+              this.addMemberToSpace(spaceId)
+            }
+          }
+          this.query = '' //把query置空
+        }
+      },
+      addMemberToSpace(spaceId){
+        let userId = this.user.id
+        $API.space.addFriend({
+            sid:spaceId,
+            userId:userId,
+          }, rsp=>{
+            Link(`/space/detail/${spaceId}`)
+          })
       }
     },
     created() {
-      let query = this.$route.query
-      let code = ''
-      if(query && query.code && query.state === 'wechat_state'){
-        code = query.code
-      }
-      if (code){
-        this.loginWithCode(code)
-      }else{
-        this.tryLogin()
-      }
+      this.initLogin()
       this.registerEvent()
     },
     beforeDestroy() {

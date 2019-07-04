@@ -84,7 +84,8 @@
               }
             })
             .catch((error) => {
-              console.log('error: ' + error);
+              this.$toast.clear()
+              this.$toast("上传出错，请稍后重试")
             });
         },
         startUpload(file, index) {
@@ -111,12 +112,15 @@
           }, resp => {
             $API.space.filesQiniuUpload({
               data:file.content,
-              token:resp.uptoken
+              token:resp.uptoken,
+              key:resp.key
             },rsp=>{
               cb && cb({result:0,url:rsp.url})
             },error=>{
               cb && cb({result:1,msg:error.msg})
             })
+          },error=>{
+            cb && cb({result:1,msg:error.msg})
           })
         },
         doPostIssue() {

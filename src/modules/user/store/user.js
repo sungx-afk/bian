@@ -20,46 +20,29 @@ const getters = {
 const actions = {
   loginWithCode ({commit, state ,dispatch}, {code}){
     $API.user.loginWithCode({code},rsp=>{
-      commit(types.LOGIN_WITH_CODE,rsp)
+      commit(types.UPDATE_USER,rsp)
+    })
+  },
+  loginWithUid ({commit, state ,dispatch}, {uid}){
+    $API.user.loginWithUid({uid},rsp=>{
+      commit(types.UPDATE_USER,rsp)
     })
   },
   fetchMyInfo({commit, state ,dispatch}, {token}){
     $API.user.fetchMyInfo({},rsp=>{
-      commit(types.FETCH_MY_INFO,{rsp,token})
+      if (rsp.result == -10001){
+        commit(types.TOKEN_EXPIRE,rsp)
+      }else{
+        commit(types.UPDATE_USER,{user:rsp,token})
+      }
     })
   }
 }
 
 // mutations
 const mutations = {
-  [types.LOGIN_WITH_CODE] (state,data) {
-    if (data.user && data.token){
-      state.user = data.user
-      state.token = data.token
-      state.expire = false
-      //更新token到bian-requestParam
-      let param = localStorage.getItem("bian-requestParam")
-      if (param){
-        param = JSON.parse(param)
-        param.token = data.token
-        localStorage.setItem("bian-requestParam",JSON.stringify(param))
-        $axios.defaults.params = param;//重新修改全局联网配置
-      }
-    }
-  },
-  [types.FETCH_MY_INFO] (state,data) {
-    if (data.rsp && data.rsp.result == -10001){
-      let param = localStorage.getItem("bian-requestParam")
-      if (param){
-        param = JSON.parse(param)
-        param.token = ''
-        localStorage.setItem("bian-requestParam",JSON.stringify(param))
-        $axios.defaults.params = param;//重新修改全局联网配置
-      }
-      state.expire = true
-      return
-    }
-    state.user = data.rsp
+  [types.UPDATE_USER] (state,data) {
+    state.user = data.user
     state.token = data.token
     state.expire = false
     //更新token到bian-requestParam
@@ -71,6 +54,16 @@ const mutations = {
       $axios.defaults.params = param;//重新修改全局联网配置
     }
   },
+  [types.TOKEN_EXPIRE] (state,rsp){
+    let param = localStorage.getItem("bian-requestParam")
+    if (param){
+      param = JSON.parse(param)
+      param.token = ''
+      localStorage.setItem("bian-requestParam",JSON.stringify(param))
+      $axios.defaults.params = param;//重新修改全局联网配置
+    }
+    state.expire = true
+  }
 }
 
 export default {
