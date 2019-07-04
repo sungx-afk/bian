@@ -10,6 +10,7 @@ const chalk = require('chalk')
 const webpack = require('webpack')
 const config = require('../config')
 const webpackConfig = require('./webpack.prod.conf')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const spinner = ora('building for production...')
 spinner.start()
@@ -26,6 +27,12 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       chunks: false,
       chunkModules: false
     }) + '\n\n')
+
+    let root = path.resolve(__dirname, '../');
+    console.log("----->", [{
+      from: root + '/static',
+      to: root + '/dist',
+    }]);
 
     if (stats.hasErrors()) {
       console.log(chalk.red('  Build failed with errors.\n'))
