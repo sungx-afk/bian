@@ -31,7 +31,9 @@
 
   .private-container{
     height: 100%;
+    overflow-y: auto;
     .private-tip{
+      height: 20px;
       font-size:14px;
       padding:10px;
       margin-bottom: 5px;

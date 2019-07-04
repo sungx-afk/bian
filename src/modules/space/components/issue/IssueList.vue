@@ -1,5 +1,5 @@
 <template>
-  <div class="issue-list-container">
+  <div class="issue-list-container" :style="{'height':calcHeight}">
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -111,6 +111,18 @@
           }
           return result
         },
+        calcHeight(){
+          let result = ''
+          if (this.type === 'SPACE'){
+            result = 'calc(100% - 80px)'
+          }else if (this.type === 'PRIVATE'){
+            result = 'calc(100% - 20px)'
+          }else {
+            result = '100%'
+          }
+
+          return result
+        }
       },
       data(){
         return{
@@ -399,8 +411,6 @@
   @import "~@/config/config.less";
 
   .issue-list-container{
-    height: 100%;
-    overflow-y: scroll;
     .add-issue-btn{
       position:fixed;
       bottom:60px;

@@ -1,5 +1,7 @@
 <template>
-  <issue-list :space="space" :type="type"></issue-list>
+  <div class="message-container">
+    <issue-list :space="space" :type="type"></issue-list>
+  </div>
 </template>
 
 <script>
@@ -22,6 +24,11 @@
     }
 </script>
 
-<style scoped>
+<style rel="stylesheet/less" lang="less" scoped>
+  @import "~@/config/config.less";
+  .message-container {
+    height: 100%;
+    overflow-y: auto;
+  }
 
 </style>
