@@ -1,5 +1,6 @@
 import qs from 'qs'
 import axios from 'axios'
+import base64 from 'js-base64'
 
 export default {
   getSpaceDetail({sid},successCb, errorCb){
@@ -189,7 +190,7 @@ export default {
       expand: expand,
       size: size
     }
-    
+
     $axios.get(`/files/qiniu/token`, { params }).then((response) => {
       successCb && successCb(response.data)
     }).catch((error) => {
@@ -197,10 +198,14 @@ export default {
     })
   },
 
-  filesQiniuUpload({data,token},successCb, errorCb){
-    let url = "https://upload.qiniup.com/putb64/-1/"
+  filesQiniuUpload({data,token,key},successCb, errorCb){
 
-    data = data.substring(23); //截掉base64前面头
+    let base64Key = base64.Base64.encode(key)
+    base64Key = base64Key.replace(/\+/g, '-') // Convert '+' to '-'
+      .replace(/\//g, '_') // Convert '/' to '_'
+
+    let url = `https://upload.qiniup.com/putb64/-1/key/${base64Key}`
+    data = data.replace(/^data:image\/\w+;base64,/, "");//截掉base64前面头
 
     axios.post(url, data,{
         headers: {
