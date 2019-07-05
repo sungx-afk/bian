@@ -721,7 +721,7 @@
 
       initZhuHuo(){
         const flameFrag = document.querySelector("#flame-frag").textContent;
-        const baseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/106114/";
+        const baseUrl = "https://ba.yugusoft.com/static/images/";
 
         const manifest = [
           {name: "noise", url: "noise-texture-11.png?v=9"}
