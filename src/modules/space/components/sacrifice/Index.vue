@@ -138,7 +138,7 @@
       },
 
       goStore(){
-        Link(`/store`)
+        Link(`/store/info`)
       },
 
       initBigFire(){
