@@ -24,23 +24,23 @@
       <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
         <van-cell class="charge-cell">
           <span>账号余额：</span><span class="charge-remain">{{remain}}</span><span>云币</span>
-          <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 100云币）</van-button>
+          <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 10云币）</van-button>
         </van-cell>
         <van-cell>
           <span>花圈装饰（永久）</span>
-          <van-button size="small" class="purchase-btn">500</van-button>
+          <van-button size="small" class="purchase-btn">50</van-button>
         </van-cell>
         <van-cell>
           <span>香烛长燃（1年）</span>
-          <van-button size="small" class="purchase-btn">5000</van-button>
+          <van-button size="small" class="purchase-btn">500</van-button>
         </van-cell>
         <van-cell>
           <span>瓜果贡品（7天）</span>
-          <van-button size="small" class="purchase-btn">50</van-button>
+          <van-button size="small" class="purchase-btn">5</van-button>
         </van-cell>
         <van-cell>
           <span>纸钱（当日）</span>
-          <van-button size="small" class="purchase-btn">50</van-button>
+          <van-button size="small" class="purchase-btn">5</van-button>
         </van-cell>
       </van-cell-group>
     </div>
