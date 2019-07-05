@@ -19,6 +19,8 @@ const Sacrifice = () => import(/* webpackChunkName: "space_manage" */ './compone
 
 const Share = () => import(/* webpackChunkName: "share" */ './components/share/Share')
 
+const Store = () => import(/* webpackChunkName: "store" */ './components/store/Store')
+
 const routes = [
   {
     path: '/space', component: Space,
@@ -77,6 +79,10 @@ const routes = [
     path: '/share',
     component: Share
   },
+  {
+    path: '/store',
+    component: Store
+  }
 ]
 
 export default routes;

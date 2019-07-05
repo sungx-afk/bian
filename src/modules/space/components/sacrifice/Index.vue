@@ -82,7 +82,7 @@
           <div class="button" @click="jibai()">上香祭拜</div>
           <div class="button" @click="flower()">送花</div>
           <div class="button" @click="dianlazu()">点蜡烛</div>
-          <div class="button">更多</div>
+          <div class="button" @click="goStore()">更多</div>
         </div>
       </div>
 
@@ -135,6 +135,10 @@
         setTimeout(function () {
           dom.style.animationName = '';
         }, 5000)
+      },
+
+      goStore(){
+        Link(`/store`)
       },
 
       initBigFire(){
