@@ -8,7 +8,7 @@
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
         <div class="footer" v-if="posterDone">
-          温馨提示：长按图片进行转发
+          温馨提示：长按保存图片到本地后进行相关操作
         </div>
       </div>
 
@@ -403,7 +403,7 @@
         display: flex;
         padding: 0px 15px 15px;
         justify-content: center;
-        font-size: 14px;
+        font-size: 12px;
         color: @FONT_THIRD_COLOR;
       }
     }
