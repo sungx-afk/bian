@@ -282,12 +282,18 @@
           let img = new Image();
           let scene = `meeting_${this.spaceId}_${this.user.id}`
           let param = getRequestParam()
-          let url = `${config_server.domain}/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          console.log(url)
           img.setAttribute("crossOrigin",'Anonymous');
           img.src = url
           img.onload = ()=>{
             this.context.drawImage(img,qx,qy,qw, qh)
             that.qrCodeDrawDone = true
+          }
+          img.onerror = ()=>{
+            setTimeout(()=>{
+              this.$toast('获取信息失败，请稍后重试')
+            },500)
           }
         },
         generateImage(){
