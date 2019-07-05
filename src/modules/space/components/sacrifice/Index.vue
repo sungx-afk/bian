@@ -1,9 +1,5 @@
 <template>
   <div class="sacrifice">
-
-
-    <canvas id="big-fire"></canvas>
-
     <div class="xiang_kuang">
       <div id="yi_xiang" style=""></div>
     </div>
@@ -57,7 +53,12 @@
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
-                <div class="item item-xiang"></div>
+                <div class="item item-xiang-lu">
+                  <div class="item-xiang-lu-box">
+                    <div class="item-xiang">
+                    </div>
+                  </div>
+                </div>
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
@@ -68,6 +69,14 @@
             </div>
           </div>
         </div>
+
+
+        <div class="big-fire-box">
+          <div class="inner">]
+            <canvas id="big-fire" style="width: 100px;height: 100px;"></canvas>
+          </div>
+        </div>
+
 
         <div class="buttons">
           <div class="button" @click="jibai()">上香祭拜</div>
@@ -101,10 +110,11 @@
       //祭拜
       jibai() {
         var dom = document.getElementById("jibai");
-        console.log(dom);
+        let xiangDom = document.querySelector('.item-xiang-lu-box');
         dom.style.visibility = 'visible'
         setTimeout(function () {
           dom.style.visibility = 'hidden';
+          xiangDom.style.visibility = 'visible';
         }, 3000)
       },
       //点烛
@@ -119,132 +129,717 @@
         }, 3000)
       },
       //送花
-      flower(){
+      flower() {
         var dom = document.getElementById("flower");
-        dom.style.animationName='flowerIn';
+        dom.style.animationName = 'flowerIn';
         setTimeout(function () {
           dom.style.animationName = '';
         }, 5000)
-      }
-    },
-    created() {
-    },
-    mounted() {
-      console.clear();
+      },
 
-      const flameFrag = document.querySelector("#flame-frag").textContent;
-      const baseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/106114/";
+      initBigFire(){
 
-      const manifest = [
-        {name: "noise", url: "noise-texture-11.png?v=9"}
-      ];
+        'use strict';
+
+        var _createClass = function () {
+          function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+              var descriptor = props[i];
+              descriptor.enumerable = descriptor.enumerable || false;
+              descriptor.configurable = true;
+              if ("value" in descriptor) descriptor.writable = true;
+              Object.defineProperty(target, descriptor.key, descriptor);
+            }
+          }
+
+          return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+          };
+        }();
+
+        function _classCallCheck(instance, Constructor) {
+          if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+          }
+        }
+
+        console.clear();
+
+        var $ = {};
+
+        $.PI = Math.PI;
+        $.TAU = $.PI * 2;
+
+        $.rand = function (min, max) {
+          return Math.random() * (max - min) + min;
+        };
+
+        $.hsla = function (h, s, l, a) {
+          return 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
+        };
+
+        $.baseRange = function (base, range) {
+          return base + $.rand(-range, range);
+        };
+
+        $.Pool = function () {
+          function _class(base, preallocateAmount) {
+            _classCallCheck(this, _class);
+
+            this.base = base;
+            this.preallocateAmount = preallocateAmount || 0;
+            this.alive = [];
+            this.dead = [];
+            this.length = 0;
+            this.deadLength = 0;
+            if (this.preallocateAmount) {
+              this.preallocate();
+            }
+          }
+
+          _createClass(_class, [{
+            key: 'preallocate',
+            value: function preallocate() {
+              for (var i = 0; i < this.preallocateAmount; i++) {
+                this.dead.push(new this.base());
+                this.deadLength++;
+              }
+            }
+          }, {
+            key: 'create',
+            value: function create(opt) {
+              if (this.deadLength) {
+                var obj = this.dead.pop();
+                obj.init(opt);
+                this.alive.push(obj);
+                this.deadLength--;
+                this.length++;
+                return obj;
+              } else {
+                var newItem = new this.base();
+                newItem.init(opt);
+                this.alive.push(newItem);
+                this.length++;
+                return newItem;
+              }
+            }
+          }, {
+            key: 'release',
+            value: function release(obj) {
+              var i = this.alive.indexOf(obj);
+              if (i > -1) {
+                this.dead.push(this.alive.splice(i, 1)[0]);
+                this.length--;
+                this.deadLength++;
+              }
+            }
+          }, {
+            key: 'empty',
+            value: function empty() {
+              this.alive.length = 0;
+              this.dead.length = 0;
+              this.length = 0;
+              this.deadLength = 0;
+            }
+          }, {
+            key: 'each',
+            value: function each(action, asc) {
+              var i = this.length;
+              while (i--) {
+                this.alive[i][action](i);
+              }
+            }
+          }]);
+
+          return _class;
+        }();
+
+        $.Particle = function () {
+          function _class2() {
+            _classCallCheck(this, _class2);
+          }
+
+          _createClass(_class2, [{
+            key: 'init',
+            value: function init(opt) {
+              Object.assign(this, opt);
+              this.life = 1;
+            }
+          }, {
+            key: 'step',
+            value: function step() {
+              this.velocity += this.acceleration;
+              this.angle += $.rand(-this.wander, this.wander);
+              this.x += Math.cos(this.angle) * this.velocity;
+              this.y += Math.sin(this.angle) * this.velocity;
+              this.life -= this.decay;
+              this.alpha = this.fade ? this.life * 1.5 : 1;
+              if (this.life < 0) {
+                this.parent.particles.release(this);
+              }
+            }
+          }, {
+            key: 'draw',
+            value: function draw() {
+              $.ctx.beginPath();
+              $.ctx.arc(this.x, this.y, this.radius, 0, $.TAU);
+              $.ctx.fillStyle = $.hsla(this.hue, this.saturation, this.lightness, this.alpha);
+              $.ctx.fill();
+            }
+          }]);
+
+          return _class2;
+        }();
+
+        $.ParticleEmitter = function () {
+          function _class3(opt) {
+            _classCallCheck(this, _class3);
+
+            Object.assign(this, opt);
+            this.particles = new $.Pool($.Particle, 100);
+          }
+
+          _createClass(_class3, [{
+            key: 'step',
+            value: function step() {
+              if ($.tick % this.interval === 0) {
+                this.particles.create({
+                  parent: this,
+                  x: $.baseRange(this.x.base, this.x.range),
+                  y: $.baseRange(this.y.base, this.y.range),
+                  radius: $.baseRange(this.radius.base, this.radius.range),
+                  angle: $.baseRange(this.angle.base, this.angle.range),
+                  velocity: $.baseRange(this.velocity.base, this.velocity.range),
+                  acceleration: $.baseRange(this.acceleration.base, this.acceleration.range),
+                  decay: $.baseRange(this.decay.base, this.decay.range),
+                  hue: $.baseRange(this.hue.base, this.hue.range),
+                  saturation: $.baseRange(this.saturation.base, this.saturation.range),
+                  lightness: $.baseRange(this.lightness.base, this.lightness.range),
+                  wander: this.wander,
+                  fade: this.fade
+                });
+              }
+              this.particles.each('step');
+            }
+          }, {
+            key: 'draw',
+            value: function draw() {
+              $.ctx.globalCompositeOperation = this.blend;
+              this.particles.each('draw');
+            }
+          }]);
+
+          return _class3;
+        }();
+
+        $.init = function () {
+          $.c = document.getElementById('big-fire');
+          $.ctx = $.c.getContext('2d');
+          $.w = $.c.width = 400;
+          $.h = $.c.height = 400;
+          $.particleEmitters = [];
+          $.tick = 1;
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: $.w * 0.5,
+              range: 20
+            },
+            y: {
+              base: $.h,
+              range: 20
+            },
+            radius: {
+              base: 0.75,
+              range: 0.4
+            },
+            angle: {
+              base: -$.PI * 0.5,
+              range: $.PI * 0.01
+            },
+            velocity: {
+              base: 0.5,
+              range: 0.5
+            },
+            acceleration: {
+              base: 0.01,
+              range: 0.01
+            },
+            decay: {
+              base: 0.005,
+              range: 0.001
+            },
+            hue: {
+              base: 30,
+              range: 30
+            },
+            saturation: {
+              base: 80,
+              range: 20
+            },
+            lightness: {
+              base: 80,
+              range: 20
+            },
+            wander: 0.06,
+            blend: 'lighter',
+            fade: true,
+            interval: 5
+          }));
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: $.w - 100,
+              range: 25
+            },
+            y: {
+              base: $.h,
+              range: 5
+            },
+            radius: {
+              base: 20,
+              range: 10
+            },
+            angle: {
+              base: -$.PI * 0.55,
+              range: $.PI * 0.05
+            },
+            velocity: {
+              base: 2,
+              range: 0
+            },
+            acceleration: {
+              base: 0.02,
+              range: 0.01
+            },
+            decay: {
+              base: 0.001,
+              range: 0
+            },
+            hue: {
+              base: 0,
+              range: 0
+            },
+            saturation: {
+              base: 0,
+              range: 0
+            },
+            lightness: {
+              base: 0,
+              range: 0
+            },
+            wander: 0.05,
+            blend: 'destination-out',
+            fade: false,
+            interval: 1
+          }));
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: 100,
+              range: 25
+            },
+            y: {
+              base: $.h,
+              range: 5
+            },
+            radius: {
+              base: 20,
+              range: 10
+            },
+            angle: {
+              base: -$.PI * 0.45,
+              range: $.PI * 0.05
+            },
+            velocity: {
+              base: 2,
+              range: 0
+            },
+            acceleration: {
+              base: 0.02,
+              range: 0.01
+            },
+            decay: {
+              base: 0.001,
+              range: 0
+            },
+            hue: {
+              base: 0,
+              range: 0
+            },
+            saturation: {
+              base: 0,
+              range: 0
+            },
+            lightness: {
+              base: 0,
+              range: 0
+            },
+            wander: 0.05,
+            blend: 'destination-out',
+            fade: false,
+            interval: 1
+          }));
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: $.w * 0.5,
+              range: 20
+            },
+            y: {
+              base: $.h,
+              range: 20
+            },
+            radius: {
+              base: 15,
+              range: 5
+            },
+            angle: {
+              base: -$.PI * 0.5,
+              range: $.PI * 0.05
+            },
+            velocity: {
+              base: 1.5,
+              range: 0
+            },
+            acceleration: {
+              base: 0.02,
+              range: 0.01
+            },
+            decay: {
+              base: 0.0075,
+              range: 0
+            },
+            hue: {
+              base: 60,
+              range: 0
+            },
+            saturation: {
+              base: 100,
+              range: 0
+            },
+            lightness: {
+              base: 70,
+              range: 0
+            },
+            wander: 0.01,
+            blend: 'source-over',
+            fade: false,
+            interval: 2
+          }));
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: $.w * 0.5,
+              range: 20
+            },
+            y: {
+              base: $.h - 20,
+              range: 20
+            },
+            radius: {
+              base: 2,
+              range: 1
+            },
+            angle: {
+              base: -$.PI * 0.5,
+              range: $.PI * 0.001
+            },
+            velocity: {
+              base: 0.5,
+              range: 0
+            },
+            acceleration: {
+              base: 0.02,
+              range: 0.02
+            },
+            decay: {
+              base: 0.0075,
+              range: 0
+            },
+            hue: {
+              base: 60,
+              range: 0
+            },
+            saturation: {
+              base: 90,
+              range: 0
+            },
+            lightness: {
+              base: 100,
+              range: 0
+            },
+            wander: 0.025,
+            blend: 'source-over',
+            fade: false,
+            interval: 3
+          }));
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: $.w * 0.5,
+              range: 20
+            },
+            y: {
+              base: $.h - 20,
+              range: 15
+            },
+            radius: {
+              base: 25,
+              range: 5
+            },
+            angle: {
+              base: -$.PI * 0.5,
+              range: $.PI * 0.025
+            },
+            velocity: {
+              base: 2,
+              range: 0.25
+            },
+            acceleration: {
+              base: 0.01,
+              range: 0.01
+            },
+            decay: {
+              base: 0.0075,
+              range: 0
+            },
+            hue: {
+              base: 30,
+              range: 0
+            },
+            saturation: {
+              base: 90,
+              range: 0
+            },
+            lightness: {
+              base: 50,
+              range: 0
+            },
+            wander: 0.01,
+            blend: 'source-over',
+            fade: false,
+            interval: 2
+          }));
+
+          $.particleEmitters.push(new $.ParticleEmitter({
+            x: {
+              base: $.w * 0.5,
+              range: 30
+            },
+            y: {
+              base: $.h - 20,
+              range: 15
+            },
+            radius: {
+              base: 35,
+              range: 10
+            },
+            angle: {
+              base: -$.PI * 0.5,
+              range: $.PI * 0.025
+            },
+            velocity: {
+              base: 2,
+              range: 0.25
+            },
+            acceleration: {
+              base: 0.01,
+              range: 0.01
+            },
+            decay: {
+              base: 0.0075,
+              range: 0
+            },
+            hue: {
+              base: 0,
+              range: 0
+            },
+            saturation: {
+              base: 90,
+              range: 0
+            },
+            lightness: {
+              base: 50,
+              range: 0
+            },
+            wander: 0.01,
+            blend: 'source-over',
+            fade: false,
+            interval: 2
+          }));
+
+          $.gradient = $.ctx.createLinearGradient(0, 0, 0, $.h * 0.75);
+          $.gradient.addColorStop(0, $.hsla(0, 0, 0, 1));
+          $.gradient.addColorStop(1, $.hsla(0, 0, 0, 0));
+
+          $.loop();
+        };
+
+        $.step = function () {
+          var i = $.particleEmitters.length;
+          while (i--) {
+            $.particleEmitters[i].step();
+          }
+          $.tick++;
+        };
+
+        $.draw = function () {
+          $.ctx.clearRect(0, 0, $.w, $.h);
+          var i = $.particleEmitters.length;
+          while (i--) {
+            $.particleEmitters[i].draw();
+          }
+
+          $.ctx.globalCompositeOperation = 'destination-out';
+          $.ctx.fillStyle = $.gradient;
+          $.ctx.fillRect(0, 0, $.w, $.h);
+
+          $.ctx.beginPath();
+          $.ctx.globalCompositeOperation = 'source-over';
+          $.ctx.arc($.w * 0.5, $.h + 40, 63, 0, $.TAU);
+          $.ctx.fillStyle = '#f00';
+          $.ctx.fill();
+
+          $.ctx.beginPath();
+          $.ctx.globalCompositeOperation = 'source-over';
+          $.ctx.arc($.w * 0.5, $.h + 40, 60, 0, $.TAU);
+          $.ctx.fillStyle = '#000';
+          $.ctx.fill();
+        };
+
+        $.loop = function () {
+          requestAnimationFrame($.loop);
+          $.step();
+          $.draw();
+        };
+
+        $.init();
+      },
+
+      initZhuHuo(){
+        const flameFrag = document.querySelector("#flame-frag").textContent;
+        const baseUrl = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/106114/";
+
+        const manifest = [
+          {name: "noise", url: "noise-texture-11.png?v=9"}
+        ];
 
 
 //
 // FLAME FILTER
 // ===========================================================================
-      class FlameFilter extends PIXI.Filter {
+        class FlameFilter extends PIXI.Filter {
 
-        constructor(texture, time = 0.0) {
-          super(null, flameFrag);
+          constructor(texture, time = 0.0) {
+            super(null, flameFrag);
 
-          this.uniforms.dimensions = new Float32Array(2);
-          this.texture = texture;
-          this.time = time;
+            this.uniforms.dimensions = new Float32Array(2);
+            this.texture = texture;
+            this.time = time;
+          }
+
+          get texture() {
+            return this.uniforms.mapSampler;
+          }
+
+          set texture(texture) {
+            texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+            this.uniforms.mapSampler = texture;
+          }
+
+          apply(filterManager, input, output, clear) {
+
+            this.uniforms.dimensions[0] = input.sourceFrame.width;
+            this.uniforms.dimensions[1] = input.sourceFrame.height;
+            this.uniforms.time = this.time;
+
+            filterManager.applyFilter(this, input, output, clear);
+          }
         }
-
-        get texture() {
-          return this.uniforms.mapSampler;
-        }
-
-        set texture(texture) {
-          texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-          this.uniforms.mapSampler = texture;
-        }
-
-        apply(filterManager, input, output, clear) {
-
-          this.uniforms.dimensions[0] = input.sourceFrame.width;
-          this.uniforms.dimensions[1] = input.sourceFrame.height;
-          this.uniforms.time = this.time;
-
-          filterManager.applyFilter(this, input, output, clear);
-        }
-      }
 
 
 //
 // APPLICATION
 // ===========================================================================
 
-      let width = document.body.clientWidth;
-      let itemWidth = width / 10;
+        let width = document.body.clientWidth;
+        let itemWidth = width / 10;
 
-      class Application extends PIXI.Application {
+        class Application extends PIXI.Application {
 
-        constructor(config) {
+          constructor(config) {
 
-          if (window.devicePixelRatio > 1) {
-            PIXI.settings.RESOLUTION = 2;
-          }
-
-          PIXI.settings.PRECISION_FRAGMENT = "highp";
-
-          super({
-            view: config.view,
-            width: itemWidth,
-            height: itemWidth,
-            backgroundColor: 0x000000,
-            autoResize: true,
-            antialias: false,
-            transparent: true
-          });
-
-          this.isResized = true;
-          this.loader.baseUrl = baseUrl;
-        }
-
-        load(manifest) {
-          var that = this;
-          that.loader
-            .add(manifest)
-            .load(function (l, r) {
-              that.init(r)
-            });
-        }
-
-        init(resources) {
-          var that = this;
-          this.flame = new FlameFilter(resources.noise.texture);
-          this.stage.filterArea = this.screen;
-          this.stage.filters = [this.flame];
-          this.ticker.add(this.update, this);
-          window.addEventListener("resize", function () {
-              that.isResized = true
+            if (window.devicePixelRatio > 1) {
+              PIXI.settings.RESOLUTION = 2;
             }
-          )
-        }
 
-        update(delta) {
+            PIXI.settings.PRECISION_FRAGMENT = "highp";
 
-          if (this.isResized) {
-            this.renderer.resize(itemWidth, itemWidth);
-            this.isResized = false;
+            super({
+              view: config.view,
+              width: itemWidth,
+              height: itemWidth,
+              backgroundColor: 0x000000,
+              autoResize: true,
+              antialias: false,
+              transparent: true
+            });
+
+            this.isResized = true;
+            this.loader.baseUrl = baseUrl;
           }
 
-          this.flame.time += 0.1 * delta;
+          load(manifest) {
+            var that = this;
+            that.loader
+              .add(manifest)
+              .load(function (l, r) {
+                that.init(r)
+              });
+          }
+
+          init(resources) {
+            var that = this;
+            this.flame = new FlameFilter(resources.noise.texture);
+            this.stage.filterArea = this.screen;
+            this.stage.filters = [this.flame];
+            this.ticker.add(this.update, this);
+            window.addEventListener("resize", function () {
+                that.isResized = true
+              }
+            )
+          }
+
+          update(delta) {
+
+            if (this.isResized) {
+              this.renderer.resize(itemWidth, itemWidth);
+              this.isResized = false;
+            }
+
+            this.flame.time += 0.1 * delta;
+          }
         }
+
+        const app1 = new Application({
+          view: document.querySelector("#zu-huo-1"),
+        });
+        const app2 = new Application({
+          view: document.querySelector("#zu-huo-2"),
+        });
+        app1.load(manifest);
+        app2.load(manifest);
       }
-
-      const app1 = new Application({
-        view: document.querySelector("#zu-huo-1"),
-      });
-      const app2 = new Application({
-        view: document.querySelector("#zu-huo-2"),
-      });
-      app1.load(manifest);
-      app2.load(manifest);
-
+    },
+    created() {
+    },
+    mounted() {
+      console.clear();
+      this.initZhuHuo();
+      this.initBigFire();
     }
   }
 </script>
@@ -346,6 +941,19 @@
     box-shadow: 4px 6px 9px rgba(1, 1, 1, 0.61);
   }
 
+  .big-fire-box{
+    background-image: url(./images/item_huo_lu.png);
+    background-size: 100% 100%;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    position: absolute;
+    left: 50%;
+    margin-left: -50px;
+    bottom: 4vw;
+    display: flex;
+  }
+
   #big-fire {
     animation: fade-in 2000ms 1000ms forwards;
     /*background: #000;*/
@@ -354,7 +962,7 @@
     /*box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.05);*/
     left: 0;
     margin: 0 auto;
-    bottom: 340px;
+    bottom: 31px;
     opacity: 0;
     position: absolute;
     right: 0;
@@ -505,6 +1113,25 @@
     background-image: url("./images/item_la_zhu.png") !important;
   }
 
+  .item-xiang-lu {
+    background-image: url("./images/item_xiang_lu.png") !important;
+    position: relative;
+    .item-xiang-lu-box{
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      bottom: 6vw;
+      visibility: hidden;
+      .item-xiang{
+        position: relative;
+        background-image: url("./images/item_xiang.png") !important;
+        background-size: cover;
+        width: 10vw;
+        height: 20vw;
+      }
+    }
+  }
+
   .item-la-zu canvas {
     position: absolute;
     left: 0px;
@@ -552,7 +1179,7 @@
     margin-left: -5vw;
     left: 50%;
     bottom: 0vw;
-    transition: all 5s  ease 1s;
+    transition: all 5s ease 1s;
     animation-duration: 5s;
     animation-timing-function: ease;
     animation-fill-mode: both;
