@@ -20,6 +20,9 @@ const Sacrifice = () => import(/* webpackChunkName: "space_manage" */ './compone
 const Share = () => import(/* webpackChunkName: "share" */ './components/share/Share')
 
 const Store = () => import(/* webpackChunkName: "store" */ './components/store/Store')
+const Info = () => import(/* webpackChunkName: "Info" */ './components/store/Info')
+const Charge = () => import(/* webpackChunkName: "charge" */ './components/store/Charge')
+const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Logs')
 
 const routes = [
   {
@@ -80,8 +83,21 @@ const routes = [
     component: Share
   },
   {
-    path: '/store',
-    component: Store
+    path: '/store', component: Store,
+    children: [
+      {
+        path:'info',
+        component:Info,
+      },
+      {
+        path:'charge',
+        component:Charge,
+      },
+      {
+        path:'logs',
+        component:Logs,
+      },
+    ]
   }
 ]
 

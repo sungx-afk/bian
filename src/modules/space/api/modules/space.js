@@ -183,6 +183,31 @@ export default {
     })
   },
 
+  modifyCouplets({sid,uid,left,right},successCb, errorCb){
+    let param = {
+      left,
+      right
+    }
+    $axios.put(`/spaces/${sid}/space_users/${uid}/couplets`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  getChargeLogs({type,start,limit},successCb, errorCb){
+    let param = {
+      start,
+      limit
+    }
+    if (type){
+      param.type = type
+    }
+    $axios.get(`/amount/logs?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
   filesQiniuUploadTicket({ reqType, name, expand, size }, successCb, errorCb) {
     const params = {
       req_type: reqType,
