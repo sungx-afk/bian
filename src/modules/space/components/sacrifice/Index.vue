@@ -861,7 +861,7 @@
   }
 
   .space-container {
-    background: url("./images/bg.png");
+    background: url("./images/bg.jpg");
     background-size: 100% 100%;
   }
 
