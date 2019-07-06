@@ -6,14 +6,16 @@
     <div class="wanlian-area">
       <van-cell-group title="自定义挽联">
         <van-field
-          v-model="wanlianLeft"
+          v-model="coupletsLeft"
+          @blur="leftInputBlur"
           label="上联"
           maxlength="10"
           placeholder="请输入上联"
         ></van-field>
 
         <van-field
-          v-model="wanlianRight"
+          v-model="coupletsRight"
+          @blur="rightInputBlur"
           label="下联"
           maxlength="10"
           placeholder="请输入下联">
@@ -49,18 +51,72 @@
 
 <script>
   import {Link} from '@/config/utils'
+  import {mapGetters} from 'vuex';
     export default {
       name: "Store",
       data(){
         return{
-          wanlianLeft:'',
-          wanlianRight:'',
+          spaceId:'',
+          space:'',
+          coupletsLeft:'',
+          coupletsRight:'',
           remain:0
         }
+      },
+      computed: {
+        ...mapGetters({
+          user: 'userStore/user',
+        }),
       },
       methods:{
         charge(){
           Link(`/store/charge`)
+        },
+        getDetail(cb){
+          if (!this.spaceId){
+            return
+          }
+          $API.space.getSpaceDetail({
+            sid: this.spaceId,
+          }, (rsp)=>{
+            this.space = rsp
+            if (this.space.spaceUsers && this.space.spaceUsers.length > 0 && this.space.spaceUsers[0].couplets){
+              this.coupletsLeft = this.space.spaceUsers[0].couplets.left
+              this.coupletsRight = this.space.spaceUsers[0].couplets.right
+            }
+            cb && cb()
+          }, error=>{
+
+          })
+        },
+        leftInputBlur(){
+          this.updateCouplets()
+        },
+        rightInputBlur(){
+          this.updateCouplets()
+        },
+        updateCouplets(){
+          let sid = this.spaceId
+          let uid = this.space.spaceUsers[0].id
+          $API.space.modifyCouplets({
+            sid,
+            uid,
+            left:this.coupletsLeft,
+            right:this.coupletsRight
+          },rsp=>{
+
+          })
+        }
+      },
+      created() {
+        let query = this.$route.query
+        if(query){
+          if (query.space_id){
+            this.spaceId = query.space_id
+            this.getDetail(() => {
+
+            })
+          }
         }
       }
     }
