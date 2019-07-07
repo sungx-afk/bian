@@ -194,6 +194,27 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  getPriceTag({test},successCb, errorCb){
+    let param = {
+      test
+    }
+    $axios.get(`/pay/price_tags?` + qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
+  placeOrder({price_tag_id},successCb, errorCb){
+    let param = {
+      price_tag_id,
+    }
+
+    $axios.post(`/pay/weixin/service/prepare/order`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   getChargeLogs({type,start,limit},successCb, errorCb){
     let param = {
       start,

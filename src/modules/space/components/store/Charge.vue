@@ -3,29 +3,9 @@
     <div class="charge-wrapper">
       <div class="info">请选择充值金额</div>
       <div class="tag_list clearfix">
-        <div class="item">
-          <span class="money">1元</span>
-          <span>100云币</span>
-        </div>
-        <div class="item">
-          <span class="money">5元</span>
-          <span>500云币</span>
-        </div>
-        <div class="item">
-          <span class="money">10元</span>
-          <span>1000云币</span>
-        </div>
-        <div class="item">
-          <span class="money">20元</span>
-          <span>2000云币</span>
-        </div>
-        <div class="item">
-          <span class="money">50元</span>
-          <span>5000云币</span>
-        </div>
-        <div class="item">
-          <span class="money">100元</span>
-          <span>10000云币</span>
+        <div class="item" v-for="item in priceTag" :key="item.id" @click="placeOrder(item)">
+          <span class="money">{{item.price/100}}元</span>
+          <span>{{item.point + item.giftPoint}}云币</span>
         </div>
       </div>
     </div>
@@ -37,10 +17,38 @@
   import {Link} from '@/config/utils'
     export default {
       name: "Charge",
+      data(){
+        return{
+          priceTag:[]
+        }
+      },
       methods:{
         goLogs(){
           Link(`/store/logs`)
+        },
+        getPriceTag(){
+          $API.space.getPriceTag({test:1},rsp=>{
+            this.priceTag = rsp.list
+          },error=>{
+
+          })
+        },
+        placeOrder(item){
+          $API.space.placeOrder({
+            price_tag_id:item.id
+          },rsp=>{
+            this.wechatPay(rsp).then((res)=>{
+              this.$toast("充值成功")
+            }).catch(error=>{
+              this.$toast(error.errMsg)
+            })
+          },error=>{
+            this.$toast("获取订单失败，请稍后重试")
+          })
         }
+      },
+      created() {
+        this.getPriceTag()
       }
     }
 </script>

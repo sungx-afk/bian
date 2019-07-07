@@ -26,8 +26,9 @@ import store from './store/index';
 import './api'
 import './config/config'
 
-import { wechatShare } from './wx/wxSdk'
+import { wechatShare,wechatPay } from './wx/wxSdk'
 Vue.prototype.wechatShare  = wechatShare
+Vue.prototype.wechatPay  = wechatPay
 
 Vue.config.productionTip = false
 

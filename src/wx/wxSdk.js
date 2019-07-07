@@ -38,7 +38,7 @@ export function wechatShare(shareData) {
         signature: ret.signature //接口返回签名
       })
       wx.config(config)
-      var configError = false
+      let configError = false
       //处理验证成功后的信息
       wx.ready(function () {
         if (configError){
@@ -67,6 +67,57 @@ export function wechatShare(shareData) {
         configError = true
       });
     } catch (error) {
+      reject(error) //处理验证失败后的结果
+    }
+  })
+}
+export function wechatPay(payData){
+  return new Promise(async function(resolve, reject) {
+    try{
+      let isWechat = navigator.userAgent.indexOf('MicroMessenger') > -1
+      if(!isWechat) {
+        return resolve('您目前所处的并不是微信内置浏览器')
+      }
+      let url = window.location.href
+      console.log("auth signature url:",url)
+      let ret = await getJsAuthSignature(url)
+      let config = Object.assign({
+        debug: true,
+        jsApiList: ['chooseWXPay']
+      }, {
+        appId: ret.appid, //公众号的唯一标识
+        timestamp: ret.timestamp, //接口返回签名的时间戳
+        nonceStr: ret.noncestr, //接口返回签名的随机串
+        signature: ret.signature //接口返回签名
+      })
+      wx.config(config)
+      let configError = false
+      //处理验证成功后的信息
+      wx.ready(function () {
+        if (configError){
+          console.log("configError return")
+          return
+        }
+        //payData
+        let payment = payData.payment
+        wx.chooseWXPay({
+          timestamp: payment.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+          nonceStr: payment.nonceStr, // 支付签名随机串，不长于 32 位
+          package: payment.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+          signType: payment.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+          paySign: payment.sign, // 支付签名
+          success: function (res) {
+            resolve(0)
+          },cancel:function () {
+            resolve(1)
+          }
+        });
+      })
+      wx.error(function(res){
+        configError = true
+        reject(res)
+      });
+    }catch (error) {
       reject(error) //处理验证失败后的结果
     }
   })
