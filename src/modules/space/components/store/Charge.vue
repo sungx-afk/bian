@@ -89,19 +89,19 @@
           float: left;
           height: 70px;
           margin-right: 2%;
-          border: 1px solid #00a5ff;
+          border: 1px solid @SECOND_THEME_COLOR;
           border-radius: 5px;
           box-sizing: border-box;
           text-align: center;
           margin-bottom: 10px;
           font-size: 13px;
-          color: #00a5ff;
+          color: @SECOND_THEME_COLOR;
           .money{
             font-weight: bold;
           }
           &:active{
-            background: #00a5ff;
-            color: #fff;
+            background: @SECOND_THEME_COLOR;
+            color: @FONT_WHITE_COLOR;
           }
         }
       }
@@ -109,7 +109,7 @@
     .view-history{
       background: #fff;
       font-size: 14px;
-      color: #8796c3;
+      color: #a9a9a9;
       text-align: center;
       width: 100%;
       cursor: pointer;

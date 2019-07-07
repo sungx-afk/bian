@@ -9,11 +9,19 @@
         :finished="finished"
         finished-text="没有更多数据了"
         @load="onLoadMoreData">
-        <van-cell
+        <van-cell class="list-cell"
           v-for="item in list"
           :key="item.id">
-          <div class="list-item">
-
+          <div class="item-content">
+            <div class="item-content-left">
+              {{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}
+            </div>
+            <div class="item-content-middle">
+              <span class="summary">{{item.summary}}</span><span>{{item.change}}云币</span>
+            </div>
+            <div class="item-content-right">
+              余额：{{item.after}}云币
+            </div>
           </div>
         </van-cell>
       </van-list>
@@ -74,5 +82,24 @@
 
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
+  .charge-logs-container{
+    .list-cell{
+      .item-content{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .item-content-left{
 
+        }
+        .item-content-middle{
+          .summary{
+
+          }
+        }
+        .item-content-right{
+
+        }
+      }
+    }
+  }
 </style>

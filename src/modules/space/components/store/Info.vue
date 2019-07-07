@@ -1,7 +1,8 @@
 <template>
   <div class="info-container">
-    <div class="tip">
-      彼岸云纪念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思。
+    <div class="header">
+      <img src="~@/modules/images/index_header_2.png" class="header-bg" />
+      <div class="header-text">彼岸云纪念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思。</div>
     </div>
     <div class="wanlian-area">
       <van-cell-group title="自定义挽联">
@@ -30,19 +31,19 @@
         </van-cell>
         <van-cell>
           <span>花圈装饰（永久）</span>
-          <van-button size="small" class="purchase-btn">50</van-button>
+          <van-button size="small" class="purchase-btn" :icon="iconMoney">50</van-button>
         </van-cell>
         <van-cell>
           <span>香烛长燃（1年）</span>
-          <van-button size="small" class="purchase-btn">500</van-button>
+          <van-button size="small" class="purchase-btn" :icon="iconMoney">500</van-button>
         </van-cell>
         <van-cell>
           <span>瓜果贡品（7天）</span>
-          <van-button size="small" class="purchase-btn">5</van-button>
+          <van-button size="small" class="purchase-btn" :icon="iconMoney">5</van-button>
         </van-cell>
         <van-cell>
           <span>纸钱（当日）</span>
-          <van-button size="small" class="purchase-btn">5</van-button>
+          <van-button size="small" class="purchase-btn" :icon="iconMoney">5</van-button>
         </van-cell>
       </van-cell-group>
     </div>
@@ -62,6 +63,7 @@
           space:'',
           coupletsLeft:'',
           coupletsRight:'',
+          iconMoney:'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/07/1562485353014/money.png'
         }
       },
       computed: {
@@ -136,17 +138,35 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .info-container{
-    background: @BG_WHITE;
-    .tip{
-      padding: 20px 10px;
-      color: #666666;
-      font-size: 14px;
+    background: @BG_GRAY;
+    .header{
+      position: relative;
+      .header-bg{
+        width: 100%;
+      }
+      .header-text{
+        color: @FONT_WHITE_COLOR;
+        font-size: 14px;
+        position: absolute;
+        top: 20%;
+        padding: 20px;
+        text-align: center;
+      }
     }
     .wanlian-area{
-
+      margin-top: 10px;
+      background: @BG_WHITE;
+      .van-cell-group__title{
+        color: @MAIN_THEME_COLOR;
+      }
     }
     .charge-area{
-      margin-top: 20px;
+      margin-top: 10px;
+      background: @BG_WHITE;
+      .van-cell-group__title{
+        color: @FONT_SECOND_COLOR;
+      }
+
       .charge-cell{
         padding: 20px 15px;
       }
@@ -158,9 +178,13 @@
         }
         .charge-btn{
           margin-left: auto;
+          color: @FONT_WHITE_COLOR;
+          background: @SECOND_THEME_COLOR;
         }
         .purchase-btn{
           margin-left: auto;
+          color: @FONT_WHITE_COLOR;
+          background: @SECOND_THEME_COLOR;
         }
       }
     }
