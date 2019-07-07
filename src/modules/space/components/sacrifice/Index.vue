@@ -73,15 +73,21 @@
 
         <div class="big-fire-box">
           <div class="inner">]
-            <canvas id="big-fire" style="width: 100px;height: 100px;"></canvas>
+            <canvas id="big-fire" style="width: 100px;height: 100px;visibility: hidden;"></canvas>
           </div>
+        </div>
+
+        <div class="messages">
+          <div class="message">张三上香一次</div>
+          <div class="message">李四上香一次</div>
+          <div class="message">张三点烛一次</div>
         </div>
 
 
         <div class="buttons">
           <div class="button" @click="jibai()">上香祭拜</div>
           <div class="button" @click="flower()">送花</div>
-          <div class="button" @click="dianlazu()">点蜡烛</div>
+          <div class="button" @click="shaozhi()">烧纸</div>
           <div class="button">更多</div>
         </div>
       </div>
@@ -111,7 +117,8 @@
       jibai() {
         var dom = document.getElementById("jibai");
         let xiangDom = document.querySelector('.item-xiang-lu-box');
-        dom.style.visibility = 'visible'
+        dom.style.visibility = 'visible';
+        this.dianlazu();
         setTimeout(function () {
           dom.style.visibility = 'hidden';
           xiangDom.style.visibility = 'visible';
@@ -126,7 +133,7 @@
         setTimeout(function () {
           dom1.style.visibility = 'hidden';
           dom2.style.visibility = 'hidden';
-        }, 3000)
+        }, 30000)
       },
       //送花
       flower() {
@@ -136,8 +143,16 @@
           dom.style.animationName = '';
         }, 5000)
       },
+      //送花
+      shaozhi() {
+        var dom = document.getElementById("big-fire");
+        dom.style.visibility = 'visible';
+        setTimeout(function () {
+          dom.style.visibility = 'hidden';
+        }, 5 * 6 * 1000)
+      },
 
-      initBigFire(){
+      initBigFire() {
 
         'use strict';
 
@@ -719,13 +734,13 @@
         $.init();
       },
 
-      initZhuHuo(){
+      initZhuHuo() {
         const flameFrag = document.querySelector("#flame-frag").textContent;
-        const baseUrl = "https://ba.yugusoft.com/static/images/";
+        const baseUrl = "/static/images/";
 
         const manifest = [
           {name: "noise", url: "noise-texture-11.png?v=9"}
-        ];
+        ]
 
 
 //
@@ -934,14 +949,15 @@
     vertical-align: middle;
     font-size: 14px;
     padding: 15px 10px;
-    letter-spacing: 8px;
+    letter-spacing: 20px;
     box-sizing: border-box;
     position: relative;
     font-weight: bold;
     box-shadow: 4px 6px 9px rgba(1, 1, 1, 0.61);
+    font-family: 仿宋;
   }
 
-  .big-fire-box{
+  .big-fire-box {
     background-image: url(./images/item_huo_lu.png);
     background-size: 100% 100%;
     width: 100px;
@@ -1116,13 +1132,13 @@
   .item-xiang-lu {
     background-image: url("./images/item_xiang_lu.png") !important;
     position: relative;
-    .item-xiang-lu-box{
+    .item-xiang-lu-box {
       position: absolute;
       left: 0px;
       right: 0px;
       bottom: 6vw;
       visibility: hidden;
-      .item-xiang{
+      .item-xiang {
         position: relative;
         background-image: url("./images/item_xiang.png") !important;
         background-size: cover;
@@ -1153,6 +1169,7 @@
     right: 0px;
     box-sizing: border-box;
     padding: 5px;
+    z-index: 9;
   }
 
   .button {
@@ -1208,6 +1225,24 @@
       opacity: 0;
       bottom: 75vw;
       visibility: visible;
+    }
+  }
+
+  .messages {
+    padding: 15px 15px 15px 0px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    height: 70vw;
+    overflow: hidden;
+    z-index: 6;
+    .message {
+      font-size: 12px;
+      color: white;
+      background: #000000a8;
+      border-radius: 0px 5px 5px 0px;
+      padding: 3px 8px 3px 10px;
+      margin-bottom: 3px;
     }
   }
 </style>
