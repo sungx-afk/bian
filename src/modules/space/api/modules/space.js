@@ -195,21 +195,29 @@ export default {
     })
   },
   getPriceTag({test},successCb, errorCb){
-    let param = {
-      test
+    let url = `/pay/price_tags`
+    if (test !== undefined && test !== null){
+      let param = {test}
+      url += '?'
+      url += qs.stringify(param, { indices: false })
     }
-    $axios.get(`/pay/price_tags?` + qs.stringify(param, { indices: false })).then(function (response) {
+    $axios.get(url).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb && errorCb(error)
     });
   },
-  placeOrder({price_tag_id},successCb, errorCb){
+  placeOrder({price_tag_id,test},successCb, errorCb){
     let param = {
       price_tag_id,
     }
-
-    $axios.post(`/pay/weixin/service/prepare/order`, JSON.stringify(param)).then(response => {
+    let url = `/pay/weixin/service/prepare/order`
+    if (test !== undefined && test !== null){
+      let param = {test}
+      url += '?'
+      url += qs.stringify(param, { indices: false })
+    }
+    $axios.post(url, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

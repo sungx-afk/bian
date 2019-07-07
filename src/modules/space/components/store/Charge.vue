@@ -19,7 +19,8 @@
       name: "Charge",
       data(){
         return{
-          priceTag:[]
+          priceTag:[],
+          isTest:true
         }
       },
       methods:{
@@ -27,16 +28,23 @@
           Link(`/store/logs`)
         },
         getPriceTag(){
-          $API.space.getPriceTag({test:1},rsp=>{
+          let param = {}
+          if (this.isTest){
+            param.test = 1
+          }
+          $API.space.getPriceTag(param,rsp=>{
             this.priceTag = rsp.list
           },error=>{
 
           })
         },
         placeOrder(item){
-          $API.space.placeOrder({
-            price_tag_id:item.id
-          },rsp=>{
+          let param = {}
+          if (this.isTest){
+            param.test = 1
+          }
+          param.price_tag_id = item.id
+          $API.space.placeOrder(param,rsp=>{
             this.wechatPay(rsp).then((res)=>{
               this.$toast("充值成功")
             }).catch(error=>{
