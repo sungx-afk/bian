@@ -9,8 +9,13 @@
         <img src="~@/modules/images/share_arrow.png"/>
       </div>
     </div>
+    <div class="share-middle">
+      <img src="~@/modules/images/index_header.jpg" class="header">
+    </div>
     <div class="share-bottom">
-
+      <div class="">
+        
+      </div>
     </div>
   </div>
 </template>
@@ -68,6 +73,16 @@
           height: 70px;
         }
       }
+    }
+    .share-middle{
+      display: flex;
+      justify-content: center;
+      .header{
+        height: 200px;
+      }
+    }
+    .share-bottom{
+
     }
   }
 </style>

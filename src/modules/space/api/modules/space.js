@@ -183,6 +183,60 @@ export default {
     })
   },
 
+  modifyCouplets({sid,uid,left,right},successCb, errorCb){
+    let param = {
+      left,
+      right
+    }
+    $axios.put(`/spaces/${sid}/space_users/${uid}/couplets`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  getPriceTag({test},successCb, errorCb){
+    let url = `/pay/price_tags`
+    if (test !== undefined && test !== null){
+      let param = {test}
+      url += '?'
+      url += qs.stringify(param, { indices: false })
+    }
+    $axios.get(url).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
+  placeOrder({price_tag_id,test},successCb, errorCb){
+    let param = {
+      price_tag_id,
+    }
+    let url = `/pay/weixin/service/prepare/order`
+    if (test !== undefined && test !== null){
+      let param = {test}
+      url += '?'
+      url += qs.stringify(param, { indices: false })
+    }
+    $axios.post(url, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  getChargeLogs({type,start,limit},successCb, errorCb){
+    let param = {
+      start,
+      limit
+    }
+    if (type){
+      param.type = type
+    }
+    $axios.get(`/amount/logs?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
   filesQiniuUploadTicket({ reqType, name, expand, size }, successCb, errorCb) {
     const params = {
       req_type: reqType,

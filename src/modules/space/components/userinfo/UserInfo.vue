@@ -22,6 +22,9 @@
     </van-cell>
     <div class="avatar-preview" v-if="user.avatarUrl">
       <van-uploader :after-read="afterSelectPhoto">
+        <div v-if="loading" class="loading-wrapper">
+          <van-loading class="loading" vertical>上传中...</van-loading>
+        </div>
         <img :src="user.avatarUrl" />
       </van-uploader>
     </div>
@@ -62,7 +65,8 @@
           sexList: [
             { name: '男', value: 0 },
             { name: '女', value: 1 }
-          ]
+          ],
+          loading:false
         }
       },
       methods:{
@@ -121,10 +125,11 @@
           })
         },
         updateAvatarData(result){
-          let cropperData = result.cropperData
-          this.user.avatarUrl = result.cropperData
-          let info = result.info
           let that = this
+          let cropperData = result.cropperData
+          that.user.avatarUrl = result.cropperData
+          let info = result.info
+          that.loading = true
           $API.space.filesQiniuUploadTicket({
             reqType: 'general_file',
             name: info.name,
@@ -136,11 +141,14 @@
               token:resp.uptoken,
             },rsp=>{
               that.user.avatarUrl = rsp.url
+              that.loading = false
             },error=>{
-              alert('filesQiniuUpload:',error)
+              this.$toast("上传失败，请稍后重试")
+              that.loading = false
             })
           },error=>{
-            alert('filesQiniuUploadTicket:',error)
+            this.$toast("上传失败，请稍后重试")
+            that.loading = false
           })
         }
       },
@@ -173,6 +181,17 @@
       img{
         width: 140px;
         height: 140px;
+      }
+      .loading-wrapper{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        justify-content: center;
+        .loading{
+          justify-content: center;
+        }
       }
     }
     .sex-radio-group{

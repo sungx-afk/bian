@@ -8,7 +8,7 @@
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
         <div class="footer" v-if="posterDone">
-          温馨提示：长按图片进行转发
+          温馨提示：长按保存图片到本地后进行相关操作
         </div>
       </div>
 
@@ -282,12 +282,18 @@
           let img = new Image();
           let scene = `meeting_${this.spaceId}_${this.user.id}`
           let param = getRequestParam()
-          let url = `${config_server.domain}/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          console.log(url)
           img.setAttribute("crossOrigin",'Anonymous');
           img.src = url
           img.onload = ()=>{
             this.context.drawImage(img,qx,qy,qw, qh)
             that.qrCodeDrawDone = true
+          }
+          img.onerror = ()=>{
+            setTimeout(()=>{
+              this.$toast('获取信息失败，请稍后重试')
+            },500)
           }
         },
         generateImage(){
@@ -397,7 +403,7 @@
         display: flex;
         padding: 0px 15px 15px;
         justify-content: center;
-        font-size: 14px;
+        font-size: 12px;
         color: @FONT_THIRD_COLOR;
       }
     }

@@ -39,25 +39,6 @@ global.$axios = axios.create({
   params: getRequestParam()
 });
 
-
-
-global.$axios.interceptors.response.use((response) => {
-  /*新增拦截器，处理服务器返回*/
-  if(response){
-    return response
-  }else{
-    //TODO
-  }
-}, (error) => {
-  if (error.response && error.response.data && error.response.data.location) {
-    window.location = error.response.data.location
-  } else {
-    localStorage.setItem("axios_error",JSON.stringify(error.response.data))
-    window.location.href = '/error';
-    return Promise.reject(error)
-  }
-})
-
 global.$API = {
   home:Home,
   space:Space,
