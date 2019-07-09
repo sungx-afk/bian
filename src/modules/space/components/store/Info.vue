@@ -126,8 +126,7 @@
             }
             let productId = product.id
             let spaceId = this.spaceId
-            let spaceUserId = this.space.spaceUsers[0].id
-            $API.space.buyProduct({productId,spaceId,spaceUserId},rsp=>{
+            $API.space.buy({productId,spaceId},rsp=>{
               this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
               this.space.creator.point = this.space.creator.point - product.point
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
