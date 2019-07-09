@@ -1,13 +1,25 @@
 <template>
   <div class="sacrifice">
-    <div class="xiang_kuang">
-      <div id="yi_xiang" style=""></div>
+
+    <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
+      <div class="xiang_kuang">
+        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+      </div>
+    </div>
+
+    <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
+      <div class="xiang_kuang">
+        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+      </div>
+      <div class="xiang_kuang">
+        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
+      </div>
     </div>
 
     <div id="dui_lian_box">
       <div class="inner" style="padding: 30px 15px 0px;">
-        <div class="dui_lian" style="float: left;">仿佛音容犹如梦</div>
-        <div class="dui_lian" style="float: right;">依稀笑语痛伤心</div>
+        <div class="dui_lian" style="float: left;">{{space &&space.couplets && space.couplets.left}}</div>
+        <div class="dui_lian" style="float: right;">{{space &&space.couplets && space.couplets.right}}</div>
       </div>
     </div>
 
@@ -109,6 +121,7 @@
     data() {
       return {
         spaceId: 0,
+        space: null,
         messages: ['张三上香一次', '李四上香一次', '张三点烛一次']
       }
     },
@@ -154,8 +167,19 @@
         }, 5 * 6 * 1000)
       },
 
-      more(){
+      more() {
         Link(`/store/info?space_id=${this.spaceId}`)
+      },
+
+      getSpaceDetail() {
+        let that = this;
+        $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
+          if (resp.id && resp.id > 0) {
+            that.space = resp;
+          }
+        }, (error) => {
+          console.log(error);
+        });
       },
 
       initBigFire() {
@@ -854,10 +878,11 @@
       }
     },
     created() {
-      console.log("route", this.$route);
+      this.spaceId = this.$route.params.id;
+      console.log(this.spaceId);
+      this.getSpaceDetail();
     },
     mounted() {
-      this.spaceId = this.$route.params.id;
       this.initZhuHuo();
       this.initBigFire();
     }
@@ -885,25 +910,52 @@
     background-size: 100% 100%;
   }
 
-  .xiang_kuang {
-    background: url("./images/item_xiang_kuang_black.png");
-    background-size: cover;
-    width: 180px;
-    height: 230px;
-    padding: 0;
-    margin: 0 auto;
+  .yi-xiang-box{
     margin-top: 12vh;
-    position: relative;
-  }
-
-  #yi_xiang {
-    position: absolute;
-    left: 27px;
-    right: 14px;
-    top: 23px;
-    bottom: 28px;
-    background: url('./images/item_yi_xiang.png');
-    background-size: cover !important;
+    &.single{
+      .xiang_kuang {
+        background: url("./images/item_xiang_kuang_black.png");
+        background-size: cover;
+        width: 180px;
+        height: 230px;
+        padding: 0;
+        margin: 0 auto;
+        position: relative;
+        .yi_xiang {
+          position: absolute;
+          left: 27px;
+          right: 14px;
+          top: 23px;
+          bottom: 28px;
+          background: url('./images/item_yi_xiang.png');
+          background-size: cover !important;
+        }
+      }
+    }
+    &.double{
+      display: flex;
+      width: 200px;
+      margin: 0 auto;
+      margin-top: 12vh;
+      .xiang_kuang {
+        background: url("./images/item_xiang_kuang_black.png");
+        background-size: cover;
+        width: 100px;
+        height: 130px;
+        padding: 0;
+        margin: 0 auto;
+        position: relative;
+        .yi_xiang {
+          position: absolute;
+          left: 15px;
+          right: 6px;
+          top: 13px;
+          bottom: 15px;
+          background: url('./images/item_yi_xiang.png');
+          background-size: cover !important;
+        }
+      }
+    }
   }
 
   .view1-box {
