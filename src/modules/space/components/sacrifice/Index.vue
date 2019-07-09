@@ -28,12 +28,11 @@
         <div id="item_hua_bg">
           <div class="inner" style="padding-top: 30vw; padding-left: 5vw;padding-right: 5vw;">
             <div id="hua_box">
-              <div class="hua"></div>
-              <div class="hua"></div>
-              <div class="hua"></div>
-              <div class="hua"></div>
-              <div class="hua"></div>
-              <div class="hua"></div>
+              <div class="hua"
+                   v-for="(item, index) in huaQuan"
+                   :key="index"
+                   v-if="index<6"
+              ></div>
             </div>
           </div>
         </div>
@@ -42,14 +41,11 @@
           <div id="item_zuo_zi_box_inner" style="padding: 0em 4vw">
             <div id="item_zuo_zi">
               <div class="inner">
-                <div class="item item-yue-bing"></div>
-                <div class="item item-kao-ya"></div>
-                <div class="item item-xuan-hua"></div>
-                <div class="item item-wu-liang-ye"></div>
-                <div class="item item-yue-bing"></div>
-                <div class="item item-kao-ya"></div>
-                <div class="item item-xuan-hua"></div>
-                <div class="item item-wu-liang-ye"></div>
+                <div v-for="(item, index) in item01"
+                     v-if="index <8"
+                     :key="index"
+                     class="item"
+                ></div>
               </div>
             </div>
           </div>
@@ -59,9 +55,11 @@
           <div id="item_zuo_zi_box_inner_2">
             <div id="item_zuo_zi_2">
               <div class="inner" style="top: -7vw;">
-                <div class="item item-yue-bing"></div>
-                <div class="item item-kao-ya"></div>
-                <div class="item item-xuan-hua"></div>
+                <div v-for="(item, index) in item02"
+                     v-if="index<3"
+                     :key="index"
+                     class="item"
+                ></div>
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
@@ -74,9 +72,11 @@
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
-                <div class="item item-xuan-hua"></div>
-                <div class="item item-wu-liang-ye"></div>
-                <div class="item item-yue-bing"></div>
+                <div v-for="(item, index) in item02"
+                     v-if="index>=6 && index <=8"
+                     :key="index"
+                     class="item"
+                ></div>
               </div>
             </div>
           </div>
@@ -121,27 +121,42 @@
   export default {
     data() {
       return {
+        item_01: new Array(8).fill({}),
+        item_02: new Array(9).fill({}),
         spaceId: 0,
         space: null,
         messages: ['张三上香一次', '李四上香一次', '张三点烛一次']
       }
     },
     components: {},
-    computed: {},
+    computed: {
+      huaQuan() {
+        return this.space && this.space.products.filter((item) => item == 'item-hua-quan');
+      },
+      item01(){
+        return this.item_01;
+      },
+      item02() {
+        this.item_02[3] = {id: 'item-xiang'};
+        this.item_02[4] = {id: 'item-xiang'};
+        this.item_02[5] = {id: 'item-xiang'};
+        return this.item_02;
+      }
+    },
     methods: {
-      
+
       //购买，通用
-      buy(productId, callback){
+      buy(productId, callback) {
         let that = this;
         $API.space.buy({spaceId: that.spaceId, productId: 'item-xuan-hua'}, (resp) => {
           if (resp && !resp.error) {
-            if(callback && typeof callback == 'function'){
+            if (callback && typeof callback == 'function') {
               callback();
             }
           } else {
             if (resp.errorCode == -9999) {
               this.$toast(resp.error);
-              setTimeout(()=>{
+              setTimeout(() => {
                 Link(`/store/charge?space_id=${this.spaceId}`);
               }, 2000)
             } else {
@@ -155,7 +170,7 @@
 
       //祭拜
       jibai() {
-        this.buy('package-shang-xiang-ji-bai', ()=>{
+        this.buy('package-shang-xiang-ji-bai', () => {
           var dom = document.getElementById("jibai");
           let xiangDom = document.querySelector('.item-xiang-lu-box');
           dom.style.visibility = 'visible';
@@ -169,7 +184,7 @@
 
       //点烛
       dianlazu() {
-        this.buy('item-la-zu', ()=>{
+        this.buy('item-la-zu', () => {
           var dom1 = document.getElementById("zu-huo-1");
           var dom2 = document.getElementById("zu-huo-2");
           dom1.style.visibility = 'visible'
@@ -179,7 +194,7 @@
 
       //送花
       flower() {
-        this.buy('item-xuan-hua', ()=>{
+        this.buy('item-xuan-hua', () => {
           var dom = document.getElementById("item-xuan-hua");
           dom.style.animationName = 'flowerIn';
           setTimeout(function () {
@@ -190,7 +205,7 @@
 
       //纸钱
       shaozhi() {
-        this.buy('item-zhi-qian', ()=>{
+        this.buy('item-zhi-qian', () => {
           var dom = document.getElementById("big-fire");
           dom.style.visibility = 'visible';
         });
@@ -1341,7 +1356,7 @@
     .message {
       font-size: 12px;
       color: white;
-      background: rgba(50,50,51,.88);
+      background: rgba(50, 50, 51, .88);
       border-radius: 0px 5px 5px 0px;
       padding: 3px 8px 3px 10px;
       margin-bottom: 3px;
