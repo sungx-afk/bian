@@ -183,7 +183,7 @@ export default {
     })
   },
 
-  modifyCouplets({sid,left,right},successCb, errorCb){
+  modifyCouplets({sid, left, right}, successCb, errorCb) {
     let param = {
       left,
       right
@@ -287,26 +287,12 @@ export default {
       errorCb && errorCb(error)
     });
   },
-<<<<<<< HEAD
 
   buy({spaceId, spaceUserId, productId}, successCb, errorCb) {
     $axios.post(`/buy`, JSON.stringify({spaceId, spaceUserId, productId})).then(response => {
-=======
-  buyProduct({productId,spaceId,spaceUserId},successCb, errorCb){
-    let param = {
-      productId,
-      spaceId,
-      spaceUserId
-    }
-    $axios.post(`/buy`, JSON.stringify(param)).then(response => {
->>>>>>> f0839941bbb7f68f49364d24373782a3b05c5afe
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
     })
-<<<<<<< HEAD
   },
-=======
-  }
->>>>>>> f0839941bbb7f68f49364d24373782a3b05c5afe
 }
