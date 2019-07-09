@@ -155,7 +155,7 @@
       },
 
       more(){
-        Link(`/store/info?spaceId=${this.space.id}`)
+        Link(`/store/info?space_id=${this.spaceId}`)
       },
 
       initBigFire() {
