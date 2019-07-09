@@ -44,7 +44,7 @@
 
 <script>
   import constant from '@/config/constant'
-  import {timesToDate,Link} from '@/config/utils'
+  import {timesToDate,Link,gUuid} from '@/config/utils'
 
     export default {
       name: "UserInfo",
@@ -66,7 +66,8 @@
             { name: '男', value: 0 },
             { name: '女', value: 1 }
           ],
-          loading:false
+          loading:false,
+          identifier:''
         }
       },
       methods:{
@@ -114,6 +115,7 @@
         },
         afterSelectPhoto(photo){
           let data = {}
+          data.identifier = this.identifier
           data.content = photo.content
           data.name = photo.file.name
           data.size = photo.file.size
@@ -126,9 +128,14 @@
         },
         updateAvatarData(result){
           let that = this
+          let info = result.info
+
+          if (info.identifier !== this.identifier){
+            return
+          }
+
           let cropperData = result.cropperData
           that.user.avatarUrl = result.cropperData
-          let info = result.info
           that.loading = true
           $API.space.filesQiniuUploadTicket({
             reqType: 'general_file',
@@ -139,6 +146,7 @@
             $API.space.filesQiniuUpload({
               data:cropperData,
               token:resp.uptoken,
+              key:resp.key
             },rsp=>{
               that.user.avatarUrl = rsp.url
               that.loading = false
@@ -153,6 +161,8 @@
         }
       },
       created() {
+        let identifier = gUuid()
+        this.identifier = identifier
         eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
       },
       beforeDestroy() {
