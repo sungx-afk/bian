@@ -288,8 +288,8 @@ export default {
     });
   },
 
-  buy({spaceId, spaceUserId, productId}, successCb, errorCb) {
-    $axios.post(`/buy`, JSON.stringify({spaceId, spaceUserId, productId})).then(response => {
+  buy({spaceId, productId}, successCb, errorCb) {
+    $axios.post(`/buy`, JSON.stringify({spaceId, productId})).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

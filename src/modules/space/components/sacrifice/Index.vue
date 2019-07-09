@@ -17,7 +17,7 @@
     </div>
 
     <div id="dui_lian_box">
-      <div class="inner" style="padding: 30px 15px 0px;">
+      <div class="inner" style="padding: 30px 15px 0px;" v-if="space && space.id>0">
         <div class="dui_lian" style="float: left;">{{space &&space.couplets && space.couplets.left}}</div>
         <div class="dui_lian" style="float: right;">{{space &&space.couplets && space.couplets.right}}</div>
       </div>
@@ -96,9 +96,10 @@
 
 
         <div class="buttons">
-          <div class="button" @click="jibai()">上香祭拜</div>
+          <div class="button" @click="jibai()">上香</div>
+          <div class="button" @click="jibai()">点烛</div>
+          <div class="button" @click="shaozhi()">纸钱</div>
           <div class="button" @click="flower()">送花</div>
-          <div class="button" @click="shaozhi()">烧纸</div>
           <div class="button" @click="more()">更多</div>
         </div>
       </div>
@@ -130,14 +131,21 @@
     methods: {
       //祭拜
       jibai() {
-        var dom = document.getElementById("jibai");
-        let xiangDom = document.querySelector('.item-xiang-lu-box');
-        dom.style.visibility = 'visible';
-        this.dianlazu();
-        setTimeout(function () {
-          dom.style.visibility = 'hidden';
-          xiangDom.style.visibility = 'visible';
-        }, 3000)
+        let that = this;
+        $API.space.buy({spaceId: that.spaceId, productId: 'package-shang-xiang-ji-bai'}, (resp) => {
+          if (resp && !resp.error) {
+            var dom = document.getElementById("jibai");
+            let xiangDom = document.querySelector('.item-xiang-lu-box');
+            dom.style.visibility = 'visible';
+            this.dianlazu();
+            setTimeout(function () {
+              dom.style.visibility = 'hidden';
+              xiangDom.style.visibility = 'visible';
+            }, 3000)
+          }
+        }, (error) => {
+          this.$toast(error.message || error.error);
+        });
       },
       //点烛
       dianlazu() {
@@ -910,9 +918,9 @@
     background-size: 100% 100%;
   }
 
-  .yi-xiang-box{
+  .yi-xiang-box {
     margin-top: 12vh;
-    &.single{
+    &.single {
       .xiang_kuang {
         background: url("./images/item_xiang_kuang_black.png");
         background-size: cover;
@@ -932,7 +940,7 @@
         }
       }
     }
-    &.double{
+    &.double {
       display: flex;
       width: 200px;
       margin: 0 auto;
