@@ -97,7 +97,7 @@
 
         <div class="buttons">
           <div class="button" @click="jibai()">上香</div>
-          <div class="button" @click="jibai()">点烛</div>
+          <div class="button" @click="dianlazu()">点烛</div>
           <div class="button" @click="shaozhi()">纸钱</div>
           <div class="button" @click="flower()">送花</div>
           <div class="button" @click="more()">更多</div>
@@ -129,6 +129,7 @@
     components: {},
     computed: {},
     methods: {
+      
       //购买，通用
       buy(productId, callback){
         let that = this;
@@ -151,6 +152,7 @@
           this.$toast(error.message || error.error);
         });
       },
+
       //祭拜
       jibai() {
         this.buy('package-shang-xiang-ji-bai', ()=>{
@@ -164,17 +166,17 @@
           }, 3000)
         });
       },
+
       //点烛
       dianlazu() {
-        var dom1 = document.getElementById("zu-huo-1");
-        var dom2 = document.getElementById("zu-huo-2");
-        dom1.style.visibility = 'visible'
-        dom2.style.visibility = 'visible'
-        setTimeout(function () {
-          dom1.style.visibility = 'hidden';
-          dom2.style.visibility = 'hidden';
-        }, 30000)
+        this.buy('item-la-zu', ()=>{
+          var dom1 = document.getElementById("zu-huo-1");
+          var dom2 = document.getElementById("zu-huo-2");
+          dom1.style.visibility = 'visible'
+          dom2.style.visibility = 'visible'
+        });
       },
+
       //送花
       flower() {
         this.buy('item-xuan-hua', ()=>{
@@ -185,13 +187,13 @@
           }, 5000)
         });
       },
+
       //纸钱
       shaozhi() {
-        var dom = document.getElementById("big-fire");
-        dom.style.visibility = 'visible';
-        setTimeout(function () {
-          dom.style.visibility = 'hidden';
-        }, 5 * 6 * 1000)
+        this.buy('item-zhi-qian', ()=>{
+          var dom = document.getElementById("big-fire");
+          dom.style.visibility = 'visible';
+        });
       },
 
       more() {
@@ -1339,7 +1341,7 @@
     .message {
       font-size: 12px;
       color: white;
-      background: #000000a8;
+      background: rgba(50,50,51,.88);
       border-radius: 0px 5px 5px 0px;
       padding: 3px 8px 3px 10px;
       margin-bottom: 3px;
