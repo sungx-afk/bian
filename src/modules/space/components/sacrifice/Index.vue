@@ -142,6 +142,15 @@
               dom.style.visibility = 'hidden';
               xiangDom.style.visibility = 'visible';
             }, 3000)
+          } else {
+            if (resp.errorCode == -9999) {
+              this.$toast(resp.error);
+              setTimeout(()=>{
+                Link(`/store/charge?space_id=${this.spaceId}`);
+              }, 2000)
+            } else {
+
+            }
           }
         }, (error) => {
           this.$toast(error.message || error.error);
