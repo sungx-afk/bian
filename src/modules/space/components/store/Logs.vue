@@ -13,14 +13,14 @@
           v-for="item in list"
           :key="item.id">
           <div class="item-content">
-            <div class="item-content-left">
-              {{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}
+            <div class="item-content-top">
+              <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
+              <span>余额：{{item.after}}云币</span>
             </div>
-            <div class="item-content-middle">
-              <span class="summary">{{item.summary}}</span><span>{{item.change}}云币</span>
-            </div>
-            <div class="item-content-right">
-              余额：{{item.after}}云币
+            <div class="item-content-bottom">
+              <span class="summary">{{item.summary}}</span>
+              <span v-if="item.type == 'CONSUME'"> -{{item.change}}云币</span>
+              <span v-if="item.type == 'RECHARGE'"> +{{item.change}}云币</span>
             </div>
           </div>
         </van-cell>
@@ -86,18 +86,15 @@
     .list-cell{
       .item-content{
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        .item-content-left{
-
+        flex-direction: column;
+        .item-content-top{
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
-        .item-content-middle{
-          .summary{
-
-          }
-        }
-        .item-content-right{
-
+        .item-content-bottom{
+          margin-top: 10px;
+          color: @FONT_THIRD_COLOR;
         }
       }
     }
