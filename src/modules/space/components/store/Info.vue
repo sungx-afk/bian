@@ -88,15 +88,12 @@
           this.updateCouplets()
         },
         updateCouplets(){
-          let sid = this.spaceId
-          let uid = this.space.spaceUsers[0].id
           $API.space.modifyCouplets({
-            sid,
-            uid,
+            sid:this.spaceId,
             left:this.coupletsLeft,
             right:this.coupletsRight
           },rsp=>{
-
+            eventHub.$emit(constant.EVENT_UPDATE_COUPLETS_SUCCESS,{left:this.coupletsLeft,right:this.coupletsRight})
           })
         },
         updateInfo(){
@@ -133,6 +130,7 @@
             $API.space.buyProduct({productId,spaceId,spaceUserId},rsp=>{
               this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
               this.space.creator.point = this.space.creator.point - product.point
+              eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
             },error=>{
               this.$toast("购买失败，请稍后重试")
             })

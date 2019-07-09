@@ -183,12 +183,12 @@ export default {
     })
   },
 
-  modifyCouplets({sid,uid,left,right},successCb, errorCb){
+  modifyCouplets({sid,left,right},successCb, errorCb){
     let param = {
       left,
       right
     }
-    $axios.put(`/spaces/${sid}/space_users/${uid}/couplets`, JSON.stringify(param)).then(response => {
+    $axios.put(`/spaces/${sid}/couplets`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

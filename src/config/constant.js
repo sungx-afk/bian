@@ -12,6 +12,8 @@ module.exports = {
   EVENT_IMAGE_CROP_COMPLETE:'image_cropper_complete',
   EVENT_UPDATE_SPACE_USER_SUCCESS:'update_space_user_success',
   EVENT_PAY_SUCCESS:'pay_success',
+  EVENT_UPDATE_COUPLETS_SUCCESS:'update_couplets_success',
+  EVENT_BUY_PRODUCT_SUCCESS:'buy_product_success',
 
   KEY_TOKEN:'token',
   KEY_MEMORIAL_MEETING_SHOW:'memorial_meeting_show',
