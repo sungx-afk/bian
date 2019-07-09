@@ -133,7 +133,7 @@
       huaQuan() {
         return this.space && this.space.products.filter((item) => item == 'item-hua-quan');
       },
-      item01(){
+      item01() {
         return this.item_01;
       },
       item02() {
@@ -148,7 +148,7 @@
       //购买，通用
       buy(productId, callback) {
         let that = this;
-        $API.space.buy({spaceId: that.spaceId, productId: 'item-xuan-hua'}, (resp) => {
+        $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
           if (resp && !resp.error) {
             if (callback && typeof callback == 'function') {
               callback();
