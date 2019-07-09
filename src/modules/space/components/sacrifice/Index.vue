@@ -174,7 +174,6 @@
           var dom = document.getElementById("jibai");
           let xiangDom = document.querySelector('.item-xiang-lu-box');
           dom.style.visibility = 'visible';
-          this.dianlazu();
           setTimeout(function () {
             dom.style.visibility = 'hidden';
             xiangDom.style.visibility = 'visible';
