@@ -30,14 +30,14 @@
           <div id="item_zuo_zi_box_inner" style="padding: 0em 4vw">
             <div id="item_zuo_zi">
               <div class="inner">
-                <div class="item item-01"></div>
-                <div class="item item-02"></div>
-                <div class="item item-03"></div>
-                <div class="item item-04"></div>
-                <div class="item item-01"></div>
-                <div class="item item-02"></div>
-                <div class="item item-03"></div>
-                <div class="item item-04"></div>
+                <div class="item item-yue-bing"></div>
+                <div class="item item-kao-ya"></div>
+                <div class="item item-xuan-hua"></div>
+                <div class="item item-wu-liang-ye"></div>
+                <div class="item item-yue-bing"></div>
+                <div class="item item-kao-ya"></div>
+                <div class="item item-xuan-hua"></div>
+                <div class="item item-wu-liang-ye"></div>
               </div>
             </div>
           </div>
@@ -47,9 +47,9 @@
           <div id="item_zuo_zi_box_inner_2">
             <div id="item_zuo_zi_2">
               <div class="inner" style="top: -7vw;">
-                <div class="item item-01"></div>
-                <div class="item item-02"></div>
-                <div class="item item-03"></div>
+                <div class="item item-yue-bing"></div>
+                <div class="item item-kao-ya"></div>
+                <div class="item item-xuan-hua"></div>
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
@@ -62,9 +62,9 @@
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
-                <div class="item item-03"></div>
-                <div class="item item-04"></div>
-                <div class="item item-01"></div>
+                <div class="item item-xuan-hua"></div>
+                <div class="item item-wu-liang-ye"></div>
+                <div class="item item-yue-bing"></div>
               </div>
             </div>
           </div>
@@ -78,9 +78,8 @@
         </div>
 
         <div class="messages">
-          <div class="message">张三上香一次</div>
-          <div class="message">李四上香一次</div>
-          <div class="message">张三点烛一次</div>
+          <div v-for="(item, index) in messages" class="message" :style="{animationDelay: `${index*1000}ms`}">{{item}}
+          </div>
         </div>
 
 
@@ -88,7 +87,7 @@
           <div class="button" @click="jibai()">上香祭拜</div>
           <div class="button" @click="flower()">送花</div>
           <div class="button" @click="shaozhi()">烧纸</div>
-          <div class="button">更多</div>
+          <div class="button" @click="more()">更多</div>
         </div>
       </div>
 
@@ -98,17 +97,20 @@
         <img src="./images/baifo.gif" style="width: 250px;height: 366px;"/>
       </div>
 
-      <div id="flower"></div>
+      <div id="item-xuan-hua" class="item-xuan-hua"></div>
     </div>
   </div>
 </template>
 <script>
   import {mapGetters} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {Link} from '@/config/utils';
 
   export default {
     data() {
-      return {}
+      return {
+        spaceId: 0,
+        messages: ['张三上香一次', '李四上香一次', '张三点烛一次']
+      }
     },
     components: {},
     computed: {},
@@ -137,7 +139,7 @@
       },
       //送花
       flower() {
-        var dom = document.getElementById("flower");
+        var dom = document.getElementById("item-xuan-hua");
         dom.style.animationName = 'flowerIn';
         setTimeout(function () {
           dom.style.animationName = '';
@@ -150,6 +152,10 @@
         setTimeout(function () {
           dom.style.visibility = 'hidden';
         }, 5 * 6 * 1000)
+      },
+
+      more(){
+        Link(`/store/info?spaceId=${this.space.id}`)
       },
 
       initBigFire() {
@@ -179,8 +185,6 @@
             throw new TypeError("Cannot call a class as a function");
           }
         }
-
-        console.clear();
 
         var $ = {};
 
@@ -850,9 +854,10 @@
       }
     },
     created() {
+      console.log("route", this.$route);
     },
     mounted() {
-      console.clear();
+      this.spaceId = this.$route.params.id;
       this.initZhuHuo();
       this.initBigFire();
     }
@@ -1103,21 +1108,21 @@
     position: relative;
   }
 
-  .item.item-01 {
+  .item.item-yue-bing {
     background-image: url("./images/item_pan_bing.png") !important;
     background-position: 0px 3px;
   }
 
-  .item.item-02 {
+  .item.item-kao-ya {
     background-image: url("./images/item_pan_ya.png") !important;
     background-position: 0px 3px;
   }
 
-  .item.item-03 {
+  .item.item-xuan-hua {
     background-image: url("./images/item_hua_01.png") !important;
   }
 
-  .item.item-04 {
+  .item.item-wu-liang-ye {
     background-image: url("./images/item_jiu_01.png") !important;
   }
 
@@ -1136,8 +1141,9 @@
       position: absolute;
       left: 0px;
       right: 0px;
-      bottom: 6vw;
+      bottom: 8vw;
       visibility: hidden;
+      margin-left: 1vw;
       .item-xiang {
         position: relative;
         background-image: url("./images/item_xiang.png") !important;
@@ -1187,7 +1193,7 @@
     font-weight: bold;
   }
 
-  #flower {
+  #item-xuan-hua.item-xuan-hua {
     background-image: url("./images/item_hua_01.png") !important;
     background-size: 100% 100%;
     width: 10vw;
@@ -1228,6 +1234,21 @@
     }
   }
 
+  @keyframes messageIn {
+    0% {
+      transform: translateX(-100%) translateY(50vw);
+      visibility: hidden;
+    }
+    20% {
+      transform: translateX(0) translateY(50vw);
+      visibility: visible;
+    }
+    100% {
+      transform: translateX(0) translateY(0vw);
+      visibility: visible;
+    }
+  }
+
   .messages {
     padding: 15px 15px 15px 0px;
     position: absolute;
@@ -1243,6 +1264,12 @@
       border-radius: 0px 5px 5px 0px;
       padding: 3px 8px 3px 10px;
       margin-bottom: 3px;
+      animation-duration: 2s;
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: forwards;
+      animation-name: messageIn;
+      transform: translateX(-100%) translateY(50vw);
+      visibility: hidden;
     }
   }
 </style>
