@@ -54,6 +54,7 @@
       },
       select(photo){
         let info = {}
+        info.identifier = this.info.identifier
         info.content = photo.content
         info.name = photo.file.name
         info.size = photo.file.size
