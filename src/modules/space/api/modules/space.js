@@ -287,4 +287,16 @@ export default {
       errorCb && errorCb(error)
     });
   },
+  buyProduct({productId,spaceId,spaceUserId},successCb, errorCb){
+    let param = {
+      productId,
+      spaceId,
+      spaceUserId
+    }
+    $axios.post(`/buy`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  }
 }

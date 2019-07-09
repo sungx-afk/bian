@@ -29,21 +29,9 @@
           <span>账号余额：</span><span class="charge-remain">{{space && space.creator && space.creator.point }}</span><span>云币</span>
           <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 10云币）</van-button>
         </van-cell>
-        <van-cell>
-          <span>花圈装饰（永久）</span>
-          <van-button size="small" class="purchase-btn" :icon="iconMoney">50</van-button>
-        </van-cell>
-        <van-cell>
-          <span>香烛长燃（1年）</span>
-          <van-button size="small" class="purchase-btn" :icon="iconMoney">500</van-button>
-        </van-cell>
-        <van-cell>
-          <span>瓜果贡品（7天）</span>
-          <van-button size="small" class="purchase-btn" :icon="iconMoney">5</van-button>
-        </van-cell>
-        <van-cell>
-          <span>纸钱（当日）</span>
-          <van-button size="small" class="purchase-btn" :icon="iconMoney">5</van-button>
+        <van-cell v-for="product in products" :key="product.id">
+          <span>{{product.name}}</span>
+          <van-button size="small" class="purchase-btn" :icon="iconMoney" @click="buyProduct(product)">{{product.point}}</van-button>
         </van-cell>
       </van-cell-group>
     </div>
@@ -61,6 +49,7 @@
         return{
           spaceId:'',
           space:'',
+          products:[],
           coupletsLeft:'',
           coupletsRight:'',
           iconMoney:'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/07/1562485353014/money.png'
@@ -113,6 +102,44 @@
         updateInfo(){
           this.getDetail()
         },
+        initProducts(){
+          this.products = [{
+            id:'package-hua-quan',
+            name:'花圈装饰（永久）',
+            point:50
+          },{
+            id:'package-xiang-zhu',
+            name:'香烛长燃（1年）',
+            point:500
+          },{
+            id:'package-gua-guo',
+            name:'瓜果贡品（7天）',
+            point:5
+          },{
+            id:'item-zhi-qian',
+            name:'纸钱（当日）',
+            point:5
+          }]
+        },
+        buyProduct(product){
+          if (this.space){
+            if (this.space.creator.point < product.point){
+              this.$toast("余额不足，请先进行充值")
+              return
+            }
+            let productId = product.id
+            let spaceId = this.spaceId
+            let spaceUserId = this.space.spaceUsers[0].id
+            $API.space.buyProduct({productId,spaceId,spaceUserId},rsp=>{
+              this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
+              this.space.creator.point = this.space.creator.point - product.point
+            },error=>{
+              this.$toast("购买失败，请稍后重试")
+            })
+          }else{
+            this.$toast("获取信息失败，请稍后重试")
+          }
+        },
         registerEvent(){
           eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
         }
@@ -127,6 +154,7 @@
             })
           }
         }
+        this.initProducts()
         this.registerEvent()
       },
       beforeDestroy() {
