@@ -183,11 +183,7 @@ export default {
     })
   },
 
-<<<<<<< HEAD
-  modifyCouplets({sid, uid, left, right}, successCb, errorCb) {
-=======
   modifyCouplets({sid,left,right},successCb, errorCb){
->>>>>>> f0839941bbb7f68f49364d24373782a3b05c5afe
     let param = {
       left,
       right
