@@ -129,19 +129,14 @@
     components: {},
     computed: {},
     methods: {
-      //祭拜
-      jibai() {
+      //购买，通用
+      buy(productId, callback){
         let that = this;
-        $API.space.buy({spaceId: that.spaceId, productId: 'package-shang-xiang-ji-bai'}, (resp) => {
+        $API.space.buy({spaceId: that.spaceId, productId: 'item-xuan-hua'}, (resp) => {
           if (resp && !resp.error) {
-            var dom = document.getElementById("jibai");
-            let xiangDom = document.querySelector('.item-xiang-lu-box');
-            dom.style.visibility = 'visible';
-            this.dianlazu();
-            setTimeout(function () {
-              dom.style.visibility = 'hidden';
-              xiangDom.style.visibility = 'visible';
-            }, 3000)
+            if(callback && typeof callback == 'function'){
+              callback();
+            }
           } else {
             if (resp.errorCode == -9999) {
               this.$toast(resp.error);
@@ -149,11 +144,24 @@
                 Link(`/store/charge?space_id=${this.spaceId}`);
               }, 2000)
             } else {
-
+              this.$toast(error.message || error.error);
             }
           }
         }, (error) => {
           this.$toast(error.message || error.error);
+        });
+      },
+      //祭拜
+      jibai() {
+        this.buy('package-shang-xiang-ji-bai', ()=>{
+          var dom = document.getElementById("jibai");
+          let xiangDom = document.querySelector('.item-xiang-lu-box');
+          dom.style.visibility = 'visible';
+          this.dianlazu();
+          setTimeout(function () {
+            dom.style.visibility = 'hidden';
+            xiangDom.style.visibility = 'visible';
+          }, 3000)
         });
       },
       //点烛
@@ -169,13 +177,15 @@
       },
       //送花
       flower() {
-        var dom = document.getElementById("item-xuan-hua");
-        dom.style.animationName = 'flowerIn';
-        setTimeout(function () {
-          dom.style.animationName = '';
-        }, 5000)
+        this.buy('item-xuan-hua', ()=>{
+          var dom = document.getElementById("item-xuan-hua");
+          dom.style.animationName = 'flowerIn';
+          setTimeout(function () {
+            dom.style.animationName = '';
+          }, 5000)
+        });
       },
-      //送花
+      //纸钱
       shaozhi() {
         var dom = document.getElementById("big-fire");
         dom.style.visibility = 'visible';
