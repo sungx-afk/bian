@@ -474,6 +474,9 @@
         }
       }
     }
+    .van-cell:not(:last-child)::after{
+      border-bottom: 1px solid @BORDER_COLOR_1;
+    }
   }
 
 </style>
