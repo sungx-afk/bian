@@ -10,7 +10,7 @@
           v-model="coupletsLeft"
           @blur="leftInputBlur"
           label="上联"
-          maxlength="10"
+          maxlength="15"
           placeholder="请输入上联"
         ></van-field>
 
@@ -18,7 +18,7 @@
           v-model="coupletsRight"
           @blur="rightInputBlur"
           label="下联"
-          maxlength="10"
+          maxlength="15"
           placeholder="请输入下联">
         </van-field>
       </van-cell-group>
