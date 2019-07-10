@@ -44,6 +44,7 @@
                 <div v-for="(item, index) in item01"
                      v-if="index <8"
                      :key="index"
+                     :class="`${item.id}`"
                      class="item"
                 ></div>
               </div>
@@ -58,6 +59,7 @@
                 <div v-for="(item, index) in item02"
                      v-if="index<3"
                      :key="index"
+                     :class="`${item.id}`"
                      class="item"
                 ></div>
                 <div class="item item-la-zu">
@@ -75,6 +77,7 @@
                 <div v-for="(item, index) in item02"
                      v-if="index>=6 && index <=8"
                      :key="index"
+                     :class="`${item.id}`"
                      class="item"
                 ></div>
               </div>
@@ -118,6 +121,8 @@
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils';
 
+  const noItems = ['item-xuan-hua', 'item-kao-ya', 'item-yue-bing', 'item-mao-tai', 'item-wu-liang-ye'];
+
   export default {
     data() {
       return {
@@ -157,7 +162,7 @@
             if (resp.errorCode == -9999) {
               this.$toast(resp.error);
               setTimeout(() => {
-                Link(`/store/charge?space_id=${this.spaceId}`);
+                Link(`/store/info?space_id=${this.spaceId}`);
               }, 2000)
             } else {
               this.$toast(error.message || error.error);
@@ -184,11 +189,15 @@
       //点烛
       dianlazu() {
         this.buy('item-la-zu', () => {
-          var dom1 = document.getElementById("zu-huo-1");
-          var dom2 = document.getElementById("zu-huo-2");
-          dom1.style.visibility = 'visible'
-          dom2.style.visibility = 'visible'
+          this.showLaZuHuo();
         });
+      },
+
+      showLaZuHuo() {
+        var dom1 = document.getElementById("zu-huo-1");
+        var dom2 = document.getElementById("zu-huo-2");
+        dom1.style.visibility = 'visible'
+        dom2.style.visibility = 'visible'
       },
 
       //送花
@@ -219,6 +228,34 @@
         $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
           if (resp.id && resp.id > 0) {
             that.space = resp;
+            if (that.space.products.indexOf('item-la-zu') >= 0) {
+              this.showLaZuHuo();
+            }
+            if (that.space.products.indexOf('item-xiang') >= 0) {
+              let dom = document.querySelector('.item-xiang-lu-box');
+              dom.style.visibility = 'visible';
+            }
+            if (that.space.products.indexOf('item-zhi-qian') >= 0) {
+              console.log('点纸钱');
+              var dom = document.getElementById("big-fire");
+              dom.style.visibility = 'visible';
+            }
+            let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
+            items.forEach((item, index) => {
+              if (index < 8) {
+                that.item_01[index] = {
+                  id: item
+                }
+              } else if(index <11){
+                that.item_02[index-8] = {
+                  id: item
+                }
+              } else if(index <14){
+                that.item_02[index-5] = {
+                  id: item
+                }
+              }
+            })
           }
         }, (error) => {
           console.log(error);
@@ -1201,6 +1238,7 @@
     margin-right: 0px;
     background-size: 100% 100%;
     position: relative;
+    transition: all 0.5s;
   }
 
   .item.item-yue-bing {
