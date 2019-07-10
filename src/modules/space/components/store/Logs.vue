@@ -10,21 +10,23 @@
           :finished="finished"
           finished-text="没有更多数据了"
           @load="onLoadMoreData">
-          <van-cell class="list-cell"
-                    v-for="item in list"
-                    :key="item.id">
-            <div class="item-content">
-              <div class="item-content-top">
-                <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
-                <span>余额：{{item.after}}云币</span>
+          <template v-if="list && list.length > 0">
+            <van-cell class="list-cell"
+                      v-for="item in list"
+                      :key="item.id">
+              <div class="item-content">
+                <div class="item-content-top">
+                  <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
+                  <span>余额：{{item.after}}云币</span>
+                </div>
+                <div class="item-content-bottom">
+                  <span class="summary">{{item.summary}}</span>
+                  <span v-if="item.type == 'CONSUME'"> -{{item.change}}云币</span>
+                  <span v-if="item.type == 'RECHARGE'"> +{{item.change}}云币</span>
+                </div>
               </div>
-              <div class="item-content-bottom">
-                <span class="summary">{{item.summary}}</span>
-                <span v-if="item.type == 'CONSUME'"> -{{item.change}}云币</span>
-                <span v-if="item.type == 'RECHARGE'"> +{{item.change}}云币</span>
-              </div>
-            </div>
-          </van-cell>
+            </van-cell>
+          </template>
         </van-list>
       </div>
 

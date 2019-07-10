@@ -9,12 +9,10 @@
         </div>
       </div>
     </div>
-    <div class="view-history" @click="goLogs">充值和扣费记录</div>
   </div>
 </template>
 
 <script>
-  import {Link} from '@/config/utils'
     export default {
       name: "Charge",
       data(){
@@ -24,9 +22,6 @@
         }
       },
       methods:{
-        goLogs(){
-          Link(`/store/logs`)
-        },
         getPriceTag(){
           let param = {}
           if (this.isTest){
@@ -105,16 +100,6 @@
           }
         }
       }
-    }
-    .view-history{
-      background: #fff;
-      font-size: 14px;
-      color: #a9a9a9;
-      text-align: center;
-      width: 100%;
-      cursor: pointer;
-      padding: 10px 0 30px;
-      flex-shrink: 0;
     }
   }
 

@@ -35,6 +35,7 @@
         </van-cell>
       </van-cell-group>
     </div>
+    <div class="view-history" @click="goLogs">充值和扣费记录</div>
   </div>
 </template>
 
@@ -137,6 +138,9 @@
             this.$toast("获取信息失败，请稍后重试")
           }
         },
+        goLogs(){
+          Link(`/store/logs`)
+        },
         registerEvent(){
           eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
         }
@@ -164,6 +168,9 @@
   @import "~@/config/config.less";
   .info-container{
     background: @BG_GRAY;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     .header{
       position: relative;
       .header-bg{
@@ -212,6 +219,16 @@
           border: 1px solid @SECOND_THEME_COLOR;
         }
       }
+    }
+    .view-history{
+      margin-top: auto;
+      font-size: 14px;
+      color: #a9a9a9;
+      text-align: center;
+      width: 100%;
+      cursor: pointer;
+      padding: 10px 0 30px;
+      flex-shrink: 0;
     }
   }
 
