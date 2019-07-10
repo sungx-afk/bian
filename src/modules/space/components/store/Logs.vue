@@ -4,27 +4,30 @@
       <no-data></no-data>
     </template>
     <template v-else>
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多数据了"
-        @load="onLoadMoreData">
-        <van-cell class="list-cell"
-          v-for="item in list"
-          :key="item.id">
-          <div class="item-content">
-            <div class="item-content-top">
-              <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
-              <span>余额：{{item.after}}云币</span>
+      <div class="log-list">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多数据了"
+          @load="onLoadMoreData">
+          <van-cell class="list-cell"
+                    v-for="item in list"
+                    :key="item.id">
+            <div class="item-content">
+              <div class="item-content-top">
+                <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
+                <span>余额：{{item.after}}云币</span>
+              </div>
+              <div class="item-content-bottom">
+                <span class="summary">{{item.summary}}</span>
+                <span v-if="item.type == 'CONSUME'"> -{{item.change}}云币</span>
+                <span v-if="item.type == 'RECHARGE'"> +{{item.change}}云币</span>
+              </div>
             </div>
-            <div class="item-content-bottom">
-              <span class="summary">{{item.summary}}</span>
-              <span v-if="item.type == 'CONSUME'"> -{{item.change}}云币</span>
-              <span v-if="item.type == 'RECHARGE'"> +{{item.change}}云币</span>
-            </div>
-          </div>
-        </van-cell>
-      </van-list>
+          </van-cell>
+        </van-list>
+      </div>
+
     </template>
   </div>
 </template>
@@ -61,6 +64,7 @@
             }else{
               this.list = this.list.concat(rsp)
             }
+            that.noData = false
             if (that.list.length === 0){
               that.noData = true
               that.finished = true
@@ -69,9 +73,14 @@
             }
           },error=>{
             that.loading = false
+            that.finished = true
+            that.$toast("获取列表失败，请稍后重试")
           })
         },
         onLoadMoreData(){
+          if (this.finished) {
+            return
+          }
           let start = this.list.length
           this.getLogs(start)
         },
@@ -83,18 +92,24 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .charge-logs-container{
-    .list-cell{
-      .item-content{
-        display: flex;
-        flex-direction: column;
-        .item-content-top{
+    height: 100%;
+    background: @BG_WHITE;
+    .log-list{
+      height: 100%;
+      overflow-y: scroll;
+      .list-cell{
+        .item-content{
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .item-content-bottom{
-          margin-top: 10px;
-          color: @FONT_THIRD_COLOR;
+          flex-direction: column;
+          .item-content-top{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .item-content-bottom{
+            margin-top: 10px;
+            color: @FONT_THIRD_COLOR;
+          }
         }
       }
     }

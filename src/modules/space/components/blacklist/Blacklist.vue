@@ -58,11 +58,14 @@
             if (rsp && rsp.config && rsp.config.blackList){
               this.blacklist = rsp.config.blackList
             }
+            this.noData = false
             if (this.blacklist.length === 0){
               this.noData = true
             }
           },error=>{
             this.loading = false
+            this.finished = true
+            this.$toast("获取列表失败，请稍后重试")
           })
         },
         showMoreMenu(item){
@@ -91,6 +94,7 @@
             sid: this.spaceId,
             list: list
           }, rsp=>{
+            this.noData = false
             if (this.blacklist.length === 0){
               this.noData = true
             }

@@ -15,6 +15,8 @@
         autoCropWidth="200"
         autoCropHeight="200"
         fixed
+        centerBox
+        mode="cover"
       ></vue-cropper>
     </template>
 

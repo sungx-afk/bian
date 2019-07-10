@@ -69,7 +69,9 @@
             start = 0
           }
           $API.space.getSpaceVisitorList({
-              sid:that.space.id
+              sid:that.space.id,
+              start,
+              limit
             }, rsp=>{
             that.loading = false
             rsp = rsp.map(item=>{
@@ -85,6 +87,7 @@
             }else{
               this.list = this.list.concat(rsp)
             }
+            that.noData = false
             if (that.list.length === 0){
               that.noData = true
               that.finished = true
@@ -93,10 +96,12 @@
             }
           },error=>{
             that.loading = false
+            that.finished = true
+            that.$toast("获取列表失败，请稍后重试")
           })
         },
         onLoadMoreData(){
-          if (this.space){
+          if (this.space && !this.finished){
             let start = this.list.length
             this.getVisitorList(start)
           }
