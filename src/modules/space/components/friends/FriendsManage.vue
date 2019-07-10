@@ -81,6 +81,7 @@
           }, rsp=>{
             this.space = rsp
             this.friends = rsp.config.friends
+            this.noData = false
             if(this.friends.length === 0){
               this.noData = true
             }

@@ -64,6 +64,7 @@
             }else{
               this.list = this.list.concat(rsp)
             }
+            that.noData = false
             if (that.list.length === 0){
               that.noData = true
               that.finished = true
@@ -72,9 +73,14 @@
             }
           },error=>{
             that.loading = false
+            that.finished = true
+            that.$toast("获取列表失败，请稍后重试")
           })
         },
         onLoadMoreData(){
+          if (this.finished) {
+            return
+          }
           let start = this.list.length
           this.getLogs(start)
         },

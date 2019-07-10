@@ -102,6 +102,7 @@
             }else{
               this.list = this.list.concat(rsp)
             }
+            that.noData = false
             if (that.list.length === 0){
               that.noData = true
               that.finished = true
@@ -109,7 +110,9 @@
               that.finished = true
             }
           },error=>{
-            this.loading = false
+            that.loading = false
+            that.finished = true
+            that.$toast("获取列表失败，请稍后重试")
           })
         },
         convertDateTime(timestamp){
@@ -118,7 +121,7 @@
           return {date,time}
         },
         onLoadMoreData(){
-          if (this.space){
+          if (this.space && !this.finished){
             let start = this.list.length
             this.getSpaceEvents(start)
           }
