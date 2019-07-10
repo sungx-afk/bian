@@ -92,8 +92,8 @@
           </div>
         </div>
 
-        <div class="messages">
-          <div v-for="(item, index) in messages" class="message" :style="{animationDelay: `${index*1000}ms`}">{{item}}
+        <div class="messages" v-if="space && space.logs">
+          <div v-for="(item, index) in space.logs" class="message" :style="{animationDelay: `${index*100}ms`}">{{item}}
           </div>
         </div>
 
@@ -129,8 +129,7 @@
         item_01: new Array(8).fill({}),
         item_02: new Array(9).fill({}),
         spaceId: 0,
-        space: null,
-        messages: ['张三上香一次', '李四上香一次', '张三点烛一次']
+        space: null
       }
     },
     components: {},
@@ -155,6 +154,9 @@
         let that = this;
         $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
           if (resp && !resp.error) {
+            // if(resp.content){
+            //   that.space.logs.unshift(resp.content);
+            // }
             if (callback && typeof callback == 'function') {
               callback();
             }
@@ -175,6 +177,7 @@
 
       //祭拜
       jibai() {
+        let that = this;
         this.buy('package-shang-xiang-ji-bai', () => {
           var dom = document.getElementById("jibai");
           let xiangDom = document.querySelector('.item-xiang-lu-box');
@@ -182,14 +185,17 @@
           setTimeout(function () {
             dom.style.visibility = 'hidden';
             xiangDom.style.visibility = 'visible';
+            that.getSpaceDetail();
           }, 3000)
         });
       },
 
       //点烛
       dianlazu() {
+        let that = this;
         this.buy('item-la-zu', () => {
           this.showLaZuHuo();
+          that.getSpaceDetail();
         });
       },
 
@@ -202,20 +208,24 @@
 
       //送花
       flower() {
+        let that = this;
         this.buy('item-xuan-hua', () => {
           var dom = document.getElementById("item-xuan-hua");
           dom.style.animationName = 'flowerIn';
           setTimeout(function () {
             dom.style.animationName = '';
+            that.getSpaceDetail();
           }, 5000)
         });
       },
 
       //纸钱
       shaozhi() {
+        let that = this;
         this.buy('item-zhi-qian', () => {
           var dom = document.getElementById("big-fire");
           dom.style.visibility = 'visible';
+          that.getSpaceDetail();
         });
       },
 
@@ -996,17 +1006,17 @@
       .xiang_kuang {
         background: url("./images/item_xiang_kuang_black.png");
         background-size: cover;
-        width: 180px;
-        height: 230px;
+        width: 160px;
+        height: 200px;
         padding: 0;
         margin: 0 auto;
         position: relative;
         .yi_xiang {
           position: absolute;
-          left: 27px;
-          right: 14px;
-          top: 23px;
-          bottom: 28px;
+          left: 23px;
+          right: 15px;
+          top: 20px;
+          bottom: 23px;
           background: url('./images/item_yi_xiang.png');
           background-size: cover !important;
         }
@@ -1085,8 +1095,8 @@
     text-align: center;
     vertical-align: middle;
     font-size: 14px;
-    padding: 15px 10px;
-    letter-spacing: 20px;
+    padding: 15px 4px;
+    letter-spacing: 8px;
     box-sizing: border-box;
     position: relative;
     font-weight: bold;
@@ -1397,7 +1407,7 @@
       border-radius: 0px 5px 5px 0px;
       padding: 3px 8px 3px 10px;
       margin-bottom: 3px;
-      animation-duration: 2s;
+      animation-duration: 1s;
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
       animation-name: messageIn;
