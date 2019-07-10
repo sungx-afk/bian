@@ -208,8 +208,8 @@
         }
         .purchase-btn{
           margin-left: auto;
-          color: @FONT_WHITE_COLOR;
-          background: @SECOND_THEME_COLOR;
+          color: @SECOND_THEME_COLOR;
+          border: 1px solid @SECOND_THEME_COLOR;
         }
       }
     }
