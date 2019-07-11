@@ -30,7 +30,7 @@
     <div class='send-comment-area' v-if="postComment">
       <div class='comment-input-container'>
         <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent"
-                   placeholder="说点什么吧..." maxlength="1000"></van-field>
+                   :placeholder="commentPlaceholder" maxlength="1000"></van-field>
       </div>
       <div class='send-btn-area'>
         <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
@@ -135,9 +135,11 @@
         isShowMoreMenu: false,
         menuList: [],
         postComment: false,
+        commentPlaceholder:'',
         commentContent: '',
         currentIssue: null,
-        currentComment: null
+        currentComment: null,
+        commentTimer:null
       }
     },
     methods: {
@@ -275,12 +277,20 @@
         })
       },
       commentBlur() {
-        setTimeout(() => {
+        this.commentTimer = setTimeout(() => {
           this.postComment = false
+          this.commentTimer = null
         }, 200)
       },
+      clearCommentTimer(){
+        if (this.commentTimer){
+          clearTimeout(this.commentTimer)
+        }
+      },
       comment(issue) {
+        this.clearCommentTimer()
         this.currentIssue = issue
+        this.commentPlaceholder = '说点什么吧...'
         this.postComment = true
         this.$nextTick(() => {
           this.$refs.comment.focus()
@@ -298,8 +308,13 @@
             this.$toast("该馆已禁止访客留言或评论")
             return
           }
+          this.clearCommentTimer()
           this.currentIssue = data.issue
           this.currentComment = data.comment
+          this.commentPlaceholder = '回复 '
+          if (this.currentComment.creator && this.currentComment.creator.name){
+            this.commentPlaceholder += this.currentComment.creator.name
+          }
           this.postComment = true
           this.$nextTick(() => {
             this.$refs.comment.focus()

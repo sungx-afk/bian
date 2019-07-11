@@ -106,7 +106,8 @@
           }
           if (!notice){
             this.deathNotice = `xxx同志因xx不幸于xxxx年xx月xx日在xx市逝世，终年xx岁。葬礼遵xxx遗愿，一切从简，特此讣告。
-            xxx`
+
+xxx`
           }else{
             this.deathNotice = notice
           }
