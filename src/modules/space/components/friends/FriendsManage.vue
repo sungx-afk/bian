@@ -119,6 +119,7 @@
                 let index = that.space.config.friends.findIndex(some=>some.id === friend.id)
                 if (index > -1){
                   that.space.config.friends.splice(index,1)
+                  eventHub.$emit(constant.EVENT_DELETE_FRIENDS_SUCCESS,friend.id)
                   if (that.space.config.friends.length === 0){
                     this.noData = true
                   }
@@ -163,6 +164,7 @@
                 let index = that.space.config.friends.findIndex(some=>some.id === item.id)
                 if (index > -1){
                   that.space.config.friends.splice(index,1)
+                  eventHub.$emit(constant.EVENT_DELETE_FRIENDS_SUCCESS,friend.id)
                 }
               })
               .catch((error) => {

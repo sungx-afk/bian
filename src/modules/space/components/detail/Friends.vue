@@ -18,6 +18,8 @@
   import IssueList from '../issue/IssueList'
   import {Link} from '@/config/utils'
 
+  import constant from '@/config/constant'
+
     export default {
       name: "Friends",
       props:{
@@ -36,7 +38,19 @@
       methods:{
         goMemberManage(){
           Link(`/space/friends/${this.space.id}`)
+        },
+        updateFriends(uid){
+          let index = this.space.config.friends.findIndex(some=>some.id === uid)
+          if (index > -1){
+            this.space.config.friends.splice(index,1)
+          }
         }
+      },
+      created() {
+        eventHub.$on(constant.EVENT_DELETE_FRIENDS_SUCCESS,this.updateFriends)
+      },
+      beforeDestroy() {
+        eventHub.$off(constant.EVENT_DELETE_FRIENDS_SUCCESS,this.updateFriends)
       }
     }
 </script>
