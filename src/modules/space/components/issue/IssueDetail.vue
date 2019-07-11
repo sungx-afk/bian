@@ -150,7 +150,7 @@
         },
         commentBlur(){
           setTimeout(()=>{
-            this.clearLastData()
+            this.postComment = false
           },200)
         },
         comment(issue){
