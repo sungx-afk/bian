@@ -73,9 +73,9 @@
             sid: this.spaceId,
           }, (rsp)=>{
             this.space = rsp
-            if (this.space.spaceUsers && this.space.spaceUsers.length > 0 && this.space.spaceUsers[0].couplets){
-              this.coupletsLeft = this.space.spaceUsers[0].couplets.left
-              this.coupletsRight = this.space.spaceUsers[0].couplets.right
+            if (this.space.couplets){
+              this.coupletsLeft = this.space.couplets.left
+              this.coupletsRight = this.space.couplets.right
             }
             cb && cb()
           }, error=>{
@@ -104,19 +104,19 @@
           this.products = [{
             id:'package-hua-quan',
             name:'花圈装饰（永久）',
-            point:50
+            point:60
           },{
             id:'package-xiang-zhu',
             name:'香烛长燃（1年）',
-            point:500
+            point:660
           },{
             id:'package-gua-guo',
             name:'瓜果贡品（7天）',
-            point:5
+            point:9
           },{
             id:'item-zhi-qian',
             name:'纸钱（当日）',
-            point:5
+            point:8
           }]
         },
         buyProduct(product){
