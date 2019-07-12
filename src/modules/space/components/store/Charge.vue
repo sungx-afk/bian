@@ -18,7 +18,7 @@
       data(){
         return{
           priceTag:[],
-          isTest:true
+          isTest:false
         }
       },
       methods:{
