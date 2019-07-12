@@ -233,6 +233,7 @@
         this.$store.dispatch('userStore/loginWithUid', {uid})
       },
       userChanged(){
+        alert('userChanged here')
         this.loginState = LoginState.DONE //完成登录
         this.dispatchWithQuery()
         this.getSpaceList()
@@ -296,11 +297,13 @@
       }
     },
     created() {
+      alert('created here')
       this.initLogin()
       this.registerEvent()
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
+      eventHub.$off(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
     }
   }
 </script>
