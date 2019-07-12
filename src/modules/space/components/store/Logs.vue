@@ -21,8 +21,13 @@
                 </div>
                 <div class="item-content-bottom">
                   <span class="summary">{{item.summary}}</span>
-                  <span v-if="item.type == 'CONSUME'"> -{{item.change}}云币</span>
-                  <span v-if="item.type == 'RECHARGE'"> +{{item.change}}云币</span>
+                  <span class="change-point">
+                    <span v-if="item.type == 'CONSUME'"> -</span>
+                    <span v-if="item.type == 'RECHARGE'"> +</span>
+                    {{item.change}}云币
+                  </span>
+
+
                 </div>
               </div>
             </van-cell>
@@ -107,10 +112,16 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            color: @FONT_SECOND_COLOR;
           }
           .item-content-bottom{
             margin-top: 10px;
             color: @FONT_THIRD_COLOR;
+            display: flex;
+            align-items: center;
+            .change-point{
+              margin-left: auto;
+            }
           }
         }
       }
