@@ -93,7 +93,7 @@
         </div>
 
         <div class="messages" v-if="space && space.logs">
-          <div v-for="(item, index) in space.logs" class="message" :style="{animationDelay: `${index*100}ms`}">{{item}}
+          <div v-for="(item, index) in space.logs" class="message">{{item}}
           </div>
         </div>
 
@@ -1379,16 +1379,20 @@
 
   @keyframes messageIn {
     0% {
-      transform: translateX(-100%) translateY(50vw);
-      visibility: hidden;
+      /*transform: translateX(-100%) translateY(50vw);*/
+      /*visibility: hidden;*/
+      opacity: 0;
+      transform: scale(0);
     }
-    20% {
-      transform: translateX(0) translateY(50vw);
-      visibility: visible;
-    }
+    /*20% {*/
+      /*!*transform: translateX(0) translateY(50vw);*!*/
+      /*!*visibility: visible;*!*/
+    /*}*/
     100% {
-      transform: translateX(0) translateY(0vw);
-      visibility: visible;
+      /*transform: translateX(0) translateY(0vw);*/
+      /*visibility: visible;*/
+      opacity: 1;
+      transform: scale(1);
     }
   }
 
@@ -1410,9 +1414,13 @@
       animation-duration: 1s;
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
-      animation-name: messageIn;
-      transform: translateX(-100%) translateY(50vw);
-      visibility: hidden;
+      /*animation-name: messageIn;*/
+      /*opacity: 0;*/
+      /*transform: scale(0);*/
+    }
+
+    &.locked {
+      animation-name: inherit;
     }
   }
 </style>
