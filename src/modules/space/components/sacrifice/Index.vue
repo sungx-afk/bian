@@ -93,7 +93,7 @@
         </div>
 
         <div class="messages" v-if="space && space.logs">
-          <div v-for="(item, index) in space.logs" class="message">{{item}}
+          <div v-for="(item, index) in space.logs" class="message" :style="{animationDelay: `${(space.logs.length - index)*300}ms`}">{{item}}
           </div>
         </div>
 
@@ -1413,14 +1413,15 @@
       margin-bottom: 3px;
       animation-duration: 1s;
       animation-timing-function: ease-in-out;
-      animation-fill-mode: forwards;
+      animation-fill-mode: both;
       /*animation-name: messageIn;*/
       /*opacity: 0;*/
       /*transform: scale(0);*/
-    }
-
-    &.locked {
-      animation-name: inherit;
+      &.locked {
+        animation-name: null;
+        opacity: 1;
+        transform: scale(1);
+      }
     }
   }
 </style>
