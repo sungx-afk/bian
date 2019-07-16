@@ -93,10 +93,13 @@
         </div>
 
         <div class="messages" v-if="space && space.logs">
-          <div v-for="(item, index) in space.logs" class="message" :style="{animationDelay: `${(space.logs.length - index)*300}ms`}">{{item}}
+          <div v-for="(item, index) in space.logs" class="message"
+               :style="{animationDelay: `${(space.logs.length - index)*300}ms`}">{{item}}
           </div>
         </div>
 
+
+        <canvas id="smoke-box"></canvas>
 
         <div class="buttons">
           <div class="button" @click="jibai()">上香</div>
@@ -256,12 +259,12 @@
                 that.item_01[index] = {
                   id: item
                 }
-              } else if(index <11){
-                that.item_02[index-8] = {
+              } else if (index < 11) {
+                that.item_02[index - 8] = {
                   id: item
                 }
-              } else if(index <14){
-                that.item_02[index-5] = {
+              } else if (index < 14) {
+                that.item_02[index - 5] = {
                   id: item
                 }
               }
@@ -965,6 +968,47 @@
         });
         app1.load(manifest);
         app2.load(manifest);
+      },
+
+      initSmoke() {
+        // var canvas = document.getElementById('smoke-box');
+        // var ctx = canvas.getContext('2d');
+        // canvas.width = document.body.clientWidth;
+        // canvas.height = document.body.clientWidth;
+        // var party = SmokeMachine(ctx, [54, 16.8, 18.2]);
+        // party.start(); // start animating
+        // console.log(canvas.width/2);
+        // party.addSmoke(canvas.width / 2, canvas.width / 2, 10); // wow we made smoke
+        // party.start();
+
+        var canvas = document.getElementById('smoke-box');
+        var ctx = canvas.getContext('2d')
+        canvas.width = innerWidth
+        canvas.height = innerHeight
+
+        var party = smokemachine(ctx, [18, 16, 54])
+        party.start() // start animating
+        party.setPreDrawCallback(function(dt){
+          party.addSmoke(innerWidth/2, innerHeight, .5)
+          canvas.width = innerWidth
+          canvas.height = innerHeight
+        })
+
+
+
+
+        // setTimeout(function () {
+        //   party.stop(); // stop animating
+        //   party.addSmoke(canvas.width * 0.6, canvas.width / 2, 100);
+        //   party.addSmoke(canvas.width / 2, canvas.width * 0.6, 20);
+        //   for (var i = 0; i < 10; i++) {
+        //     party.step(10) // pretend 10 ms pass and rerender
+        //   }
+        //   setTimeout(function () {
+        //     party.start()
+        //   }, 1000)
+        //
+        // }, 1000)
       }
     },
     created() {
@@ -975,6 +1019,7 @@
     mounted() {
       this.initZhuHuo();
       this.initBigFire();
+      this.initSmoke();
     }
   }
 </script>
@@ -998,6 +1043,13 @@
   .space-container {
     background: url("./images/bg.jpg");
     background-size: 100% 100%;
+  }
+
+  #smoke-box{
+    /*background: red;*/
+    z-index: 9;
+    position: absolute;
+    bottom: 0;
   }
 
   .yi-xiang-box {
@@ -1385,8 +1437,8 @@
       transform: scale(0);
     }
     /*20% {*/
-      /*!*transform: translateX(0) translateY(50vw);*!*/
-      /*!*visibility: visible;*!*/
+    /*!*transform: translateX(0) translateY(50vw);*!*/
+    /*!*visibility: visible;*!*/
     /*}*/
     100% {
       /*transform: translateX(0) translateY(0vw);*/
