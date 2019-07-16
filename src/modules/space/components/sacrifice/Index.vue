@@ -986,7 +986,7 @@
         canvas.width = innerWidth
         canvas.height = innerHeight
 
-        var party = smokemachine(ctx, [18, 16, 54])
+        var party = smokemachine(ctx, [160, 160, 160])
         party.start() // start animating
         party.setPreDrawCallback(function(dt){
           party.addSmoke(innerWidth/2, innerHeight, .5)
