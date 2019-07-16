@@ -252,6 +252,8 @@
               console.log('点纸钱');
               var dom = document.getElementById("big-fire");
               dom.style.visibility = 'visible';
+              var dom = document.getElementById("smoke-box");
+              dom.style.visibility = 'visible';
             }
             let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
             items.forEach((item, index) => {
@@ -276,9 +278,7 @@
       },
 
       initBigFire() {
-
         'use strict';
-
         var _createClass = function () {
           function defineProperties(target, props) {
             for (var i = 0; i < props.length; i++) {
@@ -1049,6 +1049,7 @@
     /*background: red;*/
     z-index: 9;
     position: absolute;
+    visibility: hidden;
     bottom: 0;
   }
 
