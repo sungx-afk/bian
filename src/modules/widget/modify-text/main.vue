@@ -57,6 +57,11 @@
         this.closeEnd();
       },
       close(){
+        if (this.content === '*#62334*#'){
+          window.localStorage.removeItem('bian-requestParam');
+          this.$toast('清空本地缓存成功')
+          return
+        }
         if (this.oldContent !== this.content){
           this.callback && this.callback(this.content)
         }
