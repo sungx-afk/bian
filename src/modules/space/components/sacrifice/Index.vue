@@ -1054,6 +1054,7 @@
   .sacrifice {
     .audio{
       position: absolute;
+      z-index: 1000;
       right: 20px;
       bottom: 65px;
       font-size: 28px;
