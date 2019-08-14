@@ -3,6 +3,7 @@
     <navigation>
       <router-view></router-view>
     </navigation>
+    <audio id="bgMusic" preload hidden loop="loop"></audio>
   </div>
 </template>
 

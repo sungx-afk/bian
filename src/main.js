@@ -35,10 +35,45 @@ Vue.config.productionTip = false
 import {Link} from '@/config/utils'
 
 Vue.mixin({
+  data(){
+    return{
+      bgm:[
+        "http://app01.yugusoft.com/ftask/api/file/down/PP1pYJnLgFVTtgTWu6dNrL.mp3"
+      ],
+      currentAudioTime:0
+    }
+  },
   methods: {
     viewIndexPage(replace){
       let linkReplace = replace || false;
       Link(url,{},linkReplace)
+    },
+    playBgm(seek){
+      let audio = document.getElementById('bgMusic');
+      if (audio){
+        audio.src = this.bgm[0]
+        if (seek === 0){//重新加载音频
+          audio.currentTime = 0
+        }else{
+          audio.currentTime = this.currentAudioTime
+        }
+        audio.play();
+        setTimeout(()=>{
+          eventHub.$emit("audio-play",'play')
+        },500)
+      }
+    },
+    stopBgm(quit){
+      let audio = document.getElementById('bgMusic');
+      if (audio){
+        audio.pause();
+        if (quit){
+          this.currentAudioTime = 0;
+        }else{
+          this.currentAudioTime = audio.currentTime
+        }
+        eventHub.$emit("audio-play",'stop')
+      }
     }
   }
 })

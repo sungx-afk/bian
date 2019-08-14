@@ -29,6 +29,27 @@ export default {
       errorCb &&  errorCb(error)
     });
   },
+  setUserSetting({key,value},successCb, errorCb){
+    let param = {
+      key,
+      value
+    }
+    $axios.post(`/users/setting`,JSON.stringify(param)).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb &&  errorCb(error)
+    });
+  },
+  getUserSetting({key},successCb, errorCb){
+    let param = {
+      key
+    }
+    $axios.get(`/users/setting?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb &&  errorCb(error)
+    });
+  },
   getJsAuthSignature({url},successCb, errorCb){
     // url = encodeURIComponent(url)
     let param = {

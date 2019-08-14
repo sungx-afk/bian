@@ -84,6 +84,7 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
+        userSetting:'userStore/userSetting'
       }),
       isIPhoneX(){
         return false
@@ -219,7 +220,17 @@
         return result
       },
       goSacrifice(){
+        this.tryAutoPlay()
         Link(`/space/sacrifice/${this.spaceId}`)
+      },
+      tryAutoPlay(){
+        //判断选定的是否开启自动播放音频
+        debugger
+        let playState = this.userSetting['bgm_play_state']
+        let needPlay = playState === 'play' || playState === undefined
+        if (needPlay){
+          this.playBgm(0)
+        }
       },
       registerEvent(){
 
@@ -237,7 +248,7 @@
 
           }
         })
-      }
+      },
     },
     created() {
       if(this.$route.params.id){

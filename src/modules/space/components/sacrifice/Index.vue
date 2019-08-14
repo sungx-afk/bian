@@ -118,10 +118,11 @@
 
       <div id="item-xuan-hua" class="item-xuan-hua"></div>
     </div>
+    <div class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils';
 
   const noItems = ['item-xuan-hua', 'item-kao-ya', 'item-yue-bing', 'item-mao-tai', 'item-wu-liang-ye'];
@@ -132,7 +133,8 @@
         item_01: new Array(8).fill({}),
         item_02: new Array(9).fill({}),
         spaceId: 0,
-        space: null
+        space: null,
+        playState:'stop'
       }
     },
     components: {},
@@ -151,7 +153,9 @@
       }
     },
     methods: {
-
+      ...mapActions({
+        setUserSetting: 'userStore/setUserSetting',
+      }),
       //购买，通用
       buy(productId, callback) {
         let that = this;
@@ -1009,17 +1013,37 @@
         //   }, 1000)
         //
         // }, 1000)
+      },
+      togglePlayBgm(){
+        if (this.playState === 'play'){
+          this.stopBgm()
+          this.setUserSetting({key:'bgm_play_state',value:'stop'})
+        }else if (this.playState === 'stop'){
+          this.playBgm()
+          this.setUserSetting({key:'bgm_play_state',value:'play'})
+        }
+      },
+      updatePlayState(state){
+        this.playState = state
+      },
+      registerEvent(){
+        eventHub.$on('audio-play',this.updatePlayState)
       }
     },
     created() {
       this.spaceId = this.$route.params.id;
       console.log(this.spaceId);
       this.getSpaceDetail();
+      this.registerEvent()
     },
     mounted() {
       this.initZhuHuo();
       this.initBigFire();
       this.initSmoke();
+    },
+    beforeDestroy() {
+      this.stopBgm(true)
+      eventHub.$off('audio-play',this.updatePlayState)
     }
   }
 </script>
@@ -1028,7 +1052,26 @@
   @import "~@/config/config.less";
 
   .sacrifice {
-    //
+    .audio{
+      position: absolute;
+      right: 20px;
+      bottom: 50px;
+      font-size: 28px;
+      font-weight: bold;
+      width: 30px;
+      height: 30px;
+      color: white;
+      &.anim{
+        animation: rotate 3s linear infinite;
+        animation-play-state:paused;
+        @keyframes rotate{from{transform: rotate(0deg);transform-origin:50% 50%;}
+          to{transform: rotate(359deg);transform-origin:50% 50%;}
+        }
+      }
+      &.playing{
+        animation-play-state:running;
+      }
+    }
   }
 
   html, body {

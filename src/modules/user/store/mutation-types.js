@@ -1,2 +1,4 @@
 export const UPDATE_USER = 'UPDATE_USER'
 export const TOKEN_EXPIRE = 'TOKEN_EXPIRE'
+export const SET_USER_SETTING = 'SET_USER_SETTING'
+export const GET_USER_SETTING = 'GET_USER_SETTING'
