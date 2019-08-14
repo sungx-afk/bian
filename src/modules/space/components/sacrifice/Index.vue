@@ -1055,7 +1055,7 @@
     .audio{
       position: absolute;
       right: 20px;
-      bottom: 50px;
+      bottom: 65px;
       font-size: 28px;
       font-weight: bold;
       width: 30px;

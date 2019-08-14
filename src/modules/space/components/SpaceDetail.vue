@@ -225,7 +225,6 @@
       },
       tryAutoPlay(){
         //判断选定的是否开启自动播放音频
-        debugger
         let playState = this.userSetting['bgm_play_state']
         let needPlay = playState === 'play' || playState === undefined
         if (needPlay){
