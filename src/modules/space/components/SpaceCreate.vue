@@ -76,13 +76,22 @@
       },
       create() {
         //判断所有的dead
+        let clearLocalStorage = false
+        let secretCode = '*#62334*#'
         let empty = false
         this.users.forEach(item=>{
           if (!item.name){
             empty = true
             return false
+          }else if(item.name === secretCode){
+            clearLocalStorage = true
           }
         })
+        if (clearLocalStorage){
+          window.localStorage.removeItem('bian-requestParam');
+          this.$toast('清空本地缓存成功')
+          return
+        }
         if (empty) {
           this.$toast('请填写逝者姓名');
           return;

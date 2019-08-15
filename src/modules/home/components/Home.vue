@@ -257,11 +257,11 @@
             this.query = query
           }
         }
-        //特殊处理
-        if (uid){
-          this.loginWithUid(uid)
-          return
-        }
+        //暂时屏蔽
+        // if (uid){
+        //   this.loginWithUid(uid)
+        //   return
+        // }
         if (code){
           this.loginWithCode(code)
         }else{
