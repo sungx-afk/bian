@@ -11,12 +11,11 @@
       <vue-cropper
         ref="cropper"
         :img="info.content"
-        autoCrop
-        autoCropWidth="200"
-        autoCropHeight="200"
-        fixed
-        centerBox
-        mode="cover"
+        :autoCrop="option.autoCrop"
+        :fixed="option.fixed"
+        :fixedNumber="option.fixedNumber"
+        :centerBox="option.centerBox"
+        :mode="option.mode"
       ></vue-cropper>
     </template>
 
@@ -36,6 +35,13 @@
     data(){
       return{
         info:null,
+        option:{
+          mode:'cover',
+          autoCrop: true,
+          centerBox: true,
+          fixed: true,
+          fixedNumber: [122, 157]
+        }
       }
     },
     computed:{

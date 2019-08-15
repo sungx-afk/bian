@@ -189,8 +189,8 @@
       justify-content: center;
       padding: 10px 0px;
       img{
-        width: 140px;
-        height: 140px;
+        width: 122px;
+        height: 157px;
       }
       .loading-wrapper{
         position: absolute;

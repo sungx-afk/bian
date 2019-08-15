@@ -282,8 +282,8 @@
       margin:2px 0px 10px;
       padding:10px 0px;
       .image{
-        width: 140px;
-        height: 140px;
+        width: 122px;
+        height: 157px;
         margin:0 5px;
       }
       .tombstone{
