@@ -1,7 +1,7 @@
 <template>
   <div class='nodata-container'>
     <img class="image" src="~@/modules/images/nodata.png" />
-    <span class="text">{{text || '暂无数据'}}</span>
+    <span class="text">{{text || '爱，永存'}}</span>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
       props: {
         text:{
           type:String,
-          default:'暂无数据'
+          default:''
         }
       },
       methods:{
@@ -29,11 +29,11 @@
     align-items: center;
     padding-top:30%;
     .image{
-      width: 60px;
-      height: 60px;
+      width: 100px;
+      height: 100px;
     }
     .text{
-      font-size: 13px;
+      font-size: 16px;
       color: #a9a9a9;
     }
   }
