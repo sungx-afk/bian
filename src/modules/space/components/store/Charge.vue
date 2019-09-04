@@ -41,7 +41,9 @@
           param.price_tag_id = item.id
           $API.space.placeOrder(param,rsp=>{
             this.wechatPay(rsp).then((res)=>{
-              this.$toast("充值成功")
+              if (res === 0){
+                this.$toast("充值成功")
+              }
             }).catch(error=>{
               this.$toast(error.errMsg)
             })

@@ -82,7 +82,7 @@ export function wechatPay(payData){
       console.log("auth signature url:",url)
       let ret = await getJsAuthSignature(url)
       let config = Object.assign({
-        debug: true,
+        debug: false,
         jsApiList: ['chooseWXPay']
       }, {
         appId: ret.appid, //公众号的唯一标识
