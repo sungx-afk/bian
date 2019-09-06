@@ -245,7 +245,7 @@
       initLogin(){
         let query = this.$route.query
         let code = ''
-        let uid = ''
+        let uid = '100001'
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
@@ -258,10 +258,10 @@
           }
         }
         //暂时屏蔽
-        // if (uid){
-        //   this.loginWithUid(uid)
-        //   return
-        // }
+        if (uid){
+          this.loginWithUid(uid)
+          return
+        }
         if (code){
           this.loginWithCode(code)
         }else{

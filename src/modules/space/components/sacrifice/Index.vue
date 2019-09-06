@@ -995,9 +995,10 @@
         var party = smokemachine(ctx, [160, 160, 160])
         party.start() // start animating
         party.setPreDrawCallback(function(dt){
-          party.addSmoke(innerWidth/2, innerHeight, .5)
+          party.addSmoke(innerWidth/2, innerHeight, .35)
           canvas.width = innerWidth
-          canvas.height = innerHeight
+          canvas.height = innerHeight/2
+          canvas.style.opacity = 0.75;
         })
 
 
