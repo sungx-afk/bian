@@ -118,11 +118,10 @@
 
       <div id="item-xuan-hua" class="item-xuan-hua"></div>
     </div>
-    <div class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
   </div>
 </template>
 <script>
-  import {mapGetters,mapActions} from 'vuex';
+
   import {Link} from '@/config/utils';
   import constant from '@/config/constant'
 
@@ -135,8 +134,7 @@
         item_01: new Array(8).fill({}),
         item_02: new Array(9).fill({}),
         spaceId: 0,
-        space: null,
-        playState:'stop'
+        space: null
       }
     },
     components: {},
@@ -155,9 +153,6 @@
       }
     },
     methods: {
-      ...mapActions({
-        setUserSetting: 'userStore/setUserSetting',
-      }),
       //购买，通用
       buy(productId, callback) {
         let that = this;
@@ -1017,18 +1012,6 @@
         //
         // }, 1000)
       },
-      togglePlayBgm(){
-        if (this.playState === 'play'){
-          this.stopBgm()
-          this.setUserSetting({key:'bgm_play_state',value:'stop'})
-        }else if (this.playState === 'stop'){
-          this.playBgm()
-          this.setUserSetting({key:'bgm_play_state',value:'play'})
-        }
-      },
-      updatePlayState(state){
-        this.playState = state
-      },
       updateCouplets(data){
         if (data && this.space && this.space.couplets){
           this.space.couplets.left = data.left
@@ -1036,7 +1019,6 @@
         }
       },
       registerEvent(){
-        eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
       }
     },
@@ -1052,8 +1034,6 @@
       this.initSmoke();
     },
     beforeDestroy() {
-      this.stopBgm(true)
-      eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
     }
   }
@@ -1063,27 +1043,7 @@
   @import "~@/config/config.less";
 
   .sacrifice {
-    .audio{
-      position: absolute;
-      z-index: 1000;
-      right: 20px;
-      bottom: 65px;
-      font-size: 28px;
-      font-weight: bold;
-      width: 30px;
-      height: 30px;
-      color: white;
-      &.anim{
-        animation: rotate 3s linear infinite;
-        animation-play-state:paused;
-        @keyframes rotate{from{transform: rotate(0deg);transform-origin:50% 50%;}
-          to{transform: rotate(359deg);transform-origin:50% 50%;}
-        }
-      }
-      &.playing{
-        animation-play-state:running;
-      }
-    }
+
   }
 
   html, body {

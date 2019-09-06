@@ -6,7 +6,6 @@
     </div>
     <div class="menu-area">
       <van-cell title="自定义挽联" is-link @click.stop="enterCouplets"></van-cell>
-      <van-cell title="背景音乐" is-link @click.stop="enterBgm"></van-cell>
     </div>
     <div class="charge-area">
       <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
@@ -67,9 +66,6 @@
         },
         enterCouplets(){
           Link(`/store/couplets?space_id=${this.spaceId}`)
-        },
-        enterBgm(){
-          Link(`/store/bgm`)
         },
         updateInfo(){
           this.getDetail()

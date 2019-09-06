@@ -29,11 +29,13 @@
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
     </template>
+    <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
+  import constant from '@/config/constant'
 
   import Info from './detail/Info'
   import Message from './detail/Message'
@@ -72,7 +74,8 @@
         loadingMore:false,
         postComment: false,
         showAction:false,
-        actions:[]
+        actions:[],
+        playState:'stop'
       }
     },
     components: {
@@ -121,6 +124,9 @@
       },
     },
     methods:{
+      ...mapActions({
+        setUserSetting: 'userStore/setUserSetting',
+      }),
       onTabChange(e){
         if (e === 'sacrifice'){
           this.goSacrifice()
@@ -220,19 +226,10 @@
         return result
       },
       goSacrifice(){
-        this.tryAutoPlay()
         Link(`/space/sacrifice/${this.spaceId}`)
       },
-      tryAutoPlay(){
-        //判断选定的是否开启自动播放音频
-        let playState = this.userSetting['bgm_play_state']
-        let needPlay = playState === 'play' || playState === undefined
-        if (needPlay){
-          this.playBgm(0)
-        }
-      },
       registerEvent(){
-
+        eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       },
       initShare(){
         let extra = {}
@@ -248,6 +245,18 @@
           }
         })
       },
+      togglePlayBgm(){
+        if (this.playState === 'play'){
+          this.stopBgm()
+          this.setUserSetting({key:'bgm_play_state',value:'stop'})
+        }else if (this.playState === 'stop'){
+          this.playBgm()
+          this.setUserSetting({key:'bgm_play_state',value:'play'})
+        }
+      },
+      updatePlayState(state){
+        this.playState = state
+      },
     },
     created() {
       if(this.$route.params.id){
@@ -259,6 +268,10 @@
         this.registerEvent()
         this.initShare()
       }
+    },
+    beforeDestroy() {
+      this.stopBgm(true)
+      eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
     }
   }
 </script>
@@ -332,6 +345,27 @@
         padding:10px;
         background:white;
         color: @MAIN_THEME_COLOR;
+      }
+    }
+    .audio{
+      position: absolute;
+      z-index: 10;
+      bottom:65px;
+      right: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      width: 30px;
+      height: 30px;
+      color: @MAIN_THEME_COLOR;
+      &.anim{
+        animation: rotate 3s linear infinite;
+        animation-play-state:paused;
+        @keyframes rotate{from{transform: rotate(0deg);transform-origin:50% 50%;}
+          to{transform: rotate(359deg);transform-origin:50% 50%;}
+        }
+      }
+      &.playing{
+        animation-play-state:running;
       }
     }
   }

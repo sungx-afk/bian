@@ -43,6 +43,8 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .bgm-container{
+    height: 100%;
+    background: @BG_WHITE;
     .icon-duigou1{
       color: @MAIN_THEME_COLOR;
     }

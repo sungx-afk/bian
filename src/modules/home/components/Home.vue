@@ -112,6 +112,7 @@
         Link('space/create')
       },
       goSpaceDetail(item){
+        this.tryAutoPlay()
         Link(`space/detail/${item.id}`)
       },
       moreSpaceVisitedMenu(){
@@ -245,7 +246,7 @@
       initLogin(){
         let query = this.$route.query
         let code = ''
-        let uid = '100001'
+        let uid = ''
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
@@ -258,10 +259,10 @@
           }
         }
         //暂时屏蔽
-        if (uid){
-          this.loginWithUid(uid)
-          return
-        }
+        // if (uid){
+        //   this.loginWithUid(uid)
+        //   return
+        // }
         if (code){
           this.loginWithCode(code)
         }else{
@@ -293,7 +294,15 @@
           }, rsp=>{
             Link(`/space/detail/${spaceId}`)
           })
-      }
+      },
+      tryAutoPlay(){
+        //判断选定的是否开启自动播放音频
+        let playState = this.userSetting['bgm_play_state']
+        let needPlay = playState === 'play' || playState === undefined
+        if (needPlay){
+          this.playBgm(0)
+        }
+      },
     },
     created() {
       this.initLogin()

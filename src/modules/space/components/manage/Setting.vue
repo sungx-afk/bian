@@ -12,6 +12,7 @@
       v-model="commentScopeCheck"
       @change="commentScopeChanged">
     </van-switch-cell>
+    <van-cell title="背景音乐" is-link @click.stop="goBgmSetting"></van-cell>
     <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
     <van-cell title="追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
     <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
@@ -86,6 +87,9 @@
         },
         goMemorialMeeting(){
           Link(`/space/meeting/${this.space.id}`)
+        },
+        goBgmSetting(){
+          Link(`/space/bgm`)
         },
         deleteSpace(e){
           let that = this

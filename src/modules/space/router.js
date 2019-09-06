@@ -3,6 +3,7 @@ const SpaceCreate = () => import(/* webpackChunkName: "space_create" */ './compo
 const SpaceDetail = () => import(/* webpackChunkName: "space_detail" */ './components/SpaceDetail')
 const SpaceManage = () => import(/* webpackChunkName: "space_manage" */ './components/SpaceManage')
 const Blacklist = () => import(/* webpackChunkName: "blacklist" */ './components/blacklist/Blacklist')
+const Bgm = () => import(/* webpackChunkName: "bgm" */ './components/manage/Bgm')
 const FriendsManage = () => import(/* webpackChunkName: "friends-manage" */ './components/friends/FriendsManage')
 const Meeting = () => import(/* webpackChunkName: "meeting" */ './components/meeting/Meeting')
 
@@ -24,7 +25,6 @@ const Info = () => import(/* webpackChunkName: "Info" */ './components/store/Inf
 const Charge = () => import(/* webpackChunkName: "charge" */ './components/store/Charge')
 const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Logs')
 const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/store/Couplets')
-const Bgm = () => import(/* webpackChunkName: "bgm" */ './components/store/Bgm')
 
 const routes = [
   {
@@ -54,6 +54,10 @@ const routes = [
       {
         path: 'meeting/:id',
         component: Meeting
+      },
+      {
+        path: 'bgm',
+        component: Bgm
       }
     ]
   },
@@ -102,11 +106,7 @@ const routes = [
       {
         path:'couplets',
         component:Couplets,
-      },
-      {
-        path:'bgm',
-        component:Bgm,
-      },
+      }
     ]
   }
 ]
