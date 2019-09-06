@@ -1,21 +1,23 @@
 <template>
   <div class="setting-container">
-    <van-switch-cell
-      title="仅亲属成员访问"
-      active-color="#825621"
-      v-model="viewScopeCheck"
-      @change="viewScopeChanged">
-    </van-switch-cell>
-    <van-switch-cell
-      title="关闭访客留言"
-      active-color="#825621"
-      v-model="commentScopeCheck"
-      @change="commentScopeChanged">
-    </van-switch-cell>
-    <van-cell title="背景音乐" is-link @click.stop="goBgmSetting"></van-cell>
-    <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
-    <van-cell title="追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
-    <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
+    <van-cell-group>
+      <van-switch-cell
+        title="仅亲属成员访问"
+        active-color="#825621"
+        v-model="viewScopeCheck"
+        @change="viewScopeChanged">
+      </van-switch-cell>
+      <van-switch-cell
+        title="关闭访客留言"
+        active-color="#825621"
+        v-model="commentScopeCheck"
+        @change="commentScopeChanged">
+      </van-switch-cell>
+      <van-cell title="背景音乐" is-link @click.stop="goBgmSetting"></van-cell>
+      <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
+      <van-cell title="追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
+      <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
+    </van-cell-group>
   </div>
 </template>
 
