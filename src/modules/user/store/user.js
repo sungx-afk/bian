@@ -6,7 +6,7 @@ const state = {
   user: {
     id:''
   },
-  user_setting_keys:['bgm_play_state'],
+  user_setting_keys:['bgm_play_state','bgm_key'],
   user_setting:{},
   expire:false
 }

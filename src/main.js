@@ -35,24 +35,44 @@ Vue.config.productionTip = false
 import {Link} from '@/config/utils'
 import constant from '@/config/constant'
 
+import {mapGetters} from 'vuex';
+
 Vue.mixin({
   data(){
     return{
-      bgm:[
-        "http://app01.yugusoft.com/ftask/api/file/down/PP1pYJnLgFVTtgTWu6dNrL.mp3"
+      presetBgm:[
+        {
+          key:'preset_1',
+          name:'葬礼进行曲',
+          author:'崔雅宁',
+          url:"http://app01.yugusoft.com/ftask/api/file/down/3nBaHkLDDvP2WmtsHt11SD.mp3"
+        },
+        {
+          key:'preset_2',
+          name:'大悲咒',
+          author:'梵音',
+          url:"http://app01.yugusoft.com/ftask/api/file/down/PP1pYJnLgFVTtgTWu6dNrL.mp3"
+        }
       ],
       currentAudioTime:0
     }
   },
+  computed: {
+    ...mapGetters({
+      userSetting: 'userStore/userSetting'
+    })
+  },
   methods: {
-    viewIndexPage(replace){
-      let linkReplace = replace || false;
-      Link(url,{},linkReplace)
-    },
     playBgm(seek){
       let audio = document.getElementById('bgMusic');
       if (audio){
-        audio.src = this.bgm[0]
+        let index = this.presetBgm.findIndex(item=>{
+         return item.key === this.userSetting['bgm_key']
+        })
+        if (index === -1){
+          index = 0
+        }
+        audio.src = this.presetBgm[index].url
         if (seek === 0){//重新加载音频
           audio.currentTime = 0
         }else{
