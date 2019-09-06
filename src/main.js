@@ -33,6 +33,7 @@ Vue.prototype.wechatPay  = wechatPay
 Vue.config.productionTip = false
 
 import {Link} from '@/config/utils'
+import constant from '@/config/constant'
 
 Vue.mixin({
   data(){
@@ -59,7 +60,7 @@ Vue.mixin({
         }
         audio.play();
         setTimeout(()=>{
-          eventHub.$emit("audio-play",'play')
+          eventHub.$emit(constant.EVENT_AUDIO_PLAY,'play')
         },500)
       }
     },
@@ -72,7 +73,7 @@ Vue.mixin({
         }else{
           this.currentAudioTime = audio.currentTime
         }
-        eventHub.$emit("audio-play",'stop')
+        eventHub.$emit(constant.EVENT_AUDIO_PLAY,'stop')
       }
     }
   }

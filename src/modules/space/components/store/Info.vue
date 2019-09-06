@@ -4,24 +4,8 @@
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
       <div class="header-text">彼岸云纪念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思。</div>
     </div>
-    <div class="wanlian-area">
-      <van-cell-group title="自定义挽联">
-        <van-field
-          v-model="coupletsLeft"
-          @blur="leftInputBlur"
-          label="上联"
-          maxlength="15"
-          placeholder="请输入上联"
-        ></van-field>
-
-        <van-field
-          v-model="coupletsRight"
-          @blur="rightInputBlur"
-          label="下联"
-          maxlength="15"
-          placeholder="请输入下联">
-        </van-field>
-      </van-cell-group>
+    <div class="menu-area">
+      <van-cell title="自定义挽联" is-link @click="enterCouplets"></van-cell>
     </div>
     <div class="charge-area">
       <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
@@ -45,14 +29,12 @@
   import {mapGetters} from 'vuex'
 
     export default {
-      name: "Store",
+      name: "Info",
       data(){
         return{
           spaceId:'',
           space:'',
           products:[],
-          coupletsLeft:'',
-          coupletsRight:'',
           iconMoney:'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/07/1562485353014/money.png'
         }
       },
@@ -82,20 +64,8 @@
 
           })
         },
-        leftInputBlur(){
-          this.updateCouplets()
-        },
-        rightInputBlur(){
-          this.updateCouplets()
-        },
-        updateCouplets(){
-          $API.space.modifyCouplets({
-            sid:this.spaceId,
-            left:this.coupletsLeft,
-            right:this.coupletsRight
-          },rsp=>{
-            eventHub.$emit(constant.EVENT_UPDATE_COUPLETS_SUCCESS,{left:this.coupletsLeft,right:this.coupletsRight})
-          })
+        enterCouplets(){
+          Link(`/store/couplets?space_id=${this.spaceId}`)
         },
         updateInfo(){
           this.getDetail()

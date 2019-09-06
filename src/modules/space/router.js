@@ -23,6 +23,7 @@ const Store = () => import(/* webpackChunkName: "store" */ './components/store/S
 const Info = () => import(/* webpackChunkName: "Info" */ './components/store/Info')
 const Charge = () => import(/* webpackChunkName: "charge" */ './components/store/Charge')
 const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Logs')
+const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/store/Couplets')
 
 const routes = [
   {
@@ -96,6 +97,10 @@ const routes = [
       {
         path:'logs',
         component:Logs,
+      },
+      {
+        path:'couplets',
+        component:Couplets,
       },
     ]
   }

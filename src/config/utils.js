@@ -10,7 +10,6 @@ export const Link = (url, query,replace) => {
 
   /*获取平台，初始化时，添加参数*/
   let app_plat = localStorage.getItem("app_plat");
-  console.log(app_plat)
   if(app_plat && (app_plat.toLowerCase() == 'android' || app_plat.toLowerCase() == 'iphone')){
     var param = getRequestParam();
     if(param){

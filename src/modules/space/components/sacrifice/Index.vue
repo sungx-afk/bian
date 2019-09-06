@@ -124,6 +124,8 @@
 <script>
   import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils';
+  import constant from '@/config/constant'
+
 
   const noItems = ['item-xuan-hua', 'item-kao-ya', 'item-yue-bing', 'item-mao-tai', 'item-wu-liang-ye'];
 
@@ -1026,8 +1028,15 @@
       updatePlayState(state){
         this.playState = state
       },
+      updateCouplets(data){
+        if (data && this.space && this.space.couplets){
+          this.space.couplets.left = data.left
+          this.space.couplets.right = data.right
+        }
+      },
       registerEvent(){
-        eventHub.$on('audio-play',this.updatePlayState)
+        eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+        eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
       }
     },
     created() {
@@ -1043,7 +1052,8 @@
     },
     beforeDestroy() {
       this.stopBgm(true)
-      eventHub.$off('audio-play',this.updatePlayState)
+      eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+      eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
     }
   }
 </script>
