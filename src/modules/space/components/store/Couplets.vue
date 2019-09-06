@@ -105,6 +105,9 @@
     height: 100%;
     .wanlian-area{
       background: @BG_WHITE;
+      .van-cell{
+        line-height: 40px;
+      }
     }
     .bottom-button {
       display: flex;
