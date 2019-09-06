@@ -63,6 +63,10 @@
           this.$router.go(-1)
         },
         confirm(){
+          if (!this.coupletsLeft || !this.coupletsRight){
+            this.$toast("请输入挽联内容")
+            return
+          }
           $API.space.modifyCouplets({
             sid:this.spaceId,
             left:this.coupletsLeft,
