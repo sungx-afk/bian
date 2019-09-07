@@ -21,6 +21,7 @@
           <div class="tombstone-text">{{user.name}}</div>
         </div>
       </div>
+      <slot></slot>
     </div>
     <div class="lifetime-area">
       <div class="lifetime-content" v-for="user in space.spaceUsers" :key="user.id">
@@ -276,6 +277,7 @@
       }
     }
     .avatar-area{
+      position: relative;
       display: flex;
       justify-content:center;
       background:@BG_WHITE;

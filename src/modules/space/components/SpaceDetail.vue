@@ -3,7 +3,9 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
-        <info ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged"></info>
+        <info ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged">
+          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
+        </info>
       </template>
       <template v-if="tabActive == 'message'">
         <!--留言-->
@@ -29,7 +31,6 @@
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
     </template>
-    <div v-if="tabActive == 'main' && detail" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
   </div>
 </template>
 <script>
@@ -350,7 +351,7 @@
     .audio{
       position: absolute;
       z-index: 10;
-      top:220px;
+      bottom:10px;
       right: 10px;
       font-size: 28px;
       font-weight: bold;
