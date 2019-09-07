@@ -83,10 +83,6 @@
             id:'package-gua-guo',
             name:'瓜果贡品（7天）',
             point:9
-          },{
-            id:'item-zhi-qian',
-            name:'纸钱（当日）',
-            point:8
           }]
         },
         buyProduct(product){
