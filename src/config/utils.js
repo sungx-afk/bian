@@ -480,6 +480,15 @@ export const checkUrlHttpOrHttps = (url) => {
   return objExp.test(url);
 }
 
+export const isIphone = () =>{
+  let ua = navigator.userAgent.toLowerCase();
+  let result = false
+  if (/iphone|ipad|ipod/.test(ua)) {
+    result = true
+  }
+  return result
+}
+
 var _change = {
    ary0:["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"],
    ary1:["", "十", "百", "千"],

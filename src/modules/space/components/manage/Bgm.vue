@@ -13,10 +13,12 @@
           <i class="iconfont icon-duigou1"></i>
         </div>
       </van-cell>
-      <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
-        <van-button icon="music-o" size="small">选择背景音乐</van-button>
-      </van-uploader>
-      <van-button icon="edit" size="small" @click="showPasteDialog">手动输入</van-button>
+      <template v-if="isShowUploader()">
+        <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
+          <van-button icon="music-o" size="small">选择背景音乐</van-button>
+        </van-uploader>
+      </template>
+      <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog">手动输入</van-button>
     </van-cell-group>
     <van-popup class="popup-area" v-model="isShowPasteDialog" round="false" @closed="pasteDialogClosed">
       <van-field class="popup-cell" v-model="pasteName" placeholder="请输入音乐名称" input-align="left"></van-field>
@@ -31,7 +33,7 @@
 
 <script>
   import constant from '@/config/constant'
-  import {checkUrlHttpOrHttps} from '@/config/utils'
+  import {checkUrlHttpOrHttps,isIphone} from '@/config/utils'
     export default {
       name: "Bgm",
       data(){
@@ -43,6 +45,9 @@
         }
       },
       methods:{
+        isShowUploader(){
+          return !isIphone()
+        },
         getSpaceDetail(cb){
           $API.space.getSpaceDetail({
             sid:this.spaceId
@@ -181,6 +186,9 @@
     }
     .van-uploader{
       padding: 20px 0px 20px 15px;
+    }
+    .paste-btn{
+      margin: 15px;
     }
     .popup-area{
       .popup-cell{
