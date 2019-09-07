@@ -29,7 +29,7 @@
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
     </template>
-    <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
+    <div v-if="tabActive == 'main' && detail" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
   </div>
 </template>
 <script>
@@ -350,7 +350,7 @@
     .audio{
       position: absolute;
       z-index: 10;
-      bottom:65px;
+      top:220px;
       right: 10px;
       font-size: 28px;
       font-weight: bold;
