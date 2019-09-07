@@ -15,6 +15,7 @@ module.exports = {
   EVENT_UPDATE_COUPLETS_SUCCESS:'update_couplets_success',
   EVENT_BUY_PRODUCT_SUCCESS:'buy_product_success',
   EVENT_DELETE_FRIENDS_SUCCESS:'delete_friends_success',
+  EVENT_UPDATE_BGM_SUCCESS:'update_bgm_success',
   EVENT_AUDIO_PLAY:'audio_play',
 
   KEY_TOKEN:'token',

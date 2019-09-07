@@ -2,7 +2,7 @@
   <div class="bgm-container">
     <van-cell-group title="预置">
       <van-cell v-for="item in presetBgm" :key="item.key" :title="item.name" :label="item.author" size="large" @click.stop="selectPresetBgm(item)">
-        <div v-if="showSelected(item)">
+        <div v-if="showPresetSelected(item)">
           <i class="iconfont icon-duigou1"></i>
         </div>
       </van-cell>
@@ -11,29 +11,41 @@
 </template>
 
 <script>
-  import {mapGetters,mapActions} from 'vuex';
-
+  import constant from '@/config/constant'
     export default {
       name: "Bgm",
+      data(){
+        return{
+          spaceId:'',
+        }
+      },
       methods:{
-        ...mapActions({
-          setUserSetting: 'userStore/setUserSetting',
-        }),
-        showSelected(item){
+        showPresetSelected(item){
           let result = false
-          if (this.userSetting['bgm_key']){
-            return item.key === this.userSetting['bgm_key']
-          }else{
-            if (item.key === 'preset_1'){
-              result = true
-            }
+          if (this.currentBgmKey){
+            result = item.key === this.currentBgmKey
           }
           return result
         },
         selectPresetBgm(item){
-          this.setUserSetting({key:'bgm_key',value:item.key}).then(rsp=>{
-            this.playBgm(0)
+          this.playBgm(0,{bgmKey:item.key})
+          $API.space.updateSpaceBgm({
+            sid:this.spaceId,
+            bgMusic:item.key
+          },rsp=>{
+            eventHub.$emit(constant.EVENT_UPDATE_BGM_SUCCESS,{bgm:item.key,spaceId:this.spaceId})
           })
+        }
+      },
+      created() {
+        let query = this.$route.query
+        if(query){
+          if (query.space_id){
+            this.spaceId = query.space_id
+          }
+          if (query.key){
+            this.initBgm(query.key)
+          }
         }
       }
     }

@@ -138,6 +138,17 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  updateSpaceBgm({sid, bgMusic}, successCb, errorCb) {
+    let param = {
+      bgMusic
+    }
+
+    $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   postIssue({sid, data}, successCb, errorCb) {
     $axios.post(`/subject/${sid}/comments`, JSON.stringify(data)).then(response => {
       successCb && successCb(response.data)

@@ -112,7 +112,7 @@
         Link('space/create')
       },
       goSpaceDetail(item){
-        this.tryAutoPlay()
+        this.tryHandleBgm(item)
         Link(`space/detail/${item.id}`)
       },
       moreSpaceVisitedMenu(){
@@ -190,6 +190,7 @@
       registerEvent(){
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
+        eventHub.$on(constant.EVENT_UPDATE_BGM_SUCCESS,this.updateSpaceBgm)
       },
       tryLogin(){
         if (this.loginState !== LoginState.UNDO){
@@ -295,6 +296,13 @@
             Link(`/space/detail/${spaceId}`)
           })
       },
+      tryHandleBgm(space){
+        this.tryInitCustomBgm(space)
+        this.tryAutoPlay()
+      },
+      tryInitCustomBgm(space){
+        this.initBgm(space.bgMusic)
+      },
       tryAutoPlay(){
         //判断选定的是否开启自动播放音频
         let playState = this.userSetting['bgm_play_state']
@@ -303,6 +311,14 @@
           this.playBgm(0)
         }
       },
+      updateSpaceBgm(data){
+        if (data){
+          let index = this.list.findIndex(item=>item.id == data.spaceId)
+          if (index > -1){
+            this.list[index].bgMusic = data.bgm
+          }
+        }
+      }
     },
     created() {
       this.initLogin()
@@ -311,6 +327,7 @@
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
       eventHub.$off(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
+      eventHub.$off(constant.EVENT_UPDATE_BGM_SUCCESS,this.updateSpaceBgm)
     }
   }
 </script>

@@ -54,6 +54,8 @@ Vue.mixin({
           url:"http://app01.yugusoft.com/ftask/api/file/down/PP1pYJnLgFVTtgTWu6dNrL.mp3"
         }
       ],
+      currentBgmKey:'preset_1',
+      customBgm:'',
       currentAudioTime:0
     }
   },
@@ -63,16 +65,40 @@ Vue.mixin({
     })
   },
   methods: {
-    playBgm(seek){
+    initBgm(bgm){
+      if (!bgm){
+        this.currentBgmKey = 'preset_1'
+      }
+      else if (bgm === 'preset_1' || bgm === 'preset_2'){
+        this.currentBgmKey = bgm
+      }else{
+        this.currentBgmKey = 'custom'
+        this.customBgm = bgm
+      }
+    },
+    playBgm(seek,options){
       let audio = document.getElementById('bgMusic');
       if (audio){
-        let index = this.presetBgm.findIndex(item=>{
-         return item.key === this.userSetting['bgm_key']
-        })
-        if (index === -1){
-          index = 0
+        if (options){
+          if (options.bgmKey){
+            this.currentBgmKey = options.bgmKey
+          }
+          if (options.bgmKey === 'custom' && options.url){
+            this.customBgm = options.url
+          }
         }
-        audio.src = this.presetBgm[index].url
+        if (this.currentBgmKey === 'custom'){
+          audio.src = this.customBgm
+        }else{
+          let index = this.presetBgm.findIndex(item=>{
+            return item.key === this.currentBgmKey
+          })
+          if (index === -1){
+            index = 0
+          }
+          audio.src = this.presetBgm[index].url
+        }
+
         if (seek === 0){//重新加载音频
           audio.currentTime = 0
         }else{
