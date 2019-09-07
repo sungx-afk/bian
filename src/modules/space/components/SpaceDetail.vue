@@ -263,7 +263,7 @@
         this.spaceId = this.$route.params.id
         console.log(this.spaceId)
         this.getDetail(()=>{
-
+          this.initBgm(this.detail.bgMusic)
         })
         this.registerEvent()
         this.initShare()

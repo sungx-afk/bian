@@ -297,11 +297,8 @@
           })
       },
       tryHandleBgm(space){
-        this.tryInitCustomBgm(space)
-        this.tryAutoPlay()
-      },
-      tryInitCustomBgm(space){
         this.initBgm(space.bgMusic)
+        this.tryAutoPlay()
       },
       tryAutoPlay(){
         //判断选定的是否开启自动播放音频
