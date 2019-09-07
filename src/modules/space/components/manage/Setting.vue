@@ -91,15 +91,7 @@
           Link(`/space/meeting/${this.space.id}`)
         },
         goBgmSetting(){
-          let key = ''
-          if (this.space.bgMusic){
-            if (this.space.bgMusic !== 'preset_1' && this.space.bgMusic !== 'preset_2'){
-              key = 'custom'
-            }else{
-              key = this.space.bgMusic
-            }
-          }
-          Link(`/space/bgm?space_id=${this.space.id}&key=${key}`)
+          Link(`/space/bgm/${this.space.id}`)
         },
         deleteSpace(e){
           let that = this

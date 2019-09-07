@@ -55,7 +55,7 @@ Vue.mixin({
         }
       ],
       currentBgmKey:'preset_1',
-      customBgm:'',
+      selfUpload:[],
       currentAudioTime:0
     }
   },
@@ -65,15 +65,20 @@ Vue.mixin({
     })
   },
   methods: {
-    initBgm(bgm){
-      if (!bgm){
-        this.currentBgmKey = 'preset_1'
+    initBgm(space){
+      if (!space){
+        return
       }
-      else if (bgm === 'preset_1' || bgm === 'preset_2'){
-        this.currentBgmKey = bgm
-      }else{
-        this.currentBgmKey = 'custom'
-        this.customBgm = bgm
+      if (space.music){
+        this.initBgmKey(space.music.key)
+        this.selfUpload = space.music.selfUpload
+      }
+    },
+    initBgmKey(key){
+      if (key){
+        this.currentBgmKey = key
+      } else{
+        this.currentBgmKey = 'preset_1'
       }
     },
     playBgm(seek,options){
@@ -83,12 +88,9 @@ Vue.mixin({
           if (options.bgmKey){
             this.currentBgmKey = options.bgmKey
           }
-          if (options.bgmKey === 'custom' && options.url){
-            this.customBgm = options.url
-          }
         }
         if (this.currentBgmKey === 'custom'){
-          audio.src = this.customBgm
+          audio.src = this.selfUpload[0].url
         }else{
           let index = this.presetBgm.findIndex(item=>{
             return item.key === this.currentBgmKey

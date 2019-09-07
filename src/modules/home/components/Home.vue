@@ -297,7 +297,7 @@
           })
       },
       tryHandleBgm(space){
-        this.initBgm(space.bgMusic)
+        this.initBgm(space)
         this.tryAutoPlay()
       },
       tryAutoPlay(){
@@ -312,7 +312,13 @@
         if (data){
           let index = this.list.findIndex(item=>item.id == data.spaceId)
           if (index > -1){
-            this.list[index].bgMusic = data.bgm
+            if (!this.list[index].music){
+              this.list[index].music = {}
+            }
+            this.list[index].music.key = data.bgmKey
+            if (data.selfUpload){
+              this.list[index].music.selfUpload = data.selfUpload
+            }
           }
         }
       }

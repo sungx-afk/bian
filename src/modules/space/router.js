@@ -56,7 +56,7 @@ const routes = [
         component: Meeting
       },
       {
-        path: 'bgm',
+        path: 'bgm/:id',
         component: Bgm
       }
     ]

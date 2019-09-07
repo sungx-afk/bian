@@ -474,6 +474,11 @@ export const gUuid = () => {
   });
 }
 
+export const checkUrlHttpOrHttps = (url) => {
+  var exp = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+  var objExp = new RegExp(exp);
+  return objExp.test(url);
+}
 
 var _change = {
    ary0:["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"],

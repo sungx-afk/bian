@@ -138,12 +138,16 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  updateSpaceBgm({sid, bgMusic}, successCb, errorCb) {
+  updateSpaceBgm({sid, key,selfUpload}, successCb, errorCb) {
     let param = {
-      bgMusic
+      key
     }
 
-    $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
+    if (selfUpload){
+      param.selfUpload = selfUpload
+    }
+
+    $axios.put(`/spaces/${sid}/music`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
@@ -270,7 +274,7 @@ export default {
       .replace(/\//g, '_') // Convert '/' to '_'
 
     let url = `https://upload.qiniup.com/putb64/-1/key/${base64Key}`
-    data = data.replace(/^data:image\/\w+;base64,/, "");//截掉base64前面头
+    data = data.replace(/^data:\w+\/\w+;base64,/, "");//截掉base64前面头
 
     axios.post(url, data, {
       headers: {
