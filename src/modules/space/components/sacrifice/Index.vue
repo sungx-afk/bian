@@ -1475,7 +1475,7 @@
     .message {
       font-size: 12px;
       color: white;
-      background: rgba(50, 50, 51, .88);
+      background: rgba(50, 50, 51, .38);
       border-radius: 0px 5px 5px 0px;
       padding: 3px 8px 3px 10px;
       margin-bottom: 3px;
