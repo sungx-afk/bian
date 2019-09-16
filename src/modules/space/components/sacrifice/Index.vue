@@ -98,6 +98,7 @@
           </div>
         </div>
 
+        <canvas id="yan-canvas"></canvas>
 
         <canvas id="smoke-box"></canvas>
 
@@ -856,6 +857,103 @@
         $.init();
       },
 
+
+      initYan(){
+
+        var canvas;
+        var context;
+        var proton;
+        var renderer;
+        var emitter;
+        var stats, rock;
+        var rockTha;
+
+        main();
+
+        function main() {
+          initCanvas();
+          loadRockImg(loadParticleImg);
+        }
+
+        function initCanvas() {
+          canvas = document.getElementById("yan-canvas");
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          context = canvas.getContext('2d');
+          context.globalCompositeOperation = "lighter";
+        }
+
+        function loadParticleImg(rock) {
+          var image = new Image()
+          image.onload = function (e) {
+            createProton(e.target, rock);
+            tick();
+          }
+
+          image.src = '/static/images/particle.png';
+        }
+
+        function loadRockImg(callback) {
+          rockTha = 0;
+
+          var image = new Image;
+          image.onload = function (e) {
+            rock.width = image.width;
+            rock.height = image.height;
+            rock.loaded = true;
+            rock.y = 40;
+            rock.r = 10;
+            callback(rock);
+          }
+
+          image.src = '/static/images/hand.gif';
+
+          rock = { src: image.src, img: image };
+        }
+
+        function drawRock() {
+          if (!rock.loaded) return;
+
+          var y = rock.y + Math.cos(rockTha += .05) * rock.r;
+          context.drawImage(rock.img, canvas.width / 2 - rock.width / 2, 220);
+        }
+
+        function createProton(image, rock) {
+          proton = new Proton;
+          emitter = new Proton.Emitter();
+          emitter.rate = new Proton.Rate(new Proton.Span(5, 10), new Proton.Span(.05, .2));
+
+          emitter.addInitialize(new Proton.Body(image));
+          emitter.addInitialize(new Proton.Mass(0.8));
+          emitter.addInitialize(new Proton.Life(2, 13.9));
+          emitter.addInitialize(new Proton.Velocity(new Proton.Span(.2, 1.5), new Proton.Span(122, 120, true), 'polar'));
+
+          //emitter.addBehaviour(new Proton.RandomDrift(10, 10, .1));
+          emitter.addBehaviour(new Proton.Alpha(0.12, 0.2));
+          emitter.addBehaviour(new Proton.Scale([2.5, 2], [0, .1]));
+          emitter.addBehaviour(new Proton.G(-6.6));
+          emitter.addBehaviour(new Proton.Color('#858585', '#3a3a3a', Infinity, Proton.easeInSine));
+
+          emitter.p.x = canvas.width / 2;
+          emitter.p.y = 620;
+          emitter.emit();
+          proton.addEmitter(emitter);
+
+          renderer = new Proton.CanvasRenderer(canvas);
+          proton.addRenderer(renderer);
+
+          emitter.preEmit(1);
+        }
+
+        function tick() {
+          requestAnimationFrame(tick);
+          proton.update();
+          drawRock();
+        }
+      },
+
+
+
       initZhuHuo() {
         const flameFrag = document.querySelector("#flame-frag").textContent;
         const baseUrl = "/static/images/";
@@ -1032,6 +1130,7 @@
       this.initZhuHuo();
       this.initBigFire();
       this.initSmoke();
+      this.initYan();
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
@@ -1219,6 +1318,15 @@
     height: 100vw;
     /*background: red;*/
     display: flex;
+
+    #yan-canvas{
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      top: 0px;
+      bottom: 30px;
+      width: 100vw;
+    }
   }
 
   #item_hua_bg {

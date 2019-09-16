@@ -232,6 +232,7 @@
         this.$store.dispatch('userStore/loginWithCode', {code})
       },
       loginWithUid(uid){
+        console.log("===loginWithUid====");
         this.$store.dispatch('userStore/loginWithUid', {uid})
       },
       userChanged(){
@@ -259,11 +260,10 @@
             this.query = query
           }
         }
-        //暂时屏蔽
-        // if (uid){
-        //   this.loginWithUid(uid)
-        //   return
-        // }
+        if (uid){
+          this.loginWithUid(uid)
+          return
+        }
         if (code){
           this.loginWithCode(code)
         }else{
