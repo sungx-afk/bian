@@ -186,10 +186,12 @@
         this.buy('package-shang-xiang-ji-bai', () => {
           var dom = document.getElementById("jibai");
           let xiangDom = document.querySelector('.item-xiang-lu-box');
+          let yanDom = document.querySelector('#yan-canvas');
           dom.style.visibility = 'visible';
           setTimeout(function () {
             dom.style.visibility = 'hidden';
             xiangDom.style.visibility = 'visible';
+            yanDom.style.visibility = 'visible';
             that.getSpaceDetail();
           }, 3000)
         });
@@ -879,6 +881,7 @@
           canvas = document.getElementById("yan-canvas");
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
+          canvas.style.visibility = 'hidden';
           context = canvas.getContext('2d');
           context.globalCompositeOperation = "lighter";
         }
