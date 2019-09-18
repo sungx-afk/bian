@@ -358,12 +358,12 @@
         position: absolute;
         display: flex;
         justify-content: center;
-        top: 100px;
+        top: 90px;
         width: 100%;
         .text{
           text-align: center;
           color: white;
-          font-size: 24px;
+          font-size: 22px;
           padding: 2px 20px;
           background: rgba(0,0,0,0.5);
         }

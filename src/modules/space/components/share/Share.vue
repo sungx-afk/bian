@@ -11,10 +11,13 @@
     </div>
     <div class="share-middle">
       <img src="~@/modules/images/index_header.jpg" class="header">
+      <div class="text-area">
+        <div class="text">爱，永存</div>
+      </div>
     </div>
     <div class="share-bottom">
       <div class="">
-        
+
       </div>
     </div>
   </div>
@@ -77,8 +80,23 @@
     .share-middle{
       display: flex;
       justify-content: center;
+      position: relative;
       .header{
         height: 200px;
+      }
+      .text-area{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        top: 90px;
+        width: 100%;
+        .text{
+          text-align: center;
+          color: white;
+          font-size: 22px;
+          padding: 2px 20px;
+          background: rgba(0,0,0,0.5);
+        }
       }
     }
     .share-bottom{
