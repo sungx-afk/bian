@@ -2,6 +2,9 @@
   <div class="main-container">
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />
+      <div class="text-area">
+        <div class="text">爱，永存</div>
+      </div>
     </div>
     <div class="container-bottom">
       <template v-if="list.length > 0 || visitedList.length > 0">
@@ -345,10 +348,25 @@
     flex-direction: column;
 
     .container-top {
+      position: relative;
       height: 220px;
       .header-image {
         width: 100%;
         height: 100%;
+      }
+      .text-area{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        top: 100px;
+        width: 100%;
+        .text{
+          text-align: center;
+          color: white;
+          font-size: 24px;
+          padding: 2px 20px;
+          background: rgba(0,0,0,0.5);
+        }
       }
     }
     .container-bottom {
