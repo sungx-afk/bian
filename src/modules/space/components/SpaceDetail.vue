@@ -4,7 +4,7 @@
       <template v-if="tabActive == 'main'">
         <!--首页-->
         <info ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged">
-          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="togglePlayBgm"></div>
+          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
         </info>
       </template>
       <template v-if="tabActive == 'message'">
@@ -76,7 +76,8 @@
         postComment: false,
         showAction:false,
         actions:[],
-        playState:'stop'
+        playState:'stop',
+        showBgmAction:false
       }
     },
     components: {
@@ -165,10 +166,28 @@
         }
       },
       onActionSelect(item){
-        this.$refs.info.onActionSelect(item)
+        if (this.showBgmAction){
+          this.showBgmAction = false
+          this.showAction = false
+          this.actions = []
+          let menu = item.id
+          if (menu === 'stop_bgm' || menu === 'play_bgm'){
+            this.togglePlayBgm()
+          }else if (menu === 'setting_bgm'){
+            Link(`/space/bgm/${this.spaceId}`)
+          }
+        }else{
+          this.$refs.info.onActionSelect(item)
+        }
       },
       onActionClose(){
-        this.$refs.info.onActionClose()
+        if (this.showBgmAction){
+          this.showBgmAction = false
+          this.showAction = false
+          this.actions = []
+        }else{
+          this.$refs.info.onActionClose()
+        }
       },
       getDetail(cb){
         if (!this.spaceId){
@@ -245,6 +264,25 @@
 
           }
         })
+      },
+      bgmAction(){
+        if (this.playState === 'play'){
+          this.actions.push({
+            name: '停止音乐',
+            id:'stop_bgm',
+          })
+        }else{
+          this.actions.push({
+            name: '播放音乐',
+            id:'play_bgm',
+          })
+        }
+        this.actions.push({
+          name: '设置音乐',
+          id:'setting_bgm',
+        })
+        this.showBgmAction = true
+        this.showAction = true
       },
       togglePlayBgm(){
         if (this.playState === 'play'){
