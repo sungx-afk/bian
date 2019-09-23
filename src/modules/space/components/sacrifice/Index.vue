@@ -93,7 +93,9 @@
         </div>
 
         <div class="messages" v-if="space && space.logs">
-          <div v-for="(item, index) in space.logs" class="message"
+          <div v-for="(item, index) in space.logs"
+               class="message"
+               v-if="index < 4"
                :style="{animationDelay: `${(space.logs.length - index)*300}ms`}">{{item}}
           </div>
         </div>
