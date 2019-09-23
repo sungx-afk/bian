@@ -98,7 +98,7 @@
           </div>
         </div>
 
-        <canvas id="yan-canvas"></canvas>
+        <!--<canvas id="yan-canvas"></canvas>-->
 
         <canvas id="smoke-box"></canvas>
 
@@ -186,12 +186,12 @@
         this.buy('package-shang-xiang-ji-bai', () => {
           var dom = document.getElementById("jibai");
           let xiangDom = document.querySelector('.item-xiang-lu-box');
-          let yanDom = document.querySelector('#yan-canvas');
+          // let yanDom = document.querySelector('#yan-canvas');
           dom.style.visibility = 'visible';
           setTimeout(function () {
             dom.style.visibility = 'hidden';
             xiangDom.style.visibility = 'visible';
-            yanDom.style.visibility = 'visible';
+            // yanDom.style.visibility = 'visible';
             that.getSpaceDetail();
           }, 3000)
         });
@@ -1133,7 +1133,7 @@
       this.initZhuHuo();
       this.initBigFire();
       this.initSmoke();
-      this.initYan();
+      // this.initYan();
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
@@ -1322,14 +1322,14 @@
     /*background: red;*/
     display: flex;
 
-    #yan-canvas{
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      top: 0px;
-      bottom: 30px;
-      width: 100vw;
-    }
+    /*#yan-canvas{*/
+      /*position: absolute;*/
+      /*left: 0px;*/
+      /*right: 0px;*/
+      /*top: 0px;*/
+      /*bottom: 30px;*/
+      /*width: 100vw;*/
+    /*}*/
   }
 
   #item_hua_bg {
