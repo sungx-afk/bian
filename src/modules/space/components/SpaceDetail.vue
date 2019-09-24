@@ -131,6 +131,7 @@
       }),
       onTabChange(e){
         if (e === 'sacrifice'){
+          this.saveSpaceTab('sacrifice')
           this.goSacrifice()
           return
         }
@@ -148,6 +149,8 @@
           messageType = 'PRIVATE'
         }
         this.messageType = messageType
+
+        this.saveSpaceTab(this.tabActive)
       },
       styleTabBar(tab){
         let color = '#7d7e80'
@@ -188,6 +191,22 @@
         }else{
           this.$refs.info.onActionClose()
         }
+      },
+      initTab(){
+        let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
+        let value = localStorage.getItem(key)
+        if (value) {
+          if (value === 'sacrifice'){
+            this.goSacrifice()
+          }else{
+            this.tabActive = value
+          }
+        }
+      },
+      saveSpaceTab(value){
+        //记录停在了哪个tab上
+        let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
+        localStorage.setItem(key,value)
       },
       getDetail(cb){
         if (!this.spaceId){
@@ -300,7 +319,7 @@
     created() {
       if(this.$route.params.id){
         this.spaceId = this.$route.params.id
-        console.log(this.spaceId)
+        this.initTab()
         this.getDetail(()=>{
           this.initBgm(this.detail)
         })

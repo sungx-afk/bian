@@ -22,6 +22,7 @@ module.exports = {
   KEY_MEMORIAL_MEETING_SHOW:'memorial_meeting_show',
   KEY_EDIT_USER_INFO:'edit_user_info',
   KEY_EXTRA_DATA:'extra_data',
+  KEY_LAST_SPACE_INFO:'last_space_info',
 
   IMAGE_LIMIT:9
 }
