@@ -131,6 +131,8 @@
 
   const noItems = ['item-xuan-hua', 'item-kao-ya', 'item-yue-bing', 'item-mao-tai', 'item-wu-liang-ye'];
 
+  const seqIndex = [10, 14, 9, 15, 8, 16, 3, 4, 2, 5, 1, 6, 0, 7];
+
   export default {
     data() {
       return {
@@ -263,19 +265,33 @@
             }
             let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
             items.forEach((item, index) => {
-              if (index < 8) {
-                that.item_01[index] = {
-                  id: item
-                }
-              } else if (index < 11) {
-                that.item_02[index - 8] = {
-                  id: item
-                }
-              } else if (index < 14) {
-                that.item_02[index - 5] = {
-                  id: item
+              // if (index < 8) {
+              //   that.item_01[index] = {
+              //     id: item
+              //   }
+              // } else if (index < 11) {
+              //   that.item_02[index - 8] = {
+              //     id: item
+              //   }
+              // } else if (index < 14) {
+              //   that.item_02[index - 5] = {
+              //     id: item
+              //   }
+              // }
+
+              if (index < seqIndex.length) {
+                let idx = seqIndex[index];
+                if (idx < that.item_01.length) {
+                  that.item_01[idx] = {
+                    id: item
+                  };
+                } else {
+                  that.item_02[idx - that.item_01.length] = {
+                    id: item
+                  };
                 }
               }
+
             })
           }
         }, (error) => {
@@ -862,7 +878,7 @@
       },
 
 
-      initYan(){
+      initYan() {
 
         var canvas;
         var context;
@@ -913,7 +929,7 @@
 
           image.src = '/static/images/hand.gif';
 
-          rock = { src: image.src, img: image };
+          rock = {src: image.src, img: image};
         }
 
         function drawRock() {
@@ -956,7 +972,6 @@
           drawRock();
         }
       },
-
 
 
       initZhuHuo() {
@@ -1092,14 +1107,12 @@
 
         var party = smokemachine(ctx, [160, 160, 160])
         party.start() // start animating
-        party.setPreDrawCallback(function(dt){
-          party.addSmoke(innerWidth/2, innerHeight, .35)
+        party.setPreDrawCallback(function (dt) {
+          party.addSmoke(innerWidth / 2, innerHeight, .35)
           canvas.width = innerWidth
-          canvas.height = innerHeight/2
+          canvas.height = innerHeight / 2
           canvas.style.opacity = 0.75;
         })
-
-
 
 
         // setTimeout(function () {
@@ -1115,14 +1128,14 @@
         //
         // }, 1000)
       },
-      updateCouplets(data){
-        if (data && this.space && this.space.couplets){
+      updateCouplets(data) {
+        if (data && this.space && this.space.couplets) {
           this.space.couplets.left = data.left
           this.space.couplets.right = data.right
         }
       },
-      registerEvent(){
-        eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
+      registerEvent() {
+        eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
       }
     },
     created() {
@@ -1138,7 +1151,7 @@
       // this.initYan();
     },
     beforeDestroy() {
-      eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS,this.updateCouplets)
+      eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
     }
   }
 </script>
@@ -1164,7 +1177,7 @@
     background-size: 100% 100%;
   }
 
-  #smoke-box{
+  #smoke-box {
     /*background: red;*/
     z-index: 9;
     position: absolute;
@@ -1325,12 +1338,12 @@
     display: flex;
 
     /*#yan-canvas{*/
-      /*position: absolute;*/
-      /*left: 0px;*/
-      /*right: 0px;*/
-      /*top: 0px;*/
-      /*bottom: 30px;*/
-      /*width: 100vw;*/
+    /*position: absolute;*/
+    /*left: 0px;*/
+    /*right: 0px;*/
+    /*top: 0px;*/
+    /*bottom: 30px;*/
+    /*width: 100vw;*/
     /*}*/
   }
 
