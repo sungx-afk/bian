@@ -230,6 +230,10 @@
           eventHub.$on(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)
         }
       },
+      activated(){
+        let key = constant.KEY_LAST_SPACE_INFO + '_' + this.space.id
+        localStorage.setItem(key,'main')
+      },
       created() {
         this.registerEvent()
         this.initShowMeeting()
