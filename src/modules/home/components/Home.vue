@@ -6,6 +6,11 @@
         <div class="text">爱，永存</div>
       </div>
     </div>
+    <div class="notice-container" v-if="showNotice">
+      <van-cell is-link @click.stop="goNotice">
+        您还未关注公众号，关注后可以及时收到通知
+      </van-cell>
+    </div>
     <div class="container-bottom">
       <template v-if="list.length > 0 || visitedList.length > 0">
         <div class="list" v-if="list.length > 0">
@@ -65,6 +70,7 @@
         menuList:[],
         loginState:LoginState.UNDO,
         query:'', //记录进入时的query
+        showNotice:false
       }
     },
     components: {
@@ -90,6 +96,15 @@
       }
     },
     methods:{
+      updateNotice(){
+        if (this.user && !this.user.serviceOpenId){
+          this.showNotice = true
+        }
+      },
+      goNotice(){
+        this.showNotice = false
+        Link(`/notice`)
+      },
       getSpaceList(){
         $API.home.getSpaceList((rsp)=>{
           this.list = rsp
@@ -243,6 +258,7 @@
         this.dispatchWithQuery()
         this.getSpaceList()
         this.getSpacesVisited()
+        this.updateNotice()
       },
       tokenExpire(){
         //token过期了，重新尝试授权登录
@@ -366,6 +382,18 @@
           font-size: 22px;
           padding: 2px 20px;
           background: rgba(0,0,0,0.5);
+        }
+      }
+    }
+    .notice-container{
+      border-bottom: 1px solid #eeeeee;
+      .van-cell{
+        background: @MAIN_THEME_COLOR;
+        .van-cell__value--alone{
+          color: white;
+        }
+        .van-cell__right-icon{
+          color: white;
         }
       }
     }
