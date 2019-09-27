@@ -135,7 +135,7 @@
           this.goSacrifice()
           return
         }
-        if (e.detail === 'friends'){ //亲属空间加判断
+        if (e === 'friends'){ //亲属空间加判断
           if (!this.isSpaceMember && !this.isSpaceCreator){
             this.$toast("您当前还不是该馆亲属成员")
             return
