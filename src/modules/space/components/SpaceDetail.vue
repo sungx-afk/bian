@@ -285,23 +285,27 @@
         })
       },
       bgmAction(){
-        if (this.playState === 'play'){
+        if (this.isSpaceCreator){
+          if (this.playState === 'play'){
+            this.actions.push({
+              name: '停止音乐',
+              id:'stop_bgm',
+            })
+          }else{
+            this.actions.push({
+              name: '播放音乐',
+              id:'play_bgm',
+            })
+          }
           this.actions.push({
-            name: '停止音乐',
-            id:'stop_bgm',
+            name: '设置音乐',
+            id:'setting_bgm',
           })
+          this.showBgmAction = true
+          this.showAction = true
         }else{
-          this.actions.push({
-            name: '播放音乐',
-            id:'play_bgm',
-          })
+          this.togglePlayBgm()
         }
-        this.actions.push({
-          name: '设置音乐',
-          id:'setting_bgm',
-        })
-        this.showBgmAction = true
-        this.showAction = true
       },
       togglePlayBgm(){
         if (this.playState === 'play'){
