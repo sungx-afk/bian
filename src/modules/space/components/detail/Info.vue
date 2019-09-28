@@ -71,6 +71,9 @@
         </template>
       </div>
     </template>
+    <div class="share-area" @click.stop="shareSpace">
+      <van-cell is-link>分享给好友</van-cell>
+    </div>
     <div class="split-space"></div>
   </div>
 </template>
@@ -219,6 +222,17 @@
         },
         goMemorialMeeting(){
           Link(`/space/meeting/${this.space.id}`)
+        },
+        shareSpace(){
+          let extra = {}
+
+          extra.origin_from = 'space_detail'
+          extra.invite_user_id = this.user.id
+          extra.space_id = this.space.id
+          extra = JSON.stringify(extra)
+
+          localStorage.setItem(constant.KEY_EXTRA_DATA,extra)
+          Link(`/share`)
         },
         closeMemorialMeeting(){
           this.showMeeting = false
@@ -379,6 +393,9 @@
 
         }
       }
+    }
+    .share-area{
+      margin-top: 10px;
     }
     .split-space{
       height: 10px;

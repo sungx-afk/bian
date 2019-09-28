@@ -55,6 +55,8 @@
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
 
+  import base64 from 'js-base64'
+
   var LoginState = {
     UNDO: 0,
     DOING: 1,
@@ -268,15 +270,14 @@
         let query = this.$route.query
         let code = ''
         let uid = ''
+
+        this.query = query
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
           }
           if (query.uid){
             uid = query.uid
-          }
-          if (query.origin_from){
-            this.query = query
           }
         }
         if (uid){
@@ -294,6 +295,28 @@
           let from = this.query.origin_from
           let spaceId = this.query.space_id
           let inviteUserId = this.query.invite_user_id
+          //如果是链接分享的
+          if (this.query.copylink){
+            let content = this.query.copylink
+            content = content.replace(/-/g, '+').replace(/_/g, '/') // Convert '-' to '+', '_' to '/'
+            content = base64.Base64.decode(content)
+            let params = content.split('&')
+            let query = {}
+            for (let i = 0; i < params.length; i++) {
+              let param = params[i].split('=')
+              query[param[0]] = param[1]
+            }
+            //检查时效性
+            if (query.timestamp){
+              let now = new Date().getTime()
+              if (now > parseInt(query.timestamp) + 2 * 24 * 60 * 60 * 1000){
+                return
+              }
+            }
+            from = query.origin_from
+            spaceId = query.space_id
+            inviteUserId = query.invite_user_id
+          }
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){

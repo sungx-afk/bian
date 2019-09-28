@@ -35,7 +35,7 @@
 </template>
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {Link,isIphone} from '@/config/utils'
   import constant from '@/config/constant'
 
   import Info from './detail/Info'
@@ -271,18 +271,20 @@
         eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       },
       initShare(){
-        let extra = {}
-        extra.origin_from = 'space_detail'
-        extra.invite_user_id = this.user.id
-        extra.space_id = this.spaceId
+        if (!isIphone()){
+          let extra = {}
+          extra.origin_from = 'space_detail'
+          extra.invite_user_id = this.user.id
+          extra.space_id = this.spaceId
 
-        this.wechatShare({
-          title: '彼岸纪念',
-          extra:extra,
-          success: () => { //你重置分享成功后的回调
+          this.wechatShare({
+            title: '彼岸纪念',
+            extra:extra,
+            success: () => { //你重置分享成功后的回调
 
-          }
-        })
+            }
+          })
+        }
       },
       bgmAction(){
         if (this.isSpaceCreator){
