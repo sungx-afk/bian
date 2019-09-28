@@ -5,7 +5,7 @@
       <div class="share-body">
         <div class="share-top-text">
           <span>请先点击右上角"..."</span>
-          <span>然后选择"发送给朋友"或"分享到朋友圈"</span>
+          <span>{{shareTip1}}</span>
         </div>
         <div class="share-top-image">
           <img src="~@/modules/images/share_arrow.png"/>
@@ -16,7 +16,7 @@
     <div class="share-middle">
       <div class="share-title" v-if="!isIphone">方式二</div>
       <div class="share-middle-text">
-        <span class="share-middle-tip">{{shareTip}}</span>
+        <span class="share-middle-tip">{{shareTip2}}</span>
         <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制链接</button>
       </div>
     </div>
@@ -47,22 +47,30 @@
       },
       computed:{
         isIphone(){
-          return isIphone()
+          return isIphone() && false
         },
-        isTimeAging(){
+        isAddFriends(){
           let result = false
-
           if (this.extra && this.extra.origin_from === 'add_friends'){
             result = true
+          }
+          return result
+        },
+        shareTip1(){
+          let result = '然后选择"发送给朋友"或"分享到朋友圈"'
+          if (this.isAddFriends){
+            result += '(仅用于亲属邀请，分享48小时过期）'
           }
 
           return result
         },
-        shareTip(){
-          let result = `请点击按钮复制纪念馆链接，然后直接发送给好友或者聊天群`
+        shareTip2(){
+          let result = ''
 
-          if (this.isTimeAging){
-            result += '，链接48小时后过期'
+          if (this.isAddFriends){
+            result = '请点击按钮复制纪念馆链接，然后直接发送给亲友。（此链接仅用于亲属邀请，48小时过期）'
+          }else{
+            result = '请点击按钮复制纪念馆链接，然后直接发送给朋友或者聊天群'
           }
 
           return result
@@ -80,12 +88,13 @@
             }
             if (this.extra){
               data.extra = this.extra
+              data.timestamp = new Date().getTime()
             }
             this.wechatShare(data)
           }
 
           let content = qs.stringify(this.extra,{indices:false})
-          if (this.isTimeAging){
+          if (this.isAddFriends){
             content = content + '&timestamp=' + new Date().getTime()
           }
           content = base64.Base64.encode(content)
@@ -128,7 +137,7 @@
     .share-top{
       display: flex;
       flex-direction: column;
-      padding: 40px 20px;
+      padding: 20px 20px;
       .share-title{
         font-weight: bold;
       }
@@ -156,6 +165,7 @@
       padding: 20px 20px;
       .share-title{
         font-weight: bold;
+        margin-bottom: 20px;
       }
       .share-middle-text{
         display: flex;

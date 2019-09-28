@@ -295,6 +295,7 @@
           let from = this.query.origin_from
           let spaceId = this.query.space_id
           let inviteUserId = this.query.invite_user_id
+          let timestamp = this.query.timestamp
           //如果是链接分享的
           if (this.query.copylink){
             let content = this.query.copylink
@@ -306,17 +307,18 @@
               let param = params[i].split('=')
               query[param[0]] = param[1]
             }
-            //检查时效性
-            if (query.timestamp){
-              let now = new Date().getTime()
-              if (now > parseInt(query.timestamp) + 2 * 24 * 60 * 60 * 1000){
-                return
-              }
-            }
+
             from = query.origin_from
             spaceId = query.space_id
             inviteUserId = query.invite_user_id
+            timestamp = query.timestamp
           }
+          //检查时效性
+          let now = new Date().getTime()
+          if (timestamp && now > parseInt(timestamp) + 2 * 24 * 60 * 60 * 1000){
+            return
+          }
+          
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){

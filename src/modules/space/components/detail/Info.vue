@@ -72,7 +72,7 @@
       </div>
     </template>
     <div class="share-area" @click.stop="shareSpace">
-      <van-cell is-link>分享给好友</van-cell>
+      <van-cell is-link>发送给朋友</van-cell>
     </div>
     <div class="split-space"></div>
   </div>
