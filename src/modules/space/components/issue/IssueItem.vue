@@ -61,10 +61,10 @@
           <div class='t6-1-view'>
             <div class='t6-1-left'>
               <img class='t6-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
-              <view class='t6-1-top'>
+              <div class='t6-1-top'>
                 <img class='t6-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
                 <img class='t6-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
-              </view>
+              </div>
             </div>
             <div class='t6-1-right'>
               <img class='t6-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
@@ -353,7 +353,7 @@
       }
       .t3-2-image3 {
         width:100%;
-        height:220px;
+        height:213px;
         object-fit: cover;
       }
     }
@@ -451,6 +451,7 @@
           object-fit: cover;
         }
         .t6-1-top {
+          display: flex;
           height:110px;
           .t6-1-image2 {
             width:45%;
