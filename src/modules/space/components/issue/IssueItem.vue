@@ -432,7 +432,7 @@
         .t5-5-image4
         {
           width: 100%;
-          height: 220px;
+          height: 222px;
           object-fit: cover;
         }
 
