@@ -337,13 +337,13 @@
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){
-            if (inviteUserId === this.user.id){ //如果链接是当前用户发起的，直接进入即可
+            if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
               Link(`/space/detail/${spaceId}`)
             }else{
               this.addMemberToSpace(spaceId)
             }
           }else if(from === 'transfer_space'){
-            if (inviteUserId === this.user.id){ //如果链接是当前用户发起的，直接进入即可
+            if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
               Link(`/space/detail/${spaceId}`)
             }else{
               this.transferSpace(spaceId)

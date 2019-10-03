@@ -122,6 +122,8 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .transfer-container{
+    height: 100%;
+    background: @BG_WHITE;
     .transfer-member-list-area{
       .transfer-title-area{
         padding: 0px 20px;
