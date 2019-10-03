@@ -46,6 +46,12 @@
     <van-popup v-model="isShowMoreMenu">
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
+    <van-action-sheet
+      v-model="showAction"
+      :actions="actions"
+      @select="onActionSelect"
+      @click-overlay="onActionClose">
+    </van-action-sheet>
   </div>
 </template>
 <script>
@@ -72,7 +78,9 @@
         menuList:[],
         loginState:LoginState.UNDO,
         query:'', //记录进入时的query
-        showNotice:false
+        showNotice:false,
+        showAction:false,
+        actions:[]
       }
     },
     components: {
@@ -129,7 +137,14 @@
         })
       },
       createSpace(){
-        Link('/space/create')
+        this.actions = [{
+          id:'kinsfolk',
+          name:'亲属',
+        },{
+          id:'friends',
+          name:'朋友/老师/同事',
+        },]
+        this.showAction = true
       },
       goSpaceDetail(item){
         this.tryHandleBgm(item)
@@ -318,7 +333,7 @@
           if (timestamp && now > parseInt(timestamp) + 2 * 24 * 60 * 60 * 1000){
             return
           }
-          
+
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){
@@ -326,6 +341,12 @@
               Link(`/space/detail/${spaceId}`)
             }else{
               this.addMemberToSpace(spaceId)
+            }
+          }else if(from === 'transfer_space'){
+            if (inviteUserId === this.user.id){ //如果链接是当前用户发起的，直接进入即可
+              Link(`/space/detail/${spaceId}`)
+            }else{
+              this.transferSpace(spaceId)
             }
           }
           this.query = '' //把query置空
@@ -339,6 +360,15 @@
           }, rsp=>{
             Link(`/space/detail/${spaceId}`)
           })
+      },
+      transferSpace(spaceId){
+        let toUserId = this.user.id
+        $API.space.transferSpace({
+          sid:spaceId,
+          toUserId:toUserId,
+        }, rsp=>{
+          Link(`/space/detail/${spaceId}`)
+        })
       },
       tryHandleBgm(space){
         this.initBgm(space)
@@ -365,7 +395,22 @@
             }
           }
         }
-      }
+      },
+      onActionSelect(item){
+        this.showAction = false
+        this.actions = []
+        let menu = item.id
+        let type = 0
+        if (menu === 'friends'){
+          type = 1
+        }
+
+        Link(`/space/create?type=${type}`)
+      },
+      onActionClose(){
+        this.showAction = false
+        this.actions = []
+      },
     },
     created() {
       this.initLogin()
@@ -391,6 +436,7 @@
     .container-top {
       position: relative;
       height: 220px;
+      flex-shrink: 0;
       .header-image {
         width: 100%;
         height: 100%;

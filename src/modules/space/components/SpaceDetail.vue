@@ -48,22 +48,7 @@
       return {
         spaceId:'',
         detail:'',
-        tabBarList:[{
-          id:'main',
-          name:'首页'
-        },{
-          id:'sacrifice',
-          name:'祭拜'
-        },{
-          id:'message',
-          name:'留言'
-        },{
-          id:'friends',
-          name:'亲属空间'
-        },{
-          id:'secret',
-          name:'私语'
-        }],
+        tabBarList:[],
         messageType:'PUBLIC', //PUBLIC, PRIVATE, SPACE;
         tabActive:'main',
         menuList:[],
@@ -124,6 +109,13 @@
         }
         return result
       },
+      showFriendsTab(){
+        let result = false
+        if (this.detail && this.detail.type == 0){
+          result = true
+        }
+        return result
+      }
     },
     methods:{
       ...mapActions({
@@ -193,6 +185,27 @@
         }
       },
       initTab(){
+        this.tabBarList = [{
+          id:'main',
+          name:'首页'
+        },{
+          id:'sacrifice',
+          name:'祭拜'
+        },{
+          id:'message',
+          name:'留言'
+        },{
+          id:'secret',
+          name:'私语'
+        }]
+
+        //只有type=0的才显示亲属空间
+        if (this.showFriendsTab){
+          this.tabBarList.splice(3,0,{
+            id:'friends',
+            name:'亲属空间'
+          })
+        }
         let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
         let value = localStorage.getItem(key)
         if (value) {
@@ -269,6 +282,7 @@
       },
       registerEvent(){
         eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+        eventHub.$on(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
       },
       initShare(){
         if (!isIphone()){
@@ -321,12 +335,15 @@
       updatePlayState(state){
         this.playState = state
       },
+      updateSpaceDetail(){
+        this.getDetail()
+      }
     },
     created() {
       if(this.$route.params.id){
         this.spaceId = this.$route.params.id
-        this.initTab()
         this.getDetail(()=>{
+          this.initTab()
           this.initBgm(this.detail)
         })
         this.registerEvent()
@@ -336,6 +353,7 @@
     beforeDestroy() {
       this.stopBgm(true)
       eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+      eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
     }
   }
 </script>
