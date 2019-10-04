@@ -139,10 +139,10 @@
       createSpace(){
         this.actions = [{
           id:'kinsfolk',
-          name:'亲属',
+          name:'为亲属创建',
         },{
           id:'friends',
-          name:'朋友/老师/同事',
+          name:'为朋友/老师/同事创建',
         },]
         this.showAction = true
       },
