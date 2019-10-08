@@ -166,6 +166,17 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  transferSpaceWithTicket({sid, ticket}, successCb, errorCb) {
+    let data = {
+      ticket: ticket
+    }
+
+    $axios.put(`/spaces/${sid}/creator?width_ticket`, JSON.stringify(data)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   postIssue({sid, data}, successCb, errorCb) {
     $axios.post(`/subject/${sid}/comments`, JSON.stringify(data)).then(response => {
       successCb && successCb(response.data)

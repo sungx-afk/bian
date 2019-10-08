@@ -82,8 +82,7 @@
           })
         },
         copyLink(){
-
-          let content = `origin_from=transfer_space&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
+          let content = `origin_from=transfer_space&space_id=${this.spaceId}&invite_user_id=${this.user.id}&ticket=${this.space.ticket}`
 
           content = content + '&timestamp=' + new Date().getTime()
           content = base64.Base64.encode(content)

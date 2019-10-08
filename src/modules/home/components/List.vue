@@ -311,6 +311,7 @@
           let spaceId = this.query.space_id
           let inviteUserId = this.query.invite_user_id
           let timestamp = this.query.timestamp
+          let ticket = ''
           //如果是链接分享的
           if (this.query.copylink){
             let content = this.query.copylink
@@ -327,6 +328,7 @@
             spaceId = query.space_id
             inviteUserId = query.invite_user_id
             timestamp = query.timestamp
+            ticket = query.ticket
           }
           //检查时效性
           let now = new Date().getTime()
@@ -346,7 +348,7 @@
             if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
               Link(`/space/detail/${spaceId}`)
             }else{
-              this.transferSpace(spaceId)
+              this.transferSpace(spaceId,ticket)
             }
           }
           this.query = '' //把query置空
@@ -361,11 +363,10 @@
             Link(`/space/detail/${spaceId}`)
           })
       },
-      transferSpace(spaceId){
-        let toUserId = this.user.id
-        $API.space.transferSpace({
+      transferSpace(spaceId,ticket){
+        $API.space.transferSpaceWithTicket({
           sid:spaceId,
-          toUserId:toUserId,
+          ticket
         }, rsp=>{
           Link(`/space/detail/${spaceId}`)
         })
