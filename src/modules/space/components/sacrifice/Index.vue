@@ -963,7 +963,7 @@
           Part.prototype.render = function(){
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-            ctx.fillStyle = ctx.strokeStyle = 'hsla('+this.hue+', '+this.saturation+'%, '+this.lightness+'%, '+this.alpha+')';
+            ctx.fillStyle = ctx.strokeStyle = 'hsla('+(this.hue%30)+', '+this.saturation+'%, '+this.lightness+'%, '+this.alpha+')';
             ctx.lineWidth = this.lineWidth;
             ctx.fill();
             ctx.stroke();
