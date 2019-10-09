@@ -49,22 +49,26 @@
           </div>
         </div>
         <div v-else-if="item.photos.length===5">
-          <div class='t5-1-view'>
-            <img class='t5-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
-            <img class='t5-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
-            <img class='t5-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
-            <img class='t5-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
-            <img class='t5-1-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed(4)' />
+          <div class='t5-5-view'>
+            <div class='t5-5-left'>
+              <img class='t5-5-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
+              <img class='t5-5-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
+              <img class='t5-5-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
+            </div>
+            <div class='t5-5-right'>
+              <img class='t5-5-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
+              <img class='t5-5-image5' :src='item.photos[4].thumbnailUrl || item.photos[4].url' @click.stop='imagePressed(4)' />
+            </div>
           </div>
         </div>
         <div v-else-if="item.photos.length===6">
           <div class='t6-1-view'>
             <div class='t6-1-left'>
               <img class='t6-1-image1' :src='item.photos[0].thumbnailUrl || item.photos[0].url' @click.stop='imagePressed(0)' />
-              <view class='t6-1-top'>
+              <div class='t6-1-top'>
                 <img class='t6-1-image2' :src='item.photos[1].thumbnailUrl || item.photos[1].url' @click.stop='imagePressed(1)' />
                 <img class='t6-1-image3' :src='item.photos[2].thumbnailUrl || item.photos[2].url' @click.stop='imagePressed(2)' />
-              </view>
+              </div>
             </div>
             <div class='t6-1-right'>
               <img class='t6-1-image4' :src='item.photos[3].thumbnailUrl || item.photos[3].url' @click.stop='imagePressed(3)' />
@@ -353,7 +357,7 @@
       }
       .t3-2-image3 {
         width:100%;
-        height:220px;
+        height:213px;
         object-fit: cover;
       }
     }
@@ -393,49 +397,51 @@
         }
       }
     }
+    .t5-5-view
+    {
+      display:flex;
+      .t5-5-left
+      {
+        width: 34%;
+        margin-right:3px;
+        .t5-5-image1
+        {
+          width:100%;
+          height:105px;
+          object-fit: cover;
+        }
 
-    /* t5-1 */
-    .t5-1-view {
-      height:350px;
-      .t5-1-image1 {
-        width:122px;
-        height:230px;
-        position:relative;
-        object-fit: cover;
-      }
-      .t5-1-image2 {
-        left:6px;
-        width:250px;
-        bottom:122px;
-        height:107px;
-        position:relative;
-        object-fit: cover;
-      }
+        .t5-5-image2
+        {
+          width:100%;
+          height:110px;
+          object-fit: cover;
+        }
 
-      .t5-1-image3 {
-        top:-235px;
-        left:128px;
-        width:117px;
-        height:117px;
-        position:relative;
-        object-fit: cover;
+        .t5-5-image3
+        {
+          width:100%;
+          height:105px;
+          object-fit: cover;
+        }
       }
+      .t5-5-right
+      {
+        width: 66%;
+        margin-left:3px;
+        .t5-5-image4
+        {
+          width: 100%;
+          height: 222px;
+          object-fit: cover;
+        }
 
-      .t5-1-image4 {
-        top:-121px;
-        left:125px;
-        width:125px;
-        height:230px;
-        position:relative;
-        object-fit: cover;
-      }
-
-      .t5-1-image5 {
-        top:-235px;
-        width:246px;
-        height:107px;
-        position:relative;
-        object-fit: cover;
+        .t5-5-image5
+        {
+          width: 100%;
+          height: 105px;
+          object-fit: cover;
+        }
       }
     }
 
@@ -451,6 +457,7 @@
           object-fit: cover;
         }
         .t6-1-top {
+          display: flex;
           height:110px;
           .t6-1-image2 {
             width:45%;

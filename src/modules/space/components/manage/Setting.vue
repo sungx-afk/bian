@@ -16,6 +16,7 @@
       <van-cell title="背景音乐" is-link @click.stop="goBgmSetting"></van-cell>
       <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
       <van-cell title="追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
+      <van-cell title="移交纪念馆" is-link @click.stop="goTransferSpace"></van-cell>
       <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
     </van-cell-group>
   </div>
@@ -92,6 +93,9 @@
         },
         goBgmSetting(){
           Link(`/space/bgm/${this.space.id}`)
+        },
+        goTransferSpace(){
+          Link(`/space/transfer/${this.space.id}`)
         },
         deleteSpace(e){
           let that = this

@@ -35,7 +35,7 @@
 </template>
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {Link,isIphone} from '@/config/utils'
   import constant from '@/config/constant'
 
   import Info from './detail/Info'
@@ -48,22 +48,7 @@
       return {
         spaceId:'',
         detail:'',
-        tabBarList:[{
-          id:'main',
-          name:'首页'
-        },{
-          id:'sacrifice',
-          name:'祭拜'
-        },{
-          id:'message',
-          name:'留言'
-        },{
-          id:'friends',
-          name:'亲属空间'
-        },{
-          id:'secret',
-          name:'私语'
-        }],
+        tabBarList:[],
         messageType:'PUBLIC', //PUBLIC, PRIVATE, SPACE;
         tabActive:'main',
         menuList:[],
@@ -124,6 +109,13 @@
         }
         return result
       },
+      showFriendsTab(){
+        let result = false
+        if (this.detail && this.detail.type == 0){
+          result = true
+        }
+        return result
+      }
     },
     methods:{
       ...mapActions({
@@ -135,7 +127,7 @@
           this.goSacrifice()
           return
         }
-        if (e.detail === 'friends'){ //亲属空间加判断
+        if (e === 'friends'){ //亲属空间加判断
           if (!this.isSpaceMember && !this.isSpaceCreator){
             this.$toast("您当前还不是该馆亲属成员")
             return
@@ -193,6 +185,27 @@
         }
       },
       initTab(){
+        this.tabBarList = [{
+          id:'main',
+          name:'首页'
+        },{
+          id:'sacrifice',
+          name:'祭拜'
+        },{
+          id:'message',
+          name:'留言'
+        },{
+          id:'secret',
+          name:'私语'
+        }]
+
+        //只有type=0的才显示亲属空间
+        if (this.showFriendsTab){
+          this.tabBarList.splice(3,0,{
+            id:'friends',
+            name:'亲属空间'
+          })
+        }
         let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
         let value = localStorage.getItem(key)
         if (value) {
@@ -269,39 +282,46 @@
       },
       registerEvent(){
         eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+        eventHub.$on(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
       },
       initShare(){
-        let extra = {}
-        extra.origin_from = 'space_detail'
-        extra.invite_user_id = this.user.id
-        extra.space_id = this.spaceId
+        if (!isIphone()){
+          let extra = {}
+          extra.origin_from = 'space_detail'
+          extra.invite_user_id = this.user.id
+          extra.space_id = this.spaceId
 
-        this.wechatShare({
-          title: '彼岸纪念',
-          extra:extra,
-          success: () => { //你重置分享成功后的回调
+          this.wechatShare({
+            title: '彼岸纪念',
+            extra:extra,
+            success: () => { //你重置分享成功后的回调
 
-          }
-        })
-      },
-      bgmAction(){
-        if (this.playState === 'play'){
-          this.actions.push({
-            name: '停止音乐',
-            id:'stop_bgm',
-          })
-        }else{
-          this.actions.push({
-            name: '播放音乐',
-            id:'play_bgm',
+            }
           })
         }
-        this.actions.push({
-          name: '设置音乐',
-          id:'setting_bgm',
-        })
-        this.showBgmAction = true
-        this.showAction = true
+      },
+      bgmAction(){
+        if (this.isSpaceCreator){
+          if (this.playState === 'play'){
+            this.actions.push({
+              name: '停止音乐',
+              id:'stop_bgm',
+            })
+          }else{
+            this.actions.push({
+              name: '播放音乐',
+              id:'play_bgm',
+            })
+          }
+          this.actions.push({
+            name: '设置音乐',
+            id:'setting_bgm',
+          })
+          this.showBgmAction = true
+          this.showAction = true
+        }else{
+          this.togglePlayBgm()
+        }
       },
       togglePlayBgm(){
         if (this.playState === 'play'){
@@ -315,12 +335,15 @@
       updatePlayState(state){
         this.playState = state
       },
+      updateSpaceDetail(){
+        this.getDetail()
+      }
     },
     created() {
       if(this.$route.params.id){
         this.spaceId = this.$route.params.id
-        this.initTab()
         this.getDetail(()=>{
+          this.initTab()
           this.initBgm(this.detail)
         })
         this.registerEvent()
@@ -330,6 +353,7 @@
     beforeDestroy() {
       this.stopBgm(true)
       eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+      eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
     }
   }
 </script>

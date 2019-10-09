@@ -208,6 +208,12 @@
       dianlazu() {
         let that = this;
         this.buy('item-la-zu', () => {
+          this.$notify({
+            type:'info',
+            message: '-3云币',
+            color: '#825621',
+            background: '#ffffff'
+          });
           this.showLaZuHuo();
           that.getSpaceDetail();
         });
@@ -224,6 +230,12 @@
       flower() {
         let that = this;
         this.buy('item-xuan-hua', () => {
+          this.$notify({
+            type:'info',
+            message: '-9云币',
+            color: '#825621',
+            background: '#ffffff'
+          });
           var dom = document.getElementById("item-xuan-hua");
           dom.style.animationName = 'flowerIn';
           setTimeout(function () {
@@ -237,6 +249,12 @@
       shaozhi() {
         let that = this;
         this.buy('item-zhi-qian', () => {
+          this.$notify({
+            type:'info',
+            message: '-8云币',
+            color: '#825621',
+            background: '#ffffff'
+          });
           var dom = document.getElementById("big-fire");
           dom.style.visibility = 'visible';
           that.getSpaceDetail();

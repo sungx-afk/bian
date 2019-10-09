@@ -55,8 +55,9 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({name, users}, successCb, errorCb) {
+  createSpace({type,name, users}, successCb, errorCb) {
     let param = {
+      type,
       name,
       spaceUsers: users
     }
@@ -148,6 +149,29 @@ export default {
     }
 
     $axios.put(`/spaces/${sid}/music`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  transferSpace({sid, toUserId}, successCb, errorCb) {
+
+    let data = {
+      toUserId: toUserId
+    }
+
+    $axios.put(`/spaces/${sid}/creator`, JSON.stringify(data)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  transferSpaceWithTicket({sid, ticket}, successCb, errorCb) {
+    let data = {
+      ticket: ticket
+    }
+
+    $axios.put(`/spaces/${sid}/creator?width_ticket`, JSON.stringify(data)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

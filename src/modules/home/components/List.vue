@@ -46,6 +46,12 @@
     <van-popup v-model="isShowMoreMenu">
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
+    <van-action-sheet
+      v-model="showAction"
+      :actions="actions"
+      @select="onActionSelect"
+      @click-overlay="onActionClose">
+    </van-action-sheet>
   </div>
 </template>
 <script>
@@ -54,6 +60,8 @@
   import constant from '@/config/constant'
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
+
+  import base64 from 'js-base64'
 
   var LoginState = {
     UNDO: 0,
@@ -70,7 +78,9 @@
         menuList:[],
         loginState:LoginState.UNDO,
         query:'', //记录进入时的query
-        showNotice:false
+        showNotice:false,
+        showAction:false,
+        actions:[]
       }
     },
     components: {
@@ -127,7 +137,14 @@
         })
       },
       createSpace(){
-        Link('/space/create')
+        this.actions = [{
+          id:'kinsfolk',
+          name:'为亲属创建',
+        },{
+          id:'friends',
+          name:'为朋友/老师/同事创建',
+        },]
+        this.showAction = true
       },
       goSpaceDetail(item){
         this.tryHandleBgm(item)
@@ -268,15 +285,14 @@
         let query = this.$route.query
         let code = ''
         let uid = ''
+
+        this.query = query
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
           }
           if (query.uid){
             uid = query.uid
-          }
-          if (query.origin_from){
-            this.query = query
           }
         }
         if (uid){
@@ -294,13 +310,45 @@
           let from = this.query.origin_from
           let spaceId = this.query.space_id
           let inviteUserId = this.query.invite_user_id
+          let timestamp = this.query.timestamp
+          let ticket = ''
+          //如果是链接分享的
+          if (this.query.copylink){
+            let content = this.query.copylink
+            content = content.replace(/-/g, '+').replace(/_/g, '/') // Convert '-' to '+', '_' to '/'
+            content = base64.Base64.decode(content)
+            let params = content.split('&')
+            let query = {}
+            for (let i = 0; i < params.length; i++) {
+              let param = params[i].split('=')
+              query[param[0]] = param[1]
+            }
+
+            from = query.origin_from
+            spaceId = query.space_id
+            inviteUserId = query.invite_user_id
+            timestamp = query.timestamp
+            ticket = query.ticket
+          }
+          //检查时效性
+          let now = new Date().getTime()
+          if (timestamp && now > parseInt(timestamp) + 2 * 24 * 60 * 60 * 1000){
+            return
+          }
+
           if (from === 'space_detail'){
             Link(`/space/detail/${spaceId}`)
           }else if(from === 'add_friends'){
-            if (inviteUserId === this.user.id){ //如果链接是当前用户发起的，直接进入即可
+            if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
               Link(`/space/detail/${spaceId}`)
             }else{
               this.addMemberToSpace(spaceId)
+            }
+          }else if(from === 'transfer_space'){
+            if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
+              Link(`/space/detail/${spaceId}`)
+            }else{
+              this.transferSpace(spaceId,ticket)
             }
           }
           this.query = '' //把query置空
@@ -314,6 +362,14 @@
           }, rsp=>{
             Link(`/space/detail/${spaceId}`)
           })
+      },
+      transferSpace(spaceId,ticket){
+        $API.space.transferSpaceWithTicket({
+          sid:spaceId,
+          ticket
+        }, rsp=>{
+          Link(`/space/detail/${spaceId}`)
+        })
       },
       tryHandleBgm(space){
         this.initBgm(space)
@@ -340,7 +396,22 @@
             }
           }
         }
-      }
+      },
+      onActionSelect(item){
+        this.showAction = false
+        this.actions = []
+        let menu = item.id
+        let type = 0
+        if (menu === 'friends'){
+          type = 1
+        }
+
+        Link(`/space/create?type=${type}`)
+      },
+      onActionClose(){
+        this.showAction = false
+        this.actions = []
+      },
     },
     created() {
       this.initLogin()
@@ -366,6 +437,7 @@
     .container-top {
       position: relative;
       height: 220px;
+      flex-shrink: 0;
       .header-image {
         width: 100%;
         height: 100%;

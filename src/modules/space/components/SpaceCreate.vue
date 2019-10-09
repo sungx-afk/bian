@@ -2,8 +2,8 @@
   <div class="space-create-container">
     <div class="info">
       <van-cell class="type-cell">
-        <van-radio-group v-model="currentType" class="type-radio-group" @change="typeChanged">
-          <van-radio v-for="item in typeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+        <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
+          <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
         </van-radio-group>
       </van-cell>
       <div class="users-area" v-for="(user,index) in users" :key="index">
@@ -30,6 +30,7 @@
   export default{
     data(){
       return {
+        type:0,// 0 亲属 1，朋友
         users:[{
           name: '',
           birthday:'',         //诞辰
@@ -40,11 +41,11 @@
           nation: '',         //民族
           avatarUrl: '',      //遗像地址
         }],
-        typeList:[
+        numberTypeList:[
           { name: '单人', value: 0},
           { name: '双人', value: 1 }
         ],
-        currentType:0,
+        currentNumberType:0,
         isAgreementChecked: true  //是否选择了鱼骨协议
       }
     },
@@ -57,11 +58,11 @@
       }
     },
     methods:{
-      typeChanged(type){
-        this.currentType = type
-        if (this.currentType == 0 && this.users.length > 1){
+      numberTypeChanged(value){
+        this.currentNumberType = value
+        if (this.currentNumberType == 0 && this.users.length > 1){
           this.users.splice(1,1)
-        }else if(this.currentType == 1 && this.users.length <= 1){
+        }else if(this.currentNumberType == 1 && this.users.length <= 1){
           this.users.push({
             name: '',
             birthday:'',
@@ -125,6 +126,7 @@
         spaceName += '的纪念馆'
 
         $API.space.createSpace({
+            type:this.type,
             name: spaceName,
             users: this.users
           }, rsp => {
@@ -146,7 +148,9 @@
       }
     },
     created() {
-
+      if (this.$route.query){
+        this.type = this.$route.query.type
+      }
     }
   }
 </script>
