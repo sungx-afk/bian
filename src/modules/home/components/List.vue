@@ -80,7 +80,8 @@
         query:'', //记录进入时的query
         showNotice:false,
         showAction:false,
-        actions:[]
+        actions:[],
+        needRefreshList:false
       }
     },
     components: {
@@ -148,7 +149,10 @@
       },
       goSpaceDetail(item){
         this.tryHandleBgm(item)
-        Link(`/space/detail/${item.id}`)
+        this.linkToSpaceDetail(item.id)
+      },
+      linkToSpaceDetail(spaceId){
+        Link(`/space/detail/${spaceId}`)
       },
       moreSpaceVisitedMenu(){
         this.menuList = [ {
@@ -337,16 +341,19 @@
           }
 
           if (from === 'space_detail'){
-            Link(`/space/detail/${spaceId}`)
+            if (inviteUserId != this.user.id){
+              this.needRefreshList = true
+            }
+            this.linkToSpaceDetail(spaceId)
           }else if(from === 'add_friends'){
             if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
-              Link(`/space/detail/${spaceId}`)
+              this.linkToSpaceDetail(spaceId)
             }else{
               this.addMemberToSpace(spaceId)
             }
           }else if(from === 'transfer_space'){
             if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
-              Link(`/space/detail/${spaceId}`)
+              this.linkToSpaceDetail(spaceId)
             }else{
               this.transferSpace(spaceId,ticket)
             }
@@ -357,18 +364,20 @@
       addMemberToSpace(spaceId){
         let userId = this.user.id
         $API.space.addFriend({
-            sid:spaceId,
-            userId:userId,
-          }, rsp=>{
-            Link(`/space/detail/${spaceId}`)
-          })
+          sid:spaceId,
+          userId:userId,
+        }, rsp=>{
+          this.needRefreshList = true
+          this.linkToSpaceDetail(spaceId)
+        })
       },
       transferSpace(spaceId,ticket){
         $API.space.transferSpaceWithTicket({
           sid:spaceId,
           ticket
         }, rsp=>{
-          Link(`/space/detail/${spaceId}`)
+          this.needRefreshList = true
+          this.linkToSpaceDetail(spaceId)
         })
       },
       tryHandleBgm(space){
@@ -416,6 +425,13 @@
     created() {
       this.initLogin()
       this.registerEvent()
+    },
+    activated(){
+      if (this.loginState === LoginState.DONE && this.needRefreshList){
+        this.needRefreshList = false
+        this.getSpaceList()
+        this.getSpacesVisited()
+      }
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
