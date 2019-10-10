@@ -47,7 +47,7 @@
       },
       computed:{
         isIphone(){
-          return isIphone() && false
+          return isIphone()
         },
         isAddFriends(){
           let result = false
@@ -176,11 +176,12 @@
         }
       }
       .copy-link{
-        border: 1px solid #eeeeee;
         padding: 10px;
-        background: white;
+        background: @MAIN_THEME_COLOR;
+        color: white;
         &:active{
-          background:#eeeeee;
+          background:@MAIN_THEME_COLOR;
+          opacity: 0.8;
         }
       }
     }
