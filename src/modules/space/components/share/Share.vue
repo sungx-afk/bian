@@ -177,6 +177,7 @@
       }
       .copy-link{
         padding: 10px;
+        border:none;
         background: @MAIN_THEME_COLOR;
         color: white;
         &:active{
