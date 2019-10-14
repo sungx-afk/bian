@@ -1641,8 +1641,9 @@
         position: relative;
         background-image: url("./images/item_xiang.png") !important;
         background-size: cover;
-        width: 10vw;
-        height: 20vw;
+        width: 42px;
+        height: 82px;
+        margin: 0 auto;
       }
     }
   }
