@@ -2,14 +2,14 @@
   <div class="bgm-container">
     <van-cell-group title="预置">
       <van-cell v-for="item in presetBgm" :key="item.key" :title="item.name" :label="item.author" size="large" @click.stop="selectPresetBgm(item)">
-        <div v-if="showPresetSelected(item)">
+        <div v-if="isPresetSelectedmSelected(item)">
           <i class="iconfont icon-duigou1"></i>
         </div>
       </van-cell>
     </van-cell-group>
     <van-cell-group title="自定义">
       <van-cell v-if="selfUpload && selfUpload.length > 0" :title="selfUpload[0].name" size="large" @click.stop="selectCustomBgm">
-        <div v-if="showCustomSelected()">
+        <div v-if="isCustomSelected()">
           <i class="iconfont icon-duigou1"></i>
         </div>
       </van-cell>
@@ -56,7 +56,7 @@
             cb && cb()
           })
         },
-        showPresetSelected(item){
+        isPresetSelectedmSelected(item){
           let result = false
           if (this.currentBgmKey){
             result = item.key === this.currentBgmKey
@@ -76,11 +76,11 @@
             eventHub.$emit(constant.EVENT_UPDATE_BGM_SUCCESS,{bgmKey:item.key,spaceId:this.spaceId})
           })
         },
-        showCustomSelected(){
+        isCustomSelected(){
           return this.currentBgmKey === 'custom'
         },
         selectCustomBgm(){
-          this.updateCustomBgm()
+          this.playBgm(0,{bgmKey:'custom'})
         },
         updateCustomBgm(cb){
           this.playBgm(0,{bgmKey:'custom'})
@@ -94,7 +94,7 @@
           })
         },
         afterSelectAudio(audio){
-          if (audio.file.size > 5 * 1024 * 1024){
+          if (audio.file.size > 10 * 1024 * 1024){
             this.$toast("文件过大，请选择合适长度的背景音乐")
             return
           }
@@ -117,10 +117,9 @@
             },rsp=>{
               this.$toast.clear()
               if (this.selfUpload.length > 0){
-                this.selfUpload[0] = {name:audio.file.name,url:rsp.url}
-              }else{
-                this.selfUpload.push({name:audio.file.name,url:rsp.url})
+                this.selfUpload = []
               }
+              this.selfUpload.push({name:audio.file.name,url:rsp.url})
               this.updateCustomBgm()
             },error=>{
               this.$toast.clear()
