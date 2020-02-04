@@ -13,6 +13,8 @@
 </template>
 
 <script>
+
+  import {mapGetters} from 'vuex'
     export default {
       name: "Charge",
       data(){
@@ -21,7 +23,17 @@
           isTest:false
         }
       },
+      computed: {
+        ...mapGetters({
+          user: 'userStore/user',
+        }),
+      },
       methods:{
+        initTest(){
+          if (this.user.id == '100001' || this.user.id == '101592'){
+            this.isTest = true
+          }
+        },
         getPriceTag(){
           let param = {}
           if (this.isTest){
@@ -53,6 +65,7 @@
         }
       },
       created() {
+        this.initTest()
         this.getPriceTag()
       }
     }
