@@ -87,7 +87,7 @@
         },
         buyProduct(product){
           if (this.space){
-            if (this.space.creator.point < product.point){
+            if (this.space.currentUser.point < product.point){
               this.$toast("余额不足，请先进行充值")
               return
             }
@@ -95,7 +95,7 @@
             let spaceId = this.spaceId
             $API.space.buy({productId,spaceId},rsp=>{
               this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
-              this.space.creator.point = this.space.creator.point - product.point
+              this.space.currentUser.point = this.space.currentUser.point - product.point
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
             },error=>{
               this.$toast("购买失败，请稍后重试")
