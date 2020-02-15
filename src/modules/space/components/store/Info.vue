@@ -10,7 +10,7 @@
     <div class="charge-area">
       <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
         <van-cell class="charge-cell">
-          <span>账号余额：</span><span class="charge-remain">{{space && space.creator && space.creator.point }}</span><span>云币</span>
+          <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>云币</span>
           <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 10云币）</van-button>
         </van-cell>
         <van-cell v-for="product in products" :key="product.id">
