@@ -27,6 +27,10 @@ const Charge = () => import(/* webpackChunkName: "charge" */ './components/store
 const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Logs')
 const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/store/Couplets')
 
+const Report = () => import(/* webpackChunkName: "report" */ './components/report/Report')
+const ReportCategory = () => import(/* webpackChunkName: "report-category" */ './components/report/Category')
+const ReportSubmit = () => import(/* webpackChunkName: "report-submit" */ './components/report/Submit')
+
 const routes = [
   {
     path: '/space', component: Space,
@@ -113,7 +117,19 @@ const routes = [
         component:Couplets,
       }
     ]
-  }
+  },
+  {
+    path: '/report',
+    component: Report,
+    children: [
+      {
+        path: 'category',
+        component: ReportCategory
+      }, {
+        path: 'submit',
+        component: ReportSubmit
+      }]
+  },
 ]
 
 export default routes;
