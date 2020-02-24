@@ -125,12 +125,20 @@
         })
         spaceName += '的纪念馆'
 
+        this.$toast.loading({
+          duration: 0,       // 持续展示 toast
+          forbidClick: true, // 禁用背景点击
+          loadingType: 'spinner',
+          message: '提交中...'
+        })
+
         $API.space.createSpace({
             type:this.type,
             name: spaceName,
             users: this.users
           }, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
+            this.$toast.clear()
             this.$toast({
               message:'创建成功',
               type:'success',
