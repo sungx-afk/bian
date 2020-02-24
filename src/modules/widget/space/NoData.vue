@@ -1,6 +1,6 @@
 <template>
   <div class='nodata-container'>
-    <img class="image" src="~@/modules/images/nodata.png" />
+    <img class="image" src="~@/modules/images/logo_gray.png" />
     <span class="text">{{text || '爱，永存'}}</span>
   </div>
 </template>
