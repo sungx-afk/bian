@@ -26,7 +26,7 @@
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
-    <template v-if="true">
+    <template v-if="showTab">
       <van-tabbar @change="onTabChange">
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
@@ -74,7 +74,8 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        userSetting:'userStore/userSetting'
+        userSetting:'userStore/userSetting',
+        showTab:'spaceStore/detailShowTab'
       }),
       isIPhoneX(){
         return false

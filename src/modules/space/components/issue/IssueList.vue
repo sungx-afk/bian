@@ -45,7 +45,7 @@
 
 <script>
 
-  import {mapGetters} from 'vuex';
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
 
   import Item from './IssueItem'
@@ -142,7 +142,15 @@
         commentTimer:null
       }
     },
+    watch:{
+      postComment(){
+        this.setDetailShowTab(!this.postComment)
+      },
+    },
     methods: {
+      ...mapActions({
+        setDetailShowTab: 'spaceStore/setDetailShowTab',
+      }),
       fetchIssueList(start) {
         let that = this
         if (start === undefined) {
