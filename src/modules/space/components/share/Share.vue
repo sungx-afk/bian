@@ -144,8 +144,9 @@
         align-items: center;
         .share-top-text{
           display: flex;
-          font-size: 14px;
           flex-direction: column;
+          font-size: 14px;
+          line-height: 28px;
         }
         .share-top-image{
           margin-left: auto;
