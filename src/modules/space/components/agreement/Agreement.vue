@@ -40,13 +40,14 @@
   .agreement-area{
     width: 100%;
     height: 100%;
-    padding: 20px 20px;
+    padding: 20px 20px 120px;
     box-sizing:border-box;
-
+    overflow-y: auto;
     .text{
       color: @FONT_SECOND_COLOR;
       padding: 5px 0px;
-      font-size: 15px;
+      font-size: 16px;
+      line-height: 28px;
       &.right{
         text-align: right;
         margin-top:20px;
