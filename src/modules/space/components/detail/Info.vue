@@ -26,7 +26,7 @@
     <div class="lifetime-area">
       <div class="lifetime-content" v-for="user in space.spaceUsers" :key="user.id">
         <div class="lifetime-top">
-          <div class="name">{{user.name}}</div>
+          <div class="name">生平</div>
           <i class="edit iconfont icon-bianji" v-if="canOperate" @click.stop="editMenu(user)"></i>
         </div>
         <div class="lifetime-bottom">
@@ -71,8 +71,8 @@
         </template>
       </div>
     </template>
-    <div class="share-area" @click.stop="shareSpace">
-      <van-cell is-link>发送给朋友</van-cell>
+    <div class="share-area" @click.stop="goShareSpace">
+      <van-cell is-link>{{shareText}}</van-cell>
     </div>
     <div class="split-space"></div>
   </div>
@@ -113,8 +113,36 @@
           }
           return result
         },
+        isSpaceFriend(){
+          let result = false
+
+          if (this.space && this.space.config && this.space.config.friendIds && this.space.config.friendIds.length > 0){
+            let index = this.space.config.friendIds.findIndex(item=>item === this.user.id)
+            if (index > -1){
+              result = true
+            }
+          }
+
+          return result
+        },
         canOperate(){
           return this.isSpaceCreator
+        },
+        canShareFriend(){
+          let result = false
+          //如果是亲属馆，同时是创建人或者亲属成员
+          if (this.space.type === 0 && (this.isSpaceCreator || this.isSpaceFriend)){
+            result = true
+          }
+
+          return result
+        },
+        shareText(){
+          let result = '发送给朋友'
+          if (this.canShareFriend){
+            result = '发送给亲属/朋友'
+          }
+          return result
         }
       },
       watch:{
@@ -161,6 +189,17 @@
         goSpaceManage(){
           Link(`/space/manage/${this.space.id}`)
         },
+        selectShareType(){
+          this.actions = [{
+            name: '发送给亲属',
+            id:'add_friends',
+          },{
+            name: '发送给朋友',
+            id:'space_detail',
+          },]
+          this.showAction = true
+          this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
+        },
         editMenu(user){
           this.actions = [{
             name: '逝者基本信息',
@@ -193,6 +232,8 @@
                 this.modifySummary(user,data)
               }
             })
+          }else if(menu === 'add_friends' || menu === 'space_detail'){
+            this.shareSpace(menu)
           }
         },
         onActionClose(){
@@ -223,10 +264,17 @@
         goMemorialMeeting(){
           Link(`/space/meeting/${this.space.id}`)
         },
-        shareSpace(){
+        goShareSpace(){
+          if (this.canShareFriend){
+            this.selectShareType()
+          }else {
+            this.shareSpace('space_detail')
+          }
+        },
+        shareSpace(from){
           let extra = {}
 
-          extra.origin_from = 'space_detail'
+          extra.origin_from = from
           extra.invite_user_id = this.user.id
           extra.space_id = this.space.id
           extra = JSON.stringify(extra)
