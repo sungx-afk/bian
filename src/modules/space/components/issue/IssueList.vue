@@ -23,11 +23,11 @@
       </van-list>
     </template>
     <template v-if="!postComment && canComment">
-      <div class="add-issue-btn" :class="{'x-bottom':isIPhoneX}" @click.stop="goAddIssue">
+      <div class="add-issue-btn" @click.stop="goAddIssue">
         <img class="add-issue-image" src="~@/modules/images/float_add_btn.png"/>
       </div>
     </template>
-    <div class='send-comment-area' v-if="postComment">
+    <div class='send-comment-area' :class="{'safe-bottom':isIPhoneX}" v-if="postComment">
       <div class='comment-input-container'>
         <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent"
                    :placeholder="commentPlaceholder" maxlength="1000"></van-field>
@@ -80,9 +80,6 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
-      isIPhoneX() {
-        return false
-      },
       canComment() {
         let result = true
         let currentUserId = this.user.id
@@ -469,7 +466,9 @@
       display: flex;
       align-items: center;
       border-top: solid 1px @BORDER_COLOR_1;
-
+      &.safe-bottom{
+        bottom:34px;
+      }
       .comment-input-container {
         width: 75%;
         height: 45px;
