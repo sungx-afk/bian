@@ -433,6 +433,7 @@
       eventHub.$on(constant.EVENT_POST_ISSUE_SUCCESS, this.updateList)
     },
     beforeDestroy() {
+      this.setDetailShowTab(true)
       eventHub.$off(constant.EVENT_POST_ISSUE_SUCCESS, this.updateList)
     }
   }

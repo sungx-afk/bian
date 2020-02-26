@@ -121,6 +121,7 @@
     methods:{
       ...mapActions({
         setUserSetting: 'userStore/setUserSetting',
+        setDetailShowTab: 'spaceStore/setDetailShowTab',
       }),
       onTabChange(e){
         if (e === 'sacrifice'){
@@ -353,6 +354,7 @@
     },
     beforeDestroy() {
       this.stopBgm(true)
+      this.setDetailShowTab(true)
       eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
     }
