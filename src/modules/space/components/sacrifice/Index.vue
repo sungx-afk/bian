@@ -112,7 +112,7 @@
           <div class="button" @click="dianlazu()">点烛</div>
           <div class="button" @click="shaozhi()">纸钱</div>
           <div class="button" @click="flower()">送花</div>
-          <div class="button" @click="more()">更多</div>
+          <div class="button" @click="more()" v-if="showMoreBtn">更多</div>
         </div>
       </div>
 
@@ -158,6 +158,9 @@
         this.item_02[4] = {id: 'item-xiang'};
         this.item_02[5] = {id: 'item-xiang'};
         return this.item_02;
+      },
+      showMoreBtn(){
+        return this.space && this.space.type != 2
       }
     },
     methods: {

@@ -1,5 +1,8 @@
 <template>
   <div class="space-create-container">
+    <div class="tip">
+      <i class="iconfont icon-tishi1"></i>公益馆创建后需经管理员审核才正式上线。审核通过后，您没有公益馆管理权限（删除、修改相关内容）
+    </div>
     <div class="info">
       <van-cell class="type-cell">
         <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
@@ -173,7 +176,14 @@
     background-color: #f6f6f6;
     overflow-x: hidden;
     overflow-y: auto;
-
+    .tip{
+      padding: 20px;
+      color: #666666;
+      font-size: 13px;
+      .iconfont{
+        margin-right: 4px;
+      }
+    }
     .info {
       .type-cell{
         background-color: white;

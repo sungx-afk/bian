@@ -137,15 +137,20 @@
 
         })
       },
-      createSpace(){
-        this.actions = [{
-          id:'kinsfolk',
-          name:'为亲属创建',
-        },{
-          id:'friends',
-          name:'为朋友/老师/同事创建',
-        },]
-        this.showAction = true
+      createSpace(type){
+        if (type === 'private'){
+          this.actions = [{
+            id:'kinsfolk',
+            name:'为亲属创建',
+          },{
+            id:'friends',
+            name:'为朋友/老师/同事创建',
+          },]
+          this.showAction = true
+        }else{
+          Link(`/space/create?type=2`)
+        }
+
       },
       goSpaceDetail(item){
         this.tryHandleBgm(item)
@@ -153,6 +158,21 @@
       },
       linkToSpaceDetail(spaceId){
         Link(`/space/detail/${spaceId}`)
+      },
+      onActionSelect(item){
+        this.showAction = false
+        this.actions = []
+        let menu = item.id
+        let type = 0
+        if (menu === 'friends'){
+          type = 1
+        }
+
+        Link(`/space/create?type=${type}`)
+      },
+      onActionClose(){
+        this.showAction = false
+        this.actions = []
       },
       moreSpaceVisitedMenu(){
         this.menuList = [ {
@@ -163,8 +183,11 @@
       },
       showMainMenu(){
         this.menuList = [ {
-          id:'create',
+          id:'create_private',
           name: '创建纪念馆',
+        },{
+          id:'create_public',
+          name: '创建公益纪念馆',
         },
         {
           id:'feedback',
@@ -185,8 +208,11 @@
       moreMenuPressed(menu){
         this.isShowMoreMenu = false
         switch (menu.id) {
-          case 'create':
-            this.createSpace()
+          case 'create_private':
+            this.createSpace('private')
+            break
+          case 'create_public':
+            this.createSpace('public')
             break
           case 'feedback':
             this.goFeedback()
@@ -405,21 +431,6 @@
             }
           }
         }
-      },
-      onActionSelect(item){
-        this.showAction = false
-        this.actions = []
-        let menu = item.id
-        let type = 0
-        if (menu === 'friends'){
-          type = 1
-        }
-
-        Link(`/space/create?type=${type}`)
-      },
-      onActionClose(){
-        this.showAction = false
-        this.actions = []
       },
     },
     created() {

@@ -19,7 +19,7 @@
         </van-cell>
       </van-cell-group>
     </div>
-    <div class="view-history" @click="goLogs">充值和扣费记录</div>
+    <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
   </div>
 </template>
 
