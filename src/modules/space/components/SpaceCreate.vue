@@ -1,26 +1,31 @@
 <template>
   <div class="space-create-container">
-    <div class="tip">
-      <i class="iconfont icon-tishi1"></i>公益馆创建后需经管理员审核才正式上线。审核通过后，您没有公益馆管理权限（删除、修改相关内容）
-    </div>
-    <div class="info">
-      <van-cell class="type-cell">
-        <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
-          <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
-        </van-radio-group>
-      </van-cell>
-      <div class="users-area" v-for="(user,index) in users" :key="index">
-        <user-info :user="user"></user-info>
+    <template v-if="type == 2">
+      <div class="tip" >
+        <i class="iconfont icon-tishi1"></i>公益馆创建后需经管理员审核才正式上线。审核通过后，您没有公益馆管理权限（删除、修改相关内容）
       </div>
-    </div>
-    <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="create">创建</van-button>
-    </div>
-    <div class="agreement">
-      <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
-      <span class="text">我已详细阅读并同意</span>
-      <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">《服务协议》</span>
-    </div>
+    </template>
+    <template v-else>
+      <div class="info">
+        <van-cell class="type-cell">
+          <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
+            <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+          </van-radio-group>
+        </van-cell>
+        <div class="users-area" v-for="(user,index) in users" :key="index">
+          <user-info :user="user"></user-info>
+        </div>
+      </div>
+      <div class="bottom-button">
+        <van-button type="default" size="large" @click.tap="create">创建</van-button>
+      </div>
+      <div class="agreement">
+        <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
+        <span class="text">我已详细阅读并同意</span>
+        <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">《服务协议》</span>
+      </div>
+    </template>
+
   </div>
 </template>
 <script>

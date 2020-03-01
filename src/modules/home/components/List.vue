@@ -15,18 +15,26 @@
       <template v-if="list.length > 0 || visitedList.length > 0">
         <div class="list" v-if="list.length > 0">
           <item v-for="item in list" :key="item.id" :item="item"
-                v-on:item-press="goSpaceDetail"
-                v-on:menu-press="showMoreMenu">
+                v-on:item-press="goSpaceDetail">
           </item>
         </div>
         <div class="list" v-if="visitedList.length > 0">
-          <div class="visited-header">
-            <div class="title">浏览过的纪念馆</div>
+          <div class="list-header">
+            <div class="title">最近浏览的纪念馆</div>
             <i class="more iconfont icon-gengduo" @click="moreSpaceVisitedMenu"></i>
           </div>
           <item v-for="item in visitedList" :key="item.id" :item="item" :moreMenu="true"
                 v-on:item-press="goSpaceDetail"
                 v-on:menu-press="showMoreMenu">
+          </item>
+        </div>
+        <div class="list" v-if="publicList.length > 0">
+          <div class="list-header">
+            <div class="title">公益纪念馆</div>
+            <div class="all">全部</div>
+          </div>
+          <item v-for="item in publicList" :key="item.id" :item="item"
+                v-on:item-press="goSpaceDetail">
           </item>
         </div>
       </template>
@@ -74,6 +82,7 @@
       return {
         list:[],
         visitedList:[],
+        publicList:[],
         isShowMoreMenu:false,
         menuList:[],
         loginState:LoginState.UNDO,
@@ -117,15 +126,26 @@
         Link(`/notice`)
       },
       getSpaceList(){
+        this.getSpacesPersonal()
+        this.getSpacesPublic()
+      },
+      getSpacesPersonal(){
         $API.home.getSpaceList((rsp)=>{
           this.list = rsp
         },(error)=>{
           console.log("error:",error)
         })
       },
+      getSpacesPublic(){
+        $API.home.getSpacesPublic({start:0,limit:6},(rsp)=>{
+          this.publicList = rsp
+        },(error)=>{
+          console.log("error:",error)
+        })
+      },
       getSpacesVisited(){
         let that = this
-        $API.home.getSpacesVisited((rsp)=>{
+        $API.home.getSpacesVisited({start:0,limit:3},(rsp)=>{
           that.visitedList = rsp.map(item=>{
             if (item){
               let o = item
@@ -137,20 +157,18 @@
 
         })
       },
-      createSpace(type){
-        if (type === 'private'){
-          this.actions = [{
-            id:'kinsfolk',
-            name:'为亲属创建',
-          },{
-            id:'friends',
-            name:'为朋友/老师/同事创建',
-          },]
-          this.showAction = true
-        }else{
-          Link(`/space/create?type=2`)
-        }
-
+      createSpace(){
+        this.actions = [{
+          id:'kinsfolk',
+          name:'为亲属创建',
+        },{
+          id:'friends',
+          name:'为朋友/老师/同事创建',
+        },{
+          id:'public',
+          name:'为公益人物创建',
+        },]
+        this.showAction = true
       },
       goSpaceDetail(item){
         this.tryHandleBgm(item)
@@ -166,6 +184,8 @@
         let type = 0
         if (menu === 'friends'){
           type = 1
+        }else if(menu === 'public'){
+          type = 2
         }
 
         Link(`/space/create?type=${type}`)
@@ -183,11 +203,8 @@
       },
       showMainMenu(){
         this.menuList = [ {
-          id:'create_private',
+          id:'create',
           name: '创建纪念馆',
-        },{
-          id:'create_public',
-          name: '创建公益纪念馆',
         },
         {
           id:'feedback',
@@ -208,11 +225,8 @@
       moreMenuPressed(menu){
         this.isShowMoreMenu = false
         switch (menu.id) {
-          case 'create_private':
-            this.createSpace('private')
-            break
-          case 'create_public':
-            this.createSpace('public')
+          case 'create':
+            this.createSpace()
             break
           case 'feedback':
             this.goFeedback()
@@ -406,18 +420,6 @@
           this.linkToSpaceDetail(spaceId)
         })
       },
-      tryHandleBgm(space){
-        this.initBgm(space)
-        this.tryAutoPlay()
-      },
-      tryAutoPlay(){
-        //判断选定的是否开启自动播放音频
-        let playState = this.userSetting['bgm_play_state']
-        let needPlay = playState === 'play' || playState === undefined
-        if (needPlay){
-          this.playBgm(0)
-        }
-      },
       updateSpaceBgm(data){
         if (data){
           let index = this.list.findIndex(item=>item.id == data.spaceId)
@@ -500,17 +502,17 @@
       flex-grow: 1;
       margin-bottom: 100px;
       .list {
-        .visited-header{
+        .list-header{
           display:flex;
-          height:30px;
           align-items:center;
-          background:#eeeeee;
+          height:30px;
           padding:0 25px;
+          background:#eeeeee;
           .title{
             font-size: 12px;
             color: #666666;
           }
-          .more{
+          .more,.all{
             margin-left: auto;
           }
         }

@@ -8,10 +8,25 @@ export default {
       errorCb && errorCb(error)
     });
   },
+  getSpacesPublic({start,limit},successCb,errorCb) {
 
-  getSpacesVisited(successCb,errorCb) {
+    let param = {
+      start,
+      limit
+    }
+    $axios.get(`/spaces/public_spaces?` + qs.stringify(param, {indices: false})).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
+  getSpacesVisited({start,limit},successCb,errorCb) {
 
-    $axios.get(`/spaces/visited`).then(function (response) {
+    let param = {
+      start,
+      limit
+    }
+    $axios.get(`/spaces/visited?` + qs.stringify(param, {indices: false})).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb && errorCb(error)
