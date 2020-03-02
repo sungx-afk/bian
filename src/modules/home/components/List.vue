@@ -1,15 +1,15 @@
 <template>
   <div class="main-container">
+    <div class="notice-container" v-if="showNotice">
+      <van-cell is-link @click.stop="goNotice">
+        您还未关注公众号，关注后可以及时收到通知
+      </van-cell>
+    </div>
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />
       <div class="text-area">
         <div class="text">爱，永存</div>
       </div>
-    </div>
-    <div class="notice-container" v-if="showNotice">
-      <van-cell is-link @click.stop="goNotice">
-        您还未关注公众号，关注后可以及时收到通知
-      </van-cell>
     </div>
     <div class="container-bottom">
       <template v-if="list.length > 0 || visitedList.length > 0">
@@ -489,7 +489,6 @@
       }
     }
     .notice-container{
-      border-bottom: 1px solid #eeeeee;
       .van-cell{
         background: @MAIN_THEME_COLOR;
         .van-cell__value--alone{

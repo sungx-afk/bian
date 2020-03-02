@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <div class="notice-container" v-if="showNotice">
+      <van-cell is-link @click.stop="goNotice">
+        您还未关注公众号，关注后可以及时收到通知
+      </van-cell>
+    </div>
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
@@ -62,7 +67,8 @@
         showAction:false,
         actions:[],
         playState:'stop',
-        showBgmAction:false
+        showBgmAction:false,
+        showNotice:false
       }
     },
     components: {
@@ -123,6 +129,15 @@
         setUserSetting: 'userStore/setUserSetting',
         setDetailShowTab: 'spaceStore/setDetailShowTab',
       }),
+      initNotice(){
+        if (this.user && !this.user.serviceOpenId){
+          this.showNotice = true
+        }
+      },
+      goNotice(){
+        this.showNotice = false
+        Link(`/notice`)
+      },
       onTabChange(e){
         if (e === 'sacrifice'){
           this.saveSpaceTab('sacrifice')
@@ -350,6 +365,7 @@
         })
         this.registerEvent()
         this.initShare()
+        this.initNotice()
       }
     },
     beforeDestroy() {
@@ -370,6 +386,17 @@
     box-sizing: border-box;
     background-color: #f6f6f6;
     overflow-x: hidden;
+    .notice-container{
+      .van-cell{
+        background: @MAIN_THEME_COLOR;
+        .van-cell__value--alone{
+          color: white;
+        }
+        .van-cell__right-icon{
+          color: white;
+        }
+      }
+    }
     .container-content{
       height: ~'calc(100% - 50px)';
       &.iphonex-height{
