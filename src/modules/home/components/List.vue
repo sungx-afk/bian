@@ -127,7 +127,7 @@
       },
       getSpaceList(){
         this.getSpacesPersonal()
-        this.getSpacesPublic()
+        //this.getSpacesPublic()
       },
       getSpacesPersonal(){
         $API.home.getSpaceList((rsp)=>{
@@ -164,10 +164,12 @@
         },{
           id:'friends',
           name:'为朋友/老师/同事创建',
-        },{
-          id:'public',
-          name:'为公益人物创建',
-        },]
+        },
+          // {
+          // id:'public',
+          // name:'申请公益馆',
+          // }
+        ]
         this.showAction = true
       },
       goSpaceDetail(item){
@@ -380,7 +382,7 @@
             return
           }
 
-          if (from === 'space_detail'){
+          if (from === 'space_detail' || from === 'meeting'){
             if (inviteUserId != this.user.id){
               this.needRefreshList = true
             }

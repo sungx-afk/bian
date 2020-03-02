@@ -41,6 +41,7 @@
 <script>
   import {mapGetters} from 'vuex';
   import config_server from '@/config/config'
+  import base64 from 'js-base64'
 
   const FONT = "px Pingfang SC,STHeiti,Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,SimSun,sans-serif"
 
@@ -281,9 +282,13 @@ xxx`
 
           let that = this
           let img = new Image();
-          let scene = `meeting_${this.spaceId}_${this.user.id}`
           let param = getRequestParam()
-          let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          //let scene = `meeting_${this.spaceId}_${this.user.id}`
+          //let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          let shareContent = `origin_from=space_detail&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
+          shareContent = base64.Base64.encode(shareContent)
+          let shareUrl = `${config_server.domain}/home?copylink=${shareContent}`
+          let url = `${config_server.domain}/api/v1/qrcode?content=${shareUrl}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
           console.log(url)
           img.setAttribute("crossOrigin",'Anonymous');
           img.src = url

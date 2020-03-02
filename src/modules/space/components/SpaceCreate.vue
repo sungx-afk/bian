@@ -1,8 +1,23 @@
 <template>
   <div class="space-create-container">
     <template v-if="type == 2">
-      <div class="tip" >
-        <i class="iconfont icon-tishi1"></i>公益馆创建后需经管理员审核才正式上线。审核通过后，您没有公益馆管理权限（删除、修改相关内容）
+      <div class="apply-public-container">
+        <div class="tip" >
+          <i class="iconfont icon-tishi1"></i>公益馆申请后需经审核人员编辑才能正式上线
+        </div>
+        <div class="public-name">
+          <van-field
+            ref="input"
+            v-model="famousContent"
+            type="textarea"
+            placeholder="请输入姓名及生平简介"
+            rows="10"
+            :autosize="{ maxHeight: 800, minHeight: 300 }">
+          </van-field>
+        </div>
+        <div class="bottom-button">
+          <van-button type="default" size="large" @click.tap="apply">申请</van-button>
+        </div>
       </div>
     </template>
     <template v-else>
@@ -19,13 +34,12 @@
       <div class="bottom-button">
         <van-button type="default" size="large" @click.tap="create">创建</van-button>
       </div>
-      <div class="agreement">
-        <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
-        <span class="text">我已详细阅读并同意</span>
-        <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">《服务协议》</span>
-      </div>
     </template>
-
+    <div class="agreement">
+      <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
+      <span class="text">我已详细阅读并同意</span>
+      <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">《服务协议》</span>
+    </div>
   </div>
 </template>
 <script>
@@ -54,7 +68,8 @@
           { name: '双人', value: 1 }
         ],
         currentNumberType:0,
-        isAgreementChecked: true  //是否选择了鱼骨协议
+        isAgreementChecked: true,  //是否选择了鱼骨协议
+        famousContent:''
       }
     },
     components: {
@@ -159,6 +174,12 @@
           this.$toast('创建失败，请稍后重试')
         })
       },
+      apply(){
+        if (!this.famousName){
+          this.$toast('请填写公益人物姓名');
+          return
+        }
+      },
       readAgreement(){
         Link('/agreement')
       }
@@ -184,7 +205,7 @@
     .tip{
       padding: 20px;
       color: #666666;
-      font-size: 13px;
+      font-size: 15px;
       .iconfont{
         margin-right: 4px;
       }
