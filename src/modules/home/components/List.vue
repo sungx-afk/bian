@@ -177,15 +177,7 @@
         Link(`/space/detail/${item.id}`)
       },
       linkToSpaceDetail(spaceId){
-        $API.space.getSpaceDetail({
-          sid: spaceId,
-        }, (rsp)=>{
-          let space = rsp
-          this.tryHandleBgm(space)
-          Link(`/space/detail/${spaceId}`)
-        }, error=>{
-          Link(`/space/detail/${spaceId}`)
-        })
+        Link(`/space/detail/${spaceId}`)
       },
       onActionSelect(item){
         this.showAction = false
