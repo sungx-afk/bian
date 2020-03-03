@@ -8,9 +8,12 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
-        <info ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged">
+        <info ref="info" v-if="detail && false" :space="detail" v-on:action-changed="actionChanged">
           <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
         </info>
+        <info-theme ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged">
+          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
+        </info-theme>
       </template>
       <template v-if="tabActive == 'message'">
         <!--留言-->
@@ -47,6 +50,7 @@
   import Message from './detail/Message'
   import Friends from './detail/Friends'
   import Private from './detail/Private'
+  import InfoTheme from './detail/InfoTheme'
 
   export default{
     data(){
@@ -75,7 +79,8 @@
       Info,
       Message,
       Friends,
-      Private
+      Private,
+      InfoTheme
     },
     computed:{
       ...mapGetters({

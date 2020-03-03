@@ -148,13 +148,14 @@ Vue.mixin({
       }
     },
     getThemes(){
-      let themes = [ {
-        uuid: 'Lz1m3qc7PZ7burhn',
-        color: '#ffffff',
-        background: '#1b4c66',
-        name: '山水',
-        url: '/static/images/theme/theme_shanshui.png'
-      },
+      let themes = [
+        {
+          uuid: '5oLlWLeWV3KFtgIg',
+          color: '#ffffff',
+          background: '#434343',
+          name: '无限思念',
+          url: '/static/images/theme/theme_sinian2.png'
+        },
         {
           uuid: 'i5qRVuEa3gIpKKDL',
           color: '#ffffff',
@@ -163,11 +164,11 @@ Vue.mixin({
           url: '/static/images/theme/theme_sinian1.png'
         },
         {
-          uuid: '5oLlWLeWV3KFtgIg',
+          uuid: 'Lz1m3qc7PZ7burhn',
           color: '#ffffff',
-          background: '#434343',
-          name: '无限思念',
-          url: '/static/images/theme/theme_sinian2.png'
+          background: '#1b4c66',
+          name: '山水',
+          url: '/static/images/theme/theme_shanshui.png'
         },
         {
           uuid: 'zkaodFO8EOEZrCo3',
@@ -211,6 +212,17 @@ Vue.mixin({
 
       return themes
     },
+    getOneTheme(themeId){
+      let themes = this.getThemes()
+      if (!themeId){
+        return themes[0]
+      }
+      let index = themes.findIndex(item=>item.uuid === themeId)
+      if (index < 0){
+        index = 0
+      }
+      return themes[index]
+    }
   }
 })
 

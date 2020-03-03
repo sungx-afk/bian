@@ -9,17 +9,10 @@
       name: "Report",
       data(){
         return{
-          step:'list',
-          categoryList:[{
-            id:'porn',
-            name:'色情'
-          }]
         }
       },
       methods:{
-        goSubmitStep(){
-          this.step = 'submit'
-        }
+
       }
     }
 </script>
