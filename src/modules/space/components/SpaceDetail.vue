@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <div class="notice-container" v-if="showNotice">
+      <van-cell is-link @click.stop="goNotice">
+        您还未关注公众号，关注后可以及时收到通知
+      </van-cell>
+    </div>
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
@@ -26,7 +31,7 @@
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
-    <template v-if="true">
+    <template v-if="showTab">
       <van-tabbar @change="onTabChange">
         <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
       </van-tabbar>
@@ -62,7 +67,8 @@
         showAction:false,
         actions:[],
         playState:'stop',
-        showBgmAction:false
+        showBgmAction:false,
+        showNotice:false
       }
     },
     components: {
@@ -74,7 +80,7 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        userSetting:'userStore/userSetting'
+        showTab:'spaceStore/detailShowTab'
       }),
       isIPhoneX(){
         return false
@@ -120,7 +126,17 @@
     methods:{
       ...mapActions({
         setUserSetting: 'userStore/setUserSetting',
+        setDetailShowTab: 'spaceStore/setDetailShowTab',
       }),
+      initNotice(){
+        if (this.user && !this.user.serviceOpenId){
+          this.showNotice = true
+        }
+      },
+      goNotice(){
+        this.showNotice = false
+        Link(`/notice`)
+      },
       onTabChange(e){
         if (e === 'sacrifice'){
           this.saveSpaceTab('sacrifice')
@@ -348,10 +364,12 @@
         })
         this.registerEvent()
         this.initShare()
+        this.initNotice()
       }
     },
     beforeDestroy() {
       this.stopBgm(true)
+      this.setDetailShowTab(true)
       eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
     }
@@ -367,6 +385,17 @@
     box-sizing: border-box;
     background-color: #f6f6f6;
     overflow-x: hidden;
+    .notice-container{
+      .van-cell{
+        background: @MAIN_THEME_COLOR;
+        .van-cell__value--alone{
+          color: white;
+        }
+        .van-cell__right-icon{
+          color: white;
+        }
+      }
+    }
     .container-content{
       height: ~'calc(100% - 50px)';
       &.iphonex-height{

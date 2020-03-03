@@ -21,10 +21,8 @@
       </div>
     </div>
     <div class="share-bottom">
-      <img src="~@/modules/images/index_header.jpg" class="header">
-      <div class="text-area">
-        <div class="text">爱，永存</div>
-      </div>
+      <img src="~@/modules/images/logo_gray.png" class="header">
+      <span class="text">爱，永存</span>
     </div>
   </div>
 </template>
@@ -146,8 +144,9 @@
         align-items: center;
         .share-top-text{
           display: flex;
-          font-size: 14px;
           flex-direction: column;
+          font-size: 14px;
+          line-height: 28px;
         }
         .share-top-image{
           margin-left: auto;
@@ -173,6 +172,7 @@
         flex-direction: column;
         .share-middle-tip{
           margin-bottom: 20px;
+          line-height: 28px;
         }
       }
       .copy-link{
@@ -187,25 +187,16 @@
       }
     }
     .share-bottom{
-      display: flex;
-      justify-content: center;
-      position: relative;
+      display:flex;
+      flex-direction:column;
+      align-items: center;
       .header{
-        height: 200px;
+        width: 100px;
+        height: 100px;
       }
-      .text-area{
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        top: 90px;
-        width: 100%;
-        .text{
-          text-align: center;
-          color: white;
-          font-size: 22px;
-          padding: 2px 20px;
-          background: rgba(0,0,0,0.5);
-        }
+      .text{
+        font-size: 16px;
+        color: #a9a9a9;
       }
     }
   }

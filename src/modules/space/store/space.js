@@ -2,12 +2,14 @@ import * as types from './mutation-types'
 
 // initial state
 const state = {
-  cropData:null
+  cropData:null,
+  detailShowTab:true
 }
 
 // getters
 const getters = {
   cropData: state => state.cropData,
+  detailShowTab: state => state.detailShowTab
 }
 
 // actions
@@ -17,6 +19,9 @@ const actions = {
   },
   resetCropImageData({commit, state}){
     commit(types.RESET_CROPPER_IMAGE_DATA)
+  },
+  setDetailShowTab({commit, state},flag){
+    commit(types.DETAIL_SHOW_TAB,flag)
   }
 }
 
@@ -27,6 +32,9 @@ const mutations = {
   },
   [types.RESET_CROPPER_IMAGE_DATA] (state){
     state.cropData = null
+  },
+  [types.DETAIL_SHOW_TAB] (state,flag){
+    state.detailShowTab = flag
   }
 }
 

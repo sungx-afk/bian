@@ -271,21 +271,19 @@
       display:flex;
       flex-direction:column;
       .operate-area {
-        height:30px;
+        height:44px;
         display:flex;
         position: relative;
         align-items:center;
         .date {
           color:#aaaaaa;
-          font-size:11px;
+          font-size:12px;
         }
         .comment-reply {
-          padding:14px 10px 10px 10px;
+          padding:10px;
           margin-left:auto;
         }
         .comment-more {
-          width: 18px;
-          height: 18px;
           padding:10px;
         }
       }

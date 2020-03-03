@@ -62,9 +62,30 @@ Vue.mixin({
   computed: {
     ...mapGetters({
       userSetting: 'userStore/userSetting'
-    })
+    }),
+    isIPhoneX() {
+      if (typeof window !== 'undefined' && window) {
+        return /iphone/gi.test(window.navigator.userAgent) && window.screen.height >= 812;
+      }
+      return false;
+    },
   },
   methods: {
+    tryHandleBgm(space){
+      this.initBgm(space)
+      this.tryAutoPlay()
+    },
+    tryAutoPlay(){
+      //判断选定的是否开启自动播放音频
+      let playState = 'play'
+      if (this.userSetting){
+        playState = this.userSetting['bgm_play_state']
+      }
+      let needPlay = playState === 'play'
+      if (needPlay){
+        this.playBgm(0)
+      }
+    },
     initBgm(space){
       if (!space){
         return
@@ -72,6 +93,8 @@ Vue.mixin({
       if (space.music){
         this.initBgmKey(space.music.key)
         this.selfUpload = space.music.selfUpload
+      }else {
+        this.initBgmKey()
       }
     },
     initBgmKey(key){

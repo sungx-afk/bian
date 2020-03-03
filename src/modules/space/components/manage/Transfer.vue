@@ -24,6 +24,10 @@
       </span>
       <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制移交链接</button>
     </div>
+    <div class="transfer-bottom">
+      <img src="~@/modules/images/logo_gray.png" class="header">
+      <span class="text">爱，永存</span>
+    </div>
   </div>
 </template>
 
@@ -152,14 +156,18 @@
       padding: 20px 20px;
       .copy-link-tip{
         margin: 20px 0px;
-        color: @FONT_THIRD_COLOR;
+        font-size: 14px;
+        color: @FONT_FIRST_COLOR;
+        line-height: 28px;
       }
       .copy-link{
-        border: 1px solid #eeeeee;
         padding: 10px;
-        background: white;
+        border:none;
+        background: @MAIN_THEME_COLOR;
+        color: white;
         &:active{
-          background:#eeeeee;
+          background:@MAIN_THEME_COLOR;
+          opacity: 0.8;
         }
       }
     }
@@ -167,6 +175,19 @@
       font-weight: bold;
       padding: 20px 0px 10px 0px;
       border-bottom: 1px solid #ebedf0;
+    }
+    .transfer-bottom{
+      display:flex;
+      flex-direction:column;
+      align-items: center;
+      .header{
+        width: 100px;
+        height: 100px;
+      }
+      .text{
+        font-size: 16px;
+        color: #a9a9a9;
+      }
     }
   }
 

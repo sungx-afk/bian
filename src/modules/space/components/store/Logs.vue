@@ -21,7 +21,7 @@
                 </div>
                 <div class="item-content-bottom">
                   <span class="summary">{{item.summary}}</span>
-                  <span class="change-point">
+                  <span class="change-point" :class="{recharge:item.type == 'RECHARGE'}">
                     <span v-if="item.type == 'CONSUME'"> -</span>
                     <span v-if="item.type == 'RECHARGE'"> +</span>
                     {{item.change}}云币
@@ -121,6 +121,9 @@
             align-items: center;
             .change-point{
               margin-left: auto;
+              &.recharge{
+                color: @SECOND_THEME_COLOR;
+              }
             }
           }
         }
