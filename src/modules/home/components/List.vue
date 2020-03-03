@@ -174,7 +174,7 @@
       },
       goSpaceDetail(item){
         this.tryHandleBgm(item)
-        this.linkToSpaceDetail(item.id)
+        Link(`/space/detail/${item.id}`)
       },
       linkToSpaceDetail(spaceId){
         $API.space.getSpaceDetail({
