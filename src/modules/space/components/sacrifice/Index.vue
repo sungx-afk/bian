@@ -75,7 +75,8 @@
                   </div>
                 </div>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
+                  <canvas id="
+" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
                 <div v-for="(item, index) in item02"
                      v-if="index>=6 && index <=8"
