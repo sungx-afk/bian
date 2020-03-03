@@ -62,6 +62,9 @@
                      :class="`${item.id}`"
                      class="item"
                 ></div>
+                <div class="item item-zhang-min-ding"  v-show="changMingDeng">
+                  <canvas id="change-ming-ding-1" style="width: 10vw; height: 10vw;"></canvas>
+                </div>
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
@@ -76,6 +79,9 @@
                 </div>
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
+                </div>
+                <div class="item item-zhang-min-ding" v-show="changMingDeng">
+                  <canvas id="change-ming-ding-2" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
                 <div v-for="(item, index) in item02"
                      v-if="index>=6 && index <=8"
@@ -132,7 +138,20 @@
   import constant from '@/config/constant'
 
 
-  const noItems = ['item-xuan-hua', 'item-kao-ya', 'item-yue-bing', 'item-mao-tai', 'item-wu-liang-ye'];
+  const noItems = [
+    'item-xuan-hua',
+    'item-kao-ya',
+    'item-yue-bing',
+    'item-mao-tai',
+    'item-wu-liang-ye',
+    "item_pk_jiuxi_hongsaorou",
+    "item_pk_jiuxi_ji",
+    "item_pk_jiuxi_maotai",
+    "item_pk_jiuxi_mifan",
+    "item_pk_jiuxi_mantou",
+    "item_pk_jiuxi_ya",
+    "item_pk_jiuxi_yu"
+  ];
 
   const seqIndex = [10, 14, 9, 15, 8, 16, 3, 4, 2, 5, 1, 6, 0, 7];
 
@@ -158,6 +177,9 @@
         this.item_02[4] = {id: 'item-xiang'};
         this.item_02[5] = {id: 'item-xiang'};
         return this.item_02;
+      },
+      changMingDeng(){
+        return this.space && this.space.products.includes('item-zhang-min-ding');
       }
     },
     methods: {
@@ -286,27 +308,16 @@
             }
             let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
             items.forEach((item, index) => {
-              // if (index < 8) {
-              //   that.item_01[index] = {
-              //     id: item
-              //   }
-              // } else if (index < 11) {
-              //   that.item_02[index - 8] = {
-              //     id: item
-              //   }
-              // } else if (index < 14) {
-              //   that.item_02[index - 5] = {
-              //     id: item
-              //   }
-              // }
-
+              //要小于位置
               if (index < seqIndex.length) {
                 let idx = seqIndex[index];
                 if (idx < that.item_01.length) {
+                  //放第一排
                   that.item_01[idx] = {
                     id: item
                   };
                 } else {
+                  //放第二排
                   that.item_02[idx - that.item_01.length] = {
                     id: item
                   };
@@ -1240,8 +1251,16 @@
         const app2 = new Application({
           view: document.querySelector("#zu-huo-2"),
         });
+        const app3 = new Application({
+          view: document.querySelector("#change-ming-ding-1"),
+        });
+        const app4 = new Application({
+          view: document.querySelector("#change-ming-ding-2"),
+        });
         app1.load(manifest);
         app2.load(manifest);
+        app3.load(manifest);
+        app4.load(manifest);
       },
 
       initSmoke() {
@@ -1289,8 +1308,12 @@
           this.space.couplets.right = data.right
         }
       },
+      buySuccess(){
+        this.getSpaceDetail();
+      },
       registerEvent() {
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
+        eventHub.$on(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
       }
     },
     created() {
@@ -1298,6 +1321,7 @@
       console.log(this.spaceId);
       this.getSpaceDetail();
       this.registerEvent()
+      console.log("==========created==========")
     },
     mounted() {
       this.initZhuHuo();
@@ -1305,9 +1329,11 @@
       this.initSmoke();
       this.initXiangHuo();
       // this.initYan();
+      console.log("==========mounted==========")
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
+      eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
     }
   }
 </script>
@@ -1627,6 +1653,53 @@
     background-image: url("./images/item_la_zhu.png") !important;
   }
 
+  .item-zhang-min-ding{
+    background-image: url("./images/chang_min_deng_02.png") !important;
+  }
+
+  .item.item_pk_jiuxi_hongsaorou {
+    background-image: url("./images/item_pk_jiuxi_hongsaorou.png") !important;
+    background-position: 0px 3px;
+  }
+
+  .item.item_pk_jiuxi_ji {
+    background-image: url("./images/item_pk_jiuxi_ji.png") !important;
+    background-position: 0px 3px;
+  }
+
+  .item.item_pk_jiuxi_mantou {
+    background-image: url("./images/item_pk_jiuxi_mantou.png") !important;
+    background-position: 0px 3px;
+  }
+
+  .item.item_pk_jiuxi_maotai {
+    background-image: url("./images/item_pk_jiuxi_maotai.png") !important;
+    background-position: 0px 3px;
+  }
+
+  .item.item_pk_jiuxi_mifan {
+    background-image: url("./images/item_pk_jiuxi_mifan.png") !important;
+    background-position: 0px 3px;
+  }
+
+  .item.item_pk_jiuxi_ya {
+    background-image: url("./images/item_pk_jiuxi_ya.png") !important;
+    background-position: 0px 3px;
+  }
+
+  .item.item_pk_jiuxi_yu {
+    background-image: url("./images/item_pk_jiuxi_yu.png") !important;
+    background-position: 0px 3px;
+  }
+
+
+
+
+
+
+
+
+
   .item-xiang-lu {
     background-image: url("./images/item_xiang_lu.png") !important;
     position: relative;
@@ -1648,7 +1721,7 @@
     }
   }
 
-  .item-la-zu canvas {
+  .item-la-zu canvas, .item-zhang-min-ding canvas {
     position: absolute;
     left: 0px;
     right: 0;
@@ -1658,6 +1731,15 @@
     width: 10vw;
     height: 10vw;
     visibility: hidden;
+  }
+
+  .item-zhang-min-ding canvas {
+    transform: scale(0.5);
+    top: -16px;
+    visibility: visible;
+    &.active{
+      visibility: visible;
+    }
   }
 
   .buttons {

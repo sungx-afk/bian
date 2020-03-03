@@ -40,7 +40,7 @@
       },
       computed: {
         ...mapGetters({
-          user: 'userStore/user',
+          user: 'userStore/user'
         }),
       },
       methods:{
@@ -83,9 +83,18 @@
             id:'package-gua-guo',
             name:'瓜果贡品（7天）',
             point:9
+          },{
+            id:'package-jiu-xi',
+            name:'酒席（7天）',
+            point:50
+          },{
+            id:'item-zhang-min-ding',
+            name:'长明灯（永久）',
+            point:999
           }]
         },
         buyProduct(product){
+          let that = this;
           if (this.space){
             if (this.space.currentUser.point < product.point){
               this.$toast("余额不足，请先进行充值")
@@ -97,6 +106,9 @@
               this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
               this.space.currentUser.point = this.space.currentUser.point - product.point
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
+              setTimeout(()=>{
+                that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
+              }, 1500);
             },error=>{
               this.$toast("购买失败，请稍后重试")
             })
