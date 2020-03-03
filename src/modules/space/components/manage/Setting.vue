@@ -1,12 +1,15 @@
 <template>
   <div class="setting-container">
     <van-cell-group>
-      <van-switch-cell
-        title="仅亲属成员访问"
-        active-color="#825621"
-        v-model="viewScopeCheck"
-        @change="viewScopeChanged">
-      </van-switch-cell>
+      <template v-if="space && space.type === 0">
+        <van-switch-cell
+          title="仅亲属成员访问"
+          active-color="#825621"
+          v-model="viewScopeCheck"
+          @change="viewScopeChanged">
+        </van-switch-cell>
+      </template>
+
       <van-switch-cell
         title="关闭访客留言"
         active-color="#825621"
