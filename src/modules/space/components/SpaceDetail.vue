@@ -12,7 +12,7 @@
           <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
         </info>
         <info-theme ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged">
-          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
+          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinyue2 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
         </info-theme>
       </template>
       <template v-if="tabActive == 'message'">

@@ -1,5 +1,5 @@
 <template>
-  <div class="info-theme-container" :style="{'background-image':`url(${getBackgroundImage})`}">
+  <div class="info-theme-container" :style="{'background-image':`url(${theme.url})`}">
     <div class="base-info-wrapper">
       <div class="user-wrapper">
         <div class="user" v-for="user in space.spaceUsers" :key="user.id">
@@ -8,22 +8,22 @@
 
           </div>
           <div class="name-wrapper">
-            <div class="name">{{user.name}}</div>
-            <div class="date">
-              <span>{{user.birthday | timesToDate('yyyy年')}}</span>
+            <div class="name" :style="{color:theme.color}">{{user.name}}</div>
+            <div class="date" :style="{color:theme.dateColor}">
+              <span>{{user.birthday | timesToDate('yyyy')}}</span>
               -
-              <span>{{user.dieDay | timesToDate('yyyy年')}}</span>
+              <span>{{user.dieDay | timesToDate('yyyy')}}</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="beiwen-wrapper">
+      <div class="beiwen-wrapper" :style="{color:theme.beiwenColor}">
         {{space && space.beiwen}}
       </div>
     </div>
     <div class="operate-wrapper">
       <slot></slot>
-      <div class="more iconfont icon-zhankai" @click="goMoreOperate"></div>
+      <div class="more iconfont icon-liebiao-more" @click="goMoreOperate"></div>
     </div>
   </div>
 </template>
@@ -51,9 +51,8 @@
         ...mapGetters({
           user: 'userStore/user',
         }),
-        getBackgroundImage(){
-          let theme = this.getOneTheme(this.space.themeId)
-          return theme.url
+        theme(){
+          return this.getOneTheme(this.space.themeId)
         },
         isSpaceCreator(){
           let result = false
@@ -89,18 +88,6 @@
         goMoreOperate(){
           let user = this.user
           this.actions = []
-          if (this.isSpaceCreator){
-            this.actions.push({
-              name: '设置',
-              id:'setting',
-              data:user
-            })
-            this.actions.push({
-              name: '追悼会',
-              id:'meeting',
-              data:user
-            })
-          }
           if (this.canShareFriend){
             this.actions.push({
               name: '发送给亲属',
@@ -112,6 +99,29 @@
             name: '发送给朋友',
             id:'space_detail',
           })
+          if (this.isSpaceCreator){
+            this.actions.push({
+              name: '发起云追悼会',
+              id:'meeting',
+              data:user
+            })
+            this.actions.push({
+              name: '编辑生平',
+              id:'modify_summary',
+              data:user
+            })
+            this.actions.push({
+              name: '修改纪念馆',
+              id:'modify_space',
+              data:user
+            })
+            this.actions.push({
+              name: '设置',
+              id:'setting',
+              data:user
+            })
+          }
+
           if (!this.isSpaceCreator){
             this.actions.push({
               name: '举报',
@@ -140,6 +150,11 @@
             case 'add_friends':
             case 'space_detail':
               this.shareSpace(menu)
+              break
+            case 'modify_space':
+
+              break
+            case 'modify_summary':
               break
             case 'report':
               Link(`/report/category`)
@@ -224,7 +239,7 @@
       right: 12px;
       width: 48px;
       height: 100px;
-      background: rgba(255,255,255,0.8);
+      /*background: rgba(255,255,255,0.65);*/
       .audio{
         bottom: 60px;
       }

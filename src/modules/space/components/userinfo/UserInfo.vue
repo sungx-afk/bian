@@ -1,16 +1,15 @@
 <template>
   <div class="users-info" v-if="user">
     <van-field v-model="user.name" label="逝者姓名:" placeholder="请输入逝者姓名" maxlength="25" input-align="right"></van-field>
-    <van-cell title="出生日期:" is-link :value="user.birthday?dateText(user.birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
-    <van-cell title="逝世日期:" is-link :value="user.dieDay?dateText(user.dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
-    <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-    <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-
     <van-cell title="性 别:">
       <van-radio-group v-model="user.sex" class="sex-radio-group">
         <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
       </van-radio-group>
     </van-cell>
+    <van-cell title="出生日期:" is-link :value="user.birthday?dateText(user.birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
+    <van-cell title="逝世日期:" is-link :value="user.dieDay?dateText(user.dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
+    <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
 
     <van-cell title="遗 像:" is-link>
       <van-uploader :after-read="afterSelectPhoto">

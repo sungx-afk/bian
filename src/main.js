@@ -151,61 +151,70 @@ Vue.mixin({
       let themes = [
         {
           uuid: '5oLlWLeWV3KFtgIg',
-          color: '#ffffff',
-          background: '#434343',
+          color: '#333333',
+          dateColor:'#666666',
+          beiwenColor: '#333333',
           name: '无限思念',
           url: '/static/images/theme/theme_sinian2.png'
         },
         {
           uuid: 'i5qRVuEa3gIpKKDL',
-          color: '#ffffff',
-          background: '#005500',
+          color: '#333333',
+          dateColor:'#666666',
+          beiwenColor: '#333333',
           name: '无限思念',
           url: '/static/images/theme/theme_sinian1.png'
         },
         {
           uuid: 'Lz1m3qc7PZ7burhn',
-          color: '#ffffff',
-          background: '#1b4c66',
+          color: '#333333',
+          dateColor:'#666666',
+          beiwenColor: '#333333',
           name: '山水',
           url: '/static/images/theme/theme_shanshui.png'
         },
         {
           uuid: 'zkaodFO8EOEZrCo3',
-          color: '#ffffff',
-          background: '#6c465d',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          beiwenColor: '#FFFFFF',
           name: '星空',
           url: '/static/images/theme/theme_xingkong1.png'
         },
         {
           uuid: 'ifrc01k81NRFY5Pd',
-          color: '#ffffff',
-          background: '#cc9900',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          beiwenColor: '#FFFFFF',
           name: '星空',
           url: '/static/images/theme/theme_xingkong2.png'
         }, {
           uuid: 'rvkTYJmBDC3tVTWE',
-          color: '#ffffff',
-          background: '#cc9999',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          beiwenColor: '#FFFFFF',
           name: '星空',
           url: '/static/images/theme/theme_xingkong3.png'
         },
         {
           uuid: 'JW1OjfrQPu4Xd9de',
-          color: '#ffffff',
-          background: '#339933',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          beiwenColor: '#FFFFFF',
           name: '祥云',
           url: '/static/images/theme/theme_xiangyun.png'
         }, {
           uuid: 't37lsByGDFkTfLj6',
-          color: '#ffffff',
-          background: '#003300',
+          color: '#d81e06',
+          dateColor:'#d81e06',
+          beiwenColor: '#d81e06',
           name: '党建',
           url: '/static/images/theme/theme_dangjian1.png'
         }, {
           uuid: 'MozabJlp2wvKAjAu',
-          color: '#ffffff',
-          background: '#cc6600',
+          color: '#d81e06',
+          dateColor:'#d81e06',
+          beiwenColor: '#d81e06',
           name: '党建',
           url: '/static/images/theme/theme_dangjian2.png'
         }]
@@ -215,7 +224,7 @@ Vue.mixin({
     getOneTheme(themeId){
       let themes = this.getThemes()
       if (!themeId){
-        return themes[0]
+        return themes[7]
       }
       let index = themes.findIndex(item=>item.uuid === themeId)
       if (index < 0){

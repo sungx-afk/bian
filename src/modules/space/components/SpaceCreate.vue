@@ -6,6 +6,18 @@
           <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
         </van-radio-group>
       </van-cell>
+      <van-field v-model="name" label="纪念馆名:" placeholder="请填写纪念馆名" maxlength="20" input-align="right"></van-field>
+      <van-cell title="纪念馆样式:" is-link :value="theme && theme.name" @click="goTheme"></van-cell>
+      <van-field
+        ref="input"
+        label="墓志铭:"
+        v-model="beiwen"
+        type="textarea"
+        placeholder="请输入墓志铭"
+        maxlength="120"
+        rows="2"
+        :autosize="{ maxHeight: 150, minHeight: 50 }">
+      </van-field>
       <div class="users-area" v-for="(user,index) in users" :key="index">
         <user-info :user="user"></user-info>
       </div>
@@ -45,6 +57,9 @@
           { name: '单人', value: 0},
           { name: '双人', value: 1 }
         ],
+        name:'',
+        theme:null,
+        beiwen:'',
         currentNumberType:0,
         isAgreementChecked: true,  //是否选择了鱼骨协议
       }
@@ -74,6 +89,12 @@
             avatarUrl: '',
           })
         }
+      },
+      goTheme(){
+        Link(`/space/theme`)
+      },
+      updateTheme(theme){
+        this.theme = theme
       },
       create() {
         //判断所有的dead
@@ -115,15 +136,16 @@
           return;
         }
 
-        let spaceName = ''
-
-        this.users.forEach((item,index)=>{
-          spaceName += item.name
-          if (index !== this.users.length - 1){
-            spaceName += '和'
-          }
-        })
-        spaceName += '的纪念馆'
+        let spaceName = this.name
+        if (!spaceName){
+          this.users.forEach((item,index)=>{
+            spaceName += item.name
+            if (index !== this.users.length - 1){
+              spaceName += '和'
+            }
+          })
+          spaceName += '的纪念馆'
+        }
 
         this.$toast.loading({
           duration: 0,       // 持续展示 toast
@@ -135,7 +157,9 @@
         $API.space.createSpace({
             type:this.type,
             name: spaceName,
-            users: this.users
+            users: this.users,
+            themeId:this.theme.uuid,
+            beiwen:this.beiwen,
           }, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()
@@ -159,6 +183,10 @@
       if (this.$route.query){
         this.type = this.$route.query.type
       }
+      eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
+    },
+    beforeDestroy() {
+      eventHub.$off(constant.EVENT_SELECT_THEME,this.updateTheme)
     }
   }
 </script>
