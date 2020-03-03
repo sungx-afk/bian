@@ -18,6 +18,7 @@ module.exports = {
   EVENT_DELETE_FRIENDS_SUCCESS:'delete_friends_success',
   EVENT_UPDATE_BGM_SUCCESS:'update_bgm_success',
   EVENT_AUDIO_PLAY:'audio_play',
+  EVENT_SELECT_THEME:'select_theme',
 
   KEY_TOKEN:'token',
   KEY_MEMORIAL_MEETING_SHOW:'memorial_meeting_show',

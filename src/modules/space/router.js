@@ -30,6 +30,7 @@ const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/s
 const Report = () => import(/* webpackChunkName: "report" */ './components/report/Report')
 const ReportCategory = () => import(/* webpackChunkName: "report-category" */ './components/report/Category')
 const ReportSubmit = () => import(/* webpackChunkName: "report-submit" */ './components/report/Submit')
+const Theme = () => import(/* webpackChunkName: "style" */ './components/theme/Theme')
 
 const routes = [
   {
@@ -67,6 +68,9 @@ const routes = [
       {
         path: 'transfer/:id',
         component: Transfer
+      }, {
+        path: 'theme',
+        component: Theme
       }
     ]
   },

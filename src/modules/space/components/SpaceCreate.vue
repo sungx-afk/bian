@@ -1,40 +1,18 @@
 <template>
   <div class="space-create-container">
-    <template v-if="type == 2">
-      <div class="apply-public-container">
-        <div class="tip" >
-          <i class="iconfont icon-tishi1"></i>公益馆申请后需经审核人员编辑才能正式上线
-        </div>
-        <div class="public-name">
-          <van-field
-            ref="input"
-            v-model="famousContent"
-            type="textarea"
-            placeholder="请输入姓名及生平简介"
-            rows="10"
-            :autosize="{ maxHeight: 800, minHeight: 300 }">
-          </van-field>
-        </div>
-        <div class="bottom-button">
-          <van-button type="default" size="large" @click.tap="apply">申请</van-button>
-        </div>
+    <div class="info">
+      <van-cell class="type-cell">
+        <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
+          <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+        </van-radio-group>
+      </van-cell>
+      <div class="users-area" v-for="(user,index) in users" :key="index">
+        <user-info :user="user"></user-info>
       </div>
-    </template>
-    <template v-else>
-      <div class="info">
-        <van-cell class="type-cell">
-          <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
-            <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
-          </van-radio-group>
-        </van-cell>
-        <div class="users-area" v-for="(user,index) in users" :key="index">
-          <user-info :user="user"></user-info>
-        </div>
-      </div>
-      <div class="bottom-button">
-        <van-button type="default" size="large" @click.tap="create">创建</van-button>
-      </div>
-    </template>
+    </div>
+    <div class="bottom-button">
+      <van-button type="default" size="large" @click.tap="create">创建</van-button>
+    </div>
     <div class="agreement">
       <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
       <span class="text">我已详细阅读并同意</span>
@@ -43,7 +21,7 @@
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
+
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
 
@@ -69,7 +47,6 @@
         ],
         currentNumberType:0,
         isAgreementChecked: true,  //是否选择了鱼骨协议
-        famousContent:''
       }
     },
     components: {
@@ -174,12 +151,6 @@
           this.$toast('创建失败，请稍后重试')
         })
       },
-      apply(){
-        if (!this.famousName){
-          this.$toast('请填写公益人物姓名');
-          return
-        }
-      },
       readAgreement(){
         Link('/agreement')
       }
@@ -202,14 +173,6 @@
     background-color: #f6f6f6;
     overflow-x: hidden;
     overflow-y: auto;
-    .tip{
-      padding: 20px;
-      color: #666666;
-      font-size: 15px;
-      .iconfont{
-        margin-right: 4px;
-      }
-    }
     .info {
       .type-cell{
         background-color: white;
