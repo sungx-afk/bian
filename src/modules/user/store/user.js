@@ -7,7 +7,7 @@ const state = {
     id:''
   },
   user_setting_keys:['bgm_play_state','bgm_key'],
-  user_setting:{},
+  user_setting:null,
   expire:false
 }
 

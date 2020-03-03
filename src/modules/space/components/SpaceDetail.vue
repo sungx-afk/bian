@@ -80,7 +80,6 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        userSetting:'userStore/userSetting',
         showTab:'spaceStore/detailShowTab'
       }),
       isIPhoneX(){

@@ -77,8 +77,11 @@ Vue.mixin({
     },
     tryAutoPlay(){
       //判断选定的是否开启自动播放音频
-      let playState = this.userSetting['bgm_play_state']
-      let needPlay = playState === 'play' || playState === undefined
+      let playState = 'play'
+      if (this.userSetting){
+        playState = this.userSetting['bgm_play_state']
+      }
+      let needPlay = playState === 'play'
       if (needPlay){
         this.playBgm(0)
       }
@@ -90,6 +93,8 @@ Vue.mixin({
       if (space.music){
         this.initBgmKey(space.music.key)
         this.selfUpload = space.music.selfUpload
+      }else {
+        this.initBgmKey()
       }
     },
     initBgmKey(key){
