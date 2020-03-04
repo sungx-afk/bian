@@ -27,16 +27,25 @@
         <img :src="user.avatarUrl" />
       </van-uploader>
     </div>
-    <van-popup v-model="showDatePicker" position="bottom" @closed="datePickerClosed">
+    <van-popup v-model="showBirthdayPicker" position="bottom" @closed="birthdayPickerClosed">
       <van-datetime-picker
-        v-model="currentPickerDate"
+        v-model="birthdayPickerDate"
         type="date"
         :min-date="minPickerDate"
         :max-date="maxPickerDate"
-        @cancel="datePickerCancel"
-        @confirm="datePickerConfirm">
+        @cancel="birthdayPickerCancel"
+        @confirm="birthdayPickerConfirm">
       </van-datetime-picker>
-
+    </van-popup>
+    <van-popup v-model="showDieDayPicker" position="bottom" @closed="dieDayPickerClosed">
+      <van-datetime-picker
+        v-model="dieDayPickerDate"
+        type="date"
+        :min-date="minPickerDate"
+        :max-date="maxPickerDate"
+        @cancel="dieDayPickerCancel"
+        @confirm="dieDayPickerConfirm">
+      </van-datetime-picker>
     </van-popup>
   </div>
 </template>
@@ -56,9 +65,10 @@
       },
       data(){
         return{
-          pickerType:0,
-          showDatePicker:false,
-          currentPickerDate:'',
+          showBirthdayPicker:false,
+          birthdayPickerDate:'',
+          showDieDayPicker:false,
+          dieDayPickerDate:'',
           minPickerDate:'',
           maxPickerDate:'',
           sexList: [
@@ -80,37 +90,41 @@
         },
         selectBirthday(){
           this.initMinMaxDate()
-          this.pickerType = 0
           if (this.user.birthday){
-            this.currentPickerDate = new Date(this.user.birthday)
+            this.birthdayPickerDate = new Date(this.user.birthday)
           }else{
-            this.currentPickerDate = new Date(1900,0,1)
+            this.birthdayPickerDate = new Date(1900,0,1)
           }
-          this.showDatePicker = true
+          this.showBirthdayPicker = true
         },
         selectDieDay(){
           this.initMinMaxDate()
-          this.pickerType = 1
           if (this.user.dieDay){
-            this.currentPickerDate = new Date(this.user.dieDay)
+            this.dieDayPickerDate = new Date(this.user.dieDay)
           }else{
-            this.currentPickerDate = new Date()
+            this.dieDayPickerDate = new Date()
           }
-          this.showDatePicker = true
+          this.showDieDayPicker = true
         },
-        datePickerClosed(){
-          this.showDatePicker = false
+        birthdayPickerClosed(){
+          this.showBirthdayPicker = false
         },
-        datePickerCancel(){
-          this.showDatePicker = false
+        dieDayPickerClosed(){
+          this.showDieDayPicker = false
         },
-        datePickerConfirm(date){
-          if (this.pickerType == 0){
-            this.user.birthday = date.getTime()
-          }else if(this.pickerType == 1){
-            this.user.dieDay = date.getTime()
-          }
-          this.showDatePicker = false
+        birthdayPickerCancel(){
+          this.showBirthdayPicker = false
+        },
+        dieDayPickerCancel(){
+          this.showDieDayPicker = false
+        },
+        birthdayPickerConfirm(date){
+          this.user.birthday = date.getTime()
+          this.showBirthdayPicker = false
+        },
+        dieDayPickerConfirm(date){
+          this.user.dieDay = date.getTime()
+          this.showDieDayPicker = false
         },
         afterSelectPhoto(photo){
           let data = {}
