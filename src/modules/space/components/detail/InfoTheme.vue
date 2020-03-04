@@ -23,7 +23,8 @@
     </div>
     <div class="operate-wrapper">
       <slot></slot>
-      <div class="more iconfont icon-liebiao-more" @click="goMoreOperate"></div>
+      <div class="summary iconfont icon-zhankai" @click="goSummary"></div>
+      <div class="more iconfont icon-zhankai" @click="goMoreOperate"></div>
     </div>
   </div>
 </template>
@@ -105,11 +106,11 @@
               id:'meeting',
               data:user
             })
-            this.actions.push({
-              name: '编辑生平',
-              id:'modify_summary',
-              data:user
-            })
+            // this.actions.push({
+            //   name: '编辑生平',
+            //   id:'modify_summary',
+            //   data:user
+            // })
             this.actions.push({
               name: '修改纪念馆',
               id:'modify_space',
@@ -176,6 +177,9 @@
           localStorage.setItem(constant.KEY_EXTRA_DATA,extra)
           Link(`/share`)
         },
+        goSummary(){
+          Link(`/space/summary?space_id=${this.space.id}`)
+        }
       },
       created() {
         this.space.beiwen = "当我年轻的时候，我的想象力从没有受到过限制，我梦想改变这个世界。"
@@ -238,15 +242,22 @@
       bottom: 50px;
       right: 12px;
       width: 48px;
-      height: 100px;
-      /*background: rgba(255,255,255,0.65);*/
+      height: 140px;
       .audio{
-        bottom: 60px;
+        bottom: 100px;
       }
       .more{
         font-size: 24px;
         position: absolute;
         bottom: 20px;
+        right: 14px;
+        color: @MAIN_THEME_COLOR;
+        font-weight: bold;
+      }
+      .summary{
+        font-size: 24px;
+        position: absolute;
+        bottom: 60px;
         right: 14px;
         color: @MAIN_THEME_COLOR;
         font-weight: bold;
