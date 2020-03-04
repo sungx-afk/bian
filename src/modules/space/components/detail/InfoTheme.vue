@@ -133,13 +133,13 @@
             })
           }
 
-          if (!this.isSpaceCreator){
-            this.actions.push({
-              name: '举报',
-              id:'report',
-              data:user
-            })
-          }
+          // if (!this.isSpaceCreator){
+          //   this.actions.push({
+          //     name: '举报',
+          //     id:'report',
+          //     data:user
+          //   })
+          // }
 
           this.showAction = true
           this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
@@ -230,11 +230,11 @@
             align-items: center;
             margin-top: 20px;
             .name{
-              font-size: 17px;
+              font-size: 18px;
               font-weight: bold;
             }
             .date{
-              font-size: 14px;
+              font-size: 15px;
               color: @FONT_THIRD_COLOR;
               margin-top: 8px;
             }
