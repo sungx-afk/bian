@@ -243,10 +243,10 @@
       }
       .epitaph-wrapper{
         text-align: center;
-        padding: 0px 40px;
-        max-height: 180px;
+        padding: 0px 60px;
+        max-height: 140px;
         overflow: scroll;
-        font-size: 15px;
+        font-size: 14px;
         color: @FONT_SECOND_COLOR;
       }
     }
