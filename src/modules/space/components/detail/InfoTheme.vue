@@ -207,7 +207,7 @@
     overflow-y: scroll;
     background-size: 100%,100%;
     .base-info-wrapper{
-      margin-top: 100px;
+      margin-top: 20%;
       .user-wrapper{
         display: flex;
         justify-content:center;
@@ -258,16 +258,15 @@
       height: 140px;
       .audio,.summary,.more{
         position: absolute;
-        right: 14px;
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         img{
           width: 100%;
           height: 100%;
         }
       }
       .audio{
-        bottom:100px;
+        bottom:130px;
         &.anim{
           animation: rotate 3s linear infinite;
           animation-play-state:paused;
@@ -280,10 +279,10 @@
         }
       }
       .more{
-        bottom: 20px;
+        bottom: 10px;
       }
       .summary{
-        bottom: 60px;
+        bottom: 70px;
       }
     }
   }

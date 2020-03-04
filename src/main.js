@@ -208,14 +208,14 @@ Vue.mixin({
           color: '#d81e06',
           dateColor:'#d81e06',
           epitaphColor: '#d81e06',
-          name: '党建',
+          name: '红色',
           url: '/static/images/theme/theme_dangjian1.png'
         }, {
           uuid: 'MozabJlp2wvKAjAu',
           color: '#d81e06',
           dateColor:'#d81e06',
           epitaphColor: '#d81e06',
-          name: '党建',
+          name: '红色',
           url: '/static/images/theme/theme_dangjian2.png'
         }]
 

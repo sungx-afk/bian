@@ -2,7 +2,7 @@
   <div class="theme-container">
     <div v-for="theme in themes" :key="theme.uuid" class="theme-wrapper" @click="goSelectTheme(theme)">
       <img class="image" :src="theme.url" />
-      <div class="name" :class="{'red':needRed(theme)}">
+      <div class="name">
         {{theme.name}}
       </div>
       <div class="selected-wrapper" v-if="selected === theme.uuid">
@@ -29,15 +29,6 @@
       }
     },
     methods:{
-      needRed(theme){
-        let result = false
-
-        if (theme.uuid === 't37lsByGDFkTfLj6' || theme.uuid === 'MozabJlp2wvKAjAu'){
-          result = true
-        }
-
-        return result
-      },
       goSelectTheme(theme){
         this.selected = theme.uuid
         eventHub.$emit(constant.EVENT_SELECT_THEME,theme)
@@ -69,9 +60,6 @@
         font-size: 15px;
         color: @FONT_THIRD_COLOR;
         margin-top: 4px;
-        &.red{
-          color:#d81e06;
-        }
       }
       .selected-wrapper{
         position: absolute;
