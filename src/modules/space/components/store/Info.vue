@@ -4,22 +4,29 @@
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
       <div class="header-text">彼岸云纪念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思。</div>
     </div>
-    <div class="menu-area">
-      <van-cell title="自定义挽联" is-link @click.stop="enterCouplets"></van-cell>
+    <div class="content">
+      <div class="menu-area">
+        <van-cell title="自定义挽联" is-link @click.stop="enterCouplets"></van-cell>
+      </div>
+      <div class="charge-area">
+        <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
+          <van-cell class="charge-cell">
+            <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>云币</span>
+            <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 10云币）</van-button>
+          </van-cell>
+          <van-cell v-for="product in products" :key="product.id">
+            <span>{{product.name}}</span>
+            <van-button size="small" class="purchase-btn" :icon="iconMoney" @click="buyProduct(product)">{{product.point}}</van-button>
+          </van-cell>
+        </van-cell-group>
+      </div>
+      <div class="analyze" v-if="false">
+        <p>文明祭祀，请勿过度</p>
+        <p>到访人次：2000</p>
+        <p>上香次数：2000</p>
+      </div>
+      <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
     </div>
-    <div class="charge-area">
-      <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
-        <van-cell class="charge-cell">
-          <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>云币</span>
-          <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 10云币）</van-button>
-        </van-cell>
-        <van-cell v-for="product in products" :key="product.id">
-          <span>{{product.name}}</span>
-          <van-button size="small" class="purchase-btn" :icon="iconMoney" @click="buyProduct(product)">{{product.point}}</van-button>
-        </van-cell>
-      </van-cell-group>
-    </div>
-    <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
   </div>
 </template>
 
@@ -163,50 +170,62 @@
         text-align: center;
       }
     }
-    .wanlian-area{
-      margin-top: 10px;
-      background: @BG_WHITE;
-      .van-cell-group__title{
-        color: @MAIN_THEME_COLOR;
-      }
-    }
-    .charge-area{
-      margin-top: 10px;
-      background: @BG_WHITE;
-      .van-cell-group__title{
-        color: @FONT_SECOND_COLOR;
-      }
+    .content{
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      .menu-area{
 
-      .charge-cell{
-        padding: 20px 15px;
       }
-      .van-cell__value{
-        display: flex;
-        align-items: center;
-        .charge-remain{
-          font-weight: bold;
+      .charge-area{
+        margin-top: 12px;
+        background: @BG_WHITE;
+        .van-cell-group__title{
+          color: @FONT_SECOND_COLOR;
         }
-        .charge-btn{
-          margin-left: auto;
-          color: @FONT_WHITE_COLOR;
-          background: @SECOND_THEME_COLOR;
+
+        .charge-cell{
+          padding: 20px 15px;
         }
-        .purchase-btn{
-          margin-left: auto;
-          color: @SECOND_THEME_COLOR;
-          border: 1px solid @SECOND_THEME_COLOR;
+        .van-cell__value{
+          display: flex;
+          align-items: center;
+          .charge-remain{
+            font-weight: bold;
+          }
+          .charge-btn{
+            margin-left: auto;
+            color: @FONT_WHITE_COLOR;
+            background: @SECOND_THEME_COLOR;
+          }
+          .purchase-btn{
+            margin-left: auto;
+            color: @SECOND_THEME_COLOR;
+            border: 1px solid @SECOND_THEME_COLOR;
+          }
         }
       }
-    }
-    .view-history{
-      margin-top: auto;
-      font-size: 14px;
-      color: #a9a9a9;
-      text-align: center;
-      width: 100%;
-      cursor: pointer;
-      padding: 10px 0 30px;
-      flex-shrink: 0;
+      .analyze{
+        font-size: 14px;
+        background: @BG_WHITE;
+        margin: 12px 0px 0px;
+        padding: 8px 16px;
+        color: @FONT_SECOND_COLOR;
+        p{
+          height: 24px;
+          line-height: 24px;
+        }
+      }
+      .view-history{
+        margin-top: 20px;
+        font-size: 14px;
+        color: #a9a9a9;
+        text-align: center;
+        width: 100%;
+        cursor: pointer;
+        padding: 10px 0 30px;
+        flex-shrink: 0;
+      }
     }
   }
 

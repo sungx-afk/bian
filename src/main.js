@@ -198,9 +198,9 @@ Vue.mixin({
         },
         {
           uuid: 'JW1OjfrQPu4Xd9de',
-          color: '#333333',
-          dateColor:'#333333',
-          epitaphColor: '#333333',
+          color: '#000000',
+          dateColor:'#000000',
+          epitaphColor: '#000000',
           name: '祥云',
           url: '/static/images/theme/theme_xiangyun.png'
         }, {
