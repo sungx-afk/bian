@@ -52,7 +52,9 @@
   .theme-container{
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
     overflow-y: auto;
+    background: @BG_WHITE;
     .theme-wrapper{
        display: flex;
        flex-direction: column;
