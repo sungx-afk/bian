@@ -57,6 +57,8 @@
     <van-action-sheet
       v-model="showAction"
       :actions="actions"
+      close-on-popstate
+      :round="false"
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>

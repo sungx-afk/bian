@@ -11,6 +11,7 @@
 </template>
 
 <script>
+  import {mapGetters,mapActions} from 'vuex';
   import constant from '@/config/constant'
 
   import UserInfo from './UserInfo'
@@ -26,6 +27,9 @@
         }
       },
       methods:{
+        ...mapActions({
+          updateSpaceUser:'spaceStore/updateSpaceUser',
+        }),
         initUser(){
           let value = localStorage.getItem(constant.KEY_EDIT_USER_INFO)
           if (value){
@@ -43,14 +47,9 @@
             return;
           }
           let user = JSON.parse(JSON.stringify(this.user))
-
-          $API.space.updateSpaceUser({
-              sid:this.spaceId,
-              user:user
-            }, rsp=>{
-            eventHub.$emit(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.user)
+          this.updateSpaceUser({sid:this.spaceId, user:user}).then(()=>{
             this.$router.go(-1)
-            }, error=>{
+          }).catch(()=>{
             this.$toast("修改失败，请稍后重试")
           })
         },

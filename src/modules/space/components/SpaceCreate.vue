@@ -1,40 +1,30 @@
 <template>
   <div class="space-create-container">
-    <template v-if="type == 2">
-      <div class="apply-public-container">
-        <div class="tip" >
-          <i class="iconfont icon-tishi1"></i>公益馆申请后需经审核人员编辑才能正式上线
-        </div>
-        <div class="public-name">
-          <van-field
-            ref="input"
-            v-model="famousContent"
-            type="textarea"
-            placeholder="请输入姓名及生平简介"
-            rows="10"
-            :autosize="{ maxHeight: 800, minHeight: 300 }">
-          </van-field>
-        </div>
-        <div class="bottom-button">
-          <van-button type="default" size="large" @click.tap="apply">申请</van-button>
-        </div>
+    <div class="info">
+      <van-cell class="type-cell" v-if="!id">
+        <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
+          <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+        </van-radio-group>
+      </van-cell>
+      <van-field v-model="name" label="纪念馆名:" placeholder="请填写纪念馆名" maxlength="20" input-align="right"></van-field>
+      <van-cell title="纪念馆样式:" is-link :value="theme && theme.name" @click="goTheme"></van-cell>
+      <van-field
+        ref="input"
+        label="墓志铭:"
+        v-model="epitaph"
+        type="textarea"
+        placeholder="请输入墓志铭"
+        maxlength="120"
+        rows="2"
+        :autosize="{ maxHeight: 150, minHeight: 50 }">
+      </van-field>
+      <div class="users-area" v-for="(user,index) in users" :key="index">
+        <user-info :user="user"></user-info>
       </div>
-    </template>
-    <template v-else>
-      <div class="info">
-        <van-cell class="type-cell">
-          <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
-            <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
-          </van-radio-group>
-        </van-cell>
-        <div class="users-area" v-for="(user,index) in users" :key="index">
-          <user-info :user="user"></user-info>
-        </div>
-      </div>
-      <div class="bottom-button">
-        <van-button type="default" size="large" @click.tap="create">创建</van-button>
-      </div>
-    </template>
+    </div>
+    <div class="bottom-button">
+      <van-button type="default" size="large" @click.tap="create">{{id?'修改':'创建'}}</van-button>
+    </div>
     <div class="agreement">
       <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
       <span class="text">我已详细阅读并同意</span>
@@ -43,7 +33,7 @@
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
 
@@ -52,6 +42,7 @@
   export default{
     data(){
       return {
+        id:'',
         type:0,// 0 亲属 1，朋友
         users:[{
           name: '',
@@ -60,27 +51,39 @@
           dieDay: '',         //忌日
           dieAddress: '',     //安葬地点
           sex: 0,
-          nation: '',         //民族
           avatarUrl: '',      //遗像地址
         }],
         numberTypeList:[
           { name: '单人', value: 0},
           { name: '双人', value: 1 }
         ],
+        name:'',
+        theme:null,
+        epitaph:'', //墓志铭
         currentNumberType:0,
         isAgreementChecked: true,  //是否选择了鱼骨协议
-        famousContent:''
       }
     },
     components: {
       UserInfo
     },
     computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+        detail:'spaceStore/spaceDetail'
+      }),
       isIPhoneX(){
         return false
       }
     },
     methods:{
+      initSpaceData(){
+        this.id = this.detail.id
+        this.name = this.detail.name
+        this.theme = this.getOneTheme(this.detail.themeId)
+        this.epitaph = this.detail.epitaph
+        this.users = this.detail.spaceUsers
+      },
       numberTypeChanged(value){
         this.currentNumberType = value
         if (this.currentNumberType == 0 && this.users.length > 1){
@@ -97,6 +100,12 @@
             avatarUrl: '',
           })
         }
+      },
+      goTheme(){
+        Link(`/space/theme`)
+      },
+      updateTheme(theme){
+        this.theme = theme
       },
       create() {
         //判断所有的dead
@@ -138,15 +147,16 @@
           return;
         }
 
-        let spaceName = ''
-
-        this.users.forEach((item,index)=>{
-          spaceName += item.name
-          if (index !== this.users.length - 1){
-            spaceName += '和'
-          }
-        })
-        spaceName += '的纪念馆'
+        let spaceName = this.name
+        if (!spaceName){
+          this.users.forEach((item,index)=>{
+            spaceName += item.name
+            if (index !== this.users.length - 1){
+              spaceName += '和'
+            }
+          })
+          spaceName += '的纪念馆'
+        }
 
         this.$toast.loading({
           duration: 0,       // 持续展示 toast
@@ -154,11 +164,55 @@
           loadingType: 'spinner',
           message: '提交中...'
         })
-
-        $API.space.createSpace({
+        if (this.id){
+          let p1 = new Promise((resolve, reject) => {
+            $API.space.modifySpace({
+              sid:this.id,
+              name: spaceName,
+              themeId:this.theme.uuid,
+              epitaph:this.epitaph,
+            }, rsp=>{
+              resolve && resolve(rsp)
+            },error=>{
+              reject && reject(error)
+            })
+          })
+          let promises = [p1]
+          this.users.forEach(user=>{
+            promises.push(new Promise((resolve, reject) => {
+              $API.space.updateSpaceUser({
+                sid:this.id,
+                user
+              }, rsp=>{
+                resolve && resolve(rsp)
+              },error=>{
+                reject && reject(error)
+              })
+            }))
+          })
+          Promise.all(promises)
+            .then(() => {
+              eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
+              this.$toast.clear()
+              this.$toast({
+                message:'修改成功',
+                type:'success',
+                duration:1500,
+                onClose:()=>{
+                  this.$router.go(-1)
+                }
+              })
+            })
+            .catch((error) => {
+              this.$toast('修改失败，请稍后重试')
+            });
+        }else{
+          $API.space.createSpace({
             type:this.type,
             name: spaceName,
-            users: this.users
+            users: this.users,
+            themeId:this.theme.uuid,
+            epitaph:this.epitaph,
           }, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()
@@ -170,14 +224,9 @@
                 this.$router.go(-1)
               }
             })
-        }, error => {
-          this.$toast('创建失败，请稍后重试')
-        })
-      },
-      apply(){
-        if (!this.famousName){
-          this.$toast('请填写公益人物姓名');
-          return
+          }, error => {
+            this.$toast('创建失败，请稍后重试')
+          })
         }
       },
       readAgreement(){
@@ -185,9 +234,19 @@
       }
     },
     created() {
-      if (this.$route.query){
-        this.type = this.$route.query.type
+      let query = this.$route.query
+      if (query){
+        if (query.type){
+          this.type = query.type
+        }
+        if (query.space_id){
+          this.initSpaceData()
+        }
       }
+      eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
+    },
+    beforeDestroy() {
+      eventHub.$off(constant.EVENT_SELECT_THEME,this.updateTheme)
     }
   }
 </script>
@@ -202,14 +261,6 @@
     background-color: #f6f6f6;
     overflow-x: hidden;
     overflow-y: auto;
-    .tip{
-      padding: 20px;
-      color: #666666;
-      font-size: 15px;
-      .iconfont{
-        margin-right: 4px;
-      }
-    }
     .info {
       .type-cell{
         background-color: white;

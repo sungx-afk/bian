@@ -146,6 +146,91 @@ Vue.mixin({
         }
         eventHub.$emit(constant.EVENT_AUDIO_PLAY,'stop')
       }
+    },
+    getThemes(){
+      let themes = [
+        {
+          uuid: '5oLlWLeWV3KFtgIg',
+          color: '#333333',
+          dateColor:'#666666',
+          epitaphColor: '#333333',
+          name: '无限思念',
+          url: '/static/images/theme/theme_sinian2.png'
+        },
+        {
+          uuid: 'i5qRVuEa3gIpKKDL',
+          color: '#333333',
+          dateColor:'#666666',
+          epitaphColor: '#333333',
+          name: '无限思念',
+          url: '/static/images/theme/theme_sinian1.png'
+        },
+        {
+          uuid: 'Lz1m3qc7PZ7burhn',
+          color: '#333333',
+          dateColor:'#666666',
+          epitaphColor: '#333333',
+          name: '山水',
+          url: '/static/images/theme/theme_shanshui.png'
+        },
+        {
+          uuid: 'zkaodFO8EOEZrCo3',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          name: '星空',
+          url: '/static/images/theme/theme_xingkong1.png'
+        },
+        {
+          uuid: 'ifrc01k81NRFY5Pd',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          name: '星空',
+          url: '/static/images/theme/theme_xingkong2.png'
+        }, {
+          uuid: 'rvkTYJmBDC3tVTWE',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          name: '星空',
+          url: '/static/images/theme/theme_xingkong3.png'
+        },
+        {
+          uuid: 'JW1OjfrQPu4Xd9de',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          name: '祥云',
+          url: '/static/images/theme/theme_xiangyun.png'
+        }, {
+          uuid: 't37lsByGDFkTfLj6',
+          color: '#d81e06',
+          dateColor:'#d81e06',
+          epitaphColor: '#d81e06',
+          name: '党建',
+          url: '/static/images/theme/theme_dangjian1.png'
+        }, {
+          uuid: 'MozabJlp2wvKAjAu',
+          color: '#d81e06',
+          dateColor:'#d81e06',
+          epitaphColor: '#d81e06',
+          name: '党建',
+          url: '/static/images/theme/theme_dangjian2.png'
+        }]
+
+      return themes
+    },
+    getOneTheme(themeId){
+      let themes = this.getThemes()
+      if (!themeId){
+        return themes[7]
+      }
+      let index = themes.findIndex(item=>item.uuid === themeId)
+      if (index < 0){
+        index = 0
+      }
+      return themes[index]
     }
   }
 })

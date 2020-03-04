@@ -1,16 +1,15 @@
 <template>
   <div class="users-info" v-if="user">
     <van-field v-model="user.name" label="逝者姓名:" placeholder="请输入逝者姓名" maxlength="25" input-align="right"></van-field>
-    <van-cell title="出生日期:" is-link :value="user.birthday?dateText(user.birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
-    <van-cell title="逝世日期:" is-link :value="user.dieDay?dateText(user.dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
-    <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-    <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-
     <van-cell title="性 别:">
       <van-radio-group v-model="user.sex" class="sex-radio-group">
         <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
       </van-radio-group>
     </van-cell>
+    <van-cell title="出生日期:" is-link :value="user.birthday?dateText(user.birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
+    <van-cell title="逝世日期:" is-link :value="user.dieDay?dateText(user.dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
+    <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
 
     <van-cell title="遗 像:" is-link>
       <van-uploader :after-read="afterSelectPhoto">
@@ -28,16 +27,25 @@
         <img :src="user.avatarUrl" />
       </van-uploader>
     </div>
-    <van-popup v-model="showDatePicker" position="bottom" @closed="datePickerClosed">
+    <van-popup v-model="showBirthdayPicker" position="bottom" @closed="birthdayPickerClosed">
       <van-datetime-picker
-        v-model="currentPickerDate"
+        v-model="birthdayPickerDate"
         type="date"
         :min-date="minPickerDate"
         :max-date="maxPickerDate"
-        @cancel="datePickerCancel"
-        @confirm="datePickerConfirm">
+        @cancel="birthdayPickerCancel"
+        @confirm="birthdayPickerConfirm">
       </van-datetime-picker>
-
+    </van-popup>
+    <van-popup v-model="showDieDayPicker" position="bottom" @closed="dieDayPickerClosed">
+      <van-datetime-picker
+        v-model="dieDayPickerDate"
+        type="date"
+        :min-date="minPickerDate"
+        :max-date="maxPickerDate"
+        @cancel="dieDayPickerCancel"
+        @confirm="dieDayPickerConfirm">
+      </van-datetime-picker>
     </van-popup>
   </div>
 </template>
@@ -57,9 +65,10 @@
       },
       data(){
         return{
-          pickerType:0,
-          showDatePicker:false,
-          currentPickerDate:'',
+          showBirthdayPicker:false,
+          birthdayPickerDate:'',
+          showDieDayPicker:false,
+          dieDayPickerDate:'',
           minPickerDate:'',
           maxPickerDate:'',
           sexList: [
@@ -81,37 +90,41 @@
         },
         selectBirthday(){
           this.initMinMaxDate()
-          this.showDatePicker = true
-          this.pickerType = 0
           if (this.user.birthday){
-            this.currentPickerDate = new Date(this.user.birthday)
+            this.birthdayPickerDate = new Date(this.user.birthday)
           }else{
-            this.currentPickerDate = new Date(1900,0,1)
+            this.birthdayPickerDate = new Date(1900,0,1)
           }
+          this.showBirthdayPicker = true
         },
         selectDieDay(){
           this.initMinMaxDate()
-          this.showDatePicker = true
-          this.pickerType = 1
           if (this.user.dieDay){
-            this.currentPickerDate = new Date(this.user.dieDay)
+            this.dieDayPickerDate = new Date(this.user.dieDay)
           }else{
-            this.currentPickerDate = new Date()
+            this.dieDayPickerDate = new Date()
           }
+          this.showDieDayPicker = true
         },
-        datePickerClosed(){
-          this.showDatePicker = false
+        birthdayPickerClosed(){
+          this.showBirthdayPicker = false
         },
-        datePickerCancel(){
-          this.showDatePicker = false
+        dieDayPickerClosed(){
+          this.showDieDayPicker = false
         },
-        datePickerConfirm(date){
-          if (this.pickerType == 0){
-            this.user.birthday = date.getTime()
-          }else if(this.pickerType == 1){
-            this.user.dieDay = date.getTime()
-          }
-          this.showDatePicker = false
+        birthdayPickerCancel(){
+          this.showBirthdayPicker = false
+        },
+        dieDayPickerCancel(){
+          this.showDieDayPicker = false
+        },
+        birthdayPickerConfirm(date){
+          this.user.birthday = date.getTime()
+          this.showBirthdayPicker = false
+        },
+        dieDayPickerConfirm(date){
+          this.user.dieDay = date.getTime()
+          this.showDieDayPicker = false
         },
         afterSelectPhoto(photo){
           let data = {}

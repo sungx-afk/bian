@@ -55,14 +55,35 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,epitaph}, successCb, errorCb) {
     let param = {
       type,
       name,
       spaceUsers: users
     }
 
+    if (themeId){
+      param.themeId = themeId
+    }
+
+    if (epitaph){
+      param.epitaph = epitaph
+    }
+
     $axios.post(`/spaces`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  modifySpace({sid,name,themeId,epitaph}, successCb, errorCb) {
+    let param = {
+      name,
+      themeId,
+      epitaph
+    }
+
+    $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)
