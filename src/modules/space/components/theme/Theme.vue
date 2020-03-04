@@ -41,8 +41,10 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .theme-container{
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
+    align-content: baseline;
     flex-direction: row;
     overflow-y: auto;
     background: @BG_WHITE;
@@ -50,8 +52,8 @@
        display: flex;
        flex-direction: column;
        align-items: center;
-       padding: 12px;
-      position: relative;
+       padding: 12px 8px;
+       position: relative;
       .image{
         width: 100px;
         height: 120px;
