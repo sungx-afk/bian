@@ -122,6 +122,11 @@
             //   data:user
             // })
             this.actions.push({
+              name: '纪念馆样式',
+              id:'style',
+              data:user
+            })
+            this.actions.push({
               name: '修改纪念馆',
               id:'modify_space',
               data:user
@@ -165,7 +170,8 @@
             case 'modify_space':
               Link(`/space/create?space_id=${this.space.id}`)
               break
-            case 'modify_summary':
+            case 'style':
+              Link(`/space/theme?theme_id=${this.space.themeId}`)
               break
             case 'report':
               Link(`/report/category`)
@@ -192,10 +198,21 @@
         },
         toggleBgmBtn(){
           this.$emit('bgm-click')
+        },
+        updateTheme(theme){
+          this.space.themeId = theme.uuid
+          $API.space.updateSpaceTheme({sid:this.space.id,themeId:theme.uuid},rsp=>{
+
+          },error=>{
+
+          })
         }
       },
       created() {
-
+        eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
+      },
+      beforeDestroy() {
+        eventHub.$off(constant.EVENT_SELECT_THEME,this.updateTheme)
       }
     }
 </script>

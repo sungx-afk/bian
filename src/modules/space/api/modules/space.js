@@ -115,6 +115,16 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  updateSpaceTheme({sid, themeId}, successCb, errorCb) {
+    let param = {
+      themeId
+    }
+    $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   updateSpaceUserNotice({sid, userId, deathNotice}, successCb, errorCb) {
 
     let data = {

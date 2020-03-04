@@ -34,6 +34,14 @@
         eventHub.$emit(constant.EVENT_SELECT_THEME,theme)
         this.$router.back()
       }
+    },
+    created() {
+      let query = this.$route.query
+      if(query){
+        if (query.theme_id){
+          this.selected = query.theme_id
+        }
+      }
     }
   }
 </script>
