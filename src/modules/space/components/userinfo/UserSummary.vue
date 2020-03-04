@@ -51,6 +51,7 @@
 </template>
 
 <script>
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
   import ModifyText from '@/modules/widget/modify-text'
@@ -60,29 +61,22 @@
       data(){
         return{
           spaceId:'',
-          space:null,
           activeUserId:null,
           showAction:false,
           actions:[]
         }
       },
       computed:{
-
+        ...mapGetters({
+          user: 'userStore/user',
+          space:'spaceStore/spaceDetail'
+        }),
       },
       methods:{
-        getDetail(){
-          if (!this.spaceId){
-            return
-          }
-          $API.space.getSpaceDetail({
-            sid: this.spaceId,
-          }, (rsp)=>{
-            this.space = rsp
-            if (this.space.spaceUsers){
-              this.activeUserId = [this.space.spaceUsers[0].id]
-            }
-          })
-        },
+        ...mapActions({
+          getSpaceDetail:'spaceStore/getSpaceDetail',
+          updateSpaceUser:'spaceStore/updateSpaceUser'
+        }),
         goEditUser(user){
           this.actions = [{
             name: '逝者基本信息',
@@ -97,24 +91,11 @@
         },
         modifySummary(user,summary){
           user.summary = summary
-          $API.space.updateSpaceUser({
-            sid:this.space.id,
-            user:user
-          }, rsp=>{
-            //找到对应编辑的人，更新简介
-            this.updateSpaceUser(user)
-          }, error=>{
+          this.updateSpaceUser({sid:this.space.id,user}).then(()=>{
+
+          }).catch(()=>{
             this.$toast('修改失败，请稍后重试')
           })
-        },
-        updateSpaceUser(user){
-          let spaceUsers = this.space.spaceUsers
-          let index = spaceUsers.findIndex(item=>{
-            return item.id === user.id
-          })
-          if (index > -1){
-            this.space.spaceUsers.splice(index,1,user)
-          }
         },
         onActionSelect(item){
           this.showAction = false
@@ -140,20 +121,10 @@
         },
       },
       created() {
-        let query = this.$route.query
-        if(query){
-          if (query.space_id){
-            this.spaceId = query.space_id
-            this.getDetail(() => {
-
-            })
-          }
+        if (this.space && this.space.spaceUsers){
+          this.activeUserId = [this.space.spaceUsers[0].id]
         }
-        eventHub.$on(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)
       },
-      beforeDestroy() {
-        eventHub.$off(constant.EVENT_UPDATE_SPACE_USER_SUCCESS,this.updateSpaceUser)
-      }
     }
 </script>
 

@@ -57,7 +57,6 @@
     data(){
       return {
         spaceId:'',
-        detail:'',
         tabBarList:[],
         messageType:'PUBLIC', //PUBLIC, PRIVATE, SPACE;
         tabActive:'main',
@@ -86,7 +85,8 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        showTab:'spaceStore/detailShowTab'
+        showTab:'spaceStore/detailShowTab',
+        detail:'spaceStore/spaceDetail'
       }),
       isIPhoneX(){
         return false
@@ -133,6 +133,8 @@
       ...mapActions({
         setUserSetting: 'userStore/setUserSetting',
         setDetailShowTab: 'spaceStore/setDetailShowTab',
+        getSpaceDetail:'spaceStore/getSpaceDetail',
+        clearSpaceDetail:'spaceStore/clearSpaceDetail'
       }),
       initNotice(){
         if (this.user && !this.user.serviceOpenId){
@@ -247,32 +249,27 @@
         if (!this.spaceId){
           return
         }
-        $API.space.getSpaceDetail({
-          sid: this.spaceId,
-        }, (rsp)=>{
-            let flag = this.checkCanIn(rsp)
-            if(flag === -1){
-              this.$toast({
-                message:'纪念馆已禁止访客进入，请联系馆主进行操作',
-                onClose:()=>{
-                  this.$router.go(-1)
-                }
-              })
-              return
-            }else if(flag === -2){
-              this.$toast({
-                message:'您无法浏览该馆',
-                onClose:()=>{
-                  this.$router.go(-1)
-                }
-              })
-              return
-            }
-            this.detail = rsp
-            cb && cb()
-          }, error=>{
-
-          })
+        this.getSpaceDetail({sid:this.spaceId}).then((rsp)=>{
+          let flag = this.checkCanIn(rsp)
+          if(flag === -1){
+            this.$toast({
+              message:'纪念馆已禁止访客进入，请联系馆主进行操作',
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+            return
+          }else if(flag === -2){
+            this.$toast({
+              message:'您无法浏览该馆',
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+            return
+          }
+          cb && cb()
+        })
       },
       checkCanIn(space){
         let result = 0
@@ -376,6 +373,7 @@
     beforeDestroy() {
       this.stopBgm(true)
       this.setDetailShowTab(true)
+      this.clearSpaceDetail()
       eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
     }
