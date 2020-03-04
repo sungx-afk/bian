@@ -28,7 +28,7 @@
       },
       methods:{
         ...mapActions({
-          updateSpaceUsers:'spaceStore/updateSpaceUsers',
+          updateSpaceUser:'spaceStore/updateSpaceUser',
         }),
         initUser(){
           let value = localStorage.getItem(constant.KEY_EDIT_USER_INFO)

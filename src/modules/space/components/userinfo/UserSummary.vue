@@ -5,7 +5,7 @@
         <van-collapse-item v-for="user in space.spaceUsers" :key="user.id" :name="user.id" size="large">
           <div slot="title" class="title-wrapper">
             <div class="name">{{user.name}}</div>
-            <div class="iconfont icon-bianji" @click.stop="goEditUser(user)"></div>
+            <div class="iconfont icon-bianji" v-if="isSpaceCreator" @click.stop="goEditUser(user)"></div>
           </div>
           <div class="content-wrapper">
             <div class="base-info">
@@ -44,6 +44,7 @@
       v-model="showAction"
       :actions="actions"
       close-on-popstate
+      :round="false"
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
@@ -71,6 +72,14 @@
           user: 'userStore/user',
           space:'spaceStore/spaceDetail'
         }),
+        isSpaceCreator(){
+          let result = false
+          let currentUserId = this.user.id
+          if (this.space && currentUserId === this.space.creatorId){
+            result = true
+          }
+          return result
+        },
       },
       methods:{
         ...mapActions({
@@ -132,6 +141,7 @@
   @import "~@/config/config.less";
   .user-summary-container{
     height: 100%;
+    overflow-y: auto;
     background: @BG_WHITE;
     .title-wrapper{
       display: flex;

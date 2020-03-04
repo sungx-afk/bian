@@ -11,7 +11,7 @@
       <van-field
         ref="input"
         label="墓志铭:"
-        v-model="beiwen"
+        v-model="epitaph"
         type="textarea"
         placeholder="请输入墓志铭"
         maxlength="120"
@@ -59,7 +59,7 @@
         ],
         name:'',
         theme:null,
-        beiwen:'',
+        epitaph:'', //墓志铭
         currentNumberType:0,
         isAgreementChecked: true,  //是否选择了鱼骨协议
       }
@@ -159,7 +159,7 @@
             name: spaceName,
             users: this.users,
             themeId:this.theme.uuid,
-            beiwen:this.beiwen,
+            epitaph:this.epitaph,
           }, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()

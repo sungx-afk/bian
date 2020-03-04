@@ -17,14 +17,20 @@
           </div>
         </div>
       </div>
-      <div class="beiwen-wrapper" :style="{color:theme.beiwenColor}">
-        {{space && space.beiwen}}
+      <div class="epitaph-wrapper" :style="{color:theme.epitaphColor}">
+        {{space && space.epitaph}}
       </div>
     </div>
     <div class="operate-wrapper">
-      <slot></slot>
-      <div class="summary iconfont icon-zhankai" @click="goSummary"></div>
-      <div class="more iconfont icon-zhankai" @click="goMoreOperate"></div>
+      <div class="audio anim" :class="{'playing':playState === 'play'}" @click="toggleBgmBtn" >
+        <img src="~@/modules/images/music.svg" />
+      </div>
+      <div class="summary" @click="goSummary">
+        <img src="~@/modules/images/shengping.svg" />
+      </div>
+      <div class="more" @click="goMoreOperate">
+        <img src="~@/modules/images/more.svg" />
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +47,10 @@
           type:Object,
           default:null
         },
+        playState:{
+          type:String,
+          default:''
+        }
       },
       data(){
         return{
@@ -179,10 +189,13 @@
         },
         goSummary(){
           Link(`/space/summary?space_id=${this.space.id}`)
+        },
+        toggleBgmBtn(){
+          this.$emit('bgm-click')
         }
       },
       created() {
-        this.space.beiwen = "当我年轻的时候，我的想象力从没有受到过限制，我梦想改变这个世界。"
+
       }
     }
 </script>
@@ -228,8 +241,8 @@
           }
         }
       }
-      .beiwen-wrapper{
-        text-align: left;
+      .epitaph-wrapper{
+        text-align: center;
         padding: 0px 40px;
         max-height: 180px;
         overflow: scroll;
@@ -243,24 +256,34 @@
       right: 12px;
       width: 48px;
       height: 140px;
+      .audio,.summary,.more{
+        position: absolute;
+        right: 14px;
+        width: 32px;
+        height: 32px;
+        img{
+          width: 100%;
+          height: 100%;
+        }
+      }
       .audio{
-        bottom: 100px;
+        bottom:100px;
+        &.anim{
+          animation: rotate 3s linear infinite;
+          animation-play-state:paused;
+          @keyframes rotate{from{transform: rotate(0deg);transform-origin:50% 50%;}
+            to{transform: rotate(359deg);transform-origin:50% 50%;}
+          }
+        }
+        &.playing{
+          animation-play-state:running;
+        }
       }
       .more{
-        font-size: 24px;
-        position: absolute;
         bottom: 20px;
-        right: 14px;
-        color: @MAIN_THEME_COLOR;
-        font-weight: bold;
       }
       .summary{
-        font-size: 24px;
-        position: absolute;
         bottom: 60px;
-        right: 14px;
-        color: @MAIN_THEME_COLOR;
-        font-weight: bold;
       }
     }
   }

@@ -153,7 +153,7 @@ Vue.mixin({
           uuid: '5oLlWLeWV3KFtgIg',
           color: '#333333',
           dateColor:'#666666',
-          beiwenColor: '#333333',
+          epitaphColor: '#333333',
           name: '无限思念',
           url: '/static/images/theme/theme_sinian2.png'
         },
@@ -161,7 +161,7 @@ Vue.mixin({
           uuid: 'i5qRVuEa3gIpKKDL',
           color: '#333333',
           dateColor:'#666666',
-          beiwenColor: '#333333',
+          epitaphColor: '#333333',
           name: '无限思念',
           url: '/static/images/theme/theme_sinian1.png'
         },
@@ -169,7 +169,7 @@ Vue.mixin({
           uuid: 'Lz1m3qc7PZ7burhn',
           color: '#333333',
           dateColor:'#666666',
-          beiwenColor: '#333333',
+          epitaphColor: '#333333',
           name: '山水',
           url: '/static/images/theme/theme_shanshui.png'
         },
@@ -177,7 +177,7 @@ Vue.mixin({
           uuid: 'zkaodFO8EOEZrCo3',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
-          beiwenColor: '#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '星空',
           url: '/static/images/theme/theme_xingkong1.png'
         },
@@ -185,14 +185,14 @@ Vue.mixin({
           uuid: 'ifrc01k81NRFY5Pd',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
-          beiwenColor: '#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '星空',
           url: '/static/images/theme/theme_xingkong2.png'
         }, {
           uuid: 'rvkTYJmBDC3tVTWE',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
-          beiwenColor: '#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '星空',
           url: '/static/images/theme/theme_xingkong3.png'
         },
@@ -200,21 +200,21 @@ Vue.mixin({
           uuid: 'JW1OjfrQPu4Xd9de',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
-          beiwenColor: '#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '祥云',
           url: '/static/images/theme/theme_xiangyun.png'
         }, {
           uuid: 't37lsByGDFkTfLj6',
           color: '#d81e06',
           dateColor:'#d81e06',
-          beiwenColor: '#d81e06',
+          epitaphColor: '#d81e06',
           name: '党建',
           url: '/static/images/theme/theme_dangjian1.png'
         }, {
           uuid: 'MozabJlp2wvKAjAu',
           color: '#d81e06',
           dateColor:'#d81e06',
-          beiwenColor: '#d81e06',
+          epitaphColor: '#d81e06',
           name: '党建',
           url: '/static/images/theme/theme_dangjian2.png'
         }]

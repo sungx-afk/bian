@@ -8,12 +8,7 @@
     <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
       <template v-if="tabActive == 'main'">
         <!--首页-->
-        <info ref="info" v-if="detail && false" :space="detail" v-on:action-changed="actionChanged">
-          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
-        </info>
-        <info-theme ref="info" v-if="detail" :space="detail" v-on:action-changed="actionChanged">
-          <div v-if="tabActive == 'main'" class="audio iconfont icon-yinlemusic217 anim" :class="{'playing':playState === 'play'}" @click.stop="bgmAction"></div>
-        </info-theme>
+        <info-theme ref="info" v-if="detail" :space="detail" :playState="playState" v-on:action-changed="actionChanged" v-on:bgm-click="bgmAction"></info-theme>
       </template>
       <template v-if="tabActive == 'message'">
         <!--留言-->
@@ -32,6 +27,7 @@
       v-model="showAction"
       :actions="actions"
       close-on-popstate
+      :round="false"
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
@@ -460,27 +456,6 @@
         padding:10px;
         background:white;
         color: @MAIN_THEME_COLOR;
-      }
-    }
-    .audio{
-      position: absolute;
-      z-index: 10;
-      bottom:10px;
-      right: 10px;
-      font-size: 28px;
-      font-weight: bold;
-      width: 30px;
-      height: 30px;
-      color: @MAIN_THEME_COLOR;
-      &.anim{
-        animation: rotate 3s linear infinite;
-        animation-play-state:paused;
-        @keyframes rotate{from{transform: rotate(0deg);transform-origin:50% 50%;}
-          to{transform: rotate(359deg);transform-origin:50% 50%;}
-        }
-      }
-      &.playing{
-        animation-play-state:running;
       }
     }
   }

@@ -55,7 +55,7 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users,themeId,beiwen}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,epitaph}, successCb, errorCb) {
     let param = {
       type,
       name,
@@ -66,8 +66,8 @@ export default {
       param.themeId = themeId
     }
 
-    if (beiwen){
-      param.beiwen = beiwen
+    if (epitaph){
+      param.epitaph = epitaph
     }
 
     $axios.post(`/spaces`, JSON.stringify(param)).then(response => {
