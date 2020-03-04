@@ -253,8 +253,8 @@
     .operate-wrapper{
       position: absolute;
       bottom: 50px;
-      right: 12px;
-      width: 48px;
+      right: 8px;
+      width: 44px;
       height: 140px;
       .audio,.summary,.more{
         position: absolute;
@@ -266,7 +266,7 @@
         }
       }
       .audio{
-        bottom:130px;
+        bottom:110px;
         &.anim{
           animation: rotate 3s linear infinite;
           animation-play-state:paused;
@@ -282,7 +282,7 @@
         bottom: 10px;
       }
       .summary{
-        bottom: 70px;
+        bottom: 60px;
       }
     }
   }
