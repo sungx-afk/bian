@@ -224,7 +224,7 @@ Vue.mixin({
     getOneTheme(themeId){
       let themes = this.getThemes()
       if (!themeId){
-        return themes[7]
+        return themes[0]
       }
       let index = themes.findIndex(item=>item.uuid === themeId)
       if (index < 0){
