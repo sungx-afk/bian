@@ -163,7 +163,7 @@
               this.shareSpace(menu)
               break
             case 'modify_space':
-
+              Link(`/space/create?space_id=${this.space.id}`)
               break
             case 'modify_summary':
               break

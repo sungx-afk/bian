@@ -76,6 +76,19 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  modifySpace({sid,name,themeId,epitaph}, successCb, errorCb) {
+    let param = {
+      name,
+      themeId,
+      epitaph
+    }
+
+    $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   deleteSpace({sid}, successCb, errorCb) {
     $axios.delete(`/spaces/${sid}`).then(response => {
       successCb && successCb(response.data)

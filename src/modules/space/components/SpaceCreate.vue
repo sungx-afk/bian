@@ -1,7 +1,7 @@
 <template>
   <div class="space-create-container">
     <div class="info">
-      <van-cell class="type-cell">
+      <van-cell class="type-cell" v-if="!id">
         <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
           <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
         </van-radio-group>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="create">创建</van-button>
+      <van-button type="default" size="large" @click.tap="create">{{id?'修改':'创建'}}</van-button>
     </div>
     <div class="agreement">
       <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
@@ -33,7 +33,7 @@
   </div>
 </template>
 <script>
-
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
 
@@ -42,6 +42,7 @@
   export default{
     data(){
       return {
+        id:'',
         type:0,// 0 亲属 1，朋友
         users:[{
           name: '',
@@ -50,7 +51,6 @@
           dieDay: '',         //忌日
           dieAddress: '',     //安葬地点
           sex: 0,
-          nation: '',         //民族
           avatarUrl: '',      //遗像地址
         }],
         numberTypeList:[
@@ -68,11 +68,22 @@
       UserInfo
     },
     computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+        detail:'spaceStore/spaceDetail'
+      }),
       isIPhoneX(){
         return false
       }
     },
     methods:{
+      initSpaceData(){
+        this.id = this.detail.id
+        this.name = this.detail.name
+        this.theme = this.getOneTheme(this.detail.themeId)
+        this.epitaph = this.detail.epitaph
+        this.users = this.detail.spaceUsers
+      },
       numberTypeChanged(value){
         this.currentNumberType = value
         if (this.currentNumberType == 0 && this.users.length > 1){
@@ -153,8 +164,50 @@
           loadingType: 'spinner',
           message: '提交中...'
         })
-
-        $API.space.createSpace({
+        if (this.id){
+          let p1 = new Promise((resolve, reject) => {
+            $API.space.modifySpace({
+              sid:this.id,
+              name: spaceName,
+              themeId:this.theme.uuid,
+              epitaph:this.epitaph,
+            }, rsp=>{
+              resolve && resolve(rsp)
+            },error=>{
+              reject && reject(error)
+            })
+          })
+          let promises = [p1]
+          this.users.forEach(user=>{
+            promises.push(new Promise((resolve, reject) => {
+              $API.space.updateSpaceUser({
+                sid:this.id,
+                user
+              }, rsp=>{
+                resolve && resolve(rsp)
+              },error=>{
+                reject && reject(error)
+              })
+            }))
+          })
+          Promise.all(promises)
+            .then(() => {
+              eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
+              this.$toast.clear()
+              this.$toast({
+                message:'修改成功',
+                type:'success',
+                duration:1500,
+                onClose:()=>{
+                  this.$router.go(-1)
+                }
+              })
+            })
+            .catch((error) => {
+              this.$toast('修改失败，请稍后重试')
+            });
+        }else{
+          $API.space.createSpace({
             type:this.type,
             name: spaceName,
             users: this.users,
@@ -171,17 +224,24 @@
                 this.$router.go(-1)
               }
             })
-        }, error => {
-          this.$toast('创建失败，请稍后重试')
-        })
+          }, error => {
+            this.$toast('创建失败，请稍后重试')
+          })
+        }
       },
       readAgreement(){
         Link('/agreement')
       }
     },
     created() {
-      if (this.$route.query){
-        this.type = this.$route.query.type
+      let query = this.$route.query
+      if (query){
+        if (query.type){
+          this.type = query.type
+        }
+        if (query.space_id){
+          this.initSpaceData()
+        }
       }
       eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
     },

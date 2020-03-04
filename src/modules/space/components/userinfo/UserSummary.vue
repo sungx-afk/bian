@@ -143,6 +143,7 @@
     height: 100%;
     overflow-y: auto;
     background: @BG_WHITE;
+    padding-bottom: 100px;
     .title-wrapper{
       display: flex;
       align-items: center;

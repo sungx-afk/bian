@@ -80,23 +80,23 @@
         },
         selectBirthday(){
           this.initMinMaxDate()
-          this.showDatePicker = true
           this.pickerType = 0
           if (this.user.birthday){
             this.currentPickerDate = new Date(this.user.birthday)
           }else{
             this.currentPickerDate = new Date(1900,0,1)
           }
+          this.showDatePicker = true
         },
         selectDieDay(){
           this.initMinMaxDate()
-          this.showDatePicker = true
           this.pickerType = 1
           if (this.user.dieDay){
             this.currentPickerDate = new Date(this.user.dieDay)
           }else{
             this.currentPickerDate = new Date()
           }
+          this.showDatePicker = true
         },
         datePickerClosed(){
           this.showDatePicker = false

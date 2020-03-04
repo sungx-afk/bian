@@ -298,6 +298,7 @@
       registerEvent(){
         eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
         eventHub.$on(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
+        eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.updateSpaceDetail)
       },
       initShare(){
         if (!isIphone()){
@@ -372,6 +373,7 @@
       this.clearSpaceDetail()
       eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
+      eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.updateSpaceDetail)
     }
   }
 </script>
