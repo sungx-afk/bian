@@ -300,14 +300,14 @@
             margin-top: 4px;
             opacity: 0;
             color: @FONT_WHITE_COLOR;
-            text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
+            text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -0.5px 0 0, #000 0 -1px 0;
           }
           .epitaph{
             font-size: 12px;
             margin-top: 8px;
             opacity: 0;
             color: @FONT_WHITE_COLOR;
-            text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
+            text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -0.5px 0 0, #000 0 -1px 0;
           }
         }
       }
