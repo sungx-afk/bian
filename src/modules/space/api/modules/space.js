@@ -3,8 +3,12 @@ import axios from 'axios'
 import base64 from 'js-base64'
 
 export default {
-  getSpaceDetail({sid}, successCb, errorCb) {
-    $axios.get(`/spaces/${sid}`).then(function (response) {
+  getSpaceDetail({sid,scene}, successCb, errorCb) {
+    let url = `/spaces/${sid}`
+    if (scene){
+      url = url + '?' + qs.stringify({scene}, {indices: false})
+    }
+    $axios.get(url).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb && errorCb(error)

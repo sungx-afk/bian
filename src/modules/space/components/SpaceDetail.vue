@@ -68,7 +68,8 @@
         actions:[],
         playState:'stop',
         showBgmAction:false,
-        showNotice:false
+        showNotice:false,
+        scene:''
       }
     },
     components: {
@@ -245,7 +246,7 @@
         if (!this.spaceId){
           return
         }
-        this.getSpaceDetail({sid:this.spaceId}).then((rsp)=>{
+        this.getSpaceDetail({sid:this.spaceId,scene:this.scene}).then((rsp)=>{
           let flag = this.checkCanIn(rsp)
           if(flag === -1){
             this.$toast({
@@ -356,6 +357,10 @@
       }
     },
     created() {
+      let query = this.$route.query
+      if (query && query.scene){
+        this.scene = query.scene
+      }
       if(this.$route.params.id){
         this.spaceId = this.$route.params.id
         this.getDetail(()=>{

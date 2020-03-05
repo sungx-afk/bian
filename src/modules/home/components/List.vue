@@ -178,8 +178,12 @@
         this.tryHandleBgm(item)
         Link(`/space/detail/${item.id}`)
       },
-      linkToSpaceDetail(spaceId){
-        Link(`/space/detail/${spaceId}`)
+      linkToSpaceDetail(spaceId,scene){
+        let url = `/space/detail/${spaceId}`
+        if (scene){
+          url = `${url}?scene=${scene}`
+        }
+        Link(url)
       },
       onActionSelect(item){
         this.showAction = false
@@ -384,12 +388,19 @@
             return
           }
 
-          if (from === 'space_detail' || from === 'meeting'){
+          if (from === 'space_detail'){
             if (inviteUserId != this.user.id){
               this.needRefreshList = true
             }
             this.linkToSpaceDetail(spaceId)
-          }else if(from === 'add_friends'){
+          }else if (from === 'meeting'){
+            let scene = ''
+            if (inviteUserId != this.user.id){
+              this.needRefreshList = true
+              scene = 'memorial_meeting'
+            }
+            this.linkToSpaceDetail(spaceId,scene)
+          } else if(from === 'add_friends'){
             if (inviteUserId == this.user.id){ //如果链接是当前用户发起的，直接进入即可
               this.linkToSpaceDetail(spaceId)
             }else{
