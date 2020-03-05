@@ -242,11 +242,11 @@
         let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
         localStorage.setItem(key,value)
       },
-      getDetail(cb){
+      getDetail(quiet,cb){
         if (!this.spaceId){
           return
         }
-        this.getSpaceDetail({sid:this.spaceId,scene:this.scene}).then((rsp)=>{
+        this.getSpaceDetail({sid:this.spaceId,scene:this.scene,quiet:quiet?1:0}).then((rsp)=>{
           let flag = this.checkCanIn(rsp)
           if(flag === -1){
             this.$toast({
@@ -353,7 +353,7 @@
         this.playState = state
       },
       updateSpaceDetail(){
-        this.getDetail()
+        this.getDetail(true)
       }
     },
     created() {
@@ -363,7 +363,7 @@
       }
       if(this.$route.params.id){
         this.spaceId = this.$route.params.id
-        this.getDetail(()=>{
+        this.getDetail(false,()=>{
           this.initTab()
           this.initBgm(this.detail)
         })

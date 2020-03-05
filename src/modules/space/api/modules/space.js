@@ -3,10 +3,18 @@ import axios from 'axios'
 import base64 from 'js-base64'
 
 export default {
-  getSpaceDetail({sid,scene}, successCb, errorCb) {
+  getSpaceDetail({sid,scene,quiet = 1}, successCb, errorCb) {
     let url = `/spaces/${sid}`
+    let param = {}
+
     if (scene){
-      url = url + '?' + qs.stringify({scene}, {indices: false})
+      param.scene = scene
+    }
+    if (quiet){
+      param.quiet = 1
+    }
+    if (Object.keys(param).length > 0){
+      url = url + '?' + qs.stringify(param, {indices: false})
     }
     $axios.get(url).then(function (response) {
       successCb && successCb(response.data)

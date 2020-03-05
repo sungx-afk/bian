@@ -16,11 +16,12 @@ const getters = {
 
 // actions
 const actions = {
-  getSpaceDetail({commit,state},{sid,scene}){
+  getSpaceDetail({commit,state},{sid,scene,quiet = 1}){
     return new Promise((resolve, reject) => {
       $API.space.getSpaceDetail({
         sid,
-        scene
+        scene,
+        quiet
       }, (rsp)=>{
         commit(types.GET_SPACE_DETAIL, rsp)
         resolve(rsp)
