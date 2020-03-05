@@ -281,13 +281,13 @@
               font-size: 18px;
               font-weight: bold;
               color: @FONT_WHITE_COLOR;
-              text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
+              text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
             }
             .date{
               font-size: 15px;
               color: @FONT_WHITE_COLOR;
               margin-top: 8px;
-              text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
+              text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -0.5px 0 0, #000 0 -1px 0;
             }
           }
           .hide{
@@ -302,7 +302,7 @@
         overflow: scroll;
         font-size: 14px;
         color: @FONT_WHITE_COLOR;
-        text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
+        text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
         &.hide{
           opacity: 0 !important;
         }
