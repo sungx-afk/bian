@@ -11,8 +11,8 @@
       <div class="charge-area">
         <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
           <van-cell class="charge-cell">
-            <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>云币</span>
-            <van-button size="small" class="charge-btn" @click="charge">充值（1元 = 10云币）</van-button>
+            <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
+            <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
           </van-cell>
           <van-cell v-for="product in products" :key="product.id">
             <span>{{product.name}}</span>
@@ -22,8 +22,8 @@
       </div>
       <div class="analyze" v-if="space">
         <p class="label">逝者已矣，生者如斯</p>
-        <p>到访人次：{{space.visitedTimes}}</p>
-        <p>上香次数：{{space.worshipTimes}}</p>
+        <p>到访人次：<span class="num">{{space.visitedTimes}}</span></p>
+        <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
       </div>
       <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
     </div>
@@ -214,6 +214,9 @@
         p{
           height: 24px;
           line-height: 24px;
+          .num{
+            font-weight: bold;
+          }
         }
         .label{
           font-size: 16px;
