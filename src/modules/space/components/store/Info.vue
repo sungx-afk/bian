@@ -20,10 +20,10 @@
           </van-cell>
         </van-cell-group>
       </div>
-      <div class="analyze" v-if="false">
-        <p>文明祭祀，请勿过度</p>
-        <p>到访人次：2000</p>
-        <p>上香次数：2000</p>
+      <div class="analyze" v-if="space">
+        <p class="label">逝者已矣，生者如斯</p>
+        <p>到访人次：{{space.visitedTimes}}</p>
+        <p>上香次数：{{space.worshipTimes}}</p>
       </div>
       <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
     </div>
@@ -214,6 +214,10 @@
         p{
           height: 24px;
           line-height: 24px;
+        }
+        .label{
+          font-size: 16px;
+          margin-bottom: 12px;
         }
       }
       .view-history{
