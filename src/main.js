@@ -221,7 +221,7 @@ Vue.mixin({
 
       return themes
     },
-    getOneTheme(themeId){
+    getPresetTheme(themeId){
       let themes = this.getThemes()
       if (!themeId){
         return themes[0]

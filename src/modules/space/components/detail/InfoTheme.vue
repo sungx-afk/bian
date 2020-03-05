@@ -3,11 +3,14 @@
     <div class="base-info-wrapper">
       <div class="user-wrapper">
         <div class="user" v-for="user in space.spaceUsers" :key="user.id">
-          <img class="avatar" v-if="user.avatarUrl" :src="user.avatarUrl" />
-          <div class="placeholder" v-else>
+          <div class="avatar-wrapper" :class="{hide:configHide('avatar')}">
+            <img class="avatar" v-if="user.avatarUrl" :src="user.avatarUrl" />
+            <div class="placeholder" v-else>
 
+            </div>
           </div>
-          <div class="name-wrapper">
+
+          <div class="name-wrapper" :class="{hide:configHide('info')}">
             <div class="name" :style="{color:theme.color}">{{user.name}}</div>
             <div class="date" :style="{color:theme.dateColor}">
               <span>{{user.birthday | timesToDate('yyyy')}}</span>
@@ -17,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="epitaph-wrapper" :style="{color:theme.epitaphColor}">
+      <div class="epitaph-wrapper" :class="{hide:configHide('epitaph')}" :style="{color:theme.epitaphColor}">
         {{space && space.epitaph}}
       </div>
     </div>
@@ -63,7 +66,11 @@
           user: 'userStore/user',
         }),
         theme(){
-          return this.getOneTheme(this.space.themeId)
+          if (this.space.themeId === 'custom'){
+            return this.space.customThemeId
+          }else{
+            return this.getPresetTheme(this.space.themeId)
+          }
         },
         isSpaceCreator(){
           let result = false
@@ -96,6 +103,17 @@
         },
       },
       methods:{
+        configHide(type){
+          let result = false
+          if (this.space && this.space.themeId === 'custom' && this.space.customThemeId){
+            let theme = this.space.customThemeId
+            if (theme){
+              result = theme.config.findIndex(item=>item===type) === -1
+            }
+          }
+
+          return result
+        },
         goMoreOperate(){
           let user = this.user
           this.actions = []
@@ -171,7 +189,7 @@
               Link(`/space/create?space_id=${this.space.id}`)
               break
             case 'style':
-              Link(`/space/theme?theme_id=${this.space.themeId}`)
+              Link(`/space/theme?theme_id=${this.space.themeId}&space_id=${this.space_id}`)
               break
             case 'report':
               Link(`/report/category`)
@@ -200,8 +218,18 @@
           this.$emit('bgm-click')
         },
         updateTheme(theme){
+
+          let params = {
+            sid:this.space.id,
+            themeId:theme.uuid
+          }
+          if (theme.uuid === 'custom'){
+            this.space.customThemeId = theme
+            params.customTheme = JSON.stringify(theme)
+          }
           this.space.themeId = theme.uuid
-          $API.space.updateSpaceTheme({sid:this.space.id,themeId:theme.uuid},rsp=>{
+
+          $API.space.updateSpaceTheme(params,rsp=>{
 
           },error=>{
 
@@ -230,16 +258,18 @@
         justify-content:center;
         padding:10px 0px;
         .user{
-          .avatar{
-            width: 122px;
-            height: 157px;
-            margin:0 5px;
-          }
-          .placeholder{
-            border: 2px solid @MAIN_THEME_COLOR;
-            width: 122px;
-            height: 157px;
-            margin:0 5px;
+          .avatar-wrapper{
+            .avatar{
+              width: 122px;
+              height: 157px;
+              margin:0 5px;
+            }
+            .placeholder{
+              border: 2px solid @MAIN_THEME_COLOR;
+              width: 122px;
+              height: 157px;
+              margin:0 5px;
+            }
           }
           .name-wrapper{
             display: flex;
@@ -256,6 +286,9 @@
               margin-top: 8px;
             }
           }
+          .hide{
+            opacity: 0 !important;
+          }
         }
       }
       .epitaph-wrapper{
@@ -265,6 +298,9 @@
         overflow: scroll;
         font-size: 14px;
         color: @FONT_SECOND_COLOR;
+        &.hide{
+          opacity: 0 !important;
+        }
       }
     }
     .operate-wrapper{

@@ -38,6 +38,7 @@
   import constant from '@/config/constant'
 
   import UserInfo from './userinfo/UserInfo'
+  import qs from 'qs'
 
   export default{
     data(){
@@ -80,9 +81,13 @@
       initSpaceData(){
         this.id = this.detail.id
         this.name = this.detail.name
-        this.theme = this.getOneTheme(this.detail.themeId)
         this.epitaph = this.detail.epitaph
         this.users = this.detail.spaceUsers
+        if (this.detail.themeId === 'custom'){
+          this.theme = this.detail.customThemeId
+        }else {
+          this.theme = this.getPresetTheme(this.detail.themeId)
+        }
       },
       numberTypeChanged(value){
         this.currentNumberType = value
@@ -102,7 +107,18 @@
         }
       },
       goTheme(){
-        Link(`/space/theme`)
+        let url = `/space/theme`
+        let query = {}
+        if (this.theme){
+          query.theme_id = this.theme.uuid
+        }
+        if (this.id){
+          query.space_id = this.id
+        }
+        if (Object.keys(query).length > 0){
+          url = url + '?' + qs.stringify(query, {indices: false})
+        }
+        Link(url)
       },
       updateTheme(theme){
         this.theme = theme
@@ -166,12 +182,16 @@
         })
         if (this.id){
           let p1 = new Promise((resolve, reject) => {
-            $API.space.modifySpace({
+            let params = {
               sid:this.id,
               name: spaceName,
               themeId:this.theme.uuid,
               epitaph:this.epitaph,
-            }, rsp=>{
+            }
+            if (this.theme.uuid === 'custom'){
+              params.customTheme = JSON.stringify(this.theme)
+            }
+            $API.space.modifySpace(params, rsp=>{
               resolve && resolve(rsp)
             },error=>{
               reject && reject(error)
@@ -207,13 +227,17 @@
               this.$toast('修改失败，请稍后重试')
             });
         }else{
-          $API.space.createSpace({
+          let params = {
             type:this.type,
             name: spaceName,
-            users: this.users,
             themeId:this.theme.uuid,
+            users: this.users,
             epitaph:this.epitaph,
-          }, rsp => {
+          }
+          if (this.theme.uuid === 'custom'){
+            params.customTheme = JSON.stringify(this.theme)
+          }
+          $API.space.createSpace(params, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()
             this.$toast({

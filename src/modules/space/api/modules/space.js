@@ -67,7 +67,7 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users,themeId,epitaph}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,customTheme,epitaph}, successCb, errorCb) {
     let param = {
       type,
       name,
@@ -76,6 +76,10 @@ export default {
 
     if (themeId){
       param.themeId = themeId
+    }
+
+    if (customTheme){
+      param.customThemeId = customTheme
     }
 
     if (epitaph){
@@ -88,11 +92,15 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  modifySpace({sid,name,themeId,epitaph}, successCb, errorCb) {
+  modifySpace({sid,name,themeId,customTheme,epitaph}, successCb, errorCb) {
     let param = {
       name,
       themeId,
       epitaph
+    }
+
+    if (customTheme){
+      param.customThemeId = customTheme
     }
 
     $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
@@ -127,9 +135,12 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  updateSpaceTheme({sid, themeId}, successCb, errorCb) {
+  updateSpaceTheme({sid, themeId,customTheme}, successCb, errorCb) {
     let param = {
       themeId
+    }
+    if (customTheme){
+      param.customThemeId = customTheme
     }
     $axios.put(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)

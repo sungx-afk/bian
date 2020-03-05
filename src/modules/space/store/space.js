@@ -58,7 +58,11 @@ const actions = {
 const mutations = {
 
   [types.GET_SPACE_DETAIL] (state,rsp){
-    state.spaceDetail = rsp
+    let detail = rsp
+    if (detail.customThemeId){
+      detail.customThemeId = JSON.parse(detail.customThemeId)
+    }
+    state.spaceDetail = detail
   },
   [types.UPDATE_SPACE_USER] (state,user){
     let spaceUsers = state.spaceDetail.spaceUsers
