@@ -151,25 +151,25 @@ Vue.mixin({
       let themes = [
         {
           uuid: '5oLlWLeWV3KFtgIg',
-          color: '#333333',
-          dateColor:'#666666',
-          epitaphColor: '#333333',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '无限思念-1',
           url: '/static/images/theme/theme_sinian2.png'
         },
         {
           uuid: 'i5qRVuEa3gIpKKDL',
-          color: '#333333',
-          dateColor:'#666666',
-          epitaphColor: '#333333',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '无限思念-2',
           url: '/static/images/theme/theme_sinian1.png'
         },
         {
           uuid: 'Lz1m3qc7PZ7burhn',
-          color: '#333333',
-          dateColor:'#666666',
-          epitaphColor: '#333333',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '山水',
           url: '/static/images/theme/theme_shanshui.png'
         },
@@ -198,23 +198,23 @@ Vue.mixin({
         },
         {
           uuid: 'JW1OjfrQPu4Xd9de',
-          color: '#000000',
-          dateColor:'#000000',
-          epitaphColor: '#000000',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '祥云',
           url: '/static/images/theme/theme_xiangyun.png'
         }, {
           uuid: 't37lsByGDFkTfLj6',
-          color: '#d81e06',
-          dateColor:'#d81e06',
-          epitaphColor: '#d81e06',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '红色-1',
           url: '/static/images/theme/theme_dangjian1.png'
         }, {
           uuid: 'MozabJlp2wvKAjAu',
-          color: '#d81e06',
-          dateColor:'#d81e06',
-          epitaphColor: '#d81e06',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
           name: '红色-2',
           url: '/static/images/theme/theme_dangjian2.png'
         }]

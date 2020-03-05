@@ -251,6 +251,7 @@
     height: 100%;
     overflow-y: scroll;
     background-size: 100%,100%;
+    background-repeat: round;
     .base-info-wrapper{
       margin-top: 20%;
       .user-wrapper{
@@ -279,11 +280,14 @@
             .name{
               font-size: 18px;
               font-weight: bold;
+              color: @FONT_WHITE_COLOR;
+              text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
             }
             .date{
               font-size: 15px;
-              color: @FONT_THIRD_COLOR;
+              color: @FONT_WHITE_COLOR;
               margin-top: 8px;
+              text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
             }
           }
           .hide{
@@ -297,7 +301,8 @@
         max-height: 140px;
         overflow: scroll;
         font-size: 14px;
-        color: @FONT_SECOND_COLOR;
+        color: @FONT_WHITE_COLOR;
+        text-shadow: #000 0.5px 0 0, #000 0 0.5px 0, #000 -0.5px 0 0, #000 0 -0.5px 0;
         &.hide{
           opacity: 0 !important;
         }
