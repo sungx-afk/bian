@@ -101,6 +101,18 @@
 
           })
         },
+        getCommentList(start = 0){
+          $API.space.getComments({
+            subject_id:this.issueId,
+            type:'COMMENT',
+            start,
+            limit:50
+          }, rsp => {
+            this.issue.recently = rsp.list
+          }, error => {
+
+          })
+        },
         clickOperateMenu(){
           if (this.postComment){
             return
@@ -349,6 +361,7 @@
             }
           }
           this.getIssueDetail()
+          this.getCommentList()
           this.getSpaceDetail()
         }
       }
