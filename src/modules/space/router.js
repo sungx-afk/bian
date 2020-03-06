@@ -28,8 +28,6 @@ const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Log
 const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/store/Couplets')
 
 const Report = () => import(/* webpackChunkName: "report" */ './components/report/Report')
-const ReportCategory = () => import(/* webpackChunkName: "report-category" */ './components/report/Category')
-const ReportSubmit = () => import(/* webpackChunkName: "report-submit" */ './components/report/Submit')
 const Theme = () => import(/* webpackChunkName: "theme" */ './components/theme/Theme')
 const Summary = () => import(/* webpackChunkName: "summary" */ './components/userinfo/UserSummary')
 
@@ -130,14 +128,6 @@ const routes = [
   {
     path: '/report',
     component: Report,
-    children: [
-      {
-        path: 'category',
-        component: ReportCategory
-      }, {
-        path: 'submit',
-        component: ReportSubmit
-      }]
   },
 ]
 
