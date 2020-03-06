@@ -185,11 +185,13 @@
             let params = {
               sid:this.id,
               name: spaceName,
-              themeId:this.theme.uuid,
               epitaph:this.epitaph,
             }
-            if (this.theme.uuid === 'custom'){
-              params.customTheme = JSON.stringify(this.theme)
+            if (this.theme){
+              params.themeId = this.theme.uuid
+              if (this.theme.uuid === 'custom'){
+                params.customTheme = JSON.stringify(this.theme)
+              }
             }
             $API.space.modifySpace(params, rsp=>{
               resolve && resolve(rsp)
@@ -230,12 +232,14 @@
           let params = {
             type:this.type,
             name: spaceName,
-            themeId:this.theme.uuid,
             users: this.users,
             epitaph:this.epitaph,
           }
-          if (this.theme.uuid === 'custom'){
-            params.customTheme = JSON.stringify(this.theme)
+          if (this.theme){
+            params.themeId = this.theme.uuid
+            if (this.theme.uuid === 'custom'){
+              params.customTheme = JSON.stringify(this.theme)
+            }
           }
           $API.space.createSpace(params, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
