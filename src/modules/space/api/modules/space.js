@@ -259,14 +259,13 @@ export default {
       errorCb && errorCb(error)
     });
   },
-  getComments({subject_id, start, limit, type}, successCb, errorCb) {
+  getComments({subject_id, start, limit}, successCb, errorCb) {
     let param = {
       start,
-      limit,
-      type
+      limit
     }
 
-    $axios.get(`/subject/${subject_id}/comments?` + qs.stringify(param, {indices: false})).then(function (response) {
+    $axios.get(`/subject/${subject_id}/all_comments?` + qs.stringify(param, {indices: false})).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb && errorCb(error)

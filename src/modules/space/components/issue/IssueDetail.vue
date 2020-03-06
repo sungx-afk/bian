@@ -97,6 +97,7 @@
             cid
           }, rsp => {
             that.issue = rsp
+            that.getCommentList()
           }, error => {
 
           })
@@ -104,11 +105,10 @@
         getCommentList(start = 0){
           $API.space.getComments({
             subject_id:this.issueId,
-            type:'COMMENT',
             start,
             limit:50
           }, rsp => {
-            this.issue.recently = rsp.list
+            this.issue.recently = rsp
           }, error => {
 
           })
@@ -361,7 +361,6 @@
             }
           }
           this.getIssueDetail()
-          this.getCommentList()
           this.getSpaceDetail()
         }
       }
