@@ -388,4 +388,23 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  report({subjectType,subjectId,reason,content,urls},successCb, errorCb){
+    let params = {
+      subjectType,
+      subjectId,
+      reason
+    }
+    if (content){
+      params.content = content
+    }
+    if (urls && urls.length > 0){
+      params.urls = urls
+    }
+
+    $axios.post(`/complaints`, JSON.stringify(params)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  }
 }

@@ -9,7 +9,7 @@
           :finished="true"
           finished-text="">
           <van-cell
-            v-for="item in categoryList"
+            v-for="item in reasonList"
             :key="item.id">
             <div class="category">
               <div :class="{checked:item.checked}">{{item.name}}</div>
@@ -55,10 +55,10 @@
       name: "Report",
       data(){
         return{
-          type:'',
-          subject_id:'',
-          categoryList:[{
-            id:'porn',
+          subjectType:'',
+          subjectId:'',
+          reasonList:[{
+            id:'violation',
             name:'涉嫌违法违规',
             checked:false
           },{
@@ -95,7 +95,7 @@
         disabledBtn(){
           let result = true
 
-          result = !this.categoryList.some(item=>item.checked)
+          result = !this.reasonList.some(item=>item.checked)
 
           return result
         }
@@ -184,11 +184,25 @@
           })
         },
         doReport(){
-          //uploadedFiles
-          this.$toast.clear()
-          return
-          $API.space.report({subject_id,type,desc,files,category},rsp=>{
+          let params = {
+            subjectType:this.subjectType,
+            subjectId:this.subjectId,
+          }
+          if (this.uploadedFiles && this.uploadedFiles.length > 0){
+            params.urls = this.uploadedFiles
+          }
+          if (this.desc.trim()){
+            params.content = this.desc
+          }
+          params.reason = this.reasonList.filter(item=>item.checked).map(item=>item.id)
 
+          $API.space.report(params,rsp=>{
+            this.$toast.clear()
+            this.$toast('操作成功')
+            this.$router.back()
+          },error=>{
+            this.$toast.clear()
+            this.$toast('操作失败，请稍后重试')
           })
         }
       },
@@ -196,10 +210,10 @@
         let query = this.$route.query
         if (query){
           if (query.type){
-            this.type = query.type
+            this.subjectType = query.type
           }
           if (query.subject_id){
-            this.subject_id = query.subject_id
+            this.subjectId = query.subject_id
           }
         }
       }

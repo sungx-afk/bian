@@ -12,7 +12,8 @@
         <van-cell
           v-for="item in list"
           :key="item.id">
-          <item :item.sync="item" :type.sync="type" :canOperate="item.canOperate" :canComment="canComment"
+          <item :item.sync="item" :type.sync="type"
+                :canComment="canComment"
                 v-on:click-menu="clickOperateMenu"
                 v-on:click-item="clickIssueItem"
                 v-on:click-image="clickIssueImage"
@@ -36,7 +37,9 @@
         <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
       </div>
     </div>
-    <van-popup v-model="isShowMoreMenu">
+    <van-popup
+      v-model="isShowMoreMenu"
+      close-on-popstate>
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
   </div>
@@ -214,23 +217,42 @@
         if (this.postComment) {
           return
         }
-        let name = '删除' + this.messageTypeText()
-        this.menuList = [
-          {
-            id: 'delete',
-            name: name,
-            data: item
-          }]
+        if (this.canOperateIssue(item)){
+          let name = '删除该' + this.messageTypeText()
+          this.menuList = [
+            {
+              id: 'delete_issue',
+              name: name,
+              data: item
+            }]
+        }else {
+          let name = '举报该' + this.messageTypeText()
+          this.menuList = [
+            {
+              id:'report_issue',
+              name:name,
+              data: item
+            }]
+        }
         this.isShowMoreMenu = true
       },
       moreMenuPressed(menu) {
         this.isShowMoreMenu = false
         switch (menu.id) {
-          case 'delete':
+          case 'delete_issue':
             this.deleteIssue(menu.data)
+            break
+          case 'report_issue':
+            this.reportIssue(menu.data)
             break
           case 'delete_comment':
             this.doDeleteComment(menu.data)
+            break
+          case 'report_comment':
+            this.reportComment(menu.data)
+            break
+          case 'reply_comment':
+            this.replyComment(menu.data)
             break
         }
       },
@@ -281,6 +303,12 @@
 
         })
       },
+      reportIssue(issue){
+        Link(`/report?type=post&subject_id=${issue.id}`)
+      },
+      reportComment(data){
+        Link(`/report?type=comment&subject_id=${data.comment.id}`)
+      },
       commentBlur() {
         this.commentTimer = setTimeout(() => {
           this.postComment = false
@@ -308,23 +336,49 @@
           }
           this.deleteComment(data.comment)
         } else {
+          //如果是馆主，就回复和删除，如果不是，就回复和举报
           //如果不能评论，则弹提示
-          if (!this.canComment) {
-            this.$toast("该馆已禁止访客留言或评论")
-            return
+          if (this.isSpaceCreator){
+            this.menuList = [
+              {
+                id: 'reply_comment',
+                name: '回复该评论',
+                data: data
+              },{
+                id: 'delete_comment',
+                name: '删除该评论',
+                data: data
+              }]
+          }else {
+            this.menuList = []
+            if (this.canComment){
+              this.menuList.push({
+                id: 'reply_comment',
+                name: '回复该评论',
+                data: data
+              })
+            }
+            this.menuList.push({
+              id: 'report_comment',
+              name: '举报该评论',
+              data: data
+            })
           }
-          this.clearCommentTimer()
-          this.currentIssue = data.issue
-          this.currentComment = data.comment
-          this.commentPlaceholder = '回复 '
-          if (this.currentComment.creator && this.currentComment.creator.name){
-            this.commentPlaceholder += this.currentComment.creator.name
-          }
-          this.postComment = true
-          this.$nextTick(() => {
-            this.$refs.comment.focus()
-          })
+          this.isShowMoreMenu = true
         }
+      },
+      replyComment(data){
+        this.clearCommentTimer()
+        this.currentIssue = data.issue
+        this.currentComment = data.comment
+        this.commentPlaceholder = '回复 '
+        if (this.currentComment.creator && this.currentComment.creator.name){
+          this.commentPlaceholder += this.currentComment.creator.name
+        }
+        this.postComment = true
+        this.$nextTick(() => {
+          this.$refs.comment.focus()
+        })
       },
       sendCommentDelay() {
         setTimeout(() => {

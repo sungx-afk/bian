@@ -174,7 +174,7 @@
         },
         canOperate:{
           type: Boolean,
-          default: false
+          default: true
         },
         canComment:{
           type: Boolean,

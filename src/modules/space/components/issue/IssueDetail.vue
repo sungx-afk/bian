@@ -1,7 +1,8 @@
 <template>
   <div class="issue-detail-container">
     <template v-if="issue && space">
-      <item :item.sync="issue" :type.sync="issue.type" :canOperate="canOperate" :canComment="canComment"
+      <item :item.sync="issue" :type.sync="issue.type"
+            :canComment="canComment"
             v-on:click-menu="clickOperateMenu"
             v-on:click-image="clickIssueImage"
             v-on:comment="comment"
@@ -16,7 +17,9 @@
         <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
       </div>
     </div>
-    <van-popup v-model="isShowMoreMenu">
+    <van-popup
+      v-model="isShowMoreMenu"
+      close-on-popstate>
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
   </div>
@@ -24,6 +27,7 @@
 
 <script>
   import {mapGetters} from 'vuex';
+  import {Link} from '@/config/utils'
   import Item from './IssueItem';
 
   import Vue from 'vue';
@@ -101,12 +105,22 @@
           if (this.postComment){
             return
           }
-          let name = '删除' + this.messageTypeText()
-          this.menuList = [
-            {
-              id:'delete',
-              name:name,
-            }]
+          if (this.canOperate){
+            let name = '删除该' + this.messageTypeText()
+            this.menuList = [
+              {
+                id:'delete_issue',
+                name:name,
+              }]
+          }else {
+            let name = '举报该' + this.messageTypeText()
+            this.menuList = [
+              {
+                id:'report_issue',
+                name:name,
+              }]
+          }
+
           this.isShowMoreMenu = true
         },
         clickIssueImage(index){
@@ -126,10 +140,22 @@
         },
         moreMenuPressed(menu){
           this.isShowMoreMenu = false
-          if (menu.id === 'delete') {
-            this.deleteIssue()
-          }else if(menu.id === 'delete_comment'){
-            this.doDeleteComment(menu.data)
+          switch (menu.id) {
+            case 'delete_issue':
+              this.deleteIssue()
+              break
+            case 'report_issue':
+              this.reportIssue()
+              break
+            case 'delete_comment':
+              this.doDeleteComment(menu.data)
+              break
+            case 'report_comment':
+              this.reportComment(menu.data)
+              break
+            case 'reply_comment':
+              this.replyComment(menu.data)
+              break
           }
         },
         deleteIssue(){
@@ -176,21 +202,35 @@
             }
             this.deleteComment(this.currentComment)
           }else {
+            //如果是馆主，就回复和删除，如果不是，就回复和举报
             //如果不能评论，则弹提示
-            if (!this.canComment){
-              this.$toast("该馆已禁止访客留言或评论")
-              return
+            if (this.isSpaceCreator){
+              this.menuList = [
+                {
+                  id: 'reply_comment',
+                  name: '回复该评论',
+                  data: data
+                },{
+                  id: 'delete_comment',
+                  name: '删除该评论',
+                  data: data
+                }]
+            }else {
+              this.menuList = []
+              if (this.canComment){
+                this.menuList.push({
+                  id: 'reply_comment',
+                  name: '回复该评论',
+                  data: data
+                })
+              }
+              this.menuList.push({
+                id: 'report_comment',
+                name: '举报该评论',
+                data: data
+              })
             }
-            this.clearCommentTimer()
-            this.currentComment = data.comment
-            this.commentPlaceholder = '回复 '
-            if (this.currentComment.creator && this.currentComment.creator.name){
-              this.commentPlaceholder += this.currentComment.creator.name
-            }
-            this.postComment = true
-            this.$nextTick(()=>{
-              this.$refs.comment.focus()
-            })
+            this.isShowMoreMenu = true
           }
         },
         sendCommentDelay(){
@@ -266,10 +306,28 @@
 
           })
         },
+        replyComment(data){
+          this.clearCommentTimer()
+          this.currentComment = data.comment
+          this.commentPlaceholder = '回复 '
+          if (this.currentComment.creator && this.currentComment.creator.name){
+            this.commentPlaceholder += this.currentComment.creator.name
+          }
+          this.postComment = true
+          this.$nextTick(()=>{
+            this.$refs.comment.focus()
+          })
+        },
         clearLastData() {
           this.postComment = false
           this.currentComment = null
           this.commentContent = ''
+        },
+        reportIssue(){
+          Link(`/report?type=post&subject_id=${this.issueId}`)
+        },
+        reportComment(data){
+          Link(`/report?type=comment&subject_id=${data.comment.id}`)
         },
         messageTypeText() {
           let result = '动态'

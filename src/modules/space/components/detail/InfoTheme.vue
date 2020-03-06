@@ -134,11 +134,6 @@
               id:'meeting',
               data:user
             })
-            // this.actions.push({
-            //   name: '编辑生平',
-            //   id:'modify_summary',
-            //   data:user
-            // })
             this.actions.push({
               name: '纪念馆样式',
               id:'style',
@@ -156,13 +151,13 @@
             })
           }
 
-          // if (!this.isSpaceCreator){
-          //   this.actions.push({
-          //     name: '举报',
-          //     id:'report',
-          //     data:user
-          //   })
-          // }
+          if (!this.isSpaceCreator){
+            this.actions.push({
+              name: '举报',
+              id:'report',
+              data:user
+            })
+          }
 
           this.showAction = true
           this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
@@ -192,7 +187,7 @@
               Link(`/space/theme?theme_id=${this.space.themeId}&space_id=${this.space_id}`)
               break
             case 'report':
-              Link(`/report/category`)
+              Link(`/report?type=space&subject_id=${this.space.id}`)
               break
           }
         },
