@@ -1,21 +1,22 @@
 <template>
   <div class="meeting-container">
     <template v-if="showPoster">
-      <div class="poster-mask"></div>
+      <div class="poster-mask">
+        <div class="tip">
+          <i class="iconfont icon-tishi1"></i>请长按下方图片保存二维码图片到手机相册后，发送给微信亲友。
+        </div>
+      </div>
       <div class="poster-area">
         <i class="iconfont icon-guanbi close" @click="closePoster"></i>
         <img id="logo" src="~@/modules/images/logo.png" style="display: none;"/>
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
-        <div class="footer" v-if="posterDone">
-          温馨提示：长按保存图片到本地后进行相关操作
-        </div>
       </div>
 
     </template>
     <template v-else>
       <div class="tip">
-        温馨提示：为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。
+        <i class="iconfont icon-tishi1"></i>为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。
       </div>
       <div class="report-area">
         <div class="report-header">
@@ -31,7 +32,7 @@
         </van-field>
       </div>
       <div class="poster-btn">
-        <van-button @click.stop="makePoster" type="default">发到朋友圈</van-button>
+        <van-button @click.stop="makePoster" type="default">发给亲友</van-button>
       </div>
     </template>
 
@@ -43,7 +44,7 @@
   import config_server from '@/config/config'
   import base64 from 'js-base64'
 
-  const FONT = "px Pingfang SC,STHeiti,Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,SimSun,sans-serif"
+  const FONT = "px bold Pingfang SC,STHeiti,Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,SimSun,sans-serif"
 
     export default {
       name: "Meeting",
@@ -106,7 +107,7 @@
             }
           }
           if (!notice){
-            this.deathNotice = `xxx同志因xx不幸于xxxx年xx月xx日在xx市逝世，终年xx岁。葬礼遵xxx遗愿，一切从简，特此讣告。
+            this.deathNotice = `xxx 同志因 xx 不幸于 xxxx 年 xx 月 xx 日在 xx 市逝世，终年 xx 岁。葬礼遵其遗愿，一切从简，特此讣告。
 
 xxx`
           }else{
@@ -187,7 +188,7 @@ xxx`
           if (this.ratio > 1){
             fontSize = 20
           }
-          this.context.font = fontSize + FONT
+          this.context.font = "bold " + fontSize + FONT
           this.context.fillStyle = '#000000'
           this.context.fillText(title, tx, ty);
         },
@@ -247,7 +248,7 @@ xxx`
           }
         },
         drawTip(){
-          let name = '彼岸纪念'
+          let name = '彼岸天堂纪念'
           let nx =70
           let ny = this.posterH - 50
 
@@ -345,6 +346,9 @@ xxx`
       font-size:14px;
       padding:10px;
       color:#666666;
+      .iconfont{
+        margin-right: 4px;
+      }
     }
     .report-area{
       width: 100%;
@@ -372,6 +376,8 @@ xxx`
         height: 40px;
         line-height: 38px;
         margin:0px 10px;
+        color: white;
+        background-color: @MAIN_THEME_COLOR;
       }
     }
     .poster-mask{
@@ -382,6 +388,17 @@ xxx`
       top: 0;
       left: 0;
       background: rgba(0, 0, 0, 0.6);
+      .tip{
+        display: flex;
+        padding: 15px;
+        justify-content: center;
+        font-size: 14px;
+        color: @FONT_WHITE_COLOR;
+        .iconfont{
+          padding-top: 2px;
+          margin-right: 4px;
+        }
+      }
     }
     .poster-area{
       position: fixed;
@@ -404,13 +421,6 @@ xxx`
       }
       .poster-hidden{
         display: none;
-      }
-      .footer{
-        display: flex;
-        padding: 0px 15px 15px;
-        justify-content: center;
-        font-size: 12px;
-        color: @FONT_THIRD_COLOR;
       }
     }
   }
