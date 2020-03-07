@@ -399,11 +399,14 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  report({subjectType,subjectId,reason,content,urls},successCb, errorCb){
+  report({subjectType,subjectId,subjectContent,reason,content,urls},successCb, errorCb){
     let params = {
       subjectType,
       subjectId,
       reason
+    }
+    if (subjectContent){
+      params.subjectContent = subjectContent
     }
     if (content){
       params.content = content

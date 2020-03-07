@@ -336,9 +336,10 @@
           this.commentContent = ''
         },
         reportIssue(){
-          Link(`/report?type=post&subject_id=${this.issueId}`)
+          Link(`/report?type=post&subject_id=${this.issueId}&subject_content=${this.spaceId}`)
         },
         reportComment(data){
+          localStorage.setItem('report_comment_content',data.comment.content)
           Link(`/report?type=comment&subject_id=${data.comment.id}`)
         },
         messageTypeText() {

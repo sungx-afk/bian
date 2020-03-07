@@ -57,6 +57,7 @@
         return{
           subjectType:'',
           subjectId:'',
+          subjectContent:'', //帖子时保存馆的id，comment时保存评论内容，space为空
           reasonList:[{
             id:'violation',
             name:'涉嫌违法违规',
@@ -194,6 +195,9 @@
           if (this.desc.trim()){
             params.content = this.desc
           }
+          if (this.subjectContent){
+            params.subjectContent = this.subjectContent
+          }
           params.reason = this.reasonList.filter(item=>item.checked).map(item=>item.id)
 
           $API.space.report(params,rsp=>{
@@ -214,6 +218,13 @@
           }
           if (query.subject_id){
             this.subjectId = query.subject_id
+          }
+          if (this.subjectType === 'post'){
+            this.subjectContent = query.subject_content
+          }else if(this.subjectType === 'comment'){
+            let content = localStorage.getItem('report_comment_content')
+            localStorage.removeItem('report_comment_content')
+            this.subjectContent = content
           }
         }
       }

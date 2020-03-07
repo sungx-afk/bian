@@ -304,9 +304,10 @@
         })
       },
       reportIssue(issue){
-        Link(`/report?type=post&subject_id=${issue.id}`)
+        Link(`/report?type=post&subject_id=${issue.id}&subject_content=${this.space.id}`)
       },
       reportComment(data){
+        localStorage.setItem('report_comment_content',data.comment.content)
         Link(`/report?type=comment&subject_id=${data.comment.id}`)
       },
       commentBlur() {
