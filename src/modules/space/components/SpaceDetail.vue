@@ -134,7 +134,7 @@
         clearSpaceDetail:'spaceStore/clearSpaceDetail'
       }),
       initNotice(){
-        if (this.user && !this.user.serviceOpenId){
+        if (this.user && 0 == this.user.serviceSubscribe){
           this.showNotice = true
         }
       },
@@ -264,6 +264,14 @@
               }
             })
             return
+          }else if(flag === -3){
+            this.$toast({
+              message:'纪念馆已被屏蔽，请联系客服申诉',
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+            return
           }
           cb && cb()
         })
@@ -272,8 +280,12 @@
         let result = 0
         //如果是开启了仅亲属进入，同时当前用户又不在亲属空间返回-1
         //如果没有开启仅亲属进入，判断当前用户是否在黑名单用户，如果是返回-2
+        //如果已经被举报，直接返回-3
         let currentUserId = this.user.id
-        if (currentUserId === space.creatorId){ //创建者永远能进入
+        if (space.deleted === 1){
+          result = -3
+        }
+        else if (currentUserId === space.creatorId){ //创建者永远能进入
           result = 0
         }else if (space.config.viewScope == 'member'){
           let index = space.config.friendIds.findIndex(id=>id === currentUserId)

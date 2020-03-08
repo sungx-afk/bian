@@ -144,9 +144,9 @@
           <i class="comment-more iconfont icon-gengduo" @click.stop="clickOperateMenu"></i>
         </template>
       </div>
-      <div class='inter-area' v-if=' item.recently && item.recently.length > 0'>
+      <div class='inter-area' v-if='recentlyComment && recentlyComment.length > 0'>
         <!-- 评论列表 -->
-        <div class='comment-list' v-for="comment in item.recently" :key='comment.id'>
+        <div class='comment-wrapper' v-for="comment in recentlyComment" :key='comment.id' v-if="comment.deleted === 0">
           <div class='comment-area' @click.stop="commentPressed(comment)">
             <span class='comment-name'>{{comment.creator && comment.creator.name}}
               <span v-if="comment.reply" style="color: #808080;">回复</span>
@@ -179,6 +179,15 @@
         canComment:{
           type: Boolean,
           default: false
+        }
+      },
+      computed:{
+        recentlyComment(){
+          let list = []
+          if (this.item.recently && this.item.recently.length > 0){
+            list = this.item.recently.filter(item=>item.deleted === 0)
+          }
+          return list
         }
       },
       methods:{
@@ -290,7 +299,7 @@
       .inter-area{
         padding:10px;
         background-color:@BG_GRAY;
-        .comment-list {
+        .comment-wrapper {
           padding-top:5px;
           .comment-area {
             font-size: 14px;

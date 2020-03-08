@@ -10,7 +10,7 @@
         finished-text="没有更多数据了"
         @load="onLoadMoreData">
         <van-cell
-          v-for="item in list"
+          v-for="item in filterList"
           :key="item.id">
           <item :item.sync="item" :type.sync="type"
                 :canComment="canComment"
@@ -83,6 +83,10 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
+      filterList(){
+        let list =  this.list.filter(item=>item.deleted === 0)
+        return list
+      },
       canComment() {
         let result = true
         let currentUserId = this.user.id
