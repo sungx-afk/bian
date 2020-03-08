@@ -259,7 +259,18 @@ export default {
       errorCb && errorCb(error)
     });
   },
+  getComments({subject_id, start, limit}, successCb, errorCb) {
+    let param = {
+      start,
+      limit
+    }
 
+    $axios.get(`/subject/${subject_id}/all_comments?` + qs.stringify(param, {indices: false})).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
   sendComment({sid, data}, successCb, errorCb) {
     $axios.post(`/subject/${sid}/comments`, JSON.stringify(data)).then(response => {
       successCb && successCb(response.data)
@@ -388,4 +399,26 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  report({subjectType,subjectId,subjectContent,reason,content,urls},successCb, errorCb){
+    let params = {
+      subjectType,
+      subjectId,
+      reason
+    }
+    if (subjectContent){
+      params.subjectContent = subjectContent
+    }
+    if (content){
+      params.content = content
+    }
+    if (urls && urls.length > 0){
+      params.urls = urls
+    }
+
+    $axios.post(`/complaints`, JSON.stringify(params)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  }
 }

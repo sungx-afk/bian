@@ -119,7 +119,7 @@
     },
     methods:{
       updateNotice(){
-        if (this.user && !this.user.serviceOpenId){
+        if (this.user && 0 == this.user.serviceSubscribe){
           this.showNotice = true
         }
       },

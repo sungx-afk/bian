@@ -5,36 +5,46 @@
         您还未关注公众号，关注后可以及时收到通知
       </van-cell>
     </div>
-    <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
-      <template v-if="tabActive == 'main'">
-        <!--首页-->
-        <info-theme ref="info" v-if="detail" :space="detail" :playState="playState" v-on:action-changed="actionChanged" v-on:bgm-click="bgmAction"></info-theme>
+    <template v-if="detail">
+      <template v-if="0 === checkCanIn(detail)">
+        <div class="container-content" :class="{'iphonex-height':isIPhoneX}">
+          <template v-if="tabActive == 'main'">
+            <!--首页-->
+            <info-theme ref="info" v-if="detail" :space="detail" :playState="playState" v-on:action-changed="actionChanged" v-on:bgm-click="bgmAction"></info-theme>
+          </template>
+          <template v-if="tabActive == 'message'">
+            <!--留言-->
+            <message v-if="detail" :space="detail" type="PUBLIC"></message>
+          </template>
+          <template v-if="tabActive == 'friends'">
+            <!--亲属空间-->
+            <friends v-if="detail" :space="detail" type="SPACE"></friends>
+          </template>
+          <template v-if="tabActive == 'secret'">
+            <!--私语-->
+            <private v-if="detail" :space="detail" type="PRIVATE"></private>
+          </template>
+        </div>
+        <van-action-sheet
+          v-model="showAction"
+          :actions="actions"
+          close-on-popstate
+          :round="false"
+          @select="onActionSelect"
+          @click-overlay="onActionClose">
+        </van-action-sheet>
+        <template v-if="showTab">
+          <van-tabbar @change="onTabChange">
+            <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
+          </van-tabbar>
+        </template>
       </template>
-      <template v-if="tabActive == 'message'">
-        <!--留言-->
-        <message v-if="detail" :space="detail" type="PUBLIC"></message>
+      <template v-else>
+        <div class="tip-wrapper" @click="goBack">
+          <i class="iconfont icon-warn"></i>
+          <div class="content">{{tipContent}}</div>
+        </div>
       </template>
-      <template v-if="tabActive == 'friends'">
-        <!--亲属空间-->
-        <friends v-if="detail" :space="detail" type="SPACE"></friends>
-      </template>
-      <template v-if="tabActive == 'secret'">
-        <!--私语-->
-        <private v-if="detail" :space="detail" type="PRIVATE"></private>
-      </template>
-    </div>
-    <van-action-sheet
-      v-model="showAction"
-      :actions="actions"
-      close-on-popstate
-      :round="false"
-      @select="onActionSelect"
-      @click-overlay="onActionClose">
-    </van-action-sheet>
-    <template v-if="showTab">
-      <van-tabbar @change="onTabChange">
-        <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
-      </van-tabbar>
     </template>
   </div>
 </template>
@@ -69,7 +79,8 @@
         playState:'stop',
         showBgmAction:false,
         showNotice:false,
-        scene:''
+        scene:'',
+        tipContent:''
       }
     },
     components: {
@@ -134,7 +145,7 @@
         clearSpaceDetail:'spaceStore/clearSpaceDetail'
       }),
       initNotice(){
-        if (this.user && !this.user.serviceOpenId){
+        if (this.user && 0 == this.user.serviceSubscribe){
           this.showNotice = true
         }
       },
@@ -247,24 +258,6 @@
           return
         }
         this.getSpaceDetail({sid:this.spaceId,scene:this.scene,quiet:quiet?1:0}).then((rsp)=>{
-          let flag = this.checkCanIn(rsp)
-          if(flag === -1){
-            this.$toast({
-              message:'纪念馆已禁止访客进入，请联系馆主进行操作',
-              onClose:()=>{
-                this.$router.go(-1)
-              }
-            })
-            return
-          }else if(flag === -2){
-            this.$toast({
-              message:'您无法浏览该馆',
-              onClose:()=>{
-                this.$router.go(-1)
-              }
-            })
-            return
-          }
           cb && cb()
         })
       },
@@ -272,26 +265,37 @@
         let result = 0
         //如果是开启了仅亲属进入，同时当前用户又不在亲属空间返回-1
         //如果没有开启仅亲属进入，判断当前用户是否在黑名单用户，如果是返回-2
+        //如果已经被举报，直接返回-3
         let currentUserId = this.user.id
-        if (currentUserId === space.creatorId){ //创建者永远能进入
+        if (space.deleted === 1){
+          result = -3
+          this.tipContent = '纪念馆已被屏蔽，请联系客服申诉'
+        }
+        else if (currentUserId === space.creatorId){ //创建者永远能进入
           result = 0
         }else if (space.config.viewScope == 'member'){
           let index = space.config.friendIds.findIndex(id=>id === currentUserId)
           if (index === -1){ //如果没有找到，说明不在好友列表
+            this.tipContent = '纪念馆已禁止访客进入，请联系馆主进行操作'
             result = -1
           }else{
             let index = space.config.blackListIds.findIndex(id=>id === currentUserId)
             if (index > -1){ //找到了，则说明在黑名单里
               result = -2
+              this.tipContent = '您无法浏览该馆'
             }
           }
         }else{
           let index = space.config.blackListIds.findIndex(id=>id === currentUserId)
           if (index > -1){ //找到了，则说明在黑名单里
             result = -2
+            this.tipContent = '您无法浏览该馆'
           }
         }
         return result
+      },
+      goBack(){
+        this.$router.go(-1)
       },
       goSacrifice(){
         Link(`/space/sacrifice/${this.spaceId}`)
@@ -463,6 +467,20 @@
         padding:10px;
         background:white;
         color: @MAIN_THEME_COLOR;
+      }
+    }
+    .tip-wrapper{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50%;
+      height: 100%;
+      .iconfont{
+        font-size: 60px;
+        color: @MAIN_THEME_COLOR;
+      }
+      .content{
+        color: @FONT_THIRD_COLOR;
       }
     }
   }
