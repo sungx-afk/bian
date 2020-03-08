@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="epitaph-wrapper" :class="{hide:configHide('epitaph')}" :style="{color:theme.epitaphColor}">
+      <div class="epitaph-wrapper" v-if="space.epitaph && !configHide('epitaph')" :style="{color:theme.epitaphColor}">
         {{space && space.epitaph}}
       </div>
     </div>
