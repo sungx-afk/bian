@@ -286,7 +286,7 @@ xxx`
           let param = getRequestParam()
           //let scene = `meeting_${this.spaceId}_${this.user.id}`
           //let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
-          let shareContent = `origin_from=space_detail&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
+          let shareContent = `origin_from=meeting&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
           shareContent = base64.Base64.encode(shareContent)
           let shareUrl = `${config_server.domain}/home?copylink=${shareContent}`
           let url = `${config_server.domain}/api/v1/qrcode?content=${shareUrl}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
