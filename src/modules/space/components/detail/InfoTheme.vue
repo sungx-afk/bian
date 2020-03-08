@@ -292,9 +292,9 @@
       }
       .epitaph-wrapper{
         text-align: center;
-        padding: 0px 60px;
+        margin: 0px 60px;
         max-height: 140px;
-        overflow: scroll;
+        overflow: auto;
         font-size: 14px;
         color: @FONT_WHITE_COLOR;
         text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
