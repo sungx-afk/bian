@@ -195,6 +195,7 @@
   .theme-container{
     height: 100%;
     background: @BG_WHITE;
+    overflow-y: auto;
     .preset-theme-container{
       display: flex;
       flex-wrap: wrap;
