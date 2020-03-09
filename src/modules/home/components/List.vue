@@ -318,6 +318,9 @@
       loginWithCode(code){
         this.$store.dispatch('userStore/loginWithCode', {code})
       },
+      loginWithToken(token){
+        this.fetchMyInfo(token)
+      },
       loginWithUid(uid){
         console.log("===loginWithUid====");
         this.$store.dispatch('userStore/loginWithUid', {uid})
@@ -352,7 +355,7 @@
           }
         }
         if (token){
-          //已经跳转了
+          this.loginWithToken(token)
           return
         }
         if (uid){
