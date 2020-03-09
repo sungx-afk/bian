@@ -318,6 +318,9 @@
       loginWithCode(code){
         this.$store.dispatch('userStore/loginWithCode', {code})
       },
+      loginWithToken(token){
+        this.fetchMyInfo(token)
+      },
       loginWithUid(uid){
         console.log("===loginWithUid====");
         this.$store.dispatch('userStore/loginWithUid', {uid})
@@ -337,6 +340,7 @@
         let query = this.$route.query
         let code = ''
         let uid = ''
+        let token = ''
 
         this.query = query
         if(query){
@@ -346,6 +350,13 @@
           if (query.uid){
             uid = query.uid
           }
+          if (query.token){
+            token = query.token
+          }
+        }
+        if (token){
+          this.loginWithToken(token)
+          return
         }
         if (uid){
           this.loginWithUid(uid)
