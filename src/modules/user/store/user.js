@@ -3,9 +3,7 @@ import * as types from './mutation-types'
 // initial state
 const state = {
   token: '',
-  user: {
-    id:''
-  },
+  user:null,
   user_setting_keys:['bgm_play_state','bgm_key'],
   user_setting:null,
   expire:false
