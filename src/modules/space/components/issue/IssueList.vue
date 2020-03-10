@@ -357,7 +357,7 @@
               },{
                 id: 'delete_comment',
                 name: '删除该评论',
-                data: data
+                data: data.comment
               }]
           }else {
             this.menuList = []

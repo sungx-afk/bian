@@ -68,6 +68,14 @@
           }
           return result
         },
+        isSpaceCreator() {
+          let result = false
+          let currentUserId = this.user.id
+          if (this.space && currentUserId === this.space.creatorId) {
+            result = true
+          }
+          return result
+        },
         canComment(){
           let result = true
           let currentUserId = this.user.id
@@ -217,7 +225,7 @@
             if (this.postComment){
               return
             }
-            this.deleteComment(this.currentComment)
+            this.deleteComment(data.comment)
           }else {
             //如果是馆主，就回复和删除，如果不是，就回复和举报
             //如果不能评论，则弹提示
@@ -230,7 +238,7 @@
                 },{
                   id: 'delete_comment',
                   name: '删除该评论',
-                  data: data
+                  data: data.comment
                 }]
             }else {
               this.menuList = []
