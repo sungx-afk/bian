@@ -139,16 +139,21 @@
           if (this.postComment){
             return
           }
-          let images = this.issue.photos.map(item=>{
-            return item.url
-          })
-          ImagePreview({
-            images: images,
-            startPosition: index,
-            onClose() {
-              // do something
-            }
-          });
+          let plat = getPlat()
+          if (plat === 'web'){
+            window.open(this.issue.photos[index].url)
+          }else{
+            let images = this.issue.photos.map(item=>{
+              return item.url
+            })
+            ImagePreview({
+              images: images,
+              startPosition: index,
+              onClose() {
+                // do something
+              }
+            });
+          }
         },
         moreMenuPressed(menu){
           this.isShowMoreMenu = false

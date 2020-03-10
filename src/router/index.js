@@ -21,28 +21,35 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+
+  let comm = getRequestParam()
+
+  if (to.query && to.query.plat){
+    comm.plat = to.query.plat
+  }else{
+    comm.plat = 'wechat'
+  }
+  $axios.defaults.params = comm;//重新修改全局联网配置
+  localStorage.setItem("bian-requestParam", JSON.stringify(comm));
+
   if(to.path != '/login' && to.path != '/home'){
-    let comm = getRequestParam()
+
     let user = store.getters['userStore/user']
-
-    if ((!comm || comm && !comm.token) && to.query.token) {
-      comm = {
-        token: to.query.token,
-        plat: to.query.plat || 'wechat'
+    if (!comm.token && to.query.token) {
+      if (to.query.token){
+        comm.token = to.query.token
+        $axios.defaults.params = comm;//重新修改全局联网配置
+        localStorage.setItem("bian-requestParam", JSON.stringify(comm));
+      }else {
+        next({path:'/login'});
+        return false;
       }
-      $axios.defaults.params = comm;//重新修改全局联网配置
-      localStorage.setItem("bian-requestParam", JSON.stringify(comm));
     }
-
-    if( !comm || !comm.token){
-      next({path:'/login'});
-      return false;
-    }
-    if(!!comm.token && !user){
+    if(comm.token && !user){
       store.dispatch('userStore/fetchMyInfo',{token:comm.token});
     }
   }
-		next();
+  next();
 })
 
 export default router;

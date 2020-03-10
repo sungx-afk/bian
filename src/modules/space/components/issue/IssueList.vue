@@ -270,16 +270,21 @@
         if (this.postComment) {
           return
         }
-        let images = issue.photos.map(item => {
-          return item.url
-        })
-        ImagePreview({
-          images: images,
-          startPosition: index,
-          onClose() {
-            // do something
-          }
-        });
+        let plat = getPlat()
+        if (plat === 'web'){
+          window.open(issue.photos[index].url)
+        }else{
+          let images = issue.photos.map(item => {
+            return item.url
+          })
+          ImagePreview({
+            images: images,
+            startPosition: index,
+            onClose() {
+              // do something
+            }
+          });
+        }
       },
       goAddIssue() {
         Link(`/issue/create?space_id=${this.space.id}&type=${this.type}`)

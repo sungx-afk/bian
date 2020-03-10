@@ -7,18 +7,6 @@ export const Link = (url, query,replace) => {
   if(query){
     router.query = query;
   }
-
-  /*获取平台，初始化时，添加参数*/
-  let app_plat = localStorage.getItem("app_plat");
-  if(app_plat && (app_plat.toLowerCase() == 'android' || app_plat.toLowerCase() == 'iphone')){
-    var param = getRequestParam();
-    if(param){
-      router.query.token = param.token;
-      router.query.comp_id = param.comp_id;
-      router.query.plat = app_plat;
-      router.query.build = param.build;
-    }
-  }
   if(replace){
     $router.replace(router);
   }else{

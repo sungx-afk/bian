@@ -30,6 +30,12 @@ global.getRequestParam = function() {
   return JSON.parse(param);
 }
 
+/*获取平台参数*/
+global.getPlat = function() {
+  let param = localStorage.getItem("bian-requestParam");
+  param = JSON.parse(param);
+  return param.plat
+}
 
 global.$axios = axios.create({
   baseURL: '/api/v1',
