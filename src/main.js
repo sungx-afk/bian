@@ -78,7 +78,7 @@ Vue.mixin({
     tryAutoPlay(){
       //判断选定的是否开启自动播放音频
       let playState = 'play'
-      if (this.userSetting){
+      if (this.userSetting && this.userSetting['bgm_play_state']){
         playState = this.userSetting['bgm_play_state']
       }
       let needPlay = playState === 'play'
