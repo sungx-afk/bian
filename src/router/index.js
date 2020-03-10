@@ -26,11 +26,9 @@ router.beforeEach((to, from, next) => {
 
   if (to.query && to.query.plat){
     comm.plat = to.query.plat
-  }else{
-    comm.plat = 'wechat'
+    $axios.defaults.params = comm;//重新修改全局联网配置
+    localStorage.setItem("bian-requestParam", JSON.stringify(comm));
   }
-  $axios.defaults.params = comm;//重新修改全局联网配置
-  localStorage.setItem("bian-requestParam", JSON.stringify(comm));
 
   if(to.path != '/login' && to.path != '/home'){
 
