@@ -2,7 +2,7 @@
   <div class="bgm-container">
     <van-cell-group title="预置">
       <van-cell v-for="item in presetBgm" :key="item.key" :title="item.name" :label="item.author" size="large" @click.stop="selectPresetBgm(item)">
-        <div v-if="isPresetSelectedmSelected(item)">
+        <div v-if="isPresetSelected(item)">
           <i class="iconfont icon-duigou1"></i>
         </div>
       </van-cell>
@@ -20,7 +20,7 @@
       </template>
       <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog">手动输入</van-button>
     </van-cell-group>
-    <van-popup class="popup-area" v-model="isShowPasteDialog" round="false" @closed="pasteDialogClosed">
+    <van-popup class="popup-area" v-model="isShowPasteDialog" @closed="pasteDialogClosed">
       <van-field class="popup-cell" v-model="pasteName" placeholder="请输入音乐名称" input-align="left"></van-field>
       <van-field class="popup-cell" v-model="pasteUrl" placeholder="请输入音乐地址" input-align="left"></van-field>
       <div class="bottom-button">
@@ -56,7 +56,7 @@
             cb && cb()
           })
         },
-        isPresetSelectedmSelected(item){
+        isPresetSelected(item){
           let result = false
           if (this.currentBgmKey){
             result = item.key === this.currentBgmKey
@@ -135,6 +135,15 @@
           this.pasteUrl = ''
         },
         showPasteDialog(){
+          if (this.selfUpload && this.selfUpload.length > 0){
+            let custom = this.selfUpload[0]
+            if (custom.name){
+              this.pasteName = custom.name
+            }
+            if (custom.url){
+              this.pasteUrl = custom.url
+            }
+          }
           this.isShowPasteDialog = true
         },
         confirmPaste(){
