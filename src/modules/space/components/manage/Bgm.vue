@@ -94,7 +94,7 @@
           })
         },
         afterSelectAudio(audio){
-          if (audio.file.size > 10 * 1024 * 1024){
+          if (audio.file.size > 30 * 1024 * 1024){
             this.$toast("文件过大，请选择合适长度的背景音乐")
             return
           }
