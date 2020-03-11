@@ -463,7 +463,7 @@ export const gUuid = () => {
 }
 
 export const checkUrlHttpOrHttps = (url) => {
-  var exp = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+  var exp = /^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
   var objExp = new RegExp(exp);
   return objExp.test(url);
 }
