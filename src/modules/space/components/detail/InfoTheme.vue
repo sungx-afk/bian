@@ -245,8 +245,8 @@
   .info-theme-container{
     height: 100%;
     overflow-y: scroll;
-    background-size: 100%,100%;
-    background-repeat: round;
+    background-size: cover;
+    background-repeat: no-repeat;
     .base-info-wrapper{
       margin-top: 20%;
       .user-wrapper{

@@ -278,8 +278,9 @@
         .preview-content{
           width: 200px;
           height: 300px;
-          background: @BG_GRAY2;
-          background-size: 100% 100%;
+          background-color: @BG_GRAY2;
+          background-size: cover;
+          background-repeat: no-repeat;
           display: flex;
           flex-direction: column;
           align-items: center;
