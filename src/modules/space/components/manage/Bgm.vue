@@ -15,10 +15,13 @@
       </van-cell>
       <template v-if="isShowUploader()">
         <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
-          <van-button icon="music-o" size="small">选择背景音乐</van-button>
+          <van-button icon="music-o" size="small">上传背景音乐</van-button>
         </van-uploader>
       </template>
-      <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog">手动输入</van-button>
+      <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog">手动编辑</van-button>
+      <div class="tip" v-if="!isShowUploader()">
+        由于iOS系统限制，您可以直接手动编辑输入音乐链接或者使用Android手机、网页端进行音乐文件上传
+      </div>
     </van-cell-group>
     <van-popup class="popup-area" v-model="isShowPasteDialog" @closed="pasteDialogClosed">
       <van-field class="popup-cell" v-model="pasteName" placeholder="请输入音乐名称" input-align="left"></van-field>
@@ -197,6 +200,11 @@
     }
     .paste-btn{
       margin: 15px;
+    }
+    .tip{
+      padding: 16px;
+      font-size: 12px;
+      color: @FONT_THIRD_COLOR;
     }
     .popup-area{
       .popup-cell{
