@@ -15,8 +15,8 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 /*企业正式服务器*/
 var qiniu = {
   bucket: 'static-app01',
-  // domain: 'https://static-app01.yugusoft.com/'
-  domain: '/'
+  domain: 'https://static-app01.yugusoft.com/'
+  // domain: '/'
 
 };
 
