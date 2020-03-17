@@ -447,6 +447,7 @@
         })
       },
       updateSpaceBgm(data){
+        
         if (data){
           let index = this.list.findIndex(item=>item.id == data.spaceId)
           if (index > -1){
