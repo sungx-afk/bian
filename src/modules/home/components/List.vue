@@ -175,20 +175,8 @@
         this.showAction = true
       },
       goSpaceDetail(item){
-        if (this.user && this.user.id == 101592){
-          let msg = `before item: ${item.id}`
-          alert(msg)
-        }
         this.tryHandleBgm(item)
-        if (this.user && this.user.id == 101592){
-          let msg = `item2222: ${item.id}`
-          alert(msg)
-        }
         Link(`/space/detail/${item.id}`)
-        if (this.user && this.user.id == 101592){
-          let msg = `after item: ${item.id}`
-          alert(msg)
-        }
       },
       linkToSpaceDetail(spaceId,scene){
         let url = `/space/detail/${spaceId}`
