@@ -1,5 +1,5 @@
 <template>
-  <div class="item" @click="itemPress">
+  <div class="item" @click.stop="itemPress">
     <img class="icon" src="~@/modules/images/candle.png" />
     <div class="text">{{item.name}}</div>
     <div class="operate">

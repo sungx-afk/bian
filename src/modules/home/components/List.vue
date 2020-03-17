@@ -52,7 +52,7 @@
       <img class="main-btn-image" src="~@/modules/images/main_btn.png" />
     </div>
     <van-popup v-model="isShowMoreMenu">
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click.stop="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
     <van-action-sheet
       v-model="showAction"
@@ -447,7 +447,7 @@
         })
       },
       updateSpaceBgm(data){
-        
+
         if (data){
           let index = this.list.findIndex(item=>item.id == data.spaceId)
           if (index > -1){
