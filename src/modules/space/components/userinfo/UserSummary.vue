@@ -1,5 +1,5 @@
 <template>
-  <div class="user-summary-container">
+  <div class="user-summary-container" :class="{'safe-navigator':safeNavigator}">
     <template v-if="space && space.spaceUsers && space.spaceUsers.length > 0">
       <van-collapse v-model="activeUserId" accordion>
         <van-collapse-item v-for="user in space.spaceUsers" :key="user.id" :name="user.id" size="large">
@@ -24,12 +24,7 @@
               <template v-if="user.summary && user.summary.length > 0">
                 <div class="title">生平介绍:</div>
                 <div class="summary">
-                  <van-field
-                    v-model="user.summary"
-                    type="textarea"
-                    readonly
-                    :autosize="{ maxHeight: 300, minHeight: 50 }">
-                  </van-field>
+                  {{user.summary}}
                 </div>
               </template>
               <template v-else>
@@ -80,6 +75,16 @@
           }
           return result
         },
+        safeNavigator(){
+          let result = false
+
+          let plat = getPlat()
+          if (plat === 'web'){
+            result = true
+          }
+
+          return result
+        }
       },
       methods:{
         ...mapActions({
@@ -144,6 +149,9 @@
     overflow-y: auto;
     background: @BG_WHITE;
     padding-bottom: 100px;
+    &.safe-navigator{
+      padding-top: 40px;
+    }
     .title-wrapper{
       display: flex;
       align-items: center;
