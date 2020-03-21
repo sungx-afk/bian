@@ -87,19 +87,18 @@
       display: flex;
       flex-direction: column;
       .product{
-        padding: 12px 28px;
+        padding: 12px;
         border-bottom: 1px solid #eeeeee;
       }
       .message{
         flex-grow: 1;
-        padding: 12px 12px;
       }
       .footer{
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: flex-end;
-        padding: 12px 12px;
+        padding: 12px;
         border-top: 1px solid #eeeeee;
         .type{
           margin-right: auto;
