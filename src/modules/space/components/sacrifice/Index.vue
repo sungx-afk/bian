@@ -1640,6 +1640,12 @@
   .item.item-xuan-hua {
     background-image: url("./images/item_hua_01.png") !important;
   }
+  .item.item_mantou {
+    background-image: url("./images/item_mantou.png") !important;
+  }
+  .item.item_shuiguo {
+    background-image: url("./images/item_shuiguo.png") !important;
+  }
 
   .item.item-wu-liang-ye {
     background-image: url("./images/item_jiu_01.png") !important;
