@@ -130,13 +130,17 @@
 
       <div id="item-xuan-hua" class="item-xuan-hua"></div>
     </div>
+    <message v-if="showMessage" v-on:confirm="messageConfirm" v-on:cancel="messageCancel" :product="currentProduct"></message>
   </div>
 </template>
 <script>
 
+  import {mapGetters} from 'vuex'
+
   import {Link} from '@/config/utils';
   import constant from '@/config/constant'
 
+  import Message from '../Message'
 
   const noItems = [
     'item-xuan-hua',
@@ -163,11 +167,19 @@
         item_01: new Array(8).fill({}),
         item_02: new Array(9).fill({}),
         spaceId: 0,
-        space: null
+        space: null,
+        showMessage:false,
+        currentProduct:null,
+        action:null,
       }
     },
-    components: {},
+    components: {
+      Message
+    },
     computed: {
+      ...mapGetters({
+        user: 'userStore/user'
+      }),
       huaQuan() {
         return this.space && this.space.products.filter((item) => item == 'item-hua-quan');
       },
@@ -182,7 +194,18 @@
       },
       changMingDeng(){
         return this.space && this.space.products.includes('item-zhang-min-ding');
-      }
+      },
+      canComment(){
+        let result = true
+        let currentUserId = this.user.id
+        if (this.space && currentUserId !== this.space.creatorId && this.space.config.commentScope == 'member' ){
+          let index = this.space.config.friendIds.findIndex(item=>item === currentUserId)
+          if (index === -1){ //如果没有找到，说明不在好友列表
+            result = false
+          }
+        }
+        return result
+      },
     },
     methods: {
       //购买，通用
@@ -227,17 +250,31 @@
           }, 3000)
         });
       },
-
       //点烛
       dianlazu() {
+        if (this.canComment){
+          this.showMessage = true
+          this.currentProduct = {
+            name:'点烛',
+            point:this.space.type == 2?0:3
+          }
+          this.action = this.doDianlazu
+        }else {
+          this.doDianlazu()
+        }
+      },
+
+      doDianlazu(){
         let that = this;
         this.buy('item-la-zu', () => {
-          this.$notify({
-            type:'info',
-            message: '-3云币',
-            color: '#825621',
-            background: '#ffffff'
-          });
+          if (this.space.type !== 2) {
+            this.$notify({
+              type: 'info',
+              message: '-3云币',
+              color: '#825621',
+              background: '#ffffff'
+            });
+          }
           this.showLaZuHuo();
           that.getSpaceDetail();
         });
@@ -252,14 +289,29 @@
 
       //送花
       flower() {
+        if (this.canComment){
+          this.showMessage = true
+          this.currentProduct = {
+            name:'送花',
+            point:this.space.type == 2?0:9
+          }
+          this.action = this.doFlower
+        }else {
+          this.doFlower()
+        }
+      },
+      doFlower(){
         let that = this;
         this.buy('item-xuan-hua', () => {
-          this.$notify({
-            type:'info',
-            message: '-9云币',
-            color: '#825621',
-            background: '#ffffff'
-          });
+          if (this.space.type !== 2){
+            this.$notify({
+              type:'info',
+              message: '-9云币',
+              color: '#825621',
+              background: '#ffffff'
+            });
+          }
+
           var dom = document.getElementById("item-xuan-hua");
           dom.style.animationName = 'flowerIn';
           setTimeout(function () {
@@ -271,14 +323,29 @@
 
       //纸钱
       shaozhi() {
+        if (this.canComment){
+          this.showMessage = true
+          this.currentProduct = {
+            name:'送花',
+            point:this.space.type == 2?0:8
+          }
+          this.action = this.doShaozhi
+        }else {
+          this.doShaozhi()
+        }
+
+      },
+      doShaozhi(){
         let that = this;
         this.buy('item-zhi-qian', () => {
-          this.$notify({
-            type:'info',
-            message: '-8云币',
-            color: '#825621',
-            background: '#ffffff'
-          });
+          if (this.space.type !== 2) {
+            this.$notify({
+              type: 'info',
+              message: '-8云币',
+              color: '#825621',
+              background: '#ffffff'
+            });
+          }
           var dom = document.getElementById("big-fire");
           dom.style.visibility = 'visible';
           that.getSpaceDetail();
@@ -1312,6 +1379,30 @@
       },
       buySuccess(){
         this.getSpaceDetail();
+      },
+      messageConfirm(data){
+        this.showMessage = false
+        this.action && this.action()
+        this.action = null
+        this.postMessage(data)
+      },
+      messageCancel(){
+        this.showMessage = false
+      },
+      postMessage(data){
+        if (!data || !data.content){
+          return
+        }
+
+        data.status = 'PASS'
+
+        $API.space.postIssue({
+          sid: this.spaceId,
+          data: data
+        }, rsp => {
+        }, error => {
+
+        });
       },
       registerEvent() {
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
