@@ -14,7 +14,7 @@ export default {
       start,
       limit
     }
-    $axios.get(`/spaces/public_spaces?` + qs.stringify(param, {indices: false})).then(function (response) {
+    $axios.get(`/public_spaces?` + qs.stringify(param, {indices: false})).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb && errorCb(error)

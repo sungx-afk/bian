@@ -6,10 +6,10 @@
     </div>
     <div class="content">
       <div class="menu-area">
-        <van-cell title="自定义挽联" is-link @click.stop="enterCouplets"></van-cell>
+        <van-cell title="自定义挽联" :is-link="isSpaceCreator" @click.stop="enterCouplets"></van-cell>
       </div>
       <div class="charge-area">
-        <van-cell-group title="以下为支付运营成本的部分收费服务，感谢您的支持。">
+        <van-cell-group :title="chargeTitle">
           <van-cell class="charge-cell">
             <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
             <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
@@ -40,7 +40,7 @@
       data(){
         return{
           spaceId:'',
-          space:'',
+          space:null,
           products:[],
           iconMoney:'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/07/1562485353014/money.png'
         }
@@ -49,6 +49,24 @@
         ...mapGetters({
           user: 'userStore/user'
         }),
+        isSpaceCreator(){
+          let result = false
+          if (this.space && this.user.id === this.space.creatorId){
+            result = true
+          }
+          return result
+        },
+        chargeTitle(){
+          let result = ''
+
+          if (this.space.type === 2){
+            result = '本纪念馆为公益馆'
+          }else {
+            result = '以下为支付运营成本的部分收费服务，感谢您的支持。'
+          }
+
+          return result
+        }
       },
       methods:{
         charge(){
@@ -72,6 +90,9 @@
           })
         },
         enterCouplets(){
+          if (!this.isSpaceCreator){
+            return
+          }
           Link(`/store/couplets?space_id=${this.spaceId}`)
         },
         updateInfo(){
@@ -99,6 +120,14 @@
             name:'长明灯（永久）',
             point:999
           }]
+
+          if (this.space.type === 2){
+            this.products = this.products.map(item=>{
+              let o = item
+              o.point = 0
+              return o
+            })
+          }
         },
         buyProduct(product){
           let that = this;
@@ -136,11 +165,10 @@
           if (query.space_id){
             this.spaceId = query.space_id
             this.getDetail(() => {
-
+              this.initProducts()
             })
           }
         }
-        this.initProducts()
         this.registerEvent()
       },
       beforeDestroy() {

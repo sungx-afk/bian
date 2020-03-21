@@ -28,10 +28,10 @@
                 v-on:menu-press="showMoreMenu">
           </item>
         </div>
-        <div class="list" v-if="publicList.length > 0">
+        <div class="list" v-if="publicList.length > 0 && showPublic">
           <div class="list-header">
             <div class="title">公益纪念馆</div>
-            <div class="all">全部</div>
+            <div class="all" v-if="false">全部</div>
           </div>
           <item v-for="item in publicList" :key="item.id" :item="item"
                 v-on:item-press="goSpaceDetail">
@@ -105,6 +105,15 @@
       }),
       isIPhoneX(){
         return false
+      },
+      showPublic(){
+        let result = false
+
+        if (this.user && (this.user.id === 101592 || this.user.id === 100663)){
+          result = true
+        }
+
+        return result
       }
     },
     watch:{
@@ -129,7 +138,7 @@
       },
       getSpaceList(){
         this.getSpacesPersonal()
-        //this.getSpacesPublic()
+        this.getSpacesPublic()
       },
       getSpacesPersonal(){
         $API.home.getSpaceList((rsp)=>{
