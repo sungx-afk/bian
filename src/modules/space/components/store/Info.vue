@@ -27,6 +27,7 @@
       </div>
       <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
     </div>
+    <message v-if="showMessage"></message>
   </div>
 </template>
 
@@ -35,13 +36,19 @@
   import {Link} from '@/config/utils'
   import {mapGetters} from 'vuex'
 
+  import Message from '../Message'
+
     export default {
       name: "Info",
+      components:{
+        Message
+      },
       data(){
         return{
           spaceId:'',
           space:null,
           products:[],
+          showMessage:false,
           iconMoney:'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/07/1562485353014/money.png'
         }
       },
@@ -58,11 +65,12 @@
         },
         chargeTitle(){
           let result = ''
-
-          if (this.space.type === 2){
-            result = '本纪念馆为公益馆'
-          }else {
-            result = '以下为支付运营成本的部分收费服务，感谢您的支持。'
+          if (this.space){
+            if (this.space.type === 2){
+              result = '本纪念馆为公益馆'
+            }else {
+              result = '以下为支付运营成本的部分收费服务，感谢您的支持。'
+            }
           }
 
           return result
