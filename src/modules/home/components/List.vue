@@ -107,11 +107,11 @@
         return false
       },
       showPublic(){
-        let result = false
+        let result = true
 
-        if (this.user && (this.user.id === 101592 || this.user.id === 100663)){
-          result = true
-        }
+        // if (this.user && (this.user.id === 101592 || this.user.id === 100663)){
+        //   result = true
+        // }
 
         return result
       }
