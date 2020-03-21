@@ -141,6 +141,8 @@
   const noItems = [
     'item-xuan-hua',
     'item-kao-ya',
+    'item_shuiguo',
+    'item_mantou',
     'item-yue-bing',
     'item-mao-tai',
     'item-wu-liang-ye',
