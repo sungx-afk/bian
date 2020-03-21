@@ -4,7 +4,7 @@
       v-model="showPopup"
       position="top"
       :close-on-click-overlay="false"
-      :style="{ height: '360px' }">
+      :style="{ height: '300px' }">
       <div class="message-wrapper">
         <div class="product" v-if="product">
           {{product.name}} : {{product.point}} 云币
@@ -15,7 +15,7 @@
             type="textarea"
             border
             :placeholder="placeholder"
-            :autosize="{ maxHeight: 200, minHeight: 200 }">
+            :autosize="{ maxHeight: 140, minHeight: 140 }">
           </van-field>
         </div>
         <div class="footer">
