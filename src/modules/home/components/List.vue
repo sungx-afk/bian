@@ -117,6 +117,12 @@
         if (newVal){
           this.tokenExpire()
         }
+      },
+      userSetting(){
+        this.initShowPublic()
+        if (this.showPublic){
+          this.getSpacesPublic()
+        }
       }
     },
     methods:{
@@ -349,7 +355,6 @@
       },
       userChanged(){
         this.loginState = LoginState.DONE //完成登录
-        this.initShowPublic()
         this.dispatchWithQuery()
         this.getSpaceList()
         this.getSpacesVisited()
