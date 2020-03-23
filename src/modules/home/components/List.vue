@@ -31,7 +31,7 @@
         <div class="list" v-if="publicList.length > 0 && showPublic">
           <div class="list-header">
             <div class="title">公益纪念馆</div>
-            <div class="all" v-if="false">全部</div>
+            <div class="close" @click.stop="closePublicSpace"><i class="iconfont icon-guanbi1"></i></div>
           </div>
           <item v-for="item in publicList" :key="item.id" :item="item"
                 v-on:item-press="goSpaceDetail">
@@ -65,7 +65,7 @@
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
   import config_server from '@/config/config'
@@ -92,7 +92,8 @@
         showNotice:false,
         showAction:false,
         actions:[],
-        needRefreshList:false
+        needRefreshList:false,
+        showPublic:false
       }
     },
     components: {
@@ -101,20 +102,12 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        expire:'userStore/expire'
+        expire:'userStore/expire',
+        userSetting: 'userStore/userSetting'
       }),
       isIPhoneX(){
         return false
       },
-      showPublic(){
-        let result = true
-
-        // if (this.user && (this.user.id === 101592 || this.user.id === 100663)){
-        //   result = true
-        // }
-
-        return result
-      }
     },
     watch:{
       user(){
@@ -127,6 +120,16 @@
       }
     },
     methods:{
+      ...mapActions({
+        setUserSetting: 'userStore/setUserSetting',
+      }),
+      initShowPublic(){
+        let result = true
+        if (this.userSetting && this.userSetting['public_space_close']){
+          result = false
+        }
+        this.showPublic = result
+      },
       updateNotice(){
         if (this.user && 0 == this.user.serviceSubscribe){
           this.showNotice = true
@@ -138,7 +141,9 @@
       },
       getSpaceList(){
         this.getSpacesPersonal()
-        this.getSpacesPublic()
+        if (this.showPublic){
+          this.getSpacesPublic()
+        }
       },
       getSpacesPersonal(){
         $API.home.getSpaceList((rsp)=>{
@@ -281,6 +286,14 @@
             that.visitedList = []
           }, error=>{
             this.$toast('操作失败，请稍后重试')
+        })
+      },
+      closePublicSpace(){
+        this.$dialog.confirm({
+          message: '确认关闭公益馆入口吗？'
+        }).then(() => {
+          this.setUserSetting({key:'public_space_close',value:'1'})
+          this.showPublic = false
         })
       },
       registerEvent(){
@@ -472,6 +485,7 @@
       },
     },
     created() {
+      this.initShowPublic()
       this.initLogin()
       this.registerEvent()
     },
@@ -549,6 +563,10 @@
           }
           .more,.all{
             margin-left: auto;
+          }
+          .close{
+            margin-left: auto;
+            color: #666666;
           }
         }
       }

@@ -4,7 +4,7 @@ import * as types from './mutation-types'
 const state = {
   token: '',
   user:null,
-  user_setting_keys:['bgm_play_state','bgm_key'],
+  user_setting_keys:['bgm_play_state','bgm_key','public_space_close'],
   user_setting:null,
   expire:false
 }
