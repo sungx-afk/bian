@@ -125,7 +125,7 @@
       }),
       initShowPublic(){
         let result = true
-        if (this.userSetting && this.userSetting['public_space_close']){
+        if (!this.userSetting || this.userSetting && this.userSetting['public_space_close']){
           result = false
         }
         this.showPublic = result
@@ -349,6 +349,7 @@
       },
       userChanged(){
         this.loginState = LoginState.DONE //完成登录
+        this.initShowPublic()
         this.dispatchWithQuery()
         this.getSpaceList()
         this.getSpacesVisited()
@@ -485,7 +486,6 @@
       },
     },
     created() {
-      this.initShowPublic()
       this.initLogin()
       this.registerEvent()
     },
