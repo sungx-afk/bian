@@ -326,7 +326,7 @@
         if (this.canComment){
           this.showMessage = true
           this.currentProduct = {
-            name:'送花',
+            name:'纸钱',
             point:this.space.type == 2?0:8
           }
           this.action = this.doShaozhi
