@@ -92,11 +92,15 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  modifySpace({sid,name,themeId,customTheme,epitaph}, successCb, errorCb) {
+  modifySpace({sid,name,themeId,customTheme,epitaph, backgroundId}, successCb, errorCb) {
     let param = {
       name,
       themeId,
       epitaph
+    }
+
+    if(backgroundId){
+      param.backgroundId = backgroundId;
     }
 
     if (customTheme){

@@ -1,5 +1,5 @@
 <template>
-  <div class="sacrifice">
+  <div class="sacrifice" :class="theme">
 
     <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
       <div class="xiang_kuang">
@@ -206,6 +206,9 @@
         }
         return result
       },
+      theme(){
+        return 'theme_'+(this.space&&this.space.backgroundId||1);
+      }
     },
     methods: {
       //购买，通用
@@ -1211,7 +1214,7 @@
 
       initZhuHuo() {
         const flameFrag = document.querySelector("#flame-frag").textContent;
-        const baseUrl = "/static/images/";
+        const baseUrl = "/static/bian-mobile/images/";
 
         const manifest = [
           {name: "noise", url: "noise-texture-11.png?v=9"}
@@ -1407,6 +1410,7 @@
       registerEvent() {
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
         eventHub.$on(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
+        eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
       }
     },
     created() {
@@ -1427,6 +1431,7 @@
     beforeDestroy() {
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
+      eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
     }
   }
 </script>
@@ -1434,8 +1439,141 @@
 <style rel="stylesheet/less" lang="less">
   @import "~@/config/config.less";
 
-  .sacrifice {
 
+  .sacrifice.theme_1 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_1.jpeg?v=11) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_1 #item_hua_bg {
+    //
+  }
+  .sacrifice.theme_2 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_2.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_2 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_3 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_3.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_3 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_4 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_4.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_4 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_5 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_5.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_5 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_6 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_6.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_6 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_7 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_7.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_7 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_8 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_8.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_8 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_9 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_9.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_9 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_10 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_10.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_10 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_11 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_11.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_11 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_12 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_12.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_12 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_13 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_13.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_13 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_14 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_14.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_14 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_15 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_15.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_15 #item_hua_bg {
+    background: transparent;
+  }
+  .sacrifice.theme_16 {
+    background-image: url(https://static-app01.yugusoft.com/bian/bg_16.jpeg?v=1) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+  .sacrifice.theme_16 #item_hua_bg {
+    background: transparent;
+  }
+
+
+  .sacrifice {
+    width: 100%;
+    height: 100%;
+    flex: 1;
   }
 
   html, body {
@@ -1445,11 +1583,6 @@
     background: black;
     box-sizing: border-box;
     overflow: hidden;
-  }
-
-  .space-container {
-    background: url("./images/bg.jpg");
-    background-size: 100% 100%;
   }
 
   #smoke-box {

@@ -19,6 +19,7 @@ module.exports = {
   EVENT_UPDATE_BGM_SUCCESS:'update_bgm_success',
   EVENT_AUDIO_PLAY:'audio_play',
   EVENT_SELECT_THEME:'select_theme',
+  EVENT_CHANGE_BACKGROUND_SUCCESS:'event_change_background_success',
 
   KEY_TOKEN:'token',
   KEY_MEMORIAL_MEETING_SHOW:'memorial_meeting_show',

@@ -7,6 +7,7 @@
     <div class="content">
       <div class="menu-area">
         <van-cell title="自定义挽联" :is-link="isSpaceCreator" @click.stop="enterCouplets"></van-cell>
+        <van-cell title="自定义主题" :is-link="isSpaceCreator" @click.stop="showThemes=true"></van-cell>
       </div>
       <div class="charge-area">
         <van-cell-group :title="chargeTitle">
@@ -28,6 +29,36 @@
       <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
     </div>
     <message v-if="showMessage"></message>
+
+
+
+    <van-popup
+      v-model="showThemes"
+      closeable
+      position="bottom"
+      @open="mask=true"
+      @closed="mask=false"
+      @click.stop=""
+      :style="{ height: '100%' }"
+    >
+      <div class="info">
+        <van-icon name="info"/>
+        请选择一个背景
+      </div>
+      <div class="wrapper">
+        <van-image
+          v-for="(img, index) in backgrounds"
+          width="50vw"
+          height="65vw"
+          @click="themeId = img.id"
+          :class="{'right':index % 2 === 1, 'active':themeId == img.id}"
+          :src="img.url"
+        />
+      </div>
+      <div class="button-area">
+        <van-button type="danger" block @click="changeThemeId">应用</van-button>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -45,7 +76,10 @@
       },
       data(){
         return{
+          showThemes: false,
+          mask: false,
           spaceId:'',
+          themeId:1,
           space:null,
           products:[],
           showMessage:false,
@@ -56,6 +90,17 @@
         ...mapGetters({
           user: 'userStore/user'
         }),
+        backgrounds() {
+          let arr = new Array(16);
+          for (let i = 1; i <= arr.length; i++) {
+            let item = {
+              id: i,
+              url: `https://static-app01.yugusoft.com/bian/bg_${i}.jpeg?v=2`
+            }
+            arr[i - 1] = item;
+          }
+          return arr;
+        },
         isSpaceCreator(){
           let result = false
           if (this.space && this.user.id === this.space.creatorId){
@@ -77,6 +122,22 @@
         }
       },
       methods:{
+        changeThemeId(e){
+          let that = this;
+          let spaceId = this.spaceId;
+          $API.space.modifySpace({
+            sid: spaceId,
+            backgroundId: that.themeId
+          }, rsp => {
+            that.showThemes = false;
+            eventHub.$emit(constant.EVENT_CHANGE_BACKGROUND_SUCCESS,{
+              backgroundId:that.themeId
+            })
+            that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
+          }, error => {
+            reject && reject(error)
+          })
+        },
         charge(){
           Link(`/store/charge`)
         },
@@ -87,8 +148,9 @@
           $API.space.getSpaceDetail({
             sid: this.spaceId,
           }, (rsp)=>{
-            this.space = rsp
+            this.space = rsp;
             if (this.space.couplets){
+              this.themeId = (this.space.backgroundId||1);
               this.coupletsLeft = this.space.couplets.left
               this.coupletsRight = this.space.couplets.right
             }
@@ -172,7 +234,8 @@
         if(query){
           if (query.space_id){
             this.spaceId = query.space_id
-            this.getDetail(() => {
+            this.getDetail((resp) => {
+              console.log(resp);
               this.initProducts()
             })
           }
@@ -268,6 +331,132 @@
         cursor: pointer;
         padding: 10px 0 30px;
         flex-shrink: 0;
+      }
+    }
+
+    //
+
+
+    &.mask {
+      z-index: 999;
+      opacity: 1;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      background: white;
+      padding: 10px 0px;
+      .van-image {
+        box-sizing: border-box;
+        padding: 5px 5px 0px 10px;
+        transition: all 0.35s;
+        &::before {
+          content: '';
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          bottom: 0px;
+          left: 10px;
+        }
+        &.right {
+          padding: 5px 10px 0px 5px;
+          &::before {
+            top: 5px;
+            right: 10px;
+            bottom: 0px;
+            left: 5px;
+          }
+        }
+        &.active {
+          text-align: center;
+          &::before {
+            content: "\F02B";
+            background: rgba(0, 0, 0, 0.4);
+            color: #ff6034;
+            font-size: 30px;
+            font-family: vant-icon;
+            padding-top: 50%;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .van-popup {
+      display: flex;
+      flex-direction: column;
+      background: #f9f9f9;
+      .info {
+        text-align: left;
+        padding: 15px 35px 5px 15px;
+        font-size: 14px;
+        color: #666666;
+        vertical-align: top;
+        line-height: 1.5em;
+        .van-icon {
+          color: #666;
+          margin-right: 5px;
+          font-size: 14px;
+        }
+      }
+      i {
+        font-size: 14px;
+      }
+    }
+
+    .button-area {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+      padding: 12px 16px;
+
+      .van-button {
+        height: 40px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 34px;
+        border: none;
+        border-radius: 0;
+        &::before {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%;
+          height: 100%;
+          background-color: #000;
+          border: inherit;
+          border-color: #000;
+          border-radius: inherit;
+          -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+          opacity: 0;
+          themeId: ' ';
+        }
+        &:active::before {
+          opacity: 0.1;
+        }
+      }
+
+      .van-button--warning {
+        background: -webkit-linear-gradient(left, #ffd01e, #ff8917);
+        background: linear-gradient(to right, #ffd01e, #ff8917);
+      }
+      .van-button--danger {
+        background: -webkit-linear-gradient(left, #ff6034, #ee0a24);
+        background: linear-gradient(to right, #ff6034, #ee0a24);
+      }
+      .van-button:first-of-type {
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+      }
+      .van-button:last-of-type {
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
       }
     }
   }
