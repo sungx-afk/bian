@@ -23,7 +23,7 @@
         <i class="iconfont icon-tishi1"></i>由于iOS系统限制，您可以直接手动编辑输入音乐链接或者使用Android手机、网页端进行音乐文件上传
       </div>
     </van-cell-group>
-    <van-popup class="popup-area" v-model="isShowPasteDialog" @closed="pasteDialogClosed">
+    <van-popup class="popup-area" v-model="isShowPasteDialog"  close-on-popstate @closed="pasteDialogClosed">
       <van-field class="popup-cell" v-model="pasteName" placeholder="请输入音乐名称" input-align="left"></van-field>
       <van-field class="popup-cell" v-model="pasteUrl" placeholder="请输入音乐地址" input-align="left"></van-field>
       <div class="bottom-button">

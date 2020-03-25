@@ -25,7 +25,7 @@
         </van-cell>
       </van-list>
     </template>
-    <van-popup v-model="isShowMoreMenu">
+    <van-popup v-model="isShowMoreMenu" close-on-popstate>
       <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
   </div>

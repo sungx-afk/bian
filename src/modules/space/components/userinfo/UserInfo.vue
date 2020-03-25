@@ -27,7 +27,7 @@
         <img :src="user.avatarUrl" />
       </van-uploader>
     </div>
-    <van-popup v-model="showBirthdayPicker" position="bottom" @closed="birthdayPickerClosed">
+    <van-popup v-model="showBirthdayPicker" position="bottom" close-on-popstate @closed="birthdayPickerClosed">
       <van-datetime-picker
         v-model="birthdayPickerDate"
         type="date"
@@ -37,7 +37,7 @@
         @confirm="birthdayPickerConfirm">
       </van-datetime-picker>
     </van-popup>
-    <van-popup v-model="showDieDayPicker" position="bottom" @closed="dieDayPickerClosed">
+    <van-popup v-model="showDieDayPicker" position="bottom" close-on-popstate @closed="dieDayPickerClosed">
       <van-datetime-picker
         v-model="dieDayPickerDate"
         type="date"

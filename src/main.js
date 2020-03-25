@@ -155,7 +155,7 @@ Vue.mixin({
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '无限思念-1',
-          url: '/static/images/theme/theme_sinian2.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_sinian2.png'
         },
         {
           uuid: 'i5qRVuEa3gIpKKDL',
@@ -163,7 +163,7 @@ Vue.mixin({
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '无限思念-2',
-          url: '/static/images/theme/theme_sinian1.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_sinian1.png'
         },
         {
           uuid: 'Lz1m3qc7PZ7burhn',
@@ -171,7 +171,7 @@ Vue.mixin({
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '山水',
-          url: '/static/images/theme/theme_shanshui.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_shanshui.png'
         },
         {
           uuid: 'zkaodFO8EOEZrCo3',
@@ -179,7 +179,7 @@ Vue.mixin({
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '星空-1',
-          url: '/static/images/theme/theme_xingkong1.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_xingkong1.png'
         },
         {
           uuid: 'ifrc01k81NRFY5Pd',
@@ -187,14 +187,14 @@ Vue.mixin({
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '星空-2',
-          url: '/static/images/theme/theme_xingkong2.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_xingkong2.png'
         }, {
           uuid: 'rvkTYJmBDC3tVTWE',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '星空-3',
-          url: '/static/images/theme/theme_xingkong3.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_xingkong3.png'
         },
         {
           uuid: 'JW1OjfrQPu4Xd9de',
@@ -202,21 +202,21 @@ Vue.mixin({
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '祥云',
-          url: '/static/images/theme/theme_xiangyun.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_xiangyun.png'
         }, {
           uuid: 't37lsByGDFkTfLj6',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '红色-1',
-          url: '/static/images/theme/theme_dangjian1.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_dangjian1.png'
         }, {
           uuid: 'MozabJlp2wvKAjAu',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
           name: '红色-2',
-          url: '/static/images/theme/theme_dangjian2.png'
+          url: 'https://static-app01.yugusoft.com/bian/theme_dangjian2.png'
         }]
 
       return themes

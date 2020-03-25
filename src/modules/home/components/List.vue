@@ -51,14 +51,13 @@
     <div class="main-btn" :class="{'x-bottom':isIPhoneX}" @click="showMainMenu">
       <img class="main-btn-image" src="~@/modules/images/main_btn.png" />
     </div>
-    <van-popup v-model="isShowMoreMenu">
+    <van-popup v-model="isShowMoreMenu" close-on-popstate>
       <div v-for="menu in menuList" :key="menu.id" @click.stop="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
     </van-popup>
     <van-action-sheet
       v-model="showAction"
       :actions="actions"
       close-on-popstate
-      :round="false"
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
@@ -233,8 +232,10 @@
         this.menuList = [ {
           id:'create',
           name: '创建纪念馆',
-        },
-        {
+        }, {
+            id:'meeting',
+            name: '云追悼会',
+          }, {
           id:'feedback',
           name: '意见与反馈',
         }]
@@ -265,11 +266,17 @@
           case 'clear_visited':
             this.clearSpaceVisited()
             break
+          case 'meeting':
+            this.goMeetingIntro()
+            break
         }
       },
       goFeedback(){
         let url = 'https://support.qq.com/product/63016'
         window.open(url)
+      },
+      goMeetingIntro(){
+        Link(`/meeting_intro`)
       },
       deleteSpaceVisited(space){
         let that = this

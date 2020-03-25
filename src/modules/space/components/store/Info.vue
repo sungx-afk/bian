@@ -50,6 +50,7 @@
           v-for="(img, index) in backgrounds"
           width="50vw"
           height="65vw"
+          :key="img.id"
           @click="themeId = img.id"
           :class="{'right':index % 2 === 1, 'active':themeId == img.id}"
           :src="img.url"
