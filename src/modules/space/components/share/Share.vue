@@ -77,7 +77,7 @@
       methods:{
         initShare(){
           //不是iOS的直接初始化分享
-          if (!this.isIphone){
+          if (!this.isIphone || true){
             let data = {
               title: '彼岸纪念',
               success: () => { //你重置分享成功后的回调
