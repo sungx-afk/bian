@@ -367,7 +367,7 @@ export default {
       .replace(/\//g, '_') // Convert '/' to '_'
 
     let url = `https://upload.qiniup.com/putb64/-1/key/${base64Key}`
-    data = data.replace(/^data:\w+\/\w+;base64,/, "");//截掉base64前面头
+    data = data.replace(/^data:.*;base64,/, "");//截掉base64前面头
 
     axios.post(url, data, {
       headers: {
