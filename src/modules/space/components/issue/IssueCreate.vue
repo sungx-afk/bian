@@ -42,7 +42,10 @@
       },
       methods:{
         afterRead(photo){
-          //
+          //做特殊处理，微信图片没有后缀，也拿不到type，data格式中也没有类型，默认jpeg
+          if (!photo.type && photo.content.indexOf('data:;base64,') >= 0){
+            photo.content = photo.content.replace(/^data:;base64,/, "data:image/jpeg;base64,");
+          }
         },
         clickConfirm(){
           if (this.content.length === 0 && this.selectPhotos.length === 0){
