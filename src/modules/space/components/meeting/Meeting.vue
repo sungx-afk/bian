@@ -292,7 +292,7 @@ xxx`
           let url = `${config_server.domain}/api/v1/qrcode?content=${shareUrl}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
           console.log(url)
           img.setAttribute("crossOrigin",'Anonymous');
-          img.src = url
+          img.src = url + "?v=" + new Date().getTime()
           img.onload = ()=>{
             this.context.drawImage(img,qx,qy,qw, qh)
             that.qrCodeDrawDone = true
@@ -311,7 +311,6 @@ xxx`
             let canvas = document.getElementById('myCanvas')
             let image = document.getElementById('poster');
             image.src = canvas.toDataURL("image/png");
-            console.log(image.src)
           })
         },
         getRatio(context) {
