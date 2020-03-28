@@ -290,9 +290,11 @@ xxx`
           shareContent = base64.Base64.encode(shareContent)
           let shareUrl = `${config_server.domain}/home?copylink=${shareContent}`
           let url = `${config_server.domain}/api/v1/qrcode?content=${shareUrl}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+
+          url = url + "&v=" + new Date().getTime()
           console.log(url)
           img.setAttribute("crossOrigin",'Anonymous');
-          img.src = url + "?v=" + new Date().getTime()
+          img.src = url
           img.onload = ()=>{
             this.context.drawImage(img,qx,qy,qw, qh)
             that.qrCodeDrawDone = true
