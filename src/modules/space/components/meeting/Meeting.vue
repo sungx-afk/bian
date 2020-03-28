@@ -172,7 +172,7 @@ xxx`
           that.drawBg()
           that.drawTitle()
           that.drawContent()
-          //that.drawLogo()
+          that.drawLogo()
           that.drawTip()
           that.drawQrCode()
         },
@@ -242,6 +242,7 @@ xxx`
           let that = this
 
           let img = document.getElementById('logo')
+          img.setAttribute("crossOrigin",'Anonymous');
           img.onload = ()=>{
             this.context.drawImage(img,lx,ly,lw, lh)
             that.logoDrawDone = true
