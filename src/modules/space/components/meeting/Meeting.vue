@@ -172,7 +172,7 @@ xxx`
           that.drawBg()
           that.drawTitle()
           that.drawContent()
-          that.drawLogo()
+          //that.drawLogo()
           that.drawTip()
           that.drawQrCode()
         },
