@@ -307,9 +307,11 @@ xxx`
           setTimeout(()=>{
             this.posterDone = true
             this.$toast.clear()
+
             let canvas = document.getElementById('myCanvas')
             let image = document.getElementById('poster');
             image.src = canvas.toDataURL("image/png");
+            console.log(image.src)
           })
         },
         getRatio(context) {
