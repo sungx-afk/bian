@@ -87,13 +87,11 @@
         isShowMoreMenu:false,
         menuList:[],
         loginState:LoginState.UNDO,
-        query:'', //记录进入时的query
         showNotice:false,
         showAction:false,
         actions:[],
         needRefreshList:false,
-        showPublic:false,
-        isAuthWechat:false
+        showPublic:false
       }
     },
     components: {
@@ -344,7 +342,6 @@
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
       authWechat(){
-        this.isAuthWechat = true
         let url = `${config_server.domain}/login.html`
         url = encodeURIComponent(url)
         let appid = 'wxdb43de2e1083005a'
@@ -374,21 +371,22 @@
         this.authWechat()
       },
       initLogin(){
-        console.log('initLogin query:',this.$route.query)
         let query = this.$route.query
         let code = ''
         let uid = ''
         let token = ''
 
-        if (this.isAuthWechat){
-          this.isAuthWechat = false
-        }else {
-          this.query = query
-        }
-
+        this.query = query
+        localStorage.setItem("bian-query",JSON.stringify(this.query))
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
+            let value = localStorage.getItem("bian-query")
+            if (value){
+              this.query = JSON.parse(value)
+            }
+
+            localStorage.removeItem("bian-query")
           }
           if (query.uid){
             uid = query.uid
