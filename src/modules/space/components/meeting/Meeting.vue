@@ -8,7 +8,6 @@
       </div>
       <div class="poster-area">
         <i class="iconfont icon-guanbi close" @click="closePoster"></i>
-        <img id="logo" src="~@/modules/images/logo.png" style="display: none;"/>
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
       </div>
@@ -241,8 +240,10 @@ xxx`
 
           let that = this
 
-          let img = document.getElementById('logo')
+          let img = new Image()
           img.setAttribute("crossOrigin",'Anonymous');
+          img.src = 'https://static-app01.yugusoft.com/bian/logo.png'
+
           img.onload = ()=>{
             this.context.drawImage(img,lx,ly,lw, lh)
             that.logoDrawDone = true
