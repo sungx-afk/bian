@@ -92,7 +92,8 @@
         showAction:false,
         actions:[],
         needRefreshList:false,
-        showPublic:false
+        showPublic:false,
+        isAuthWechat:false
       }
     },
     components: {
@@ -343,6 +344,7 @@
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
       authWechat(){
+        this.isAuthWechat = true
         let url = `${config_server.domain}/login.html`
         url = encodeURIComponent(url)
         let appid = 'wxdb43de2e1083005a'
@@ -372,12 +374,18 @@
         this.authWechat()
       },
       initLogin(){
+        console.log('initLogin query:',this.$route.query)
         let query = this.$route.query
         let code = ''
         let uid = ''
         let token = ''
 
-        this.query = query
+        if (this.isAuthWechat){
+          this.isAuthWechat = false
+        }else {
+          this.query = query
+        }
+
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
