@@ -377,7 +377,6 @@
         let token = ''
 
         this.query = query
-        localStorage.setItem("bian-query",JSON.stringify(this.query))
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
@@ -387,6 +386,8 @@
             }
 
             localStorage.removeItem("bian-query")
+          }else {
+            localStorage.setItem("bian-query",JSON.stringify(query))
           }
           if (query.uid){
             uid = query.uid
