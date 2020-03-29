@@ -86,7 +86,7 @@
         initMinMaxDate(){
           let now = new Date()
           this.maxPickerDate = now
-          this.minPickerDate = new Date(1900,0,1)
+          this.minPickerDate = new Date(1600,0,1)
         },
         selectBirthday(){
           this.initMinMaxDate()
