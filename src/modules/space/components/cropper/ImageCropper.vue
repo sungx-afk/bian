@@ -69,7 +69,6 @@
         this.$router.go(-1)
       },
       cancel(){
-        eventHub.$emit(constant.EVENT_IMAGE_CROP_CANCEL)
         this.goBack()
       },
       select(photo){

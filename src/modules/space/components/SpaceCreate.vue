@@ -24,12 +24,14 @@
         </van-radio-group>
       </van-cell>
       <van-cell>
-        <van-uploader
-          :max-count="avatarMaxCount"
-          v-model="avatarUrls"
-          :after-read="afterSelectPhoto">
+        <div class="avatar-wrapper">
+          <div class="avatar-preview" v-for="(avatar,index) in avatarUrls" :key="index">
+            <van-uploader :after-read="afterSelectPhoto" :name="index">
+              <img class="avatar" :src="avatar.url" v-if="avatar.url"/>
+            </van-uploader>
+          </div>
+        </div>
 
-        </van-uploader>
       </van-cell>
 
       <div class="users-area" v-for="(user,index) in users" :key="index">
@@ -78,6 +80,7 @@
         ],
         avatarType:0,
         avatarUrls:[],
+        avatarUploaderIndex:0,
         name:'',
         theme:null,
         epitaph:'', //墓志铭
@@ -96,36 +99,33 @@
       isIPhoneX(){
         return false
       },
-      avatarMaxCount(){
-        let count = 1
-
-        if (this.currentNumberType === 1 && this.avatarType === 0){
-          count = 2
-        }
-
-        return count
-      }
     },
     methods:{
       initSpaceData(){
-        this.id = this.detail.id
-        this.name = this.detail.name
-        this.epitaph = this.detail.epitaph
-        this.users = this.detail.spaceUsers
-        if (this.detail.themeId === 'custom'){
-          this.theme = this.detail.customThemeId
-        }else {
-          this.theme = this.getPresetTheme(this.detail.themeId)
-        }
-        this.avatarType = this.detail.combineImage
-        this.avatarUrls = this.users.filter(item=>item.avatarUrl).map(item=>{
-          let o = {
-            url:item.avatarUrl
+        if (this.id){
+          this.name = this.detail.name
+          this.epitaph = this.detail.epitaph
+          this.users = this.detail.spaceUsers
+          if (this.detail.themeId === 'custom'){
+            this.theme = this.detail.customThemeId
+          }else {
+            this.theme = this.getPresetTheme(this.detail.themeId)
           }
-          return o
-        })
+          this.avatarType = this.detail.combineImage
+          this.avatarUrls = this.users.filter(item=>item.avatarUrl).map(item=>{
+            let o = {
+              url:item.avatarUrl
+            }
+            return o
+          })
+          if (this.avatarType == 0 && this.avatarUrls.length === 1){
+            this.avatarUrls.push({url:''})
+          }
 
-        this.currentNumberType = this.users.length > 1?1:0
+          this.currentNumberType = this.users.length > 1?1:0
+        }else {
+          this.avatarUrls = [{url:''}]
+        }
       },
       numberTypeChanged(value){
         this.currentNumberType = value
@@ -145,6 +145,9 @@
             nation: '',
             avatarUrl: '',
           })
+          if (this.avatarType == 0 && this.avatarUrls.length === 1){
+            this.avatarUrls.push({url:''})
+          }
         }
       },
       goTheme(){
@@ -168,11 +171,14 @@
         this.avatarType = value
         if (this.avatarType == 1 && this.avatarUrls.length > 1){
           this.avatarUrls.splice(1,1)
+        }else if(this.avatarType == 0 && this.avatarUrls.length === 1){
+          this.avatarUrls.push({url:''})
         }
       },
-      afterSelectPhoto(photo){
+      afterSelectPhoto(photo,detail){
+        this.avatarUploaderIndex = detail.name
         let data = {}
-        data.identifier = this.identifier = gUuid()
+        data.identifier = this.avatarUrls[this.avatarUploaderIndex].identifier = gUuid()
         data.content = photo.content
         data.name = photo.file.name
         data.size = photo.file.size
@@ -186,13 +192,13 @@
       updateAvatarData(result){
         let that = this
         let info = result.info
-
-        if (info.identifier !== this.identifier){
+        let index = that.avatarUploaderIndex
+        if (info.identifier !== this.avatarUrls[index].identifier){
           return
         }
 
         let cropperData = result.cropperData
-        let index = that.avatarUrls.length - 1
+
         that.avatarUrls[index] = result.cropperData
         that.loading = true
         $API.space.filesQiniuUploadTicket({
@@ -206,7 +212,7 @@
             token:resp.uptoken,
             key:resp.key
           },rsp=>{
-            that.avatarUrls[index] = {url:rsp.url}
+            that.avatarUrls.splice(index,1,{url:rsp.url})
             that.loading = false
           },error=>{
             this.$toast("上传失败，请稍后重试")
@@ -216,10 +222,6 @@
           this.$toast("上传失败，请稍后重试")
           that.loading = false
         })
-      },
-      cancelAvatarData(){
-        let index = this.avatarUrls.length - 1
-        this.avatarUrls.splice(index,1)
       },
       create() {
         //判断所有的dead
@@ -373,17 +375,16 @@
           this.type = query.type
         }
         if (query.space_id){
-          this.initSpaceData()
+          this.id = query.space_id
         }
+        this.initSpaceData()
       }
       eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
       eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
-      eventHub.$on(constant.EVENT_IMAGE_CROP_CANCEL,this.cancelAvatarData)
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_SELECT_THEME,this.updateTheme)
       eventHub.$off(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
-      eventHub.$off(constant.EVENT_IMAGE_CROP_CANCEL,this.cancelAvatarData)
     }
   }
 </script>
@@ -418,6 +419,18 @@
       }
       .van-uploader{
         padding: 8px 0px;
+      }
+      .avatar-wrapper{
+        display: flex;
+        align-items: center;
+        .avatar-preview{
+          margin-right: 8px;
+          .avatar{
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+          }
+        }
       }
     }
 
