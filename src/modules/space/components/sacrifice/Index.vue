@@ -129,6 +129,9 @@
           <div class="button" @click="flower()">送花</div>
           <div class="button" @click="more()">更多</div>
         </div>
+        <div class="back" @click="goBack">
+          <img src="~@/modules/images/back.svg" />
+        </div>
       </div>
 
 
@@ -380,7 +383,9 @@
       more() {
         Link(`/store/info?space_id=${this.spaceId}`)
       },
-
+      goBack(){
+        this.$router.back()
+      },
       getSpaceDetail() {
         let that = this;
         $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
@@ -2019,7 +2024,18 @@
       visibility: visible;
     }
   }
-
+  .back{
+    position: fixed;
+    bottom: 56px;
+    right: 20px;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
   .buttons {
     display: flex;
     flex-direction: row;

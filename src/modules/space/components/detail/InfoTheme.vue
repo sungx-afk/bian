@@ -37,6 +37,9 @@
       <div class="more" @click="goMoreOperate">
         <img src="~@/modules/images/more.svg" />
       </div>
+      <div class="back-home" @click="goBack">
+        <img src="~@/modules/images/back.svg" />
+      </div>
     </div>
   </div>
 </template>
@@ -225,6 +228,9 @@
         goSummary(){
           Link(`/space/summary?space_id=${this.space.id}`)
         },
+        goBack(){
+          this.$router.back()
+        },
         toggleBgmBtn(){
           this.$emit('bgm-click')
         },
@@ -338,7 +344,7 @@
       right: 8px;
       width: 44px;
       height: 140px;
-      .audio,.summary,.more{
+      .audio,.summary,.more,.back-home{
         position: absolute;
         width: 36px;
         height: 36px;
@@ -348,7 +354,7 @@
         }
       }
       .audio{
-        bottom:110px;
+        bottom:160px;
         &.anim{
           animation: rotate 3s linear infinite;
           animation-play-state:paused;
@@ -361,10 +367,13 @@
         }
       }
       .more{
-        bottom: 10px;
+        bottom: 60px;
       }
       .summary{
-        bottom: 60px;
+        bottom: 110px;
+      }
+      .back-home{
+        bottom:10px;
       }
     }
   }
