@@ -116,7 +116,7 @@
           let user = item.data
           if (menu === 'base'){
             localStorage.setItem(constant.KEY_EDIT_USER_INFO,JSON.stringify(user))
-            Link(`/user_edit?space_id=${this.space.id}`)
+            Link(`/user_edit?space_id=${this.space.id}&avatar_type=${this.space.combineImage}`)
           }else if (menu === 'summary'){
             ModifyText({
               content:user.summary,

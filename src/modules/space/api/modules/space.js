@@ -67,11 +67,12 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users,themeId,customTheme,epitaph}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,customTheme,epitaph,combineImage}, successCb, errorCb) {
     let param = {
       type,
       name,
-      spaceUsers: users
+      spaceUsers: users,
+      combineImage
     }
 
     if (themeId){
@@ -92,11 +93,12 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  modifySpace({sid,name,themeId,customTheme,epitaph, backgroundId}, successCb, errorCb) {
+  modifySpace({sid,name,themeId,customTheme,epitaph, backgroundId,combineImage}, successCb, errorCb) {
     let param = {
       name,
       themeId,
-      epitaph
+      epitaph,
+      combineImage
     }
 
     if(backgroundId){

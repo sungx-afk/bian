@@ -35,13 +35,7 @@
     data(){
       return{
         info:null,
-        option:{
-          mode:'cover',
-          autoCrop: true,
-          centerBox: true,
-          fixed: true,
-          fixedNumber: [122, 157]
-        }
+        option:null
       }
     },
     computed:{
@@ -50,6 +44,19 @@
       }),
     },
     methods:{
+      initOptions(type){
+        this.option = {
+          mode:'cover',
+          autoCrop: true,
+          centerBox: true,
+          fixed: true,
+        }
+        if (type == 1){
+          this.option.fixedNumber = [244, 157]
+        }else {
+          this.option.fixedNumber = [122, 157]
+        }
+      },
       initImgData(){
         this.info = this.cropData
         //做特殊处理，微信图片没有后缀，也拿不到type，data格式中也没有类型，默认jpeg
@@ -62,6 +69,7 @@
         this.$router.go(-1)
       },
       cancel(){
+        eventHub.$emit(constant.EVENT_IMAGE_CROP_CANCEL)
         this.goBack()
       },
       select(photo){
@@ -88,6 +96,7 @@
       }
     },
     created() {
+      this.initOptions(this.$route.query.avatar_type)
       this.initImgData()
     }
   }

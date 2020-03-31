@@ -11,6 +11,7 @@ module.exports = {
   EVENT_DELETE_ISSUE_SUCCESS:'delete_issue_success',
   EVENT_MODIFY_TEXT_COMPLETE:'modify_text_complete',
   EVENT_IMAGE_CROP_COMPLETE:'image_cropper_complete',
+  EVENT_IMAGE_CROP_CANCEL:'image_cropper_cancel',
   EVENT_UPDATE_SPACE_USER_SUCCESS:'update_space_user_success',
   EVENT_PAY_SUCCESS:'pay_success',
   EVENT_UPDATE_COUPLETS_SUCCESS:'update_couplets_success',

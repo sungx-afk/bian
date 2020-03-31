@@ -11,22 +11,25 @@
     <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
     <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
 
-    <van-cell title="遗 像:" is-link>
-      <van-uploader :after-read="afterSelectPhoto">
-        <div style="width: 250px;">
-          <span v-if="user.avatarUrl">已选择</span>
-          <span v-else>请选择</span>
-        </div>
-      </van-uploader>
-    </van-cell>
-    <div class="avatar-preview" v-if="user.avatarUrl">
-      <van-uploader :after-read="afterSelectPhoto">
-        <div v-if="loading" class="loading-wrapper">
-          <van-loading class="loading" vertical>上传中...</van-loading>
-        </div>
-        <img :src="user.avatarUrl" />
-      </van-uploader>
-    </div>
+    <template v-if="showAvatar">
+      <van-cell title="遗 像:" is-link>
+        <van-uploader :after-read="afterSelectPhoto">
+          <div style="width: 250px;">
+            <span v-if="user.avatarUrl">已选择</span>
+            <span v-else>请选择</span>
+          </div>
+        </van-uploader>
+      </van-cell>
+      <div class="avatar-preview" v-if="user.avatarUrl">
+        <van-uploader :after-read="afterSelectPhoto">
+          <div v-if="loading" class="loading-wrapper">
+            <van-loading class="loading" vertical>上传中...</van-loading>
+          </div>
+          <img :src="user.avatarUrl" />
+        </van-uploader>
+      </div>
+    </template>
+
     <van-popup v-model="showBirthdayPicker" position="bottom" close-on-popstate @closed="birthdayPickerClosed">
       <van-datetime-picker
         v-model="birthdayPickerDate"
@@ -61,6 +64,10 @@
           type:Object,
           default:null,
           twoWay:true
+        },
+        showAvatar:{
+          type:Boolean,
+          default:false
         }
       },
       data(){
@@ -220,6 +227,9 @@
     .sex-radio-group{
       display: flex;
       justify-content: flex-end;
+      .van-radio{
+        margin-left: 8px;
+      }
     }
   }
 

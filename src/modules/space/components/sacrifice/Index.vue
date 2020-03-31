@@ -1,20 +1,29 @@
 <template>
   <div class="sacrifice" :class="theme">
+    <template v-if="space && space.combineImage == 1">
+      <div class="yi-xiang-box combine">
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${combineAvatarUrl})`}"></div>
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+        </div>
+      </div>
 
-    <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
-      <div class="xiang_kuang">
-        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+      <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+        </div>
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
+        </div>
       </div>
-    </div>
+    </template>
 
-    <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
-      <div class="xiang_kuang">
-        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
-      </div>
-      <div class="xiang_kuang">
-        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
-      </div>
-    </div>
 
     <div id="dui_lian_box">
       <div class="inner" style="padding: 30px 15px 0px;" v-if="space && space.id>0">
@@ -208,6 +217,19 @@
       },
       theme(){
         return 'theme_'+(this.space&&this.space.backgroundId||1);
+      },
+      combineAvatarUrl(){
+        let url = ''
+
+        for (let i = 0; i < this.space.spaceUsers.length; i++) {
+          let user = this.space.spaceUsers[i]
+          if (user && user.avatarUrl){
+            url = user.avatarUrl
+            break
+          }
+        }
+
+        return url
       }
     },
     methods: {
@@ -1634,6 +1656,30 @@
           right: 6px;
           top: 13px;
           bottom: 15px;
+          background: url('./images/item_yi_xiang.png');
+          background-size: cover !important;
+        }
+      }
+    }
+    &.combine {
+      display: flex;
+      width: 200px;
+      margin: 0 auto;
+      margin-top: 12vh;
+      .xiang_kuang {
+        background: url("./images/item_xiang_kuang_black.png");
+        background-size: cover;
+        width: 244px;
+        height: 130px;
+        padding: 0;
+        margin: 0 auto;
+        position: relative;
+        .yi_xiang {
+          position: absolute;
+          left: 23px;
+          right: 26px;
+          top: 20px;
+          bottom: 14px;
           background: url('./images/item_yi_xiang.png');
           background-size: cover !important;
         }

@@ -18,6 +18,20 @@
         rows="2"
         :autosize="{ maxHeight: 150, minHeight: 50 }">
       </van-field>
+      <van-cell title="遗 像:" :border="false">
+        <van-radio-group v-model="avatarType" class="avatar-type-radio-group" @change="avatarTypeChanged" v-if="currentNumberType === 1">
+          <van-radio v-for="item in avatarTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+        </van-radio-group>
+      </van-cell>
+      <van-cell>
+        <van-uploader
+          :max-count="avatarMaxCount"
+          v-model="avatarUrls"
+          :after-read="afterSelectPhoto">
+
+        </van-uploader>
+      </van-cell>
+
       <div class="users-area" v-for="(user,index) in users" :key="index">
         <user-info :user="user"></user-info>
       </div>
@@ -34,7 +48,7 @@
 </template>
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {Link,gUuid} from '@/config/utils'
   import constant from '@/config/constant'
 
   import UserInfo from './userinfo/UserInfo'
@@ -58,6 +72,12 @@
           { name: '单人', value: 0},
           { name: '双人', value: 1 }
         ],
+        avatarTypeList:[
+          { name: '单人照', value: 0},
+          { name: '合影', value: 1}
+        ],
+        avatarType:0,
+        avatarUrls:[],
         name:'',
         theme:null,
         epitaph:'', //墓志铭
@@ -75,6 +95,15 @@
       }),
       isIPhoneX(){
         return false
+      },
+      avatarMaxCount(){
+        let count = 1
+
+        if (this.currentNumberType === 1 && this.avatarType === 0){
+          count = 2
+        }
+
+        return count
       }
     },
     methods:{
@@ -88,11 +117,23 @@
         }else {
           this.theme = this.getPresetTheme(this.detail.themeId)
         }
+        this.avatarType = this.detail.combineImage
+        this.avatarUrls = this.users.filter(item=>item.avatarUrl).map(item=>{
+          let o = {
+            url:item.avatarUrl
+          }
+          return o
+        })
+
+        this.currentNumberType = this.users.length > 1?1:0
       },
       numberTypeChanged(value){
         this.currentNumberType = value
         if (this.currentNumberType == 0 && this.users.length > 1){
           this.users.splice(1,1)
+          if (this.avatarUrls.length > 1){
+            this.avatarUrls.splice(1,1)
+          }
         }else if(this.currentNumberType == 1 && this.users.length <= 1){
           this.users.push({
             name: '',
@@ -123,6 +164,63 @@
       updateTheme(theme){
         this.theme = theme
       },
+      avatarTypeChanged(value){
+        this.avatarType = value
+        if (this.avatarType == 1 && this.avatarUrls.length > 1){
+          this.avatarUrls.splice(1,1)
+        }
+      },
+      afterSelectPhoto(photo){
+        let data = {}
+        data.identifier = this.identifier = gUuid()
+        data.content = photo.content
+        data.name = photo.file.name
+        data.size = photo.file.size
+        data.type = photo.file.type
+        data.lastModified = photo.file.lastModified
+        this.$store.dispatch('spaceStore/setCropImageData',data)
+        this.$nextTick(()=>{
+          Link(`/cropper?avatar_type=${this.avatarType}`)
+        })
+      },
+      updateAvatarData(result){
+        let that = this
+        let info = result.info
+
+        if (info.identifier !== this.identifier){
+          return
+        }
+
+        let cropperData = result.cropperData
+        let index = that.avatarUrls.length - 1
+        that.avatarUrls[index] = result.cropperData
+        that.loading = true
+        $API.space.filesQiniuUploadTicket({
+          reqType: 'general_file',
+          name: info.name,
+          expand: info.name.replace(/.+\./, ''),
+          size: info.size,
+        }, resp => {
+          $API.space.filesQiniuUpload({
+            data:cropperData,
+            token:resp.uptoken,
+            key:resp.key
+          },rsp=>{
+            that.avatarUrls[index] = {url:rsp.url}
+            that.loading = false
+          },error=>{
+            this.$toast("上传失败，请稍后重试")
+            that.loading = false
+          })
+        },error=>{
+          this.$toast("上传失败，请稍后重试")
+          that.loading = false
+        })
+      },
+      cancelAvatarData(){
+        let index = this.avatarUrls.length - 1
+        this.avatarUrls.splice(index,1)
+      },
       create() {
         //判断所有的dead
         let clearLocalStorage = false
@@ -152,8 +250,8 @@
         }
 
         let invalidAvatar = false
-        this.users.forEach(item=>{
-          if (item.avatarUrl && (item.avatarUrl.indexOf("http://") === -1 && item.avatarUrl.indexOf("https://") === -1)){
+        this.avatarUrls.forEach(item=>{
+          if (item.url && (item.url.indexOf("http://") === -1 && item.url.indexOf("https://") === -1)){
             invalidAvatar = true
             return false
           }
@@ -161,6 +259,11 @@
         if (invalidAvatar) {
           this.$toast('遗像未正确上传，请重新选择');
           return;
+        }
+
+        //遗像
+        for (let i = 0; i < this.avatarUrls.length; i++) {
+          this.users[i].avatarUrl = this.avatarUrls[i].url
         }
 
         let spaceName = this.name
@@ -186,6 +289,7 @@
               sid:this.id,
               name: spaceName,
               epitaph:this.epitaph,
+              combineImage:this.avatarType
             }
             if (this.theme){
               params.themeId = this.theme.uuid
@@ -234,6 +338,7 @@
             name: spaceName,
             users: this.users,
             epitaph:this.epitaph,
+            combineImage:this.avatarType
           }
           if (this.theme){
             params.themeId = this.theme.uuid
@@ -272,9 +377,13 @@
         }
       }
       eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
+      eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+      eventHub.$on(constant.EVENT_IMAGE_CROP_CANCEL,this.cancelAvatarData)
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_SELECT_THEME,this.updateTheme)
+      eventHub.$off(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+      eventHub.$off(constant.EVENT_IMAGE_CROP_CANCEL,this.cancelAvatarData)
     }
   }
 </script>
@@ -299,6 +408,16 @@
           justify-content: space-around;
           margin-left: 25%;
         }
+      }
+      .avatar-type-radio-group{
+        display: flex;
+        justify-content: flex-end;
+        .van-radio{
+          margin-left: 8px;
+        }
+      }
+      .van-uploader{
+        padding: 8px 0px;
       }
     }
 
