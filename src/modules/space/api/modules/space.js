@@ -355,7 +355,7 @@ export default {
       size: size
     }
 
-    $axios.get(`/files/qiniu/token`, {params}).then((response) => {
+    $axios.get(`/files/qiniu/token?`+ qs.stringify(params, {indices: false})).then((response) => {
       successCb && successCb(response.data)
     }).catch((error) => {
       errorCb && errorCb(error)

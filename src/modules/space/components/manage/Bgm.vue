@@ -109,7 +109,7 @@
           })
           $API.space.filesQiniuUploadTicket({
             reqType: 'general_file',
-            name: audio.file.name,
+            name: audio.file.name.replace(/[\s\[\]]/g,''),
             expand: audio.file.name.replace(/.+\./, ''),
             size: audio.file.size,
           }, resp => {
