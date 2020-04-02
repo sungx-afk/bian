@@ -83,7 +83,7 @@
           return this.currentBgmKey === 'custom'
         },
         selectCustomBgm(){
-          this.playBgm(0,{bgmKey:'custom'})
+          this.updateCustomBgm()
         },
         updateCustomBgm(cb){
           this.playBgm(0,{bgmKey:'custom'})
