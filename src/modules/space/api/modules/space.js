@@ -67,11 +67,12 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users,themeId,customTheme,epitaph}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,customTheme,epitaph,combineImage}, successCb, errorCb) {
     let param = {
       type,
       name,
-      spaceUsers: users
+      spaceUsers: users,
+      combineImage
     }
 
     if (themeId){
@@ -92,11 +93,12 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  modifySpace({sid,name,themeId,customTheme,epitaph, backgroundId}, successCb, errorCb) {
+  modifySpace({sid,name,themeId,customTheme,epitaph, backgroundId,combineImage}, successCb, errorCb) {
     let param = {
       name,
       themeId,
-      epitaph
+      epitaph,
+      combineImage
     }
 
     if(backgroundId){
@@ -197,9 +199,10 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  updateSpaceBgm({sid, key,selfUpload}, successCb, errorCb) {
+  updateSpaceBgm({sid,key,usedIndex,selfUpload}, successCb, errorCb) {
     let param = {
-      key
+      key,
+      usedIndex
     }
 
     if (selfUpload){
@@ -353,7 +356,7 @@ export default {
       size: size
     }
 
-    $axios.get(`/files/qiniu/token`, {params}).then((response) => {
+    $axios.get(`/files/qiniu/token?`+ qs.stringify(params, {indices: false})).then((response) => {
       successCb && successCb(response.data)
     }).catch((error) => {
       errorCb && errorCb(error)

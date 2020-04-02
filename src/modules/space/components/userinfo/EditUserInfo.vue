@@ -1,7 +1,7 @@
 <template>
   <div class="edit-user-container">
     <template v-if="user">
-      <user-info :user.sync="user"></user-info>
+      <user-info :user.sync="user" :show-avatar="avatarType === 0"></user-info>
       <div class="bottom-button">
         <van-button @click.stop="cancel">取消</van-button>
         <van-button class="confirm" type="default" @click.stop="confirm">确定</van-button>
@@ -23,6 +23,7 @@
       data(){
         return{
           spaceId:'',
+          avatarType:0,
           user:null
         }
       },
@@ -62,6 +63,9 @@
         if(query){
           if (query.space_id){
             this.spaceId = query.space_id
+          }
+          if (query.avatar_type !== undefined){
+            this.avatarType = query.avatar_type
           }
         }
         this.initUser()

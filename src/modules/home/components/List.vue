@@ -87,7 +87,6 @@
         isShowMoreMenu:false,
         menuList:[],
         loginState:LoginState.UNDO,
-        query:'', //记录进入时的query
         showNotice:false,
         showAction:false,
         actions:[],
@@ -381,6 +380,14 @@
         if(query){
           if (query.code && query.state === 'wechat_state'){
             code = query.code
+            let value = localStorage.getItem("bian-query")
+            if (value){
+              this.query = JSON.parse(value)
+            }
+
+            localStorage.removeItem("bian-query")
+          }else {
+            localStorage.setItem("bian-query",JSON.stringify(query))
           }
           if (query.uid){
             uid = query.uid
@@ -490,6 +497,9 @@
               this.list[index].music = {}
             }
             this.list[index].music.key = data.bgmKey
+            if (data.usedIndex !== undefined){
+              this.list[index].music.usedIndex = data.usedIndex
+            }
             if (data.selfUpload){
               this.list[index].music.selfUpload = data.selfUpload
             }

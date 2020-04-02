@@ -1,20 +1,29 @@
 <template>
   <div class="sacrifice" :class="theme">
+    <template v-if="space && space.combineImage == 1">
+      <div class="yi-xiang-box combine">
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${combineAvatarUrl})`}"></div>
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+        </div>
+      </div>
 
-    <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
-      <div class="xiang_kuang">
-        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+      <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
+        </div>
+        <div class="xiang_kuang">
+          <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
+        </div>
       </div>
-    </div>
+    </template>
 
-    <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
-      <div class="xiang_kuang">
-        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
-      </div>
-      <div class="xiang_kuang">
-        <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
-      </div>
-    </div>
 
     <div id="dui_lian_box">
       <div class="inner" style="padding: 30px 15px 0px;" v-if="space && space.id>0">
@@ -120,6 +129,9 @@
           <div class="button" @click="flower()">送花</div>
           <div class="button" @click="more()">更多</div>
         </div>
+        <div class="back" @click="goBack">
+          <img src="~@/modules/images/back.svg" />
+        </div>
       </div>
 
 
@@ -208,6 +220,19 @@
       },
       theme(){
         return 'theme_'+(this.space&&this.space.backgroundId||1);
+      },
+      combineAvatarUrl(){
+        let url = ''
+
+        for (let i = 0; i < this.space.spaceUsers.length; i++) {
+          let user = this.space.spaceUsers[i]
+          if (user && user.avatarUrl){
+            url = user.avatarUrl
+            break
+          }
+        }
+
+        return url
       }
     },
     methods: {
@@ -358,7 +383,9 @@
       more() {
         Link(`/store/info?space_id=${this.spaceId}`)
       },
-
+      goBack(){
+        this.$router.back()
+      },
       getSpaceDetail() {
         let that = this;
         $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
@@ -1639,6 +1666,30 @@
         }
       }
     }
+    &.combine {
+      display: flex;
+      width: 200px;
+      margin: 0 auto;
+      margin-top: 12vh;
+      .xiang_kuang {
+        background: url("./images/item_xiang_kuang_black.png");
+        background-size: cover;
+        width: 244px;
+        height: 130px;
+        padding: 0;
+        margin: 0 auto;
+        position: relative;
+        .yi_xiang {
+          position: absolute;
+          left: 23px;
+          right: 26px;
+          top: 20px;
+          bottom: 14px;
+          background: url('./images/item_yi_xiang.png');
+          background-size: cover !important;
+        }
+      }
+    }
   }
 
   .view1-box {
@@ -1972,7 +2023,19 @@
       visibility: visible;
     }
   }
-
+  .back{
+    position: fixed;
+    z-index: 999;
+    bottom: 56px;
+    right: 20px;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
   .buttons {
     display: flex;
     flex-direction: row;

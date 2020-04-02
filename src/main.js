@@ -56,6 +56,7 @@ Vue.mixin({
       ],
       currentBgmKey:'preset_1',
       selfUpload:[],
+      customIndex:0,
       currentAudioTime:0
     }
   },
@@ -92,6 +93,7 @@ Vue.mixin({
       }
       if (space.music){
         this.initBgmKey(space.music.key)
+        this.customIndex = space.music.usedIndex
         this.selfUpload = space.music.selfUpload
       }else {
         this.initBgmKey()
@@ -113,12 +115,16 @@ Vue.mixin({
           }
         }
         if (this.currentBgmKey === 'custom'){
-          audio.src = this.selfUpload[0].url
+          let index = this.customIndex
+          if (options && options.index !== undefined){
+            index = options.index
+          }
+          audio.src = this.selfUpload[index].url
         }else{
           let index = this.presetBgm.findIndex(item=>{
             return item.key === this.currentBgmKey
           })
-          if (index === -1){
+          if (index === -1 || index === undefined){
             index = 0
           }
           audio.src = this.presetBgm[index].url

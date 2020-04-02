@@ -1,16 +1,19 @@
 <template>
   <div class="info-theme-container" :style="{'background-image':`url(${theme.url})`}">
     <div class="base-info-wrapper">
+      <div class="combine-avatar" v-if="space.combineImage === 1" :class="{hide:configHide('avatar')}">
+        <img class="avatar" v-if="combineAvatarUrl" :src="combineAvatarUrl" />
+      </div>
       <div class="user-wrapper">
         <div class="user" v-for="user in space.spaceUsers" :key="user.id">
-          <div class="avatar-wrapper" :class="{hide:configHide('avatar')}">
+          <div class="avatar-wrapper" :class="{hide:configHide('avatar')}" v-if="space.combineImage === 0">
             <img class="avatar" v-if="user.avatarUrl" :src="user.avatarUrl" />
             <div class="placeholder" v-else>
 
             </div>
           </div>
 
-          <div class="name-wrapper" :class="{hide:configHide('info')}">
+          <div class="name-wrapper" :class="{hide:configHide('info'),combine:space.combineImage === 1}">
             <div class="name" :style="{color:theme.color}">{{user.name}}</div>
             <div class="date" :style="{color:theme.dateColor}">
               <span>{{user.birthday | timesToDate('yyyy')}}</span>
@@ -33,6 +36,9 @@
       </div>
       <div class="more" @click="goMoreOperate">
         <img src="~@/modules/images/more.svg" />
+      </div>
+      <div class="back-home" @click="goBack">
+        <img src="~@/modules/images/back.svg" />
       </div>
     </div>
   </div>
@@ -101,6 +107,19 @@
 
           return result
         },
+        combineAvatarUrl(){
+          let url = ''
+
+          for (let i = 0; i < this.space.spaceUsers.length; i++) {
+            let user = this.space.spaceUsers[i]
+            if (user && user.avatarUrl){
+              url = user.avatarUrl
+              break
+            }
+          }
+
+          return url
+        }
       },
       methods:{
         configHide(type){
@@ -209,6 +228,9 @@
         goSummary(){
           Link(`/space/summary?space_id=${this.space.id}`)
         },
+        goBack(){
+          this.$router.back()
+        },
         toggleBgmBtn(){
           this.$emit('bgm-click')
         },
@@ -249,10 +271,20 @@
     background-repeat: no-repeat;
     .base-info-wrapper{
       margin-top: 20%;
+      .combine-avatar{
+        display: flex;
+        justify-content: center;
+        .avatar{
+          width: 244px;
+          height: 157px;
+          margin:0 5px;
+        }
+      }
       .user-wrapper{
         display: flex;
         justify-content:center;
         padding:10px 0px;
+
         .user{
           .avatar-wrapper{
             .avatar{
@@ -272,6 +304,9 @@
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
+            &.combine{
+              padding: 0px 20px;
+            }
             .name{
               font-size: 18px;
               font-weight: bold;
@@ -309,7 +344,7 @@
       right: 8px;
       width: 44px;
       height: 140px;
-      .audio,.summary,.more{
+      .audio,.summary,.more,.back-home{
         position: absolute;
         width: 36px;
         height: 36px;
@@ -319,7 +354,7 @@
         }
       }
       .audio{
-        bottom:110px;
+        bottom:160px;
         &.anim{
           animation: rotate 3s linear infinite;
           animation-play-state:paused;
@@ -332,10 +367,13 @@
         }
       }
       .more{
-        bottom: 10px;
+        bottom: 60px;
       }
       .summary{
-        bottom: 60px;
+        bottom: 110px;
+      }
+      .back-home{
+        bottom:10px;
       }
     }
   }
