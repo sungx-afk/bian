@@ -253,6 +253,13 @@
       height:100%;
       margin: 5px 0px;
       word-wrap:break-word;
+      .content-text{
+        user-select: auto;
+        -webkit-user-select:auto;
+        -khtml-user-select:auto;
+        -moz-user-select:auto;
+        -ms-user-select:auto;
+      }
     }
     .issue-video {
       width: 100%;
