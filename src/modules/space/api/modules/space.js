@@ -199,9 +199,10 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  updateSpaceBgm({sid, key,selfUpload}, successCb, errorCb) {
+  updateSpaceBgm({sid,key,usedIndex,selfUpload}, successCb, errorCb) {
     let param = {
-      key
+      key,
+      usedIndex
     }
 
     if (selfUpload){

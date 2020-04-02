@@ -497,6 +497,9 @@
               this.list[index].music = {}
             }
             this.list[index].music.key = data.bgmKey
+            if (data.usedIndex !== undefined){
+              this.list[index].music.usedIndex = data.usedIndex
+            }
             if (data.selfUpload){
               this.list[index].music.selfUpload = data.selfUpload
             }
