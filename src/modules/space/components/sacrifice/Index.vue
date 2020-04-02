@@ -1682,19 +1682,18 @@
 
   .dui_lian {
     background: #f0eadd;
-    color: black;
+    color: #000;
     height: auto;
-    writing-mode: vertical-rl;
     text-align: center;
-    vertical-align: middle;
     font-size: 14px;
-    padding: 15px 4px;
+    padding: 15px 6px;
     letter-spacing: 8px;
-    box-sizing: border-box;
-    position: relative;
-    font-weight: bold;
-    box-shadow: 4px 6px 9px rgba(1, 1, 1, 0.61);
+    font-weight: 700;
+    -webkit-box-shadow: 4px 6px 9px rgba(1,1,1,.61);
+    box-shadow: 4px 6px 9px rgba(1,1,1,.61);
     font-family: 仿宋;
+    width: 25px;
+    box-sizing: border-box;
   }
 
   .big-fire-box {
