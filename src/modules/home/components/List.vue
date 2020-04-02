@@ -126,6 +126,7 @@
     methods:{
       ...mapActions({
         setUserSetting: 'userStore/setUserSetting',
+        updateRequestParams:'userStore/updateRequestParams'
       }),
       initShowPublic(){
         let result = true
@@ -383,6 +384,7 @@
             let value = localStorage.getItem("bian-query")
             if (value){
               this.query = JSON.parse(value)
+              this.updateRequestParams({mchId:this.query.mchId})
             }
 
             localStorage.removeItem("bian-query")

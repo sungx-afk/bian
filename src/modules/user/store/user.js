@@ -57,6 +57,9 @@ const actions = {
         resolve(rsp);
       })
     })
+  },
+  updateRequestParams({commit, state},data){
+    commit(types.UPDATE_REQUEST_PARAMS, data)
   }
 }
 
@@ -90,6 +93,26 @@ const mutations = {
       $axios.defaults.params = param;//重新修改全局联网配置
     }
     state.expire = true
+  },
+  [types.UPDATE_REQUEST_PARAMS](state,data){
+    let param = localStorage.getItem("bian-requestParam")
+    if (param){
+      param = JSON.parse(param)
+    }else {
+      param = {
+        plat:'wechat',
+        build:'999999',
+        token:'',
+        platVersion:'1.0.1',
+        mchId:''
+      }
+    }
+    if (data.mchId){
+      param.mchId = data.mchId
+    }
+
+    localStorage.setItem("bian-requestParam",JSON.stringify(param))
+    $axios.defaults.params = param;//重新修改全局联网配置
   }
 }
 

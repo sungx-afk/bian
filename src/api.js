@@ -22,7 +22,8 @@ global.getRequestParam = function() {
       plat:'wechat',
       build:'999999',
       token:'',
-      platVersion:'1.0.1'
+      platVersion:'1.0.1',
+      mchId:''
     }
     param = JSON.stringify(param)
     localStorage.setItem("bian-requestParam",param)
