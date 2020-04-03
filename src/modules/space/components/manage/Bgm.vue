@@ -70,7 +70,7 @@
       },
       methods:{
         isShowUploader(){
-          return !isIphone() || true
+          return !isIphone()
         },
         getSpaceDetail(cb){
           $API.space.getSpaceDetail({
