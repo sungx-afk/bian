@@ -7,7 +7,7 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多数据了"
+        :finished-text="finishedText"
         @load="onLoadMoreData">
         <van-cell
           v-for="item in list"
@@ -56,6 +56,19 @@
           isShowMoreMenu:false,
           containerHeight:0
         }
+      },
+      computed:{
+        finishedText(){
+          let result = ''
+
+          if (this.list.length < LIMIT){
+            result = ''
+          }else {
+            result = '没有更多数据了'
+          }
+
+          return result
+        },
       },
       methods:{
         initContainerHeight(){

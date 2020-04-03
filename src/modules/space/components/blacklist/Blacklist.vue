@@ -8,7 +8,7 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多数据了">
+          :finished-text="finishedText">
           <van-cell
             v-for="item in blacklist"
             :key="item.id">
@@ -49,6 +49,19 @@
           isShowMoreMenu:false,
           noData:false
         }
+      },
+      computed:{
+        finishedText(){
+          let result = ''
+
+          if (this.blacklist.length < 20){
+            result = ''
+          }else {
+            result = '没有更多数据了'
+          }
+
+          return result
+        },
       },
       methods:{
         getSpaceDetail(){

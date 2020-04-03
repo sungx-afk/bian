@@ -8,7 +8,7 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多数据了"
+          :finished-text="finishedText"
           @load="onLoadMoreData">
           <template v-if="list && list.length > 0">
             <van-cell class="list-cell"
@@ -55,6 +55,19 @@
           loading:false,
           finished:false
         }
+      },
+      computed:{
+        finishedText(){
+          let result = ''
+
+          if (this.list.length < LIMIT){
+            result = ''
+          }else {
+            result = '没有更多数据了'
+          }
+
+          return result
+        },
       },
       methods:{
         getLogs(start){
