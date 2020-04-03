@@ -154,7 +154,7 @@
       },
       onTabChange(e){
         if (e === 'sacrifice'){
-          this.saveSpaceTab('sacrifice')
+          //this.saveSpaceTab('sacrifice')
           this.goSacrifice()
           return
         }
@@ -173,7 +173,7 @@
         }
         this.messageType = messageType
 
-        this.saveSpaceTab(this.tabActive)
+        //this.saveSpaceTab(this.tabActive)
       },
       styleTabBar(tab){
         let color = '#7d7e80'
@@ -237,15 +237,15 @@
             name:'亲属空间'
           })
         }
-        let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
-        let value = localStorage.getItem(key)
-        if (value) {
-          if (value === 'sacrifice'){
-            this.goSacrifice()
-          }else{
-            this.tabActive = value
-          }
-        }
+        // let key = constant.KEY_LAST_SPACE_INFO + '_' + this.spaceId
+        // let value = localStorage.getItem(key)
+        // if (value) {
+        //   if (value === 'sacrifice'){
+        //     this.goSacrifice()
+        //   }else{
+        //     this.tabActive = value
+        //   }
+        // }
       },
       saveSpaceTab(value){
         //记录停在了哪个tab上
