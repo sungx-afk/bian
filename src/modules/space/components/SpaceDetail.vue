@@ -313,13 +313,11 @@
 
           let param = {
             title: '彼岸天堂纪念',
+            desc:`逝者已矣，生者如斯。来自 ${this.detail.name}`,
             extra:extra,
             success: () => { //你重置分享成功后的回调
 
             }
-          }
-          if (this.user.id == '101592'){
-            param.desc = `逝者已矣，生者如斯。来自 ${this.detail.name}`
           }
           this.wechatShare(param)
         }

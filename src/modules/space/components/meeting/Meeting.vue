@@ -106,7 +106,7 @@
             }
           }
           if (!notice){
-            this.deathNotice = `xxx 同志因 xx 不幸于 xxxx 年 xx 月 xx 日在 xx 市逝世，终年 xx 岁。葬礼遵其遗愿，一切从简，特此讣告。
+            this.deathNotice = `xxx 同志因 xx 不幸于 xxxx 年 xx 月 xx 日在 xx 市逝世，享年 xx 岁。葬礼遵其遗愿，一切从简，特此讣告。
 
 xxx`
           }else{

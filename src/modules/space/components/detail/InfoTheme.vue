@@ -220,9 +220,7 @@
           extra.origin_from = from
           extra.invite_user_id = this.user.id
           extra.space_id = this.space.id
-          if (this.user.id == '101592'){
-            extra.space_name = this.space.name
-          }
+          extra.space_name = this.space.name
 
           extra = JSON.stringify(extra)
 
