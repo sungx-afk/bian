@@ -1,7 +1,7 @@
 <template>
   <div class="user-summary-container" :class="{'safe-navigator':safeNavigator}">
     <template v-if="space && space.spaceUsers && space.spaceUsers.length > 0">
-      <van-collapse v-model="activeUserId" accordion>
+      <van-collapse v-model="activeUserId">
         <van-collapse-item v-for="user in space.spaceUsers" :key="user.id" :name="user.id" size="large">
           <div slot="title" class="title-wrapper">
             <div class="name">{{user.name}}</div>
@@ -135,7 +135,10 @@
       },
       created() {
         if (this.space && this.space.spaceUsers){
-          this.activeUserId = this.space.spaceUsers[0].id
+          this.activeUserId = []
+          this.space.spaceUsers.forEach(user=>{
+            this.activeUserId.push(user.id)
+          })
         }
       },
     }
