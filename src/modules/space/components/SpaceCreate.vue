@@ -118,8 +118,12 @@
             }
             return o
           })
-          if (this.avatarType == 0 && this.avatarUrls.length === 1 && this.users.length > 1){
-            this.avatarUrls.push({url:''})
+
+          if (this.avatarType == 0 && this.avatarUrls.length < this.users.length){
+            let delta = this.users.length - this.avatarUrls.length
+            for (let i = 0; i < delta; i++) {
+              this.avatarUrls.push({url:''})
+            }
           }
 
           this.currentNumberType = this.users.length > 1?1:0
