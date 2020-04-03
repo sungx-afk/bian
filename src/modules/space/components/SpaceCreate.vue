@@ -118,7 +118,7 @@
             }
             return o
           })
-          if (this.avatarType == 0 && this.avatarUrls.length === 1){
+          if (this.avatarType == 0 && this.avatarUrls.length === 1 && this.users.length > 1){
             this.avatarUrls.push({url:''})
           }
 
