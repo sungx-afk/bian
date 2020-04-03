@@ -32,7 +32,7 @@ Vue.prototype.wechatPay  = wechatPay
 
 Vue.config.productionTip = false
 
-import {Link} from '@/config/utils'
+import {Link,isIphone} from '@/config/utils'
 import constant from '@/config/constant'
 
 import {mapGetters} from 'vuex';
@@ -135,7 +135,23 @@ Vue.mixin({
         }else{
           audio.currentTime = this.currentAudioTime
         }
-        audio.play();
+        if (isIphone()){
+          wx.config({
+            // 配置信息, 即使不正确也能使用 wx.ready
+            debug: false,
+            appId: '',
+            timestamp: new Date().getTime(),
+            nonceStr: '',
+            signature: '',
+            jsApiList: []
+          });
+          wx.ready(function() {
+            audio.play();
+          });
+        }else {
+          audio.play();
+        }
+
         setTimeout(()=>{
           eventHub.$emit(constant.EVENT_AUDIO_PLAY,'play')
         },500)

@@ -194,7 +194,7 @@
         this.showAction = true
       },
       goSpaceDetail(item){
-        this.tryHandleBgm(item)
+        //this.tryHandleBgm(item)
         Link(`/space/detail/${item.id}`)
       },
       linkToSpaceDetail(spaceId,scene){
