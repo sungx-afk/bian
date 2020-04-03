@@ -1,31 +1,35 @@
 <template>
   <div class="meeting-intro-container">
-    <div class="tip">
-      <div>您可以在纪念馆->首页->右下角菜单 发起 云追悼会</div>
-      <img src="https://static-app01.yugusoft.com/bian/meeting_guide.png">
+    <div class="create-wrapper">
+      <div class="label">
+        1. 请创建纪念馆后再发起云追悼会
+      </div>
+      <div class='create-btn-wrapper'>
+        <van-button class="btn" @click.stop="createSpace">马上创建</van-button>
+      </div>
+
+      <div class="tip">
+        <div>创建完成后在 纪念馆->首页->更多菜单 发起云追悼会</div>
+        <img src="https://static-app01.yugusoft.com/bian/meeting_guide.png">
+      </div>
     </div>
-    <div class="list-wrapper">
-      <template v-if="loaded">
-        <div class="list" v-if="list.length > 0">
-          <div class="label">
-            您已创建的纪念馆：
+
+    <div class="list-wrapper" v-if="list.length > 0">
+      <div class="label">
+        2. 选择已创建的纪念馆，发起云追悼会
+      </div>
+      <van-cell v-for="space in list" :key="space.id" is-link>
+        <div class="space">
+          <div class="name">
+            {{space.name}}
           </div>
-          <van-cell v-for="space in list" :key="space.id" is-link>
-            <div class="space">
-              <div class="name">
-                {{space.name}}
-              </div>
-              <div class="meeting" @click.stop="goMemorialMeeting(space)">
-                发起追悼会
-              </div>
-            </div>
-          </van-cell>
+          <div class="meeting" @click.stop="goMemorialMeeting(space)">
+            发起
+          </div>
         </div>
-        <div class="no-data" v-else>
-          您还未创建纪念馆，<span class="create" @click="createSpace">马上创建</span>
-        </div>
-      </template>
+      </van-cell>
     </div>
+
     <van-action-sheet
       v-model="showAction"
       :actions="actions"
@@ -44,7 +48,6 @@
       name: "MeetingIntro",
       data(){
         return{
-          loaded:false,
           list:[],
           showAction:false,
           actions:[],
@@ -58,7 +61,6 @@
       methods:{
         getList(){
           $API.home.getSpaceList((rsp)=>{
-            this.loaded = true
             this.list = rsp.filter(item=>item.creatorId === this.user.id)
           },(error)=>{
             console.log("error:",error)
@@ -107,41 +109,57 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    .tip{
-      font-size: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      img{
-        width: 256px;
+    .create-wrapper{
+      font-size: 14px;
+      color: @FONT_SECOND_COLOR;
+      .label{
+        font-size: 16px;
+        padding: 16px;
+      }
+      .create-btn-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .van-button{
+          width: 40%;
+          height: 40px;
+          line-height: 38px;
+          margin:0px 10px;
+          &.btn{
+            color: white;
+            background-color: @MAIN_THEME_COLOR;
+          }
+        }
+      }
+      .tip{
+        font-size: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img{
+          width: 256px;
+        }
       }
     }
+
     .list-wrapper{
       font-size: 14px;
       color: @FONT_SECOND_COLOR;
-      border-top: 1px solid @BORDER_COLOR_1;
-      .list{
-        .label{
-          padding: 16px;
-        }
-        .space{
-          display: flex;
-          align-items: center;
-          .name{
-            overflow:hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
-          }
-          .meeting{
-            margin-left: auto;
-          }
-        }
-      }
-      .no-data{
+      .label{
+        font-size: 16px;
         padding: 16px;
-        .create{
-          color: @MAIN_THEME_COLOR;
+      }
+      .space{
+        display: flex;
+        align-items: center;
+        .name{
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
+        }
+        .meeting{
+          margin-left: auto;
         }
       }
     }

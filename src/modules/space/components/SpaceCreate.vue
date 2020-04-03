@@ -41,7 +41,7 @@
     <div class="bottom-button">
       <van-button type="default" size="large" @click.tap="create">{{id?'修改':'创建'}}</van-button>
     </div>
-    <div class="agreement">
+    <div class="agreement" v-if="!id">
       <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
       <span class="text">我已详细阅读并同意</span>
       <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">《服务协议》</span>
