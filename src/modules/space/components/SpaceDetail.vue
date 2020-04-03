@@ -311,13 +311,17 @@
           extra.invite_user_id = this.user.id
           extra.space_id = this.spaceId
 
-          this.wechatShare({
-            title: '彼岸纪念',
+          let param = {
+            title: '彼岸天堂纪念',
             extra:extra,
             success: () => { //你重置分享成功后的回调
 
             }
-          })
+          }
+          if (this.user.id == '101592'){
+            param.desc = `逝者已矣，生者如斯。来自 ${this.detail.name}`
+          }
+          this.wechatShare(param)
         }
       },
       bgmAction(){

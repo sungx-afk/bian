@@ -85,6 +85,10 @@
               }
             }
             if (this.extra){
+              if (this.extra.space_name){
+                data.desc = `逝者已矣，生者如斯。来自 ${this.extra.space_name}`
+                delete this.extra.space_name
+              }
               data.extra = this.extra
               data.timestamp = new Date().getTime()
             }
