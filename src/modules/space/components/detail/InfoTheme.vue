@@ -3,6 +3,9 @@
     <div class="base-info-wrapper">
       <div class="combine-avatar" v-if="space.combineImage === 1" :class="{hide:configHide('avatar')}">
         <img class="avatar" v-if="combineAvatarUrl" :src="combineAvatarUrl" />
+        <div class="placeholder" v-else>
+
+        </div>
       </div>
       <div class="user-wrapper">
         <div class="user" v-for="user in space.spaceUsers" :key="user.id">
@@ -277,6 +280,12 @@
         display: flex;
         justify-content: center;
         .avatar{
+          width: 244px;
+          height: 157px;
+          margin:0 5px;
+        }
+        .placeholder{
+          border: 2px solid @MAIN_THEME_COLOR;
           width: 244px;
           height: 157px;
           margin:0 5px;

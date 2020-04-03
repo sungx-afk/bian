@@ -124,6 +124,8 @@
             for (let i = 0; i < delta; i++) {
               this.avatarUrls.push({url:''})
             }
+          }else if (this.avatarType == 1 && this.avatarUrls.length === 0){
+            this.avatarUrls.push({url:''})
           }
 
           this.currentNumberType = this.users.length > 1?1:0
