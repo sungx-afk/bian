@@ -15,7 +15,7 @@ export function wechatShare(shareData) {
         link = link + '?'+qs.stringify(shareData.extra,{indices:false});
       }
       let defaultData = {
-        title: '彼岸纪念',
+        title: '彼岸天堂纪念',
         desc: '逝者已矣，生者如斯',
         link: link,
         imgUrl: 'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/03/1562158589633/logo.jpg',
