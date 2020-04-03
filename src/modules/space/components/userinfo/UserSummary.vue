@@ -24,7 +24,12 @@
               <template v-if="user.summary && user.summary.length > 0">
                 <div class="title">生平介绍:</div>
                 <div class="summary">
-                  {{user.summary}}
+                  <van-field
+                    v-model="user.summary"
+                    autosize
+                    readonly
+                    type="textarea"
+                  />
                 </div>
               </template>
               <template v-else>

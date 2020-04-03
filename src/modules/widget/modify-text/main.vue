@@ -1,7 +1,6 @@
 <template>
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="box-wrapper" v-show="show">
-      <div class="bg_cover" @click.stop="close"></div>
       <div class="item-box">
         <template v-if="multiline">
           <van-field
@@ -42,7 +41,7 @@
         placeholder:'请输入文本',
         btnText:'确定',
         multiline:false,
-        maxH:800,
+        maxH:500,
         minH:300,
         rows:10,
         oldContent:''
@@ -74,6 +73,7 @@
     created(){
       this.show = true
       this.oldContent = this.content
+      this.maxH = document.documentElement.clientHeight - 120
     }
   }
 </script>
@@ -83,16 +83,6 @@
   .box-wrapper{
     overflow-y: auto;
     .modal();
-    .bg_cover{
-      width: 100%;
-      height: 100%;
-      background: @BG_GRAY2;
-      opacity: .8;
-      position: absolute;
-      left: 0;
-      top:0;
-      z-index: 10;
-    }
     .item-box{
       position: relative;
       z-index: 11;
