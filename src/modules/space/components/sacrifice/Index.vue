@@ -2091,7 +2091,7 @@
       visibility: visible;
     }
     85% {
-      transform: scale(1.25);
+      transform: scale(2.5);
       opacity: 1;
       bottom: 75vw;
       visibility: visible;
