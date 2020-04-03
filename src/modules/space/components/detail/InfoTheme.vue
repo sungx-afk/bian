@@ -24,7 +24,12 @@
         </div>
       </div>
       <div class="epitaph-wrapper" v-if="space.epitaph && !configHide('epitaph')" :style="{color:theme.epitaphColor}">
-        {{space && space.epitaph}}
+        <van-field
+          v-model="space.epitaph"
+          :autosize="{ maxHeight: 220, minHeight: 60 }"
+          readonly
+          type="textarea"
+        />
       </div>
     </div>
     <div class="operate-wrapper">
@@ -330,7 +335,6 @@
       .epitaph-wrapper{
         text-align: center;
         margin: 0px 60px;
-        max-height: 140px;
         overflow: auto;
         font-size: 14px;
         color: @FONT_WHITE_COLOR;
