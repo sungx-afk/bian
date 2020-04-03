@@ -70,7 +70,7 @@
         transferToMember(item){
           let that = this
           this.$dialog.confirm({
-            message: `确认移交该纪念馆?`
+            message: `确认移交该纪念馆吗?`
           }).then(() => {
             $API.space.transferSpace({
               sid:that.spaceId,

@@ -146,7 +146,7 @@
         moveToBlackList(user){
           let that = this
           this.$dialog.confirm({
-            message: '确定将此游客加入到黑名单？'
+            message: '确定将此游客加入到黑名单吗？'
           }).then(() => {
             let blackListIds = that.space.config.blackListIds
             blackListIds.push(user.id)

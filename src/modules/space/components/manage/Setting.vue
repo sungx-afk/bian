@@ -18,7 +18,7 @@
       </van-switch-cell>
       <van-cell title="背景音乐" is-link @click.stop="goBgmSetting"></van-cell>
       <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
-      <van-cell title="追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
+      <van-cell title="云追悼会" is-link @click.stop="goMemorialMeeting"></van-cell>
       <van-cell title="移交纪念馆" is-link @click.stop="goTransferSpace"></van-cell>
       <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
     </van-cell-group>
@@ -106,7 +106,7 @@
             className:'my-delete-dialog',
             confirmButtonText:'取消',
             cancelButtonText:'删除',
-            message: `确认删除该纪念馆?`
+            message: `确认删除该纪念馆吗?`
           }).then(() => {
             // cancel //删除操作特殊处理到左侧按钮
           }).catch(() => {

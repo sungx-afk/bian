@@ -186,7 +186,7 @@
         deleteIssue(){
           let that = this
           this.$dialog.confirm({
-            message: `确认删除该${this.messageTypeText()}?`
+            message: `确认删除该${this.messageTypeText()}吗?`
           }).then(() => {
             $API.space.deleteIssue({
               sid: that.spaceId,

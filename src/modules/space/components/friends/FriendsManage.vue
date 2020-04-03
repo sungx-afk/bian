@@ -1,19 +1,19 @@
 <template>
-  <div class="friends-container" v-if="friends">
+  <div class="friends-container" v-if="space && space.config.friends">
     <div class="header">
-      <span class="count-info">亲属成员{{friends.length}}个</span>
+      <span class="count-info">亲属成员{{space.config.friends.length}}个</span>
       <div class='invite' @click.stop="goInviteFriends">
         马上去邀请 >
       </div>
     </div>
-    <template v-if="noData">
+    <template v-if="space.config.friends.length === 0">
       <no-data></no-data>
     </template>
     <template v-else>
       <div class="list">
         <van-list>
           <van-cell
-            v-for="friend in friends"
+            v-for="friend in space.config.friends"
             :key="friend.id">
             <div class="list-item">
               <div class="left-content">
@@ -51,9 +51,7 @@
       data(){
         return{
           spaceId:'',
-          space:'',
           friends:[],
-          noData:false,
           menuList:[],
           isShowMoreMenu:false
         }
@@ -61,6 +59,7 @@
       computed:{
         ...mapGetters({
           user: 'userStore/user',
+          space:'spaceStore/spaceDetail'
         }),
         isSpaceCreator(){
           let result = false
@@ -80,11 +79,6 @@
             sid:this.spaceId
           }, rsp=>{
             this.space = rsp
-            this.friends = rsp.config.friends
-            this.noData = false
-            if(this.friends.length === 0){
-              this.noData = true
-            }
           })
         },
         showMoreMenu(friend) {
@@ -110,7 +104,7 @@
         deleteFriend(friend){
           let that = this
           this.$dialog.confirm({
-            message: '确定将此人移出亲属空间？'
+            message: '确定将此人移出亲属空间吗？'
           }).then(() => {
             $API.space.deleteFriend({
                 sid:that.spaceId,
@@ -120,9 +114,6 @@
                 if (index > -1){
                   that.space.config.friends.splice(index,1)
                   eventHub.$emit(constant.EVENT_DELETE_FRIENDS_SUCCESS,friend.id)
-                  if (that.space.config.friends.length === 0){
-                    this.noData = true
-                  }
                 }
             },error=>{
               this.$toast('删除失败，请稍后重试')
@@ -134,7 +125,7 @@
         moveToBlacklist(item){
           let that = this
           this.$dialog.confirm({
-            message: '确定将此人加入到黑名单？'
+            message: '确定将此人移出亲属空间并加入到黑名单吗？'
           }).then(() => {
             let p1 = new Promise((resolve, reject) => {
               $API.space.deleteFriend({
@@ -148,7 +139,7 @@
             })
             let p2 = new Promise((resolve, reject) => {
               let blackListIds = that.space.config.blackListIds
-              blackListIds.push(friend.id)
+              blackListIds.push(item.id)
               $API.space.updateBlacklist({
                   sid:that.spaceId,
                   list:blackListIds
@@ -180,6 +171,7 @@
           extra.origin_from = 'add_friends'
           extra.invite_user_id = this.user.id
           extra.space_id = this.spaceId
+          extra.space_name = this.space.name
 
           extra = JSON.stringify(extra)
 
@@ -191,7 +183,6 @@
       created() {
         if(this.$route.params.id){
           this.spaceId = this.$route.params.id
-          this.getSpaceDetail()
         }
       }
     }
