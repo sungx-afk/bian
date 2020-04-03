@@ -403,6 +403,7 @@
     background-color: #f6f6f6;
     overflow-x: hidden;
     overflow-y: auto;
+    padding-bottom: 32px;
     .info {
       .type-cell{
         background-color: white;
@@ -458,7 +459,6 @@
       height: 30px;
       align-items: center;
       margin-top: 20px;
-      margin-bottom: 20px;
 
       .text {
         height: 30px;
