@@ -121,7 +121,7 @@
         align-items: center;
         justify-content: center;
         .van-button{
-          width: 40%;
+          width: 90%;
           height: 40px;
           line-height: 38px;
           margin:0px 10px;
