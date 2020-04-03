@@ -30,7 +30,7 @@
         </div>
         <div class="list" v-if="publicList.length > 0 && showPublic">
           <div class="list-header">
-            <div class="title">公益纪念馆</div>
+            <div class="title">样例纪念馆</div>
             <div class="close" @click.stop="closePublicSpace"><i class="iconfont icon-guanbi1"></i></div>
           </div>
           <item v-for="item in publicList" :key="item.id" :item="item"
@@ -185,12 +185,7 @@
         },{
           id:'friends',
           name:'为朋友/老师/同事创建',
-        },
-          // {
-          // id:'public',
-          // name:'申请公益馆',
-          // }
-        ]
+        }]
         this.showAction = true
       },
       goSpaceDetail(item){
@@ -303,7 +298,7 @@
       },
       closePublicSpace(){
         this.$dialog.confirm({
-          message: '确认关闭公益馆入口吗？'
+          message: '确认关闭样例馆入口吗？'
         }).then(() => {
           this.setUserSetting({key:'public_space_close',value:'1'})
           this.showPublic = false

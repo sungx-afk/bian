@@ -74,12 +74,7 @@
           },{
             id:'friends',
             name:'为朋友/老师/同事创建',
-          },
-            // {
-            // id:'public',
-            // name:'申请公益馆',
-            // }
-          ]
+          }]
           this.showAction = true
         },
         onActionSelect(item){

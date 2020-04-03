@@ -113,7 +113,7 @@
           let result = ''
           if (this.space){
             if (this.space.type === 2){
-              result = '本纪念馆为公益馆'
+              result = '本纪念馆为样例馆'
             }else {
               result = '以下为支付运营成本的部分收费服务，感谢您的支持。'
             }
