@@ -160,7 +160,7 @@
               notice = this.spaceUsers[0].deathNotice
             }
           }
-          if (notice && false){
+          if (notice){
             this.deathNotice = notice
           }else{
             if (this.spaceUsers && this.spaceUsers.length === 1){
