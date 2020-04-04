@@ -318,8 +318,10 @@ xxx`
           that.drawQrCode()
         },
         drawBg(){
-          this.context.fillStyle = '#ffffff'
+          this.context.fillStyle = '#000000'
           this.context.fillRect(0, 0, this.posterW, this.posterH)
+          this.context.fillStyle = '#ffffff'
+          this.context.fillRect(8, 8, this.posterW - 16 , this.posterH - 16)
         },
         drawTitle(){
           let title = '讣告'
@@ -338,8 +340,8 @@ xxx`
           if (!this.avatarChecked){
             return
           }
-          let lw = 122
-          let lh = 157
+          let lw = 80
+          let lh = 102
           let lx = (this.posterW - lw)/2
           let ly = 60
 
@@ -367,7 +369,7 @@ xxx`
             let lines = content.split('\n')
             let prevY = 60
             if (this.avatarChecked){
-              prevY += 160
+              prevY += 110
             }
             for (let i = 0; i < lines.length; i++) {
               let line = lines[i]
