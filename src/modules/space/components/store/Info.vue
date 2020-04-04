@@ -23,7 +23,10 @@
       </div>
       <div class="analyze" v-if="space">
         <p class="label">逝者已矣，生者如斯</p>
-        <p>到访人次：<span class="num">{{space.visitedTimes}}</span></p>
+        <p>到访人次：<span class="num">{{space.visitedTimes}}</span>
+          <i class="iconfont icon-wenhao" @click="goShowVisitedTip"></i>
+          <span @click="goViewVisitedLog" class="view-log">查看记录 ></span>
+        </p>
         <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
       </div>
       <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
@@ -60,6 +63,11 @@
         <van-button type="danger" block @click="changeThemeId">应用</van-button>
       </div>
     </van-popup>
+    <van-popup class="visited-tip-popup-area" v-model="showVisitedTip" closeable :round="false" close-on-popstate @closed="tipPopupClosed">
+      <div class="text">
+        到访人次以每次进入纪念馆详情页为准，包括创建者本人进入记录
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -78,6 +86,7 @@
       data(){
         return{
           showThemes: false,
+          showVisitedTip:false,
           mask: false,
           spaceId:'',
           themeId:1,
@@ -227,6 +236,15 @@
         goLogs(){
           Link(`/store/logs`)
         },
+        goViewVisitedLog(){
+          Link(`/space/manage/${this.spaceId}`)
+        },
+        goShowVisitedTip(){
+          this.showVisitedTip = true
+        },
+        tipPopupClosed(){
+          this.showVisitedTip = false
+        },
         registerEvent(){
           eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
         }
@@ -322,6 +340,13 @@
         .label{
           font-size: 16px;
           margin-bottom: 12px;
+        }
+        .iconfont{
+          color: @FONT_THIRD_COLOR;
+          margin: 0px 12px;
+        }
+        .view-log{
+          color: @MAIN_THEME_COLOR;
         }
       }
       .view-history{
@@ -459,6 +484,13 @@
       .van-button:last-of-type {
         border-top-right-radius: 20px;
         border-bottom-right-radius: 20px;
+      }
+    }
+    .visited-tip-popup-area{
+      .text{
+        padding: 60px 20px;
+        color: @FONT_THIRD_COLOR;
+        font-size: 14px;
       }
     }
   }
