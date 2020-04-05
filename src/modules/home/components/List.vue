@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="container-bottom">
-      <template v-if="list.length > 0 || visitedList.length > 0">
+      <template v-if="list.length > 0 || visitedList.length > 0 || (publicList.length > 0 && showPublic)">
         <div class="list" v-if="list.length > 0">
           <item v-for="item in list" :key="item.id" :item="item"
                 v-on:item-press="goSpaceDetail">
