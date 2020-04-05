@@ -327,7 +327,7 @@ xxx`
           let title = '讣告'
           let tx = (this.posterW - 20)/2 - 10
           let ty = 50
-          let fontSize = 16
+          let fontSize = 18
           if (this.ratio > 1){
             fontSize = 20
           }
@@ -540,7 +540,7 @@ xxx`
         align-items:center;
         justify-content:center;
         .title{
-          font-size: 16px;
+          font-size: 18px;
           font-weight: bold;
         }
       }
