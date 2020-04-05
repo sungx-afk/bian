@@ -75,9 +75,9 @@
           spaceUsers:null,
           deathNotice:'',
           qrCode:'',
-          rows:10,
-          maxH:200,
-          minH:200,
+          rows:5,
+          maxH:160,
+          minH:100,
           posterW:0,
           posterH:0,
           context:null,
@@ -318,10 +318,10 @@ xxx`
           that.drawQrCode()
         },
         drawBg(){
-          this.context.fillStyle = '#000000'
-          this.context.fillRect(0, 0, this.posterW, this.posterH)
           this.context.fillStyle = '#ffffff'
-          this.context.fillRect(8, 8, this.posterW - 16 , this.posterH - 16)
+          this.context.fillRect(0, 0, this.posterW, this.posterH)
+          // this.context.fillStyle = '#ffffff'
+          // this.context.fillRect(8, 8, this.posterW - 16 , this.posterH - 16)
         },
         drawTitle(){
           let title = '讣告'
@@ -521,6 +521,7 @@ xxx`
     background-color: #f6f6f6;
     overflow-y: auto;
     padding-bottom: 32px;
+    box-sizing: border-box;
     .tip{
       font-size:14px;
       padding:10px;
@@ -532,7 +533,6 @@ xxx`
     .report-area{
       width: 100%;
       background:@BG_WHITE;
-      margin-top:10px;
       .report-header{
         position: relative;
         height:40px;
@@ -550,12 +550,12 @@ xxx`
         align-items: center;
         position: relative;
         img{
-          width: 122px;
-          height: 157px;
+          width: 80px;
+          height: 102px;
         }
         .avatar-fake{
-          width: 122px;
-          height: 157px;
+          width: 80px;
+          height: 102px;
           border: 2px solid @MAIN_THEME_COLOR;
         }
         .loading{
@@ -586,6 +586,7 @@ xxx`
       display: flex;
       justify-content: center;
       margin-top: 20px;
+      margin-bottom: 120px;
       .van-button{
         width: 40%;
         height: 40px;
