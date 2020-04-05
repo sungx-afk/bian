@@ -1884,7 +1884,7 @@
   #item_zuo_zi_box_inner_2 {
     flex: 1;
     position: relative;
-    padding: 2vw;
+    padding: 0vw;
     margin: 0 auto;
     box-sizing: border-box;
   }
