@@ -370,11 +370,10 @@
         this.spaceId = this.$route.params.id
         this.getDetail(false,()=>{
           this.initTab()
-          //this.initBgm(this.detail)
           this.tryHandleBgm(this.detail)
+          this.initShare()
         })
         this.registerEvent()
-        this.initShare()
         this.initNotice()
       }
     },
