@@ -284,6 +284,7 @@
           this.showMessage = true
           this.currentProduct = {
             name:'点烛',
+            duration:'1天',
             point:this.space.type == 2?0:3
           }
           this.action = this.doDianlazu
@@ -321,6 +322,7 @@
           this.showMessage = true
           this.currentProduct = {
             name:'送花',
+            duration:'1天',
             point:this.space.type == 2?0:9
           }
           this.action = this.doFlower
@@ -355,6 +357,7 @@
           this.showMessage = true
           this.currentProduct = {
             name:'纸钱',
+            duration:'1天',
             point:this.space.type == 2?0:8
           }
           this.action = this.doShaozhi

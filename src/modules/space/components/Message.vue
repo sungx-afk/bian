@@ -7,7 +7,7 @@
       :style="{ height: '300px' }">
       <div class="message-wrapper">
         <div class="product" v-if="product">
-          {{product.name}} : {{product.point}} 云币
+          {{product.name}} ({{product.duration}}) : {{product.point}} 云币
         </div>
         <div class="message">
           <van-field
