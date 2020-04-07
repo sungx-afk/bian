@@ -47,15 +47,18 @@
         </div>
 
         <div id="item_zuo_zi_box">
-          <div id="item_zuo_zi_box_inner" style="padding: 0em 4vw">
+          <div id="item_zuo_zi_box_inner">
             <div id="item_zuo_zi">
               <div class="inner">
-                <div v-for="(item, index) in item01"
-                     v-if="index <8"
-                     :key="index"
-                     :class="`${item.id}`"
-                     class="item"
-                ></div>
+                <template v-for="(item, index) in item01" v-if="index <8">
+                  <div
+                    :key="index"
+                    :class="`${item.id}`"
+                    class="item"
+                    v-if="item.id!=='item-zhang-min-ding'"
+                  ></div>
+                  <change-ming-deng v-else></change-ming-deng>
+                </template>
               </div>
             </div>
           </div>
@@ -64,16 +67,16 @@
         <div id="item_zuo_zi_box_2" style="top:62vw;">
           <div id="item_zuo_zi_box_inner_2">
             <div id="item_zuo_zi_2">
-              <div class="inner" style="top: -7vw;">
-                <div v-for="(item, index) in item02"
-                     v-if="index<3"
-                     :key="index"
-                     :class="`${item.id}`"
-                     class="item"
-                ></div>
-                <div class="item item-zhang-min-ding"  v-show="changMingDeng">
-                  <canvas id="change-ming-ding-1" style="width: 10vw; height: 10vw;"></canvas>
-                </div>
+              <div class="inner">
+                <template v-for="(item, index) in item02" v-if="index<3">
+                  <div
+                    :key="index"
+                    :class="`${item.id}`"
+                    class="item"
+                    v-if="item.id!=='item-zhang-min-ding'"
+                  ></div>
+                  <change-ming-deng v-else></change-ming-deng>
+                </template>
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
@@ -89,15 +92,15 @@
                 <div class="item item-la-zu">
                   <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
                 </div>
-                <div class="item item-zhang-min-ding" v-show="changMingDeng">
-                  <canvas id="change-ming-ding-2" style="width: 10vw; height: 10vw;"></canvas>
-                </div>
-                <div v-for="(item, index) in item02"
-                     v-if="index>=6 && index <=8"
-                     :key="index"
-                     :class="`${item.id}`"
-                     class="item"
-                ></div>
+                <template v-for="(item, index) in item02" v-if="index>=6 && index <=8">
+                  <div
+                    :key="index"
+                    :class="`${item.id}`"
+                    class="item"
+                    v-if="item.id!=='item-zhang-min-ding'"
+                  ></div>
+                  <change-ming-deng v-else></change-ming-deng>
+                </template>
               </div>
             </div>
           </div>
@@ -150,9 +153,10 @@
   import {mapGetters} from 'vuex'
 
   import {Link} from '@/config/utils';
-  import constant from '@/config/constant'
+  import constant from '@/config/constant';
 
-  import Message from '../Message'
+  import Message from '../Message';
+  import ChangeMingDeng from './ChangeMingDeng.vue';
 
   const noItems = [
     'item-xuan-hua',
@@ -168,7 +172,8 @@
     "item_pk_jiuxi_mifan",
     "item_pk_jiuxi_mantou",
     "item_pk_jiuxi_ya",
-    "item_pk_jiuxi_yu"
+    "item_pk_jiuxi_yu",
+    "item-zhang-min-ding",
   ];
 
   const seqIndex = [10, 14, 9, 15, 8, 16, 3, 4, 2, 5, 1, 6, 0, 7];
@@ -186,6 +191,7 @@
       }
     },
     components: {
+      ChangeMingDeng,
       Message
     },
     computed: {
@@ -409,6 +415,12 @@
               dom.style.visibility = 'visible';
             }
             let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
+            let changeMingDeng = items.filter((item)=>item === 'item-zhang-min-ding');
+            let other = items.filter((item)=>item !== 'item-zhang-min-ding');
+            console.log(JSON.stringify(changeMingDeng))
+            console.log(JSON.stringify(other))
+            items = changeMingDeng.concat(changeMingDeng);
+            items = items.concat(other);
             items.forEach((item, index) => {
               //要小于位置
               if (index < seqIndex.length) {
@@ -425,7 +437,6 @@
                   };
                 }
               }
-
             })
           }
         }, (error) => {
@@ -1843,24 +1854,38 @@
     right: 0px;
     top: 46vw;
     height: 400px;
-    transform: scale(0.9);
   }
 
   #item_zuo_zi_box_inner {
     flex: 1;
     position: relative;
-    padding: 2vw;
+    padding: 0vw;
     margin: 0 auto;
     box-sizing: border-box;
   }
 
-  #item_zuo_zi .inner, #item_zuo_zi_2 .inner {
+  #item_zuo_zi .inner {
     display: flex;
     flex-direction: row;
     vertical-align: top;
     justify-items: center;
     position: absolute;
-    top: -8vw;
+    top: -9vw;
+    text-align: center;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #item_zuo_zi_2 .inner {
+    display: flex;
+    flex-direction: row;
+    vertical-align: top;
+    justify-items: center;
+    position: absolute;
+    top: -10vw;
     text-align: center;
     margin: 0 auto;
     left: 0;
@@ -1901,9 +1926,12 @@
     width: 10vw;
     height: 10vw;
     margin-right: 0px;
-    background-size: 100% 100%;
     position: relative;
+    -webkit-transition: all 0.5s;
     transition: all 0.5s;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: bottom;
   }
 
   .item.item-yue-bing {
@@ -1936,6 +1964,7 @@
 
   .item-la-zu {
     background-image: url("./images/item_la_zhu.png") !important;
+    background-size: 100% 100% !important;
   }
 
   .item-zhang-min-ding{
@@ -1970,20 +1999,14 @@
   .item.item_pk_jiuxi_ya {
     background-image: url("./images/item_pk_jiuxi_ya.png") !important;
     background-position: 0px 3px;
+    background-size: 100% 65% !important;
   }
 
   .item.item_pk_jiuxi_yu {
     background-image: url("./images/item_pk_jiuxi_yu.png") !important;
-    background-position: 0px 3px;
+    background-size: 100% 56% !important;
+    margin-top: -2px;
   }
-
-
-
-
-
-
-
-
 
   .item-xiang-lu {
     background-image: url("./images/item_xiang_lu.png") !important;
