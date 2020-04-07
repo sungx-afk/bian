@@ -180,6 +180,10 @@
         },
         initProducts(){
           this.products = [{
+            id:'item-zhang-min-ding',
+            name:'长明灯（永久，每次添加两盏，可多次）',
+            point:999
+          },{
             id:'package-hua-quan',
             name:'花圈装饰（永久）',
             point:60
@@ -195,10 +199,6 @@
             id:'package-jiu-xi',
             name:'酒席（7天）',
             point:50
-          },{
-            id:'item-zhang-min-ding',
-            name:'长明灯（永久）',
-            point:999
           }]
 
           if (this.space.type === 2){
