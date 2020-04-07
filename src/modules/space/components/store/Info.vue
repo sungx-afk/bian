@@ -223,8 +223,8 @@
               this.space.currentUser.point = this.space.currentUser.point - product.point
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
               setTimeout(()=>{
-                //that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
-                this.$router.back()
+                that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
+                // this.$router.back()
               }, 1500);
             },error=>{
               this.$toast("购买失败，请稍后重试")
