@@ -127,7 +127,10 @@
         }
       },
       mounted() {
-        this.initZhuHuo()
+        let that = this;
+        setTimeout(()=>{
+          that.initZhuHuo()
+        }, 1000)
       }
     }
 </script>
