@@ -142,7 +142,8 @@
       },
       goNotice(){
         this.showNotice = false
-        Link(`/notice`)
+        // Link(`/notice`)
+        window.location.href = '/notice'
       },
       getSpaceList(){
         this.getSpacesPersonal()
