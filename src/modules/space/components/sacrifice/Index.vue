@@ -1843,7 +1843,7 @@
   #hua_box {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: center;
   }
 
   .hua {
