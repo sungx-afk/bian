@@ -78,10 +78,10 @@
                   <change-ming-deng v-else></change-ming-deng>
                 </template>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;"></canvas>
+                  <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;" :style="{'visibility': showLaZuCanvas?'visible':'hidden'}"></canvas>
                 </div>
                 <div class="item item-xiang-lu">
-                  <div class="item-xiang-lu-box">
+                  <div class="item-xiang-lu-box" :style="{'visibility': showXiangCanvas?'visible':'hidden'}">
                     <div class="item-xiang">
                       <canvas id="a" width="30" height="30"></canvas>
                       <canvas id="b" width="30" height="30"></canvas>
@@ -90,7 +90,7 @@
                   </div>
                 </div>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;"></canvas>
+                  <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;" :style="{'visibility': showLaZuCanvas?'visible':'hidden'}"></canvas>
                 </div>
                 <template v-for="(item, index) in item02" v-if="index>=6 && index <=8">
                   <div
@@ -109,7 +109,7 @@
 
         <div class="big-fire-box">
           <div class="inner">]
-            <canvas id="big-fire" style="width: 100px;height: 100px;visibility: hidden;"></canvas>
+            <canvas id="big-fire" style="width: 100px;height: 100px;visibility: hidden;" :style="{'visibility': showZhiQianCanvas?'visible':'hidden'}"></canvas>
           </div>
         </div>
 
@@ -188,6 +188,9 @@
         showMessage:false,
         currentProduct:null,
         action:null,
+        showLaZuCanvas: false,
+        showXiangCanvas: false,
+        showZhiQianCanvas: false,
       }
     },
     components: {
@@ -316,10 +319,12 @@
       },
 
       showLaZuHuo() {
-        var dom1 = document.getElementById("zu-huo-1");
-        var dom2 = document.getElementById("zu-huo-2");
-        dom1.style.visibility = 'visible'
-        dom2.style.visibility = 'visible'
+        // var dom1 = document.getElementById("zu-huo-1");
+        // var dom2 = document.getElementById("zu-huo-2");
+        // dom1.style.visibility = 'visible'
+        // dom2.style.visibility = 'visible'
+
+        this.showLaZuCanvas = true;
       },
 
       //送花
@@ -383,8 +388,9 @@
               background: '#ffffff'
             });
           }
-          var dom = document.getElementById("big-fire");
-          dom.style.visibility = 'visible';
+          // var dom = document.getElementById("big-fire");
+          // dom.style.visibility = 'visible';
+          that.showZhiQianCanvas = true;
           that.getSpaceDetail();
         });
       },
@@ -404,21 +410,23 @@
               this.showLaZuHuo();
             }
             if (that.space.products.indexOf('item-xiang') >= 0) {
-              let dom = document.querySelector('.item-xiang-lu-box');
-              dom.style.visibility = 'visible';
+              // let dom = document.querySelector('.item-xiang-lu-box');
+              // dom.style.visibility = 'visible';
+              that.showXiangCanvas = true;
             }
             if (that.space.products.indexOf('item-zhi-qian') >= 0) {
-              console.log('点纸钱');
-              var dom = document.getElementById("big-fire");
-              dom.style.visibility = 'visible';
-              var dom = document.getElementById("smoke-box");
-              dom.style.visibility = 'visible';
+              // console.log('点纸钱');
+              // var dom = document.getElementById("big-fire");
+              // dom.style.visibility = 'visible';
+              // var dom = document.getElementById("smoke-box");
+              // dom.style.visibility = 'visible';
+              that.showZhiQianCanvas = true;
             }
             let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
             let changeMingDeng = items.filter((item)=>item === 'item-zhang-min-ding');
             let other = items.filter((item)=>item !== 'item-zhang-min-ding');
-            console.log(JSON.stringify(changeMingDeng))
-            console.log(JSON.stringify(other))
+            console.log(JSON.stringify(changeMingDeng));
+            console.log(JSON.stringify(other));
             items = changeMingDeng.concat(changeMingDeng);
             items = items.concat(other);
             items.forEach((item, index) => {
