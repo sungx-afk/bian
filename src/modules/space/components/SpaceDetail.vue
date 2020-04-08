@@ -150,7 +150,8 @@
       },
       goNotice(){
         this.showNotice = false
-        Link(`/notice`)
+        // Link(`/notice`)
+        window.location.href = '/notice'
       },
       onTabChange(e){
         if (e === 'sacrifice'){

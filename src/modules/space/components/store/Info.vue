@@ -11,6 +11,9 @@
       </div>
       <div class="charge-area">
         <van-cell-group :title="chargeTitle">
+          <van-cell class="account-cell">
+            <span>账号ID：</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
+          </van-cell>
           <van-cell class="charge-cell">
             <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
             <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
@@ -303,7 +306,7 @@
           color: @FONT_SECOND_COLOR;
         }
 
-        .charge-cell{
+        .account-cell,.charge-cell{
           padding: 20px 15px;
         }
         .van-cell__value{
