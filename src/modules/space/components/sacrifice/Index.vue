@@ -35,7 +35,7 @@
     <div id="main-box">
       <div class="inner">
         <div id="item_hua_bg">
-          <div class="inner" style="padding-top: 30vw; padding-left: 5vw;padding-right: 5vw;">
+          <div class="inner" style="padding-top:25vw; padding-left: 5vw;padding-right: 5vw;">
             <div id="hua_box">
               <div class="hua"
                    v-for="(item, index) in huaQuan"
@@ -1843,6 +1843,7 @@
   #hua_box {
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
   }
 
   .hua {
