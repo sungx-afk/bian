@@ -23,13 +23,14 @@
       </template>
 
       <template v-if="isShowUploader()">
-        <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
-          <van-button icon="music-o" size="small">本地上传</van-button>
-        </van-uploader>
         <div class="uploader" v-if="showBigUploader()">
           <van-button icon="music-o" size="small" id="uploadFiles">本地上传</van-button>
         </div>
-
+        <template v-else>
+          <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
+            <van-button icon="music-o" size="small">本地上传</van-button>
+          </van-uploader>
+        </template>
       </template>
       <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog" v-if="false">手动添加</van-button>
       <div class="tip" v-if="!isShowUploader()">
@@ -139,7 +140,7 @@
           })
         },
         afterSelectAudio(audio){
-          if (audio.file.size > 30 * 1024 * 1024){
+          if (audio.file.size > 50 * 1024 * 1024){
             this.$toast("文件过大，请选择合适长度的背景音乐")
             return
           }
@@ -279,6 +280,7 @@
                 { title : "Audio files", extensions : "mp3,wav,m4a" },
               ],
               max_file_size : '1000mb',
+              max_file_size : '50mb',
               prevent_duplicates : true //不允许选取重复文件
             },
             init: {
@@ -434,9 +436,8 @@
             }
           });
 
-          function uploadFinish(file,info) {
-            const f = JSON.parse(info.file);
-            that.selfUpload.unshift({name:f.name,url:f.url})
+          function uploadFinish(file,rsp) {
+            that.selfUpload.unshift({name:rsp.name,url:rsp.url})
             that.customIndex = 0
             let len = that.selfUpload.length
             if (len > that.bgmMaxCount){
