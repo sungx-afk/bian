@@ -263,6 +263,7 @@
             params: {},
             mimeType: null
           }
+          var toast = that.$toast
           var chunkTokens = {}
           var uploader = new plupload.Uploader({
             runtimes: "html5,flash,html4",
@@ -299,6 +300,12 @@
                 });
                 Promise.all(promiseArray).then(respArray => {
                   if(respArray.some(item => !!item)){
+                    toast.loading({
+                      duration: 0,       // 持续展示 toast
+                      forbidClick: true, // 禁用背景点击
+                      loadingType: 'spinner',
+                      message: '上传中...'
+                    })
                     up.start();
                   }
                 })
@@ -422,8 +429,17 @@
 
           function uploadFinish(file,info) {
             const f = JSON.parse(info.file);
-            // that.updateUuidUrl(file.id, f.uuid, f.url);
-            // that.updateUuidExpand(file.id, f.uuid, f.expand);
+            that.selfUpload.unshift({name:f.name,url:f.url})
+            that.customIndex = 0
+            let len = that.selfUpload.length
+            if (len > that.bgmMaxCount){
+              that.selfUpload.splice(that.bgmMaxCount,len - that.bgmMaxCount)
+            }
+            that.updateCustomBgm(()=>{
+              that.playBgm(0,{bgmKey:'custom',index:that.customIndex})
+            })
+
+            toast.clear()
             localStorage.removeItem(file.name)
           }
           function initFileInfo(file) {
@@ -482,12 +498,15 @@
             $API.space.mkFileRequest({
                 url:requestUrl,
                 headers:headers,
-                data:ctx.join(",")},
-              rsp=>{
+                data:ctx.join(",")
+              }, rsp=>{
                 delete chunkTokens[file.id]
                 uploadFinish(file,rsp)
-              }
-            )
+              },
+              error=>{
+                toast.clear()
+                toast("上传失败，请稍后重试")
+              })
           }
 
           function isExpired(time){
