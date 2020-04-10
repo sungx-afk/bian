@@ -59,6 +59,8 @@
   import constant from '@/config/constant'
   import {checkUrlHttpOrHttps,isIphone} from '@/config/utils'
 
+  const MAX_BGM_SIZE = 50 * 1024 * 1024
+
     export default {
       name: "Bgm",
       data(){
@@ -140,7 +142,7 @@
           })
         },
         afterSelectAudio(audio){
-          if (audio.file.size > 50 * 1024 * 1024){
+          if (audio.file.size > MAX_BGM_SIZE){
             this.$toast("文件过大，请选择合适长度的背景音乐")
             return
           }
@@ -279,8 +281,7 @@
               mime_types : [ //只允许上传音频
                 { title : "Audio files", extensions : "mp3,wav,m4a" },
               ],
-              max_file_size : '1000mb',
-              max_file_size : '50mb',
+              max_file_size : MAX_BGM_SIZE,
               prevent_duplicates : true //不允许选取重复文件
             },
             init: {
@@ -331,7 +332,10 @@
                 console.log("[完成]");
               },
               Error: function(up, err) {
-                console.log(err.response);
+                if (err && err.code == -600 && err.file && err.file.origSize > MAX_BGM_SIZE){
+                  toast("文件过大，请选择合适长度的背景音乐")
+                }
+                console.log(err);
               }
             }
           });
