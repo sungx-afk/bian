@@ -297,7 +297,7 @@
                     promiseArray.push(new Promise((resolve, reject) => {
                       $API.space.filesQiniuUploadTicket({
                         reqType: 'general_file',
-                        name: item.name,
+                        name: item.name.replace(/[\s\[\]]/g,''),
                         expand: item.name.replace(/.+\./, ''),
                         size: item.size
                       }, resp => {
