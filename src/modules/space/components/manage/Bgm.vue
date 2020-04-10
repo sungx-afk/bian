@@ -27,10 +27,11 @@
           <van-button icon="music-o" size="small" id="uploadFiles">本地上传</van-button>
         </div>
         <template v-else>
-          <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
-            <van-button icon="music-o" size="small">本地上传</van-button>
-          </van-uploader>
+
         </template>
+        <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
+          <van-button icon="music-o" size="small">本地上传</van-button>
+        </van-uploader>
       </template>
       <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog" v-if="false">手动添加</van-button>
       <div class="tip" v-if="!isShowUploader()">
