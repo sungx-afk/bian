@@ -48,7 +48,7 @@ global.$axios = axios.create({
 
 global.$axios.interceptors.response.use((response) => {
   /*新增拦截器，处理服务器返回*/
-  console.log("interceptors.response",response)
+  //console.log("interceptors.response",response)
   // if (response && response.data && response.data.result == -10001){
   //   window.location.href = '/home';
   //   return Promise.reject(response.data.msg || 'error')

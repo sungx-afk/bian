@@ -29,7 +29,7 @@
         <template v-else>
 
         </template>
-        <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
+        <van-uploader accept="audio/mpeg,audio/wav,audio/x-m4a" :before-read="beforeSelectAudio" :after-read="afterSelectAudio">
           <van-button icon="music-o" size="small">本地上传</van-button>
         </van-uploader>
       </template>
@@ -81,7 +81,7 @@
           return !isIphone()
         },
         showBigUploader(){
-          return this.spaceId == '192195'
+          return false
         },
         getSpaceDetail(cb){
           $API.space.getSpaceDetail({
@@ -142,7 +142,20 @@
             eventHub.$emit(constant.EVENT_UPDATE_BGM_SUCCESS,{bgmKey:'custom',selfUpload:this.selfUpload,spaceId:this.spaceId,usedIndex:this.customIndex})
           })
         },
-        afterSelectAudio(audio){
+        beforeSelectAudio(audio,detail){
+          console.log('beforeSelectAudio')
+          console.log(audio)
+          console.log(detail)
+          if (audio.type === 'audio/mpeg'
+            || audio.type === 'audio/wav'
+            || audio.type === 'audio/x-m4a' ) {
+            return true;
+          }
+          this.$toast('请上传mp3/wav/m4a格式文件');
+          return false;
+        },
+        afterSelectAudio(audio,detail){
+          console.log('afterSelectAudio')
           if (audio.file.size > MAX_BGM_SIZE){
             this.$toast("文件过大，请选择合适长度的背景音乐")
             return
