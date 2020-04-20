@@ -1470,12 +1470,13 @@
       console.log("==========created==========")
     },
     mounted() {
+      let that = this;
       this.initBigFire();
       this.initSmoke();
       this.initXiangHuo();
       // this.initYan();
       setTimeout(function(){
-        this.initZhuHuo();
+        that.initZhuHuo();
       }, 500);
       console.log("==========mounted==========")
     },
