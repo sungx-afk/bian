@@ -128,9 +128,7 @@
       },
       mounted() {
         let that = this;
-        setTimeout(()=>{
-          that.initZhuHuo()
-        }, 1000)
+        that.initZhuHuo()
       }
     }
 </script>
