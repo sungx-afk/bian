@@ -1477,7 +1477,7 @@
       // this.initYan();
       setTimeout(function(){
         that.initZhuHuo();
-      }, 500);
+      }, 1000);
       console.log("==========mounted==========")
     },
     beforeDestroy() {
