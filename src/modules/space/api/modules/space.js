@@ -386,6 +386,14 @@ export default {
       });
   },
 
+  mkFileRequest({url,data,headers},successCb, errorCb){
+
+    axios.post(url,data,{headers}).then((response) => {
+      successCb(response.data)
+    }).catch((error) => {
+      errorCb && errorCb(error)
+    });
+  },
   getWxQrCode({scene}, successCb, errorCb) {
 
     let param = {

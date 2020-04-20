@@ -23,7 +23,13 @@
       </template>
 
       <template v-if="isShowUploader()">
-        <van-uploader accept="audio/mpeg" :after-read="afterSelectAudio">
+        <div class="uploader" v-if="showBigUploader()">
+          <van-button icon="music-o" size="small" id="uploadFiles">本地上传</van-button>
+        </div>
+        <template v-else>
+
+        </template>
+        <van-uploader accept="audio/mpeg,audio/x-m4a" :before-read="beforeSelectAudio" :after-read="afterSelectAudio">
           <van-button icon="music-o" size="small">本地上传</van-button>
         </van-uploader>
       </template>
@@ -54,6 +60,8 @@
   import constant from '@/config/constant'
   import {checkUrlHttpOrHttps,isIphone} from '@/config/utils'
 
+  const MAX_BGM_SIZE = 50 * 1024 * 1024
+
     export default {
       name: "Bgm",
       data(){
@@ -71,6 +79,9 @@
       methods:{
         isShowUploader(){
           return !isIphone()
+        },
+        showBigUploader(){
+          return false
         },
         getSpaceDetail(cb){
           $API.space.getSpaceDetail({
@@ -131,8 +142,20 @@
             eventHub.$emit(constant.EVENT_UPDATE_BGM_SUCCESS,{bgmKey:'custom',selfUpload:this.selfUpload,spaceId:this.spaceId,usedIndex:this.customIndex})
           })
         },
-        afterSelectAudio(audio){
-          if (audio.file.size > 30 * 1024 * 1024){
+        beforeSelectAudio(audio,detail){
+          console.log('beforeSelectAudio')
+          console.log(audio)
+          console.log(detail)
+          if (audio.type === 'audio/mpeg'
+            || audio.type === 'audio/x-m4a' ) {
+            return true;
+          }
+          this.$toast('请上传mp3/m4a格式文件');
+          return false;
+        },
+        afterSelectAudio(audio,detail){
+          console.log('afterSelectAudio')
+          if (audio.file.size > MAX_BGM_SIZE){
             this.$toast("文件过大，请选择合适长度的背景音乐")
             return
           }
@@ -244,12 +267,291 @@
           this.showAction = false
           this.actions = []
         },
+        uploader() {
+          var that = this
+          var uploadUrl = 'https://upload.qiniup.com'
+          var indexCount = 0;
+          var resume = false;
+          var chunk_size;
+          var blockSize;
+          var putExtra = {
+            fname: "",
+            params: {},
+            mimeType: null
+          }
+          var toast = that.$toast
+          var chunkTokens = {}
+          var uploader = new plupload.Uploader({
+            runtimes: "html5,flash,html4",
+            url: uploadUrl,
+            browse_button: "uploadFiles", // 触发文件选择对话框的按钮，为那个元素id
+            flash_swf_url: "/bian-mobile/static/plupload/js/Moxie.swf", // swf文件，当需要使用swf方式进行上传时需要配置该参数
+            chunk_size: 4 * 1024 * 1024,
+            max_retries: 3,
+            multipart_params:{
+            },
+            filters: {
+              mime_types : [ //只允许上传音频
+                { title : "Audio files", extensions : "mp3,wav,m4a" },
+              ],
+              max_file_size : MAX_BGM_SIZE,
+              prevent_duplicates : true //不允许选取重复文件
+            },
+            init: {
+              PostInit: () => {
+                console.log("upload init");
+              },
+              FilesAdded: (up, files) => {
+                up.stop()
+                let promiseArray = []
+                files.forEach(item => {
+                  if (!!item.type) {
+                    promiseArray.push(new Promise((resolve, reject) => {
+                      $API.space.filesQiniuUploadTicket({
+                        reqType: 'general_file',
+                        name: item.name.replace(/[\s\[\]]/g,''),
+                        expand: item.name.replace(/.+\./, ''),
+                        size: item.size
+                      }, resp => {
+                        item.uptoken = resp.uptoken;
+                        resolve(resp.uptoken)
+                      }, error => {
+                        resolve();
+                      })
+                    }))
+                  }
+                });
+                Promise.all(promiseArray).then(respArray => {
+                  if(respArray.some(item => !!item)){
+                    toast.loading({
+                      duration: 0,       // 持续展示 toast
+                      forbidClick: true, // 禁用背景点击
+                      loadingType: 'spinner',
+                      message: '上传中...'
+                    })
+                    up.start();
+                  }
+                })
+              },
+              UploadProgress: (up, file) => {
+                console.log("UploadProgress:",file.percent)
+                // that.updatePercent(file.id, file.percent);
+              },
+              FileUploaded: (up, file, info) => {
+                console.log(info);
+              },
+              UploadComplete: (up, files) => {
+                // Called when all files are either uploaded or failed
+                console.log("[完成]");
+              },
+              Error: function(up, err) {
+                if (err && err.code == -600 && err.file && err.file.origSize > MAX_BGM_SIZE){
+                  toast("文件过大，请选择合适长度的背景音乐")
+                }
+                console.log(err);
+              }
+            }
+          });
+          uploader.init();
+          uploader.bind('Error',function(){
+
+          })
+
+          uploader.bind("BeforeUpload", (up, file)=> {
+            let key = file.name;
+            putExtra.params["x:name"] = key.split(".")[0];
+            chunk_size = up.getOption("chunk_size");
+            var directUpload = ()=> {
+              resume = false;
+              let multipart_params_obj = {};
+              multipart_params_obj.token = file.uptoken;
+              // filterParams 返回符合自定义变量格式的数组，每个值为也为一个数组，包含变量名及变量值
+              let customVarList = qiniu.filterParams(putExtra.params);
+              for (let i = 0; i < customVarList.length; i++) {
+                let k = customVarList[i];
+                multipart_params_obj[k[0]] = k[1];
+              }
+              multipart_params_obj.key = key;
+              up.setOption({
+                url: uploadUrl,
+                multipart: true,
+                required_features:'',
+                multipart_params: multipart_params_obj
+              });
+            }
+
+            var resumeUpload = ()=> {
+              let token = file.uptoken
+              chunkTokens[file.id] = token
+              blockSize = chunk_size;
+              initFileInfo(file);
+              if(blockSize === 0){
+                mkFileRequest(file)
+                up.stop()
+                return
+              }
+              resume = true;
+              up.setOption({
+                url: uploadUrl + "/mkblk/" + blockSize,
+                multipart: false,
+                required_features: "chunks",
+                headers: {
+                  Authorization: "UpToken " + token
+                },
+                multipart_params: {}
+              });
+            };
+
+            // 判断是否采取分片上传
+            if ((up.runtime === "html5" || up.runtime === "flash") && chunk_size) {
+              if (file.size < chunk_size) {
+                directUpload();
+              } else {
+                resumeUpload();
+              }
+            } else {
+              console.log(
+                "directUpload because file.size < chunk_size || is_android_weixin_or_qq()"
+              );
+              directUpload();
+            }
+          });
+
+          uploader.bind("ChunkUploaded", (up, file, info)=> {
+            let token = chunkTokens[file.id]
+            var res = JSON.parse(info.response);
+            var leftSize = info.total - info.offset;
+            let chunkSize = uploader.getOption && uploader.getOption("chunk_size");
+            if (leftSize < chunkSize) {
+              up.setOption({
+                url: uploadUrl + "/mkblk/" + leftSize
+              });
+            }
+            up.setOption({
+              headers: {
+                Authorization: "UpToken " + token
+              }
+            });
+            // 更新本地存储状态
+            let localFileInfo = JSON.parse(localStorage.getItem(file.name))|| [];
+            localFileInfo[indexCount] = {
+              ctx: res.ctx,
+              time: new Date().getTime(),
+              offset: info.offset,
+              percent: file.percent
+            };
+            indexCount++;
+            localStorage.setItem(file.name, JSON.stringify(localFileInfo));
+          });
+
+          uploader.bind("FileUploaded", (up, file, info)=> {
+            if (resume) {
+              mkFileRequest(file)
+            } else {
+              const response = JSON.parse(info.response);
+              uploadFinish(file,response)
+            }
+          });
+
+          function uploadFinish(file,rsp) {
+            that.selfUpload.unshift({name:rsp.name,url:rsp.url})
+            that.customIndex = 0
+            let len = that.selfUpload.length
+            if (len > that.bgmMaxCount){
+              that.selfUpload.splice(that.bgmMaxCount,len - that.bgmMaxCount)
+            }
+            that.updateCustomBgm(()=>{
+              that.playBgm(0,{bgmKey:'custom',index:that.customIndex})
+            })
+
+            toast.clear()
+            localStorage.removeItem(file.name)
+          }
+          function initFileInfo(file) {
+            let localFileInfo = JSON.parse(localStorage.getItem(file.name))|| [];
+            indexCount = 0;
+            let length = localFileInfo.length
+            if (length) {
+              let clearStatus = false
+              for (let i = 0; i < localFileInfo.length; i++) {
+                indexCount++
+                if (isExpired(localFileInfo[i].time)) {
+                  clearStatus = true
+                  localStorage.removeItem(file.name);
+                  break;
+                }
+              }
+              if(clearStatus){
+                indexCount = 0;
+                return
+              }
+              file.loaded = localFileInfo[length - 1].offset;
+              let leftSize = file.size - file.loaded;
+              if(leftSize < chunk_size){
+                blockSize = leftSize
+              }
+              file.percent = localFileInfo[length - 1].percent;
+            }else{
+              indexCount = 0
+            }
+          }
+
+          function updateChunkProgress(file, chunk_size, count) {
+            var index = Math.ceil(file.loaded / chunk_size);
+            if (index == count) {
+              chunk_size = file.size - chunk_size * (index - 1);
+            }
+          }
+
+          function mkFileRequest(file){
+            // 调用sdk的url构建函数
+            let requestUrl = qiniu.createMkFileUrl(
+              uploadUrl,
+              file.size,
+              file.name,
+              putExtra
+            );
+
+            let ctx = []
+            let local = JSON.parse(localStorage.getItem(file.name))
+            for(let i =0;i<local.length;i++){
+              ctx.push(local[i].ctx)
+            }
+            // 设置上传的header信息
+            let token = chunkTokens[file.id]
+            let headers = qiniu.getHeadersForMkFile(token)
+            $API.space.mkFileRequest({
+                url:requestUrl,
+                headers:headers,
+                data:ctx.join(",")
+              }, rsp=>{
+                delete chunkTokens[file.id]
+                uploadFinish(file,rsp)
+              },
+              error=>{
+                toast.clear()
+                toast("上传失败，请稍后重试")
+              })
+          }
+
+          function isExpired(time){
+            let expireAt = time + 3600 * 24* 1000;
+            return new Date().getTime() > expireAt || true;
+          }
+        }
       },
       created() {
         if(this.$route.params.id){
           this.spaceId = this.$route.params.id
           this.getSpaceDetail()
         }
+      },
+      mounted() {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.uploader();
+          }, 500)
+        });
       }
     }
 </script>
@@ -273,7 +575,9 @@
         }
       }
     }
-
+    .uploader{
+      padding: 20px;
+    }
     .icon-duigou1{
       color: @MAIN_THEME_COLOR;
     }
