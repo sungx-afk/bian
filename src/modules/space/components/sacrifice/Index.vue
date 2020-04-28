@@ -242,6 +242,9 @@
         }
 
         return url
+      },
+      supportPay(){
+        return config_server.supportPay
       }
     },
     methods: {
@@ -305,7 +308,7 @@
       doDianlazu(){
         let that = this;
         this.buy('item-la-zu', () => {
-          if (this.space.type !== 2) {
+          if (this.space.type !== 2 && this.supportPay) {
             this.$notify({
               type: 'info',
               message: '-3云币',
@@ -344,7 +347,7 @@
       doFlower(){
         let that = this;
         this.buy('item-xuan-hua', () => {
-          if (this.space.type !== 2){
+          if (this.space.type !== 2 && this.supportPay){
             this.$notify({
               type:'info',
               message: '-9云币',
@@ -380,7 +383,7 @@
       doShaozhi(){
         let that = this;
         this.buy('item-zhi-qian', () => {
-          if (this.space.type !== 2) {
+          if (this.space.type !== 2 && this.supportPay) {
             this.$notify({
               type: 'info',
               message: '-8云币',

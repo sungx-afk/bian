@@ -144,7 +144,7 @@
         clearSpaceDetail:'spaceStore/clearSpaceDetail'
       }),
       initNotice(){
-        if (this.user && 0 == this.user.serviceSubscribe){
+        if (this.user && 0 == this.user.serviceSubscribe && config_server.supportNotice){
           this.showNotice = true
         }
       },

@@ -136,7 +136,7 @@
         this.showPublic = result
       },
       updateNotice(){
-        if (this.user && 0 == this.user.serviceSubscribe){
+        if (this.user && 0 == this.user.serviceSubscribe && config_server.supportNotice){
           this.showNotice = true
         }
       },
@@ -231,10 +231,13 @@
         }, {
             id:'meeting',
             name: '云追悼会',
-          }, {
-          id:'feedback',
-          name: '意见与反馈',
-        }]
+          }]
+        if (config_server.supportFeedback){
+          this.menuList.push({
+            id:'feedback',
+            name: '意见与反馈',
+          })
+        }
         this.isShowMoreMenu = true
       },
       showMoreMenu(item){

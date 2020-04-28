@@ -18,7 +18,7 @@ export function wechatShare(shareData) {
         title: '彼岸天堂纪念',
         desc: '逝者已矣，生者如斯',
         link: link,
-        imgUrl: 'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/03/1562158589633/logo.jpg',
+        imgUrl: 'https://static-app01.yugusoft.com/bian/logo.jpg',
         success: function (res) {}
       }
       //shareData是你重置的分享标题等等

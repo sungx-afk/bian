@@ -7,7 +7,7 @@
       :style="{ height: '300px' }">
       <div class="message-wrapper">
         <div class="product" v-if="product">
-          {{product.name}} ({{product.duration}}) : {{product.point}} 云币
+          <span>{{product.name}} ({{product.duration}})</span><span v-if="supportPay">: {{product.point}} 云币</span>
         </div>
         <div class="message">
           <van-field
@@ -39,8 +39,10 @@
     export default {
       name: "Message",
       props:{
-        product:Object,
-        default:null
+        product:{
+          type:Object,
+          default:null
+        }
       },
       data(){
         return{
@@ -65,6 +67,9 @@
           }
 
           return result
+        },
+        supportPay(){
+          return config_server.supportPay
         }
       },
       methods:{

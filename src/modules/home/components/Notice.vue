@@ -1,7 +1,7 @@
 <template>
   <div class="notice-container">
     <div class="tip">长按二维码直接识别关注公众号</div>
-    <img src="https://ba.yugusoft.com/api/v1/files/download/bian_user/19/09/23/1569227181396/qrcode_for_gh_44093dc42ad4_258.jpg"/>
+    <img src="https://static-app01.yugusoft.com/bian/qrcode.jpg"/>
   </div>
 </template>
 

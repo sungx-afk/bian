@@ -14,13 +14,13 @@
           <van-cell class="account-cell">
             <span>账号ID：</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
           </van-cell>
-          <van-cell class="charge-cell">
+          <van-cell class="charge-cell" v-if="supportPay">
             <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
             <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
           </van-cell>
           <van-cell v-for="product in products" :key="product.id">
             <span>{{product.name}}</span>
-            <van-button size="small" class="purchase-btn" :icon="iconMoney" @click="buyProduct(product)">{{product.point}}</van-button>
+            <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{product.point > 0?product.point:'祭奠'}}</van-button>
           </van-cell>
         </van-cell-group>
       </div>
@@ -32,11 +32,8 @@
         </p>
         <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
       </div>
-      <div class="view-history"><span @click="goLogs">充值和扣费记录</span></div>
+      <div class="view-history"><span @click="goLogs" v-if="supportPay">充值和扣费记录</span></div>
     </div>
-    <message v-if="showMessage"></message>
-
-
 
     <van-popup
       v-model="showThemes"
@@ -79,12 +76,10 @@
   import {Link} from '@/config/utils'
   import {mapGetters} from 'vuex'
 
-  import Message from '../Message'
-
     export default {
       name: "Info",
       components:{
-        Message
+
       },
       data(){
         return{
@@ -95,8 +90,7 @@
           themeId:1,
           space:null,
           products:[],
-          showMessage:false,
-          iconMoney:'https://ba.yugusoft.com/api/v1/files/download/bian_user/19/07/07/1562485353014/money.png'
+          iconMoney:'https://static-app01.yugusoft.com/bian/money.png'
         }
       },
       computed: {
@@ -126,12 +120,16 @@
           if (this.space){
             if (this.space.type === 2){
               result = '本纪念馆为样例馆'
+            }else if (!this.supportPay){
+              result = ''
             }else {
               result = '以下为支付运营成本的部分收费服务，感谢您的支持。'
             }
           }
-
           return result
+        },
+        supportPay(){
+          return config_server.supportPay
         }
       },
       methods:{
@@ -183,10 +181,6 @@
         },
         initProducts(){
           this.products = [{
-            id:'item-zhang-min-ding',
-            name:'长明灯（永久，每次添加两盏，可多次）',
-            point:999
-          },{
             id:'package-hua-quan',
             name:'花圈装饰（永久）',
             point:60
@@ -203,8 +197,20 @@
             name:'酒席（7天）',
             point:50
           }]
-
-          if (this.space.type === 2){
+          if (this.supportPay){
+            this.products.unshift({
+              id:'item-zhang-min-ding',
+              name:'长明灯（永久，每次添加两盏，可多次）',
+              point:999
+            })
+          }else {
+            this.products.unshift({
+              id:'item-zhang-min-ding',
+              name:'长明灯（永久）',
+              point:999
+            })
+          }
+          if (this.space.type === 2 || !this.supportPay){
             this.products = this.products.map(item=>{
               let o = item
               o.point = 0
@@ -222,8 +228,12 @@
             let productId = product.id
             let spaceId = this.spaceId
             $API.space.buy({productId,spaceId},rsp=>{
-              this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
-              this.space.currentUser.point = this.space.currentUser.point - product.point
+              if (this.supportPay){
+                this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
+                this.space.currentUser.point = this.space.currentUser.point - product.point
+              }else {
+                this.$toast(`已祭奠${product.name}`)
+              }
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
               setTimeout(()=>{
                 that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
