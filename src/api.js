@@ -59,7 +59,7 @@ global.$axios.interceptors.response.use((response) => {
   if (error.response && error.response.data && error.response.data.location) {
     window.location = error.response.data.location
   } else {
-    window.location.href = '/error';
+    //window.location.href = '/error';
     return Promise.reject(error)
   }
 })

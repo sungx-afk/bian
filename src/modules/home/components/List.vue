@@ -292,7 +292,7 @@
         Link(`/meeting_intro`)
       },
       goReportHandle(){
-        Link(`/report_handle`)
+        Link(`/report_handle/list`)
       },
       deleteSpaceVisited(space){
         let that = this
