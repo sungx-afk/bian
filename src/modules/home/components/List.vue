@@ -181,7 +181,7 @@
             }
           })
         },error=>{
-
+          console.log("error:",error)
         })
       },
       createSpace(){
