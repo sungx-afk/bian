@@ -243,6 +243,12 @@
             name: '意见与反馈',
           })
         }
+        if (this.user && this.user.id == 101592){
+          this.menuList.push({
+            id:'report',
+            name: '处理举报',
+          })
+        }
         this.isShowMoreMenu = true
       },
       showMoreMenu(item){
@@ -273,6 +279,9 @@
           case 'meeting':
             this.goMeetingIntro()
             break
+          case 'report':
+            this.goReportHandle()
+            break
         }
       },
       goFeedback(){
@@ -281,6 +290,9 @@
       },
       goMeetingIntro(){
         Link(`/meeting_intro`)
+      },
+      goReportHandle(){
+        Link(`/report_handle`)
       },
       deleteSpaceVisited(space){
         let that = this

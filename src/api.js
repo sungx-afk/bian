@@ -2,6 +2,7 @@ import axios from 'axios'
 import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
 import User from './modules/user/api/index'
+import Report from './modules/report/api/index'
 
 axios.interceptors.request.use(config => {
   return config
@@ -66,5 +67,6 @@ global.$axios.interceptors.response.use((response) => {
 global.$API = {
   home:Home,
   space:Space,
-  user:User
+  user:User,
+  report:Report
 }

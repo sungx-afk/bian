@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Home from '@/modules/home/router'
 import Space from '@/modules/space/router'
+import Report from '@/modules/report/router'
 
 import store from '@/store';
 
@@ -16,7 +17,8 @@ const router = new Router({
   mode: 'history', //'hash'则一切正常
   routes: [
     ...Home,
-    ...Space
+    ...Space,
+    ...Report
   ]
 })
 
