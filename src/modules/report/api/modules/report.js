@@ -22,7 +22,9 @@ export default {
     let param = {
       status
     }
-    $axios.put(`/complaints/${rid}`,qs.stringify(param, { indices: false })).then(function (response) {
+    $axios.put(`/complaints/${rid}`,qs.stringify(param, { indices: false }),{headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }}).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb && errorCb(error)

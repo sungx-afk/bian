@@ -134,6 +134,10 @@
         this.containerHeight = document.body.clientHeight - 44
       },
       onTabChange(e){
+        this.list = []
+        this.loading = false
+        this.finished = false
+        this.noData = false
         this.getList()
       },
       getList(start = 0){
