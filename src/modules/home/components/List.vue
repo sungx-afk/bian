@@ -39,11 +39,14 @@
         </div>
       </template>
       <template v-else>
-        <div class="empty">
+        <div class="empty" v-if="listLoaded">
           <div class="text">
-            <p class="note">
+            <div class="note">
               走了的人只是去了另外一个世界，他/她依然在看着你，感受你的爱。
-            </p>
+            </div>
+          </div>
+          <div class="bottom-button">
+            <van-button type="default" size="large" @click.tap="createSpace">为他/她创建纪念馆</van-button>
           </div>
         </div>
       </template>
@@ -91,7 +94,8 @@
         showAction:false,
         actions:[],
         needRefreshList:false,
-        showPublic:false
+        showPublic:false,
+        listLoaded:false
       }
     },
     components: {
@@ -154,6 +158,7 @@
       getSpacesPersonal(){
         $API.home.getSpaceList((rsp)=>{
           this.list = rsp
+          this.listLoaded = true
         },(error)=>{
           console.log("error:",error)
         })
@@ -595,11 +600,23 @@
       }
       .empty {
         .text {
-          padding: 30px;
+          padding: 30px 30px 20px;
           text-align: center;
           font-size: 17px;
           .note {
             color: @MAIN_THEME_COLOR;
+          }
+        }
+        .bottom-button {
+          display: flex;
+          justify-content: center;
+          margin-top: 12px;
+          .van-button--large{
+            width: 90%;
+            color: white;
+            height: 40px;
+            line-height: 38px;
+            background-color: @MAIN_THEME_COLOR;
           }
         }
       }
