@@ -8,7 +8,7 @@
               <no-data></no-data>
             </template>
             <template v-else>
-              <div class="report-list">
+              <div class="report-list" ref="reportList" @scroll="listScroll">
                 <van-list
                   v-model="loading"
                   :finished="finished"
@@ -76,7 +76,8 @@
         loading:false,
         finished:false,
         noData:false,
-        containerHeight:0
+        containerHeight:0,
+        scrollTop:0
       }
     },
     computed:{
@@ -138,7 +139,6 @@
         this.loading = false
         this.finished = false
         this.noData = false
-        this.getList()
       },
       getList(start = 0){
         this.start = start
@@ -169,6 +169,9 @@
         },error=>{
           this.loading = false
         })
+      },
+      listScroll(e){
+        this.scrollTop = e.currentTarget.scrollTop
       },
       onLoadMoreData(){
         if (!this.finished){
@@ -208,6 +211,10 @@
     created() {
       this.initContainerHeight()
       eventHub.$on('report-handled',this.updateList)
+    },
+    activated() {
+      //因为有for循环，这里refs返回的是数组
+      this.$refs.reportList[0].scrollTop = this.scrollTop
     },
     beforeDestroy() {
       eventHub.$off('report-handled',this.updateList)
