@@ -243,11 +243,15 @@
             name: '意见与反馈',
           })
         }
-        if (this.user && this.user.id == 101592){
-          this.menuList.push({
-            id:'report',
-            name: '处理举报',
-          })
+        if (this.user){
+          let reportHandler = [101592]
+          let flag = reportHandler.some(item=>item == this.user.id)
+          if (flag){
+            this.menuList.push({
+              id:'report',
+              name: '处理举报',
+            })
+          }
         }
         this.isShowMoreMenu = true
       },
