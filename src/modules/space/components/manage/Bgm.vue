@@ -143,15 +143,16 @@
           })
         },
         beforeSelectAudio(audio,detail){
-          console.log('beforeSelectAudio')
-          console.log(audio)
-          console.log(detail)
-          if (audio.type === 'audio/mpeg'
-            || audio.type === 'audio/x-m4a' ) {
-            return true;
-          }
-          this.$toast('请上传mp3/m4a格式文件');
-          return false;
+          return true
+          // console.log('beforeSelectAudio')
+          // console.log("audio:",audio)
+          // console.log("detail:",detail)
+          // if (audio.type === 'audio/mpeg'
+          //   || audio.type === 'audio/x-m4a' ) {
+          //   return true;
+          // }
+          // this.$toast('请上传mp3/m4a格式文件');
+          // return false;
         },
         afterSelectAudio(audio,detail){
           console.log('afterSelectAudio')
