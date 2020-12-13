@@ -439,6 +439,9 @@
           }
         }
       }
+      /deep/.van-field__label{
+        color:#323233;
+      }
     }
 
     .bottom-button {

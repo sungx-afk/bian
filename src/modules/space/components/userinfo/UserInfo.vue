@@ -6,8 +6,7 @@
         <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
       </van-radio-group>
     </van-cell>
-    <van-cell title="出生日期:" is-link :value="user.birthday?dateText(user.birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
-    <van-cell title="逝世日期:" is-link :value="user.dieDay?dateText(user.dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
+    <van-cell class="date-wrapper" title="生 卒:" is-link :value="userDate" @click.stop="goSelectDate"></van-cell>
     <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
     <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
 
@@ -29,33 +28,13 @@
         </van-uploader>
       </div>
     </template>
-
-    <van-popup v-model="showBirthdayPicker" position="bottom" close-on-popstate @closed="birthdayPickerClosed">
-      <van-datetime-picker
-        v-model="birthdayPickerDate"
-        type="date"
-        :min-date="minPickerDate"
-        :max-date="maxPickerDate"
-        @cancel="birthdayPickerCancel"
-        @confirm="birthdayPickerConfirm">
-      </van-datetime-picker>
-    </van-popup>
-    <van-popup v-model="showDieDayPicker" position="bottom" close-on-popstate @closed="dieDayPickerClosed">
-      <van-datetime-picker
-        v-model="dieDayPickerDate"
-        type="date"
-        :min-date="minPickerDate"
-        :max-date="maxPickerDate"
-        @cancel="dieDayPickerCancel"
-        @confirm="dieDayPickerConfirm">
-      </van-datetime-picker>
-    </van-popup>
   </div>
 </template>
 
 <script>
   import constant from '@/config/constant'
   import {timesToDate,Link,gUuid} from '@/config/utils'
+  import SelectDate from '@/modules/widget/select-date'
 
     export default {
       name: "UserInfo",
@@ -72,12 +51,6 @@
       },
       data(){
         return{
-          showBirthdayPicker:false,
-          birthdayPickerDate:'',
-          showDieDayPicker:false,
-          dieDayPickerDate:'',
-          minPickerDate:'',
-          maxPickerDate:'',
           sexList: [
             { name: '男', value: 0 },
             { name: '女', value: 1 }
@@ -86,52 +59,35 @@
           identifier:''
         }
       },
+      computed:{
+        userDate(){
+          debugger
+          let birthday = '出生日期'
+          let dieDay = '逝世日期'
+          let split = ' - '
+          if (this.user.birthday){
+            birthday = this.dateText(this.user.birthday)
+          }
+          if (this.user.dieDay){
+            dieDay = this.dateText(this.user.dieDay)
+          }
+          
+          return `${birthday}${split}${dieDay}`
+        }
+      },
       methods:{
         dateText(timestamp){
           return timesToDate(timestamp,'yyyy年MM月dd日')
         },
-        initMinMaxDate(){
-          let now = new Date()
-          this.maxPickerDate = now
-          this.minPickerDate = new Date(1600,0,1)
-        },
-        selectBirthday(){
-          this.initMinMaxDate()
-          if (this.user.birthday){
-            this.birthdayPickerDate = new Date(this.user.birthday)
-          }else{
-            this.birthdayPickerDate = new Date(1900,0,1)
-          }
-          this.showBirthdayPicker = true
-        },
-        selectDieDay(){
-          this.initMinMaxDate()
-          if (this.user.dieDay){
-            this.dieDayPickerDate = new Date(this.user.dieDay)
-          }else{
-            this.dieDayPickerDate = new Date()
-          }
-          this.showDieDayPicker = true
-        },
-        birthdayPickerClosed(){
-          this.showBirthdayPicker = false
-        },
-        dieDayPickerClosed(){
-          this.showDieDayPicker = false
-        },
-        birthdayPickerCancel(){
-          this.showBirthdayPicker = false
-        },
-        dieDayPickerCancel(){
-          this.showDieDayPicker = false
-        },
-        birthdayPickerConfirm(date){
-          this.user.birthday = date.getTime()
-          this.showBirthdayPicker = false
-        },
-        dieDayPickerConfirm(date){
-          this.user.dieDay = date.getTime()
-          this.showDieDayPicker = false
+        goSelectDate(){
+          SelectDate({
+            birthday:this.user.birthday,
+            dieDay:this.user.dieDay,
+            callback:(data)=>{
+              this.user.birthday = data.birthday
+              this.user.dieDay = data.dieDay
+            }
+          })
         },
         afterSelectPhoto(photo){
           let data = {}
@@ -202,6 +158,13 @@
         width: 100%;
         display: flex;
         justify-content: flex-end;
+      }
+      &.date-wrapper{
+        .van-cell__title{
+          flex-shrink: 0;
+          flex-grow: 0;
+          flex-basis: 40px;
+        }
       }
     }
     .avatar-preview{
