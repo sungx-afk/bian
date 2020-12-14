@@ -118,8 +118,8 @@
         if (this.dieDayStr){
           dieDaySelector.value = this.dieDayStr
         }
-        new ruiDatepicker().init('#birthday_selector');
-        new ruiDatepicker().init('#dieday_selector');
+        new ruiDatepicker().init('#birthday_selector','',{dateType:{show:false}});
+        new ruiDatepicker().init('#dieday_selector','',{dateType:{show:false}});
 
       });
     },

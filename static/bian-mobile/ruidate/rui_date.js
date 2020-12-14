@@ -67,10 +67,13 @@ window.ruiDatepicker = (function () {
         this.levelnum = 8 // 每增加2-聚焦的向下移动一，记得修改聚焦位置的样式 .date_grid 的top 值
     }
     datePicker.prototype = {
-        init: function (id,minyear) {
+        init: function (id,minyear,options) {
             this.trigger = document.querySelector(id);
             this.bindEvent('date');
             if(minyear) this.minY = minyear;
+            if (options){
+                this.options = options
+            }
         },
         bindEvent: function (type) {
             var _self = this;
@@ -314,37 +317,44 @@ window.ruiDatepicker = (function () {
                         '</div>' +
                         '</div>';
                 } else {
-                    _self.gearDate.innerHTML = '<div class="date_ctrl slideInUp">' +
-                        '<div class="date_info_box lcalendar_info">' +
-                        '</div>' +
-                        '<div class="date_class_box">' +
-                        '<div class="date_btn lcalendar_cancel">取消</div>' +
-                        '<div>'+
+                    let temp1 = '<div class="date_ctrl slideInUp">' +
+                    '<div class="date_info_box lcalendar_info">' +
+                    '</div>' +
+                    '<div class="date_class_box">' +
+                    '<div class="date_btn lcalendar_cancel">取消</div>' 
+                    let dateType = '<div>'+
+                    '<div class="date_class lcalendar_gongli">公历</div>' +
+                    '<div class="date_class lcalendar_nongli">阴历</div>' +
+                    '</div>'
+                    if (_self.options && _self.options.dateType && _self.options.dateType.show === false){
+                        dateType = '<div style="opacity: 0;">'+
                         '<div class="date_class lcalendar_gongli">公历</div>' +
                         '<div class="date_class lcalendar_nongli">阴历</div>' +
-                        '</div>'+
-                        '<div class="date_btn lcalendar_finish">确定</div>' +
-                        '</div>' +
-                        '<div class="date_roll_mask">' +
-                        '<div class="date_roll">' +
-                        '<div>' +
-                        '<div class="gear date_yy" data-datetype="date_yy"></div>' +
-                        '<div class="date_grid">' +
-                        '</div>' +
-                        '</div>' +
-                        '<div>' +
-                        '<div class="gear date_mm" data-datetype="date_mm"></div>' +
-                        '<div class="date_grid">' +
-                        '</div>' +
-                        '</div>' +
-                        '<div>' +
-                        '<div class="gear date_dd" data-datetype="date_dd"></div>' +
-                        '<div class="date_grid">' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>';
+                        '</div>'
+                    }
+                    let temp2 = '<div class="date_btn lcalendar_finish">确定</div>' +
+                    '</div>' +
+                    '<div class="date_roll_mask">' +
+                    '<div class="date_roll">' +
+                    '<div>' +
+                    '<div class="gear date_yy" data-datetype="date_yy"></div>' +
+                    '<div class="date_grid">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div>' +
+                    '<div class="gear date_mm" data-datetype="date_mm"></div>' +
+                    '<div class="date_grid">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div>' +
+                    '<div class="gear date_dd" data-datetype="date_dd"></div>' +
+                    '<div class="date_grid">' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>'
+                    _self.gearDate.innerHTML = temp1 + dateType + temp2
                 }
                 document.body.appendChild(_self.gearDate);
                 dateCtrlInit();
@@ -411,6 +421,9 @@ window.ruiDatepicker = (function () {
             }
             // 公历农历选择
             function convertTap(type) {
+                if (_self.options && _self.options.dateType && _self.options.dateType.show === false){
+                    return
+                }
                 var nongli = _self.gearDate.querySelector(".lcalendar_nongli");
                 var gongli = _self.gearDate.querySelector(".lcalendar_gongli");
                 var changeOn = 0;
