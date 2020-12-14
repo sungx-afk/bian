@@ -4,12 +4,20 @@
       <div class="item-box">
         <div class="date-type-wrapper">
           <van-radio-group v-model="dateType" class="type-radio-group" direction="horizontal">
-              <van-radio v-for="item in dateTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+              <van-radio v-for="item in dateTypeList" :key="item.value" :name="item.value" checked-color="#825621" @click="dateTypeClicked">{{item.name}}</van-radio>
           </van-radio-group>
         </div>
         <div class="date-select-wrapper">
-          <van-cell class="date-cell" title="出生日期:" is-link :value="birthday?dateText(birthday):'未填写'" @click.stop="selectBirthday"></van-cell>
-          <van-cell class="date-cell" title="逝世日期:" is-link :value="dieDay?dateText(dieDay):'未填写'" @click.stop="selectDieDay"></van-cell>
+          <div class="date-input-wrapper">
+            <span>出生日期：</span>
+              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" placeholder="请选择出生日期" :data-type="dateType ==='solar'?0:1" :data-date="birthdayDate" /></input>
+              <input type="hidden" id="birthday_input" name="birthday">
+          </div>
+          <div class="date-input-wrapper">
+            <span>逝世日期：</span>
+              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" placeholder="请选择逝世日期" :data-type="dateType ==='solar'?0:1" :data-date="dieDayDate" /></input>
+              <input type="hidden" id="dieday_input" name="dieday">
+          </div>
         </div>
         <div class="push-setting-wrapper">
             <van-checkbox checked-color="#825621" shape="square" v-model="pushChecked"></van-checkbox>
@@ -24,34 +32,13 @@
           <van-button type="default" @click.tap="confirm">确定</van-button>
         </div>
       </div>
-      <van-popup v-model="showBirthdayPicker" position="bottom" close-on-popstate @closed="birthdayPickerClosed">
-        <van-datetime-picker
-          v-model="birthdayPickerDate"
-          type="date"
-          :min-date="minPickerDate"
-          :max-date="maxPickerDate"
-          @cancel="birthdayPickerCancel"
-          @confirm="birthdayPickerConfirm">
-        </van-datetime-picker>
-      </van-popup>
-      <van-popup v-model="showDieDayPicker" position="bottom" close-on-popstate @closed="dieDayPickerClosed">
-        <van-datetime-picker
-          v-model="dieDayPickerDate"
-          type="date"
-          :min-date="minPickerDate"
-          :max-date="maxPickerDate"
-          @cancel="dieDayPickerCancel"
-          @confirm="dieDayPickerConfirm">
-        </van-datetime-picker>
-      </van-popup>
     </div>
   </transition>
 </template>
 
 <script>
   
-  import {timesToDate,Link,gUuid} from '@/config/utils'
-
+  import {timesToDate,dateToTimes} from '@/config/utils'
   export default {
     data(){
       return {
@@ -59,6 +46,8 @@
         callback:null,
         birthday:null,
         dieDay:null,
+        birthdayStr:'',
+        dieDayStr:'',
         dateType:'solar',
         dateTypeList:[{
           value:'solar',
@@ -67,14 +56,16 @@
           value:'lunar',
           name:'阴历'
         }],
-        minPickerDate:'',
-        maxPickerDate:'',
-        birthdayPickerDate:'',
-        dieDayPickerDate:'',
-        showBirthdayPicker:false,
-        showDieDayPicker:false,
         pushChecked:false,
         pushDays:1
+      }
+    },
+    computed:{
+      dieDayDate(){
+        return this.dieDay?timesToDate(this.dieDay,'yyyy-MM-dd'):''
+      },
+      birthdayDate(){
+        return this.birthday?timesToDate(this.birthday,'yyyy-MM-dd'):'1901-2-19'
       }
     },
     methods: {
@@ -88,72 +79,52 @@
       close(){
         this.show = false;
       },
-      dateText(timestamp){
-        return timesToDate(timestamp,'yyyy年MM月dd日')
-      },
-      initMinMaxDate(){
-          let now = new Date()
-          this.maxPickerDate = now
-          this.minPickerDate = new Date(1600,0,1)
-        },
-      selectBirthday(){
-        this.initMinMaxDate()
-        if (this.birthday){
-          this.birthdayPickerDate = new Date(this.birthday)
-        }else{
-          this.birthdayPickerDate = new Date(1900,0,1)
-        }
-        this.showBirthdayPicker = true
-      },
-      selectDieDay(){
-        this.initMinMaxDate()
-        if (this.dieDay){
-          this.dieDayPickerDate = new Date(this.dieDay)
-        }else{
-          this.dieDayPickerDate = new Date()
-        }
-        this.showDieDayPicker = true
-      },
-      birthdayPickerClosed(){
-        this.showBirthdayPicker = false
-      },
-      dieDayPickerClosed(){
-        this.showDieDayPicker = false
-      },
-      birthdayPickerCancel(){
-        this.showBirthdayPicker = false
-      },
-      dieDayPickerCancel(){
-        this.showDieDayPicker = false
-      },
-      birthdayPickerConfirm(date){
-        this.birthday = date.getTime()
-        this.showBirthdayPicker = false
-      },
-      dieDayPickerConfirm(date){
-        this.dieDay = date.getTime()
-        this.showDieDayPicker = false
-      },
       cancel(){
         this.close()
       },
-      confirm(){
+      confirm(){ 
+        let inputValue = document.getElementById('birthday_input').value
+        this.birthday = dateToTimes(inputValue)
+        inputValue = document.getElementById('dieday_input').value
+        this.dieDay = dateToTimes(inputValue)
+        let birthdayStr = document.getElementById('birthday_selector').value
+        let dieDayStr = document.getElementById('dieday_selector').value
         let data = {
+          dateType:this.dateType,
           birthday:this.birthday,
           dieDay:this.dieDay,
-          type:this.dateType
+          birthdayStr,
+          dieDayStr
         }
-        
         this.callback && this.callback(data)
         this.close()
+      },
+      dateTypeClicked(e){
+        document.getElementById('birthday_input').value = ''
+        document.getElementById('dieday_input').value = ''
+        document.getElementById('birthday_selector').value = ''
+        document.getElementById('dieday_selector').value = ''
       }
     },
     mounted() {
       this.$nextTick(() => {
         this.show = true;
+
+        let birthdaySelector = document.getElementById('birthday_selector')
+        let dieDaySelector = document.getElementById('dieday_selector')
+        if (this.birthdayStr){
+          birthdaySelector.value = this.birthdayStr
+        }
+        if (this.dieDayStr){
+          dieDaySelector.value = this.dieDayStr
+        }
+        new ruiDatepicker().init('#birthday_selector');
+        new ruiDatepicker().init('#dieday_selector');
+
       });
     },
     created(){
+      this.dateType = this.dateType || 'solar'
     }
   }
 </script>
@@ -179,20 +150,21 @@
         border-bottom: 1px solid #ebedf0;
       }
       .date-select-wrapper{
-        .date-cell{
-          padding: 18px 16px;
-          &::after{
-            left:0px;
-            right: 0px;
-            transform: scale(1);
+        .date-input-wrapper{
+          height: 66px;
+          line-height: 66px;
+          padding: 0 16px;
+          .date-input{
+            width: ~'calc(100% - 100px)';
+            height: 60px;
           }
+           border-bottom: 1px solid #ebedf0;
         }
       }
       .push-setting-wrapper{
         padding: 20px 16px;
         display: flex;
         align-items: center;
-        border-top: 1px solid #ebedf0;
         border-bottom: 1px solid #ebedf0;
         /deep/.van-field{
           padding: 0;

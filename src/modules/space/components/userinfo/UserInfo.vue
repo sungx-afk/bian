@@ -61,18 +61,30 @@
       },
       computed:{
         userDate(){
-          debugger
           let birthday = '出生日期'
           let dieDay = '逝世日期'
           let split = ' - '
-          if (this.user.birthday){
-            birthday = this.dateText(this.user.birthday)
+          if (this.user.birthdayStr){
+            birthday = this.user.birthdayStr
+          }else{
+            if (this.user.birthday){
+              birthday = this.dateText(this.user.birthday)
+            }
           }
-          if (this.user.dieDay){
-            dieDay = this.dateText(this.user.dieDay)
+          if (this.user.dieDayStr){
+             dieDay = this.user.dieDayStr
+          }else{
+            if (this.user.dieDay){
+              dieDay = this.dateText(this.user.dieDay)
+            }
           }
-          
-          return `${birthday}${split}${dieDay}`
+          let dateType = ''
+          if (this.user.dateType === 'solar'){
+            dateType = '公历:'
+          }else if (this.user.dateType === 'lunar'){
+            dateType = '阴历:'
+          }
+          return `${dateType}${birthday}${split}${dieDay}`
         }
       },
       methods:{
@@ -81,11 +93,17 @@
         },
         goSelectDate(){
           SelectDate({
+            dateType:this.user.dateType,
             birthday:this.user.birthday,
             dieDay:this.user.dieDay,
+            birthdayStr:this.user.birthdayStr,
+            dieDayStr:this.user.dieDayStr,
             callback:(data)=>{
+              this.user.dateType = data.dateType
               this.user.birthday = data.birthday
               this.user.dieDay = data.dieDay
+              this.user.birthdayStr = data.birthdayStr
+              this.user.dieDayStr = data.dieDayStr
             }
           })
         },
