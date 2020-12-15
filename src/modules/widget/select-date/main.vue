@@ -19,13 +19,9 @@
               <input type="hidden" id="dieday_input" name="dieday">
           </div>
         </div>
-        <div class="push-setting-wrapper">
-            <van-checkbox checked-color="#825621" shape="square" v-model="pushChecked"></van-checkbox>
-            <span class="text" style="margin-left:8px;">在忌日前</span>
-            <van-field
-                v-model="pushDays">
-            </van-field>
-            <span class="text">天发送消息提醒</span>
+        <div class="notify-setting-wrapper">
+            <van-checkbox checked-color="#825621" shape="square" v-model="notifyChecked"></van-checkbox>
+            <span class="text" style="margin-left:8px;">在忌日前 1 天发送提醒消息</span>
         </div>
         <div class="bottom-button">
           <van-button type="default" @click.tap="cancel">取消</van-button>
@@ -56,8 +52,7 @@
           value:'lunar',
           name:'阴历'
         }],
-        pushChecked:false,
-        pushDays:1
+        notifyChecked:true
       }
     },
     computed:{
@@ -161,7 +156,7 @@
            border-bottom: 1px solid #ebedf0;
         }
       }
-      .push-setting-wrapper{
+      .notify-setting-wrapper{
         padding: 20px 16px;
         display: flex;
         align-items: center;
