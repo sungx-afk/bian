@@ -2,20 +2,20 @@
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="select-date-box" v-show="show">
       <div class="item-box">
-        <div class="date-type-wrapper">
-          <van-radio-group v-model="dateType" class="type-radio-group" direction="horizontal">
-              <van-radio v-for="item in dateTypeList" :key="item.value" :name="item.value" checked-color="#825621" @click="dateTypeClicked">{{item.name}}</van-radio>
+        <div class="calendar-type-wrapper">
+          <van-radio-group v-model="calType" class="type-radio-group" direction="horizontal">
+              <van-radio v-for="item in calTypeList" :key="item.value" :name="item.value" checked-color="#825621" @click="calTypeClicked">{{item.name}}</van-radio>
           </van-radio-group>
         </div>
         <div class="date-select-wrapper">
           <div class="date-input-wrapper">
             <span>出生日期：</span>
-              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" placeholder="请选择出生日期" :data-type="dateType ==='solar'?0:1" :data-date="birthdayDate" /></input>
+              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" placeholder="请选择出生日期" :data-type="calType" :data-date="birthdayDate" /></input>
               <input type="hidden" id="birthday_input" name="birthday">
           </div>
           <div class="date-input-wrapper">
             <span>逝世日期：</span>
-              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" placeholder="请选择逝世日期" :data-type="dateType ==='solar'?0:1" :data-date="dieDayDate" /></input>
+              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" placeholder="请选择逝世日期" :data-type="calType" :data-date="dieDayDate" /></input>
               <input type="hidden" id="dieday_input" name="dieday">
           </div>
         </div>
@@ -44,12 +44,12 @@
         dieDay:null,
         birthdayStr:'',
         dieDayStr:'',
-        dateType:'solar',
-        dateTypeList:[{
-          value:'solar',
+        calType:0,
+        calTypeList:[{
+          value:0,
           name:'公历'
         },{
-          value:'lunar',
+          value:1,
           name:'阴历'
         }],
         notifyChecked:true
@@ -77,24 +77,29 @@
       cancel(){
         this.close()
       },
-      confirm(){ 
+      confirm(){
         let inputValue = document.getElementById('birthday_input').value
-        this.birthday = dateToTimes(inputValue)
+        if (inputValue){
+          this.birthday = dateToTimes(inputValue)
+        }
         inputValue = document.getElementById('dieday_input').value
-        this.dieDay = dateToTimes(inputValue)
+        if (inputValue){
+          this.dieDay = dateToTimes(inputValue)
+        }
         let birthdayStr = document.getElementById('birthday_selector').value
         let dieDayStr = document.getElementById('dieday_selector').value
         let data = {
-          dateType:this.dateType,
+          calType:this.calType,
           birthday:this.birthday,
           dieDay:this.dieDay,
           birthdayStr,
-          dieDayStr
+          dieDayStr,
+          notifyStatus:this.notifyChecked?1:0
         }
         this.callback && this.callback(data)
         this.close()
       },
-      dateTypeClicked(e){
+      calTypeClicked(e){
         document.getElementById('birthday_input').value = ''
         document.getElementById('dieday_input').value = ''
         document.getElementById('birthday_selector').value = ''
@@ -113,13 +118,14 @@
         if (this.dieDayStr){
           dieDaySelector.value = this.dieDayStr
         }
-        new ruiDatepicker().init('#birthday_selector','',{dateType:{show:false}});
-        new ruiDatepicker().init('#dieday_selector','',{dateType:{show:false}});
+        
+        new ruiDatepicker().init('#birthday_selector','',{calType:{show:false}});
+        new ruiDatepicker().init('#dieday_selector','',{calType:{show:false}});
 
       });
     },
     created(){
-      this.dateType = this.dateType || 'solar'
+      this.calType = this.calType !== undefined? this.calType : 0
     }
   }
 </script>
@@ -140,7 +146,7 @@
       box-sizing: border-box;
       overflow-x: hidden;
       overflow-y: hidden;
-      .date-type-wrapper{
+      .calendar-type-wrapper{
         padding: 20px 16px;
         border-bottom: 1px solid #ebedf0;
       }

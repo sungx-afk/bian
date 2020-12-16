@@ -10,8 +10,8 @@
           <div class="content-wrapper">
             <div class="base-info">
               <div class="date-info">
-                <span>出生：{{user.birthday | timesToDate('yyyy年MM月dd日') || '未填写'}}</span>
-                <span style="margin-left: 15px;">逝世：{{user.dieDay | timesToDate('yyyy年MM月dd日') || '未填写'}}</span>
+                <span>出生：{{birthdayText(user)}}</span>
+                <span style="margin-left: 15px;">逝世：{{dieDayText(user)}}</span>
               </div>
               <div class="address-info">
                 出生地点：{{user.birthAddress || '未填写'}}
@@ -52,7 +52,7 @@
 
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {timesToDate,Link} from '@/config/utils'
   import constant from '@/config/constant'
   import ModifyText from '@/modules/widget/modify-text'
 
@@ -95,6 +95,24 @@
           getSpaceDetail:'spaceStore/getSpaceDetail',
           updateSpaceUser:'spaceStore/updateSpaceUser'
         }),
+        birthdayText(user){
+          let result = '未填写'
+          if (user.birthdayStr){
+            result = user.birthdayStr
+          }else if (user.birthday){
+            result = timesToDate(user.birthday,'yyyy年MM月dd日')
+          }
+          return result
+        },
+        dieDayText(user){
+          let result = '未填写'
+          if (user.dieDayStr){
+            result = user.dieDayStr
+          }else if (user.dieDay){
+            result = timesToDate(user.dieDay,'yyyy年MM月dd日')
+          }
+          return result
+        },
         goEditUser(user){
           this.actions = [{
             name: '逝者基本信息',

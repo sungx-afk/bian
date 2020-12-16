@@ -32,8 +32,8 @@
         <div class="lifetime-bottom">
           <div class="base-info">
             <div class="date-info">
-              <span>出生：{{user.birthday | timesToDate('yyyy年MM月dd日') || '未填写'}}</span>
-              <span style="margin-left: 15px;">逝世：{{user.dieDay | timesToDate('yyyy年MM月dd日') || '未填写'}}</span>
+              <span>出生：{{user.birthdayStr || (user.birthday | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
+              <span style="margin-left: 15px;">逝世：{{user.dieDayStr || (user.dieDay | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
             </div>
             <div class="address-info">
               出生地点：{{user.birthAddress || '未填写'}}

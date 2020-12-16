@@ -78,13 +78,13 @@
               dieDay = this.dateText(this.user.dieDay)
             }
           }
-          let dateType = ''
-          if (this.user.dateType === 'solar'){
-            dateType = '公历:'
-          }else if (this.user.dateType === 'lunar'){
-            dateType = '阴历:'
+          let calType = ''
+          if (this.calType === 0){
+            calType = '公历:'
+          }else if (this.calType === 1){
+            calType = '阴历:'
           }
-          return `${dateType}${birthday}${split}${dieDay}`
+          return `${calType}${birthday}${split}${dieDay}`
         }
       },
       methods:{
@@ -93,17 +93,22 @@
         },
         goSelectDate(){
           SelectDate({
-            dateType:this.user.dateType,
+            calType:this.user.calType,
             birthday:this.user.birthday,
-            dieDay:this.user.dieDay,
             birthdayStr:this.user.birthdayStr,
+            dieDay:this.user.dieDay,
             dieDayStr:this.user.dieDayStr,
+            notifyChecked:this.user.notifyStatus === 1,
             callback:(data)=>{
-              this.user.dateType = data.dateType
-              this.user.birthday = data.birthday
-              this.user.dieDay = data.dieDay
-              this.user.birthdayStr = data.birthdayStr
-              this.user.dieDayStr = data.dieDayStr
+              this.user.calType = data.calType
+              if (data.birthday !== undefined){
+                this.user.birthday = data.birthday
+                this.user.birthdayStr = data.birthdayStr
+              }
+              if (data.dieDay !== undefined){
+                this.user.dieDay = data.dieDay
+                this.user.dieDayStr = data.dieDayStr
+              } 
             }
           })
         },

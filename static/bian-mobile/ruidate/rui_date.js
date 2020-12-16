@@ -322,12 +322,12 @@ window.ruiDatepicker = (function () {
                     '</div>' +
                     '<div class="date_class_box">' +
                     '<div class="date_btn lcalendar_cancel">取消</div>' 
-                    let dateType = '<div>'+
+                    let calType = '<div>'+
                     '<div class="date_class lcalendar_gongli">公历</div>' +
                     '<div class="date_class lcalendar_nongli">阴历</div>' +
                     '</div>'
-                    if (_self.options && _self.options.dateType && _self.options.dateType.show === false){
-                        dateType = '<div style="opacity: 0;">'+
+                    if (_self.options && _self.options.calType && _self.options.calType.show === false){
+                        calType = '<div style="opacity: 0;">'+
                         '<div class="date_class lcalendar_gongli">公历</div>' +
                         '<div class="date_class lcalendar_nongli">阴历</div>' +
                         '</div>'
@@ -354,7 +354,7 @@ window.ruiDatepicker = (function () {
                     '</div>' +
                     '</div>' +
                     '</div>'
-                    _self.gearDate.innerHTML = temp1 + dateType + temp2
+                    _self.gearDate.innerHTML = temp1 + calType + temp2
                 }
                 document.body.appendChild(_self.gearDate);
                 dateCtrlInit();
@@ -421,7 +421,7 @@ window.ruiDatepicker = (function () {
             }
             // 公历农历选择
             function convertTap(type) {
-                if (_self.options && _self.options.dateType && _self.options.dateType.show === false){
+                if (_self.options && _self.options.calType && _self.options.calType.show === false){
                     return
                 }
                 var nongli = _self.gearDate.querySelector(".lcalendar_nongli");
