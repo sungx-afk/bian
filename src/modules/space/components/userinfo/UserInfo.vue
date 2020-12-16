@@ -101,11 +101,11 @@
             notifyChecked:this.user.notifyStatus === 1,
             callback:(data)=>{
               this.user.calType = data.calType
-              if (data.birthday !== undefined){
+              if (data.birthday !== undefined && data.birthday !== null){
                 this.user.birthday = data.birthday
                 this.user.birthdayStr = data.birthdayStr
               }
-              if (data.dieDay !== undefined){
+              if (data.dieDay !== undefined && data.dieDay !== null){
                 this.user.dieDay = data.dieDay
                 this.user.dieDayStr = data.dieDayStr
               } 
