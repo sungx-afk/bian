@@ -69,6 +69,7 @@
           dieAddress: '',     //安葬地点
           sex: 0,
           avatarUrl: '',      //遗像地址
+          notifyStatus: 1
         }],
         numberTypeList:[
           { name: '单人', value: 0},

@@ -114,9 +114,13 @@
         let dieDaySelector = document.getElementById('dieday_selector')
         if (this.birthdayStr){
           birthdaySelector.value = this.birthdayStr
+        }else if (this.birthday){
+          birthdaySelector.value = timesToDate(this.birthday,'yyyy年MM月dd日')
         }
         if (this.dieDayStr){
           dieDaySelector.value = this.dieDayStr
+        }else if (this.birthday){
+          dieDaySelector.value = timesToDate(this.dieDay,'yyyy年MM月dd日')
         }
         
         new ruiDatepicker().init('#birthday_selector','',{calType:{show:false}});
@@ -125,7 +129,7 @@
       });
     },
     created(){
-      this.calType = this.calType !== undefined? this.calType : 0
+      this.calType = this.calType !== undefined && this.calType !== null? this.calType : 0
     }
   }
 </script>
