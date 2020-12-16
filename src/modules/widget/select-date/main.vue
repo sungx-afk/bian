@@ -10,12 +10,12 @@
         <div class="date-select-wrapper">
           <div class="date-input-wrapper">
             <span>出生日期：</span>
-              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" placeholder="请选择出生日期" :data-type="calType" :data-date="birthdayDate" /></input>
+              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" placeholder="请选择出生日期" :data-type="calType" :data-date="birthdayDate" readonly="readonly"/></input>
               <input type="hidden" id="birthday_input" name="birthday">
           </div>
           <div class="date-input-wrapper">
             <span>逝世日期：</span>
-              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" placeholder="请选择逝世日期" :data-type="calType" :data-date="dieDayDate" /></input>
+              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" placeholder="请选择逝世日期" :data-type="calType" :data-date="dieDayDate" readonly="readonly"/></input>
               <input type="hidden" id="dieday_input" name="dieday">
           </div>
         </div>
