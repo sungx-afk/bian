@@ -45,13 +45,13 @@ Vue.mixin({
           key:'preset_1',
           name:'葬礼进行曲',
           author:'崔雅宁',
-          url:"http://app01.yugusoft.com/ftask/api/file/down/PiAviztsce3R1thS8FTcVP.mp3"
+          url:"https://app01.yugusoft.com/ftask/api/file/down/PiAviztsce3R1thS8FTcVP.mp3"
         },
         {
           key:'preset_2',
           name:'大悲咒',
           author:'梵音',
-          url:"http://app01.yugusoft.com/ftask/api/file/down/AjE3v2qHBTWBNPje6ZikFk.mp3"
+          url:"https://app01.yugusoft.com/ftask/api/file/down/AjE3v2qHBTWBNPje6ZikFk.mp3"
         }
       ],
       currentBgmKey:'preset_1',
