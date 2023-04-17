@@ -1,0 +1,5 @@
+服务器移动端目录：/data/server/gitrepo/bian-mobile
+服务器官网目录：/root/index
+
+服务器ip：47.93.253.233
+
