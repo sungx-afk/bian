@@ -418,7 +418,7 @@ xxx`
           }
         },
         drawTip(){
-          let name = '彼岸天堂纪念'
+          let name = '彼岸思念'
           let nx =70
           let ny = this.posterH - 50
 

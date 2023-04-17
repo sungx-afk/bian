@@ -79,7 +79,7 @@
           //不是iOS的直接初始化分享
           if (!this.isIphone){
             let data = {
-              title: '彼岸天堂纪念',
+              title: '彼岸思念',
               success: () => { //你重置分享成功后的回调
 
               }
