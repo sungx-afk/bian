@@ -22,7 +22,7 @@
     </div>
     <div class="share-bottom">
       <img src="~@/modules/images/logo_gray.png" class="header">
-      <span class="text">爱，永存</span>
+      <span class="text">爱，永存!</span>
     </div>
   </div>
 </template>
