@@ -2,6 +2,8 @@
 import qs from 'qs'
 import config_server from '@/config/config'
 
+import {isIphone} from '@/config/utils'
+
 export function wechatShare(shareData) {
   return new Promise(async function(resolve, reject) {
     try {
@@ -25,7 +27,13 @@ export function wechatShare(shareData) {
       let data = { ...defaultData, ...shareData }
       //等待后台返回签名
       let url = window.location.href
+
+      //iOS的真实url为第一次进入页面的url或者刷新后页面的url，所以直接用entryUrl来更新签名url
+      if (isIphone()){
+        url = global.entryUrl
+      }
       console.log("auth signature url:",url)
+
       let ret = await getJsAuthSignature(url)
       //后台返回成功后，配置微信的API
       let config = Object.assign({

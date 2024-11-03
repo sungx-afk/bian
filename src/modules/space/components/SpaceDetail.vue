@@ -306,8 +306,8 @@
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.updateSpaceDetail)
       },
       initShare(){
-        //try 20241103 sungx:打开限制
-        if (!isIphone() || true){
+        //try 20241103 sungx:打开限制，不再限制iPhone
+        if (true){
           let extra = {}
           extra.origin_from = 'space_detail'
           extra.invite_user_id = this.user.id
