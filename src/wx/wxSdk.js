@@ -33,11 +33,20 @@ export function wechatShare(shareData) {
         url = global.entryUrl
       }
       console.log("auth signature url:",url)
+ 
+      let debugFlag = false
+      // if (shareData.extra.invite_user_id == '100663' || shareData.extra.invite_user_id == '101592' || shareData.extra.invite_user_id == '101812'){
+      //   alert("url:" + url)
+      //   alert("global.entryUrl:" + global.entryUrl)
+      //   alert("location.href:" + location.href)
+      //   debugFlag = true
+      // }
 
       let ret = await getJsAuthSignature(url)
+   
       //后台返回成功后，配置微信的API
       let config = Object.assign({
-        debug: false,
+        debug: debugFlag,
         jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData']
       }, {
         appId: ret.appid, //公众号的唯一标识
