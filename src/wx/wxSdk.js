@@ -29,15 +29,15 @@ export function wechatShare(shareData) {
       let url = window.location.href
 
       //iOS的真实url为第一次进入页面的url或者刷新后页面的url，所以直接用entryUrl来更新签名url
-      if (isIphone()){
-        url = global.entryUrl
+      if (isIphone() && window.entryUrl){
+        url = window.entryUrl
       }
       console.log("auth signature url:",url)
  
       let debugFlag = false
       // if (shareData.extra.invite_user_id == '100663' || shareData.extra.invite_user_id == '101592' || shareData.extra.invite_user_id == '101812'){
       //   alert("url:" + url)
-      //   alert("global.entryUrl:" + global.entryUrl)
+      //   alert("window.entryUrl:" + window.entryUrl)
       //   alert("location.href:" + location.href)
       //   debugFlag = true
       // }

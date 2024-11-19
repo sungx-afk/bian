@@ -37,8 +37,8 @@ import constant from '@/config/constant'
 
 import {mapGetters} from 'vuex';
 
-if (global.entryUrl === 'undefined' || global.entryUrl === '') {
-  global.entryUrl = window.location.href.split('#')[0];
+if (window.entryUrl === 'undefined' || window.entryUrl === '') {
+  window.entryUrl = window.location.href.split('#')[0];
 }
 
 Vue.mixin({
