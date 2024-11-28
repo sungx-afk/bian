@@ -252,6 +252,11 @@
               name: '处理举报',
             })
           }
+
+          this.menuList.push({
+            id:'account',
+            name: '账号ID: ' + this.user.id,
+          })
         }
         this.isShowMoreMenu = true
       },
