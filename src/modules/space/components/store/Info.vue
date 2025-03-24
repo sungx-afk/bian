@@ -2,12 +2,12 @@
   <div class="info-container">
     <div class="header">
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
-      <div class="header-text">彼岸云纪念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思。</div>
+      <div class="header-text">彼岸思念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思</div>
     </div>
     <div class="content">
-      <div class="menu-area">
-        <van-cell title="自定义挽联" :is-link="isSpaceCreator" @click.stop="enterCouplets"></van-cell>
-        <van-cell title="自定义主题" :is-link="isSpaceCreator" @click.stop="showThemes=true"></van-cell>
+      <div class="menu-area" v-if="isSpaceCreator">
+        <van-cell title="自定义挽联" :is-link="true" @click.stop="enterCouplets"></van-cell>
+        <van-cell title="自定义主题" :is-link="true" @click.stop="goSwitchTheme"></van-cell>
       </div>
       <div class="charge-area">
         <van-cell-group :title="chargeTitle">
@@ -28,7 +28,7 @@
         <p class="label">逝者已矣，生者如斯</p>
         <p>到访人次：<span class="num">{{space.visitedTimes}}</span>
           <i class="iconfont icon-wenhao" @click="goShowVisitedTip"></i>
-          <span @click="goViewVisitedLog" class="view-log">查看记录 ></span>
+          <span v-if="isSpaceCreator" @click="goViewVisitedLog" class="view-log">查看记录 ></span>
         </p>
         <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
       </div>
@@ -123,7 +123,7 @@
             }else if (!this.supportPay){
               result = ''
             }else {
-              result = '以下为支付运营成本的部分收费服务，感谢您的支持。'
+              result = '以下是为支付运营成本的收费服务，感谢您的支持'
             }
           }
           return result
@@ -176,6 +176,9 @@
           }
           Link(`/store/couplets?space_id=${this.spaceId}`)
         },
+        goSwitchTheme(){
+          this.showThemes = true
+        },
         updateInfo(){
           this.getDetail()
         },
@@ -186,15 +189,15 @@
             point:60
           },{
             id:'package-xiang-zhu',
-            name:'香烛长燃（1年）',
+            name:'香烛长燃（1 年）',
             point:660
           },{
             id:'package-gua-guo',
-            name:'瓜果贡品（7天）',
+            name:'瓜果贡品（7 天）',
             point:9
           },{
             id:'package-jiu-xi',
-            name:'酒席（7天）',
+            name:'酒席（7 天）',
             point:50
           }]
           if (this.supportPay){
@@ -222,7 +225,7 @@
           let that = this;
           if (this.space){
             if (this.space.currentUser.point < product.point){
-              this.$toast("余额不足，请先进行充值")
+              this.$toast("余额不足，请先充值")
               return
             }
             let productId = product.id
@@ -307,10 +310,9 @@
       flex-direction: column;
       overflow-y: auto;
       .menu-area{
-
+        margin-bottom: 12px;
       }
       .charge-area{
-        margin-top: 12px;
         background: @BG_WHITE;
         .van-cell-group__title{
           color: @FONT_SECOND_COLOR;
