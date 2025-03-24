@@ -235,7 +235,7 @@
           name: '创建纪念馆',
         }, {
             id:'meeting',
-            name: '云追悼会',
+            name: '云追悼会（讣告）',
           }]
         if (config_server.supportFeedback){
           this.menuList.push({

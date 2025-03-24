@@ -152,7 +152,7 @@
           })
           if (this.isSpaceCreator){
             this.actions.push({
-              name: '发起云追悼会',
+              name: '发起云追悼会（讣告）',
               id:'meeting',
               data:user
             })
