@@ -74,13 +74,9 @@
         initContainerHeight(){
           this.containerHeight = document.body.clientHeight - 44
         },
-        getVisitorList(start){
+        getVisitorList(start = 0){
           let that = this
           let limit = LIMIT
-
-          if (start === undefined){
-            start = 0
-          }
           $API.space.getSpaceVisitorList({
               sid:that.space.id,
               start,

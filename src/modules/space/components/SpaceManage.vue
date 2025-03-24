@@ -1,18 +1,18 @@
 <template>
   <div class="space-manage-container">
     <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
-      <van-tab title="记录">
+      <van-tab title="记录" v-if="false">
         <template v-if="tabActive === 0">
           <event :space.sync="detail"></event>
         </template>
       </van-tab>
       <van-tab title="访客列表">
-        <template v-if="tabActive === 1">
+        <template v-if="tabActive === 0 && detail">
           <visitor :space.sync="detail"></visitor>
         </template>
       </van-tab>
       <van-tab title="设置">
-        <template v-if="tabActive === 2">
+        <template v-if="tabActive === 1 && detail">
           <setting :space.sync="detail"></setting>
         </template>
       </van-tab>
