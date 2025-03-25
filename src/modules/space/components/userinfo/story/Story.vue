@@ -28,7 +28,7 @@
         </van-cell>
       </van-list>
     </template>
-    <div class="add-btn" @click.stop="goNewStory">
+    <div class="add-btn" v-if="canNewStory" @click.stop="goNewStory">
       <img class="add-image" src="~@/modules/images/float_add_btn.png"/>
     </div>
     <van-popup
@@ -92,6 +92,9 @@ export default {
       }
       return result
     },
+    canNewStory(){
+      return this.isSpaceCreator
+    }
   },
   watch: {},
   methods: {
