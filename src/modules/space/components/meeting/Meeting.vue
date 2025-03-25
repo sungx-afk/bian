@@ -324,7 +324,7 @@ xxx`
           return new Promise((resolve,reject)=>{
             let img = new Image()
             img.setAttribute("crossOrigin",'Anonymous');
-            img.src = 'https://static-app01.yugusoft.com/bian/fugao2_bg.png'
+            img.src = 'https://static-app01.yugusoft.com/bian/fugao3_bg.png'
 
             img.onload = ()=>{
               this.context.drawImage(img,0,0,this.posterW, this.posterH)
@@ -336,7 +336,7 @@ xxx`
         drawTitle(){
           let title = '讣告'
           let tx = (this.posterW - 20)/2 - 10
-          let ty = 50
+          let ty = 30
           let fontSize = 18
           if (this.ratio > 1){
             fontSize = 20
@@ -353,7 +353,7 @@ xxx`
           let lw = 80
           let lh = 102
           let lx = (this.posterW - lw)/2
-          let ly = 60
+          let ly = 50
 
           let that = this
 
@@ -368,9 +368,9 @@ xxx`
         },
         drawContent(){
           if (this.deathNotice){
-            let fontSize = 14
+            let fontSize = 12
             if (this.ratio > 1){
-              fontSize = 16
+              fontSize = 14
             }
             this.context.font = fontSize + FONT
             this.context.fillStyle = MAIN_COLOR
@@ -384,9 +384,9 @@ xxx`
             for (let i = 0; i < lines.length; i++) {
               let line = lines[i]
               let x = 40/2
-              let y = 30 + prevY
+              let y = 22 + prevY
               let maxWidth = this.posterW - 40
-              let lineHeight = 30
+              let lineHeight = 22
 
               prevY = this.drawMultiLine(this.context,line,x,y,maxWidth,lineHeight)
             }
