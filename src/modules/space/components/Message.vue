@@ -7,7 +7,7 @@
       :style="{ height: '300px' }">
       <div class="message-wrapper">
         <div class="product" v-if="product">
-          <span>{{product.name}} ({{product.duration}})</span><span v-if="supportPay">: {{product.point}} 云币</span>
+          <span>{{product.name}} （{{product.duration}}）</span><span v-if="showPoint">： {{product.point}} 云币</span>
         </div>
         <div class="message">
           <van-field
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+   import {mapGetters,mapActions} from 'vuex';
     export default {
       name: "Message",
       props:{
@@ -59,6 +60,10 @@
         }
       },
       computed:{
+        ...mapGetters({
+          user: 'userStore/user',
+          space:'spaceStore/spaceDetail'
+        }),
         placeholder(){
           let result = '请输入您想说的（选填，填写内容后会发送一则留言）'
 
@@ -70,6 +75,12 @@
         },
         supportPay(){
           return config_server.supportPay
+        },
+        isVipSpace(){
+          return this.space && this.space.vip == 1
+        },
+        showPoint(){
+          return this.supportPay && !this.isVipSpace
         }
       },
       methods:{

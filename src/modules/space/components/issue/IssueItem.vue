@@ -121,6 +121,13 @@
             </div>
           </div>
         </div>
+        <div v-else-if="item.photos.length > 0">
+          <div class='photo-view'>
+            <div class='photo' v-for="(photo,index) in item.photos" :key='photo.url'  @click.stop='imagePressed(index)'>
+              <img class='photo-image' :src='photo.thumbnailUrl || photo.url' />
+            </div>
+          </div>
+        </div>
       </div>
     </template>
 
@@ -292,7 +299,7 @@
         position: relative;
         align-items:center;
         .date {
-          color:#aaaaaa;
+          color:@FONT_FOUR_COLOR;
           font-size:12px;
         }
         .comment-reply {
@@ -658,6 +665,26 @@
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+      }
+    }
+    .photo-view{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      .photo{
+        width: 30%;
+        height: 0; //保持和宽度一样
+        padding-bottom: 30%;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        position: relative;
+        .photo-image{
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
         }
       }
     }

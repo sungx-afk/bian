@@ -166,6 +166,28 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  getSpaceStoryList(sid,params,successCb, errorCb){
+    let url = `v2/subject/${sid}/comments?` + qs.stringify(params, {indices: false})
+    $axios.get(url).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
+  getSpaceStoryDetail({sid,cid},successCb, errorCb){
+    $axios.get(`/subject/${sid}/comments/${cid}`).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
+  deleteSpaceStory({sid,cid},successCb, errorCb){
+    $axios.delete(`/subject/${sid}/comments/${cid}`).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   addFriend({sid, userId}, successCb, errorCb) {
     $axios.post(`/spaces/${sid}/config/friends`, JSON.stringify([userId])).then(response => {
       successCb && successCb(response.data)

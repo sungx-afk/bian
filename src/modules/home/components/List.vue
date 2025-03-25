@@ -61,6 +61,7 @@
       v-model="showAction"
       :actions="actions"
       close-on-popstate
+      close-on-click-action
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
@@ -264,7 +265,7 @@
         if (item.isVisited){
           this.menuList = [ {
             id:'delete_visited',
-            name:'删除该访问记录',
+            name:'删除访问记录',
             data:item
           }]
         }

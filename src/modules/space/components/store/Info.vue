@@ -18,9 +18,17 @@
             <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
             <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
           </van-cell>
-          <van-cell v-for="product in products" :key="product.id">
-            <span>{{product.name}}</span>
-            <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{product.point > 0?product.point:'祭奠'}}</van-button>
+          <van-cell class="charge-cell" v-if="isVipSpace">
+            <span>当前馆为尊贵馆，各种祭奠物品免费</span>
+          </van-cell>
+          <van-cell class="product-cell" v-for="product in products" :key="product.id">
+            <div class="product-top">
+              <span>{{product.name}}</span>
+              <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
+            </div>
+            <div class="product-bottom" v-if="product.tip">
+              <span class="product-tip">{{ product.tip }}</span>
+            </div>
           </van-cell>
         </van-cell-group>
       </div>
@@ -28,7 +36,7 @@
         <p class="label">逝者已矣，生者如斯</p>
         <p>到访人次：<span class="num">{{space.visitedTimes}}</span>
           <i class="iconfont icon-wenhao" @click="goShowVisitedTip"></i>
-          <span v-if="isSpaceCreator" @click="goViewVisitedLog" class="view-log">查看访客 ></span>
+          <span v-if="isSpaceCreator || true" @click="goViewVisitedLog" class="view-log">查看访客 ></span>
         </p>
         <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
       </div>
@@ -114,6 +122,9 @@
             result = true
           }
           return result
+        },
+        isVipSpace(){
+          return this.space && this.space.vip == 1
         },
         chargeTitle(){
           let result = ''
@@ -213,6 +224,15 @@
               point:999
             })
           }
+          //不是尊贵馆，增加对应的VIP购买
+          if (!this.isVipSpace){
+            this.products.unshift({
+              id:'item-space-vip',
+              name:'尊贵馆',
+              tip:'对来访所有人员，各种祭奠物品免费。按年支付，方便祭奠',
+              point:2999
+            })
+          }
           if (this.space.type === 2 || !this.supportPay){
             this.products = this.products.map(item=>{
               let o = item
@@ -221,10 +241,17 @@
             })
           }
         },
+        buyProductBtnText(product){
+          let result = '祭奠'
+          if (!this.isVipSpace && product.point > 0){
+            result = product.point
+          }
+          return result
+        },
         buyProduct(product){
           let that = this;
           if (this.space){
-            if (this.space.currentUser.point < product.point){
+            if (!this.isVipSpace && this.space.currentUser.point < product.point){
               this.$toast("余额不足，请先充值")
               return
             }
@@ -232,16 +259,25 @@
             let spaceId = this.spaceId
             $API.space.buy({productId,spaceId},rsp=>{
               if (this.supportPay){
-                this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
-                this.space.currentUser.point = this.space.currentUser.point - product.point
+                if (this.isVipSpace){
+                  this.$toast(`已祭奠${product.name}`)
+                }else{
+                  this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
+                  this.space.currentUser.point = this.space.currentUser.point - product.point
+                }
               }else {
                 this.$toast(`已祭奠${product.name}`)
               }
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
-              setTimeout(()=>{
-                that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
-                // this.$router.back()
-              }, 1500);
+              if (productId == 'item-space-vip'){
+                //这里获取一次详情？
+                this.updateInfo()
+              }else{
+                setTimeout(()=>{
+                  that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
+                  // this.$router.back()
+                }, 1500);
+              }
             },error=>{
               this.$toast("购买失败，请稍后重试")
             })
@@ -271,7 +307,6 @@
           if (query.space_id){
             this.spaceId = query.space_id
             this.getDetail((resp) => {
-              console.log(resp);
               this.initProducts()
             })
           }
@@ -336,6 +371,24 @@
             margin-left: auto;
             color: @SECOND_THEME_COLOR;
             border: 1px solid @SECOND_THEME_COLOR;
+          }
+        }
+        .product-cell{
+          .van-cell__value{
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .product-top{
+            width: 100%;
+            display: flex;
+            align-items: center;
+          }
+          .product-bottom{
+            margin-top: 4px;
+            .product-tip{
+              font-size: 12px;
+              color: @FONT_THIRD_COLOR;
+            }
           }
         }
       }

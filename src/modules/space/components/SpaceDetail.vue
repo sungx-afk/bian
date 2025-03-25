@@ -29,6 +29,7 @@
           v-model="showAction"
           :actions="actions"
           close-on-popstate
+          close-on-click-action
           @select="onActionSelect"
           @click-overlay="onActionClose">
         </van-action-sheet>
@@ -225,7 +226,7 @@
           name:'祭拜'
         },{
           id:'message',
-          name:'留言'
+          name:'留言板'
         },{
           id:'secret',
           name:'私语'

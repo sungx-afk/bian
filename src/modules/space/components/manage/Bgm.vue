@@ -50,6 +50,7 @@
       v-model="showAction"
       :actions="actions"
       close-on-popstate
+      close-on-click-action
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>

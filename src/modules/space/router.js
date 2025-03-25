@@ -31,6 +31,8 @@ const Report = () => import(/* webpackChunkName: "report" */ './components/repor
 const Theme = () => import(/* webpackChunkName: "theme" */ './components/theme/Theme')
 const Summary = () => import(/* webpackChunkName: "summary" */ './components/userinfo/UserSummary')
 
+const StoryDetail = () => import(/* webpackChunkName: "story-detail" */ './components/userinfo/story/StoryDetail')
+
 const routes = [
   {
     path: '/space', component: Space,
@@ -74,6 +76,10 @@ const routes = [
       {
         path: 'summary',
         component: Summary
+      },
+      {
+        path: 'story/:id',
+        component: StoryDetail
       }
     ]
   },

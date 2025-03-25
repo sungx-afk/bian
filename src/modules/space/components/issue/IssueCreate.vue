@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="tip">尊重逝者，请谨慎留言。</div>
+    <div class="tip">尊重逝者，请谨慎留言</div>
     <div class="bottom-button">
       <van-button type="default" @click="clickConfirm" size="large">确定</van-button>
     </div>
@@ -43,7 +43,7 @@
       methods:{
         afterRead(photo){
           //做特殊处理，微信图片没有后缀，也拿不到type，data格式中也没有类型，默认jpeg
-          if (!photo.type && photo.content.indexOf('data:;base64,') >= 0){
+          if (!photo.type && photo.content && photo.content.indexOf('data:;base64,') >= 0){
             photo.content = photo.content.replace(/^data:;base64,/, "data:image/jpeg;base64,");
           }
         },
@@ -59,7 +59,7 @@
             duration: 0,       // 持续展示 toast
             forbidClick: true, // 禁用背景点击
             loadingType: 'spinner',
-            message: '发布中'
+            message: '发布中...'
           })
           let files = this.selectPhotos.map(item=>{
             let file = {}

@@ -206,7 +206,7 @@
               Link(`/space/create?space_id=${this.space.id}`)
               break
             case 'style':
-              Link(`/space/theme?theme_id=${this.space.themeId}&space_id=${this.space_id}`)
+              Link(`/space/theme?theme_id=${this.space.themeId}&space_id=${this.space.id}`)
               break
             case 'report':
               Link(`/report?type=space&subject_id=${this.space.id}`)

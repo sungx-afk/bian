@@ -245,7 +245,10 @@
       },
       supportPay(){
         return config_server.supportPay
-      }
+      },
+      isVipSpace(){
+        return this.space && this.space.vip == 1
+      },
     },
     methods: {
       //购买，通用
@@ -308,7 +311,7 @@
       doDianlazu(){
         let that = this;
         this.buy('item-la-zu', () => {
-          if (this.space.type !== 2 && this.supportPay) {
+          if (this.space.type !== 2 && this.supportPay && !this.isVipSpace) {
             this.$notify({
               type: 'info',
               message: '-3云币',
@@ -347,7 +350,7 @@
       doFlower(){
         let that = this;
         this.buy('item-xuan-hua', () => {
-          if (this.space.type !== 2 && this.supportPay){
+          if (this.space.type !== 2 && this.supportPay && !this.isVipSpace){
             this.$notify({
               type:'info',
               message: '-9云币',
@@ -383,7 +386,7 @@
       doShaozhi(){
         let that = this;
         this.buy('item-zhi-qian', () => {
-          if (this.space.type !== 2 && this.supportPay) {
+          if (this.space.type !== 2 && this.supportPay && !this.isVipSpace) {
             this.$notify({
               type: 'info',
               message: '-8云币',
@@ -1470,7 +1473,6 @@
       console.log(this.spaceId);
       this.getSpaceDetail();
       this.registerEvent()
-      console.log("==========created==========")
     },
     mounted() {
       let that = this;
@@ -1481,7 +1483,6 @@
       setTimeout(function(){
         that.initZhuHuo();
       }, 1000);
-      console.log("==========mounted==========")
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)

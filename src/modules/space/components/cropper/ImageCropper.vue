@@ -60,7 +60,7 @@
       initImgData(){
         this.info = this.cropData
         //做特殊处理，微信图片没有后缀，也拿不到type，data格式中也没有类型，默认jpeg
-        if (!this.info.type && this.info.content.indexOf('data:;base64,') >= 0){
+        if (!this.info.type && this.info.content && this.info.content.indexOf('data:;base64,') >= 0){
           this.info.content = this.info.content.replace(/^data:;base64,/, "data:image/jpeg;base64,");
         }
       },
@@ -81,7 +81,7 @@
         info.lastModified = photo.file.lastModified
 
         //做特殊处理，微信图片没有后缀，也拿不到type，data格式中也没有类型，默认jpeg
-        if (!info.type && info.content.indexOf('data:;base64,') >= 0){
+        if (!info.type && info.content && info.content.indexOf('data:;base64,') >= 0){
           info.content = info.content.replace(/^data:;base64,/, "data:image/jpeg;base64,");
         }
 

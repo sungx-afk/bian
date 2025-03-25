@@ -11,7 +11,7 @@
       </template>
 
       <van-switch-cell
-        title="关闭访客留言"
+        title="关闭访客留言/评论"
         active-color="#825621"
         v-model="commentScopeCheck"
         @change="commentScopeChanged">

@@ -1,69 +1,35 @@
 <template>
   <div class="user-summary-container" :class="{'safe-navigator':safeNavigator}">
-    <template v-if="space && space.spaceUsers && space.spaceUsers.length > 0">
-      <van-collapse v-model="activeUserId">
-        <van-collapse-item v-for="user in space.spaceUsers" :key="user.id" :name="user.id" size="large">
-          <div slot="title" class="title-wrapper">
-            <div class="name">{{user.name}}</div>
-            <div class="iconfont icon-bianji" v-if="isSpaceCreator" @click.stop="goEditUser(user)"></div>
-          </div>
-          <div class="content-wrapper">
-            <div class="base-info">
-              <div class="date-info">
-                <span>出生：{{birthdayText(user)}}</span>
-                <span style="margin-left: 15px;">逝世：{{dieDayText(user)}}</span>
-              </div>
-              <div class="address-info">
-                出生地点：{{user.birthAddress || '未填写'}}
-              </div>
-              <div class="address-info">
-                安葬地点：{{user.dieAddress || '未填写'}}
-              </div>
-            </div>
-            <div class="summary-area">
-              <template v-if="user.summary && user.summary.length > 0">
-                <div class="title">生平介绍:</div>
-                <div class="summary">
-                  <van-field
-                    v-model="user.summary"
-                    autosize
-                    readonly
-                    type="textarea"
-                  />
-                </div>
-              </template>
-              <template v-else>
-                暂无生平介绍
-              </template>
-            </div>
-          </div>
-        </van-collapse-item>
-      </van-collapse>
-    </template>
-    <van-action-sheet
-      v-model="showAction"
-      :actions="actions"
-      close-on-popstate
-      @select="onActionSelect"
-      @click-overlay="onActionClose">
-    </van-action-sheet>
+    <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
+      <van-tab title="介绍">
+        <template v-if="tabActive === 0">
+          <Summary></Summary>
+        </template>
+      </van-tab>
+      <van-tab title="文章">
+        <template v-if="tabActive === 1">
+          <Story></Story>
+        </template>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {timesToDate,Link} from '@/config/utils'
-  import constant from '@/config/constant'
-  import ModifyText from '@/modules/widget/modify-text'
+  
+  import Summary from './Summary';
+  import Story from './story/Story';
 
     export default {
       name: "UserSummary",
+      components:{
+        Summary,
+        Story
+      },
       data(){
         return{
-          spaceId:'',
-          activeUserId:null,
-          showAction:false,
-          actions:[]
+          tabActive:0,
         }
       },
       computed:{
@@ -71,14 +37,6 @@
           user: 'userStore/user',
           space:'spaceStore/spaceDetail'
         }),
-        isSpaceCreator(){
-          let result = false
-          let currentUserId = this.user.id
-          if (this.space && currentUserId === this.space.creatorId){
-            result = true
-          }
-          return result
-        },
         safeNavigator(){
           let result = false
 
@@ -91,78 +49,12 @@
         }
       },
       methods:{
-        ...mapActions({
-          getSpaceDetail:'spaceStore/getSpaceDetail',
-          updateSpaceUser:'spaceStore/updateSpaceUser'
-        }),
-        birthdayText(user){
-          let result = '未填写'
-          if (user.birthdayStr){
-            result = user.birthdayStr
-          }else if (user.birthday){
-            result = timesToDate(user.birthday,'yyyy年MM月dd日')
-          }
-          return result
-        },
-        dieDayText(user){
-          let result = '未填写'
-          if (user.dieDayStr){
-            result = user.dieDayStr
-          }else if (user.dieDay){
-            result = timesToDate(user.dieDay,'yyyy年MM月dd日')
-          }
-          return result
-        },
-        goEditUser(user){
-          this.actions = [{
-            name: '逝者基本信息',
-            id:'base',
-            data:user
-          },{
-            name: '逝者生平',
-            id:'summary',
-            data:user
-          },]
-          this.showAction = true
-        },
-        modifySummary(user,summary){
-          user.summary = summary
-          this.updateSpaceUser({sid:this.space.id,user}).then(()=>{
+        onTabChange(e){
 
-          }).catch(()=>{
-            this.$toast('修改失败，请稍后重试')
-          })
-        },
-        onActionSelect(item){
-          this.showAction = false
-          let menu = item.id
-          let user = item.data
-          if (menu === 'base'){
-            localStorage.setItem(constant.KEY_EDIT_USER_INFO,JSON.stringify(user))
-            Link(`/user_edit?space_id=${this.space.id}&avatar_type=${this.space.combineImage}`)
-          }else if (menu === 'summary'){
-            ModifyText({
-              content:user.summary,
-              multiline:true,
-              placeholder:'请输入生平简介',
-              callback:data=>{
-                this.modifySummary(user,data)
-              }
-            })
-          }
-        },
-        onActionClose(){
-          this.showAction = false
-          this.actions = []
         },
       },
       created() {
-        if (this.space && this.space.spaceUsers){
-          this.activeUserId = []
-          this.space.spaceUsers.forEach(user=>{
-            this.activeUserId.push(user.id)
-          })
-        }
+        
       },
     }
 </script>
@@ -172,45 +64,10 @@
   .user-summary-container{
     height: 100%;
     overflow-y: auto;
-    background: @BG_WHITE;
+    background: @BG_GRAY2;
     padding-bottom: 100px;
     &.safe-navigator{
       padding-top: 40px;
-    }
-    .title-wrapper{
-      display: flex;
-      align-items: center;
-      .name{
-        font-size: 18px;
-        font-weight: bold;
-      }
-      .iconfont{
-        margin-left: 8px;
-      }
-    }
-    .content-wrapper{
-      font-size: 14px;
-      color: @FONT_THIRD_COLOR;
-      overflow-y: auto;
-      .base-info{
-        .date-info{
-          padding: 5px 0px;
-        }
-        .address-info{
-          padding: 5px 0px;
-        }
-      }
-      .summary-area{
-        margin-top: 10px;
-        .title{
-          margin-bottom: 10px;
-        }
-        .summary{
-          .van-field{
-            padding: 10px 0px;
-          }
-        }
-      }
     }
   }
 </style>

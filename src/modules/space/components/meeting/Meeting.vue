@@ -65,6 +65,8 @@
 
   import base64 from 'js-base64'
 
+  const MAIN_COLOR = '#FFFFFF' //#000000
+  const TIP_COLOR = '#FFFFFF' //#666666
   const FONT = "px bold Pingfang SC,STHeiti,Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,SimSun,sans-serif"
 
     export default {
@@ -309,19 +311,27 @@ xxx`
             loadingType: 'spinner',
             message: '生成图片中...'
           })
-          that.drawBg()
-          that.drawTitle()
-          that.drawAvatar()
-          that.drawContent()
-          that.drawLogo()
-          that.drawTip()
-          that.drawQrCode()
+          that.drawBg().then(()=>{
+            that.drawTitle()
+            that.drawAvatar()
+            that.drawContent()
+            that.drawLogo()
+            that.drawTip()
+            that.drawQrCode()
+          })
         },
         drawBg(){
-          this.context.fillStyle = '#ffffff'
-          this.context.fillRect(0, 0, this.posterW, this.posterH)
-          // this.context.fillStyle = '#ffffff'
-          // this.context.fillRect(8, 8, this.posterW - 16 , this.posterH - 16)
+          return new Promise((resolve,reject)=>{
+            let img = new Image()
+            img.setAttribute("crossOrigin",'Anonymous');
+            img.src = 'https://static-app01.yugusoft.com/bian/fugao2_bg.png'
+
+            img.onload = ()=>{
+              this.context.drawImage(img,0,0,this.posterW, this.posterH)
+              resolve()
+            }
+          })
+          
         },
         drawTitle(){
           let title = '讣告'
@@ -332,7 +342,7 @@ xxx`
             fontSize = 20
           }
           this.context.font = "bold " + fontSize + FONT
-          this.context.fillStyle = '#000000'
+          this.context.fillStyle = MAIN_COLOR
           this.context.fillText(title, tx, ty);
         },
         drawAvatar(){
@@ -363,7 +373,7 @@ xxx`
               fontSize = 16
             }
             this.context.font = fontSize + FONT
-            this.context.fillStyle = '#333333'
+            this.context.fillStyle = MAIN_COLOR
 
             let content = this.deathNotice
             let lines = content.split('\n')
@@ -428,7 +438,7 @@ xxx`
           }
           this.context.font = fontSize + FONT
 
-          this.context.fillStyle = '#000000'
+          this.context.fillStyle = MAIN_COLOR
 
           this.context.fillText(name, nx, ny);
 
@@ -436,13 +446,13 @@ xxx`
           let tx = 70
           let ty = this.posterH - 30
 
-          fontSize = 12
+          fontSize = 11
           if (this.ratio > 1){
-            fontSize = 14
+            fontSize = 12
           }
 
           this.context.font = fontSize + FONT
-          this.context.fillStyle = '#666666'
+          this.context.fillStyle = TIP_COLOR
           this.context.fillText(tip, tx, ty);
         },
         drawQrCode(){
@@ -622,7 +632,7 @@ xxx`
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: #FFFFFF;
+      // background-color: #FFFFFF;
       text-align: center;
       overflow: hidden;
       box-sizing: border-box;

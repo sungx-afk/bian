@@ -126,7 +126,7 @@
             return
           }
           if (this.canOperate){
-            let name = '删除该' + this.messageTypeText()
+            let name = '删除' + this.messageTypeText()
             this.menuList = [
               {
                 id:'delete_issue',
@@ -233,11 +233,11 @@
               this.menuList = [
                 {
                   id: 'reply_comment',
-                  name: '回复该评论',
+                  name: '回复评论',
                   data: data
                 },{
                   id: 'delete_comment',
-                  name: '删除该评论',
+                  name: '删除评论',
                   data: data.comment
                 }]
             }else {
@@ -245,7 +245,7 @@
               if (this.canComment){
                 this.menuList.push({
                   id: 'reply_comment',
-                  name: '回复该评论',
+                  name: '回复评论',
                   data: data
                 })
               }
@@ -306,7 +306,7 @@
           return result
         },
         deleteComment(comment){
-          let name = '删除该评论'
+          let name = '删除评论'
           this.menuList = [
             {
               id:'delete_comment',
