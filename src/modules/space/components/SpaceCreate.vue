@@ -435,7 +435,7 @@
           margin-right: 8px;
           .avatar{
             width: 80px;
-            height: 80px;
+            height: 103px;
             border-radius: 8px;
           }
         }

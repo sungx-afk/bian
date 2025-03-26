@@ -22,7 +22,7 @@
           <div class="title">讣告</div>
         </div>
         <div class="avatar-wrapper" v-if="avatarChecked">
-          <img :src="avatarUrl"  v-if="avatarUrl"/>
+          <img :class="{'gray':avatarGrayChecked}" :src="avatarUrl"  v-if="avatarUrl"/>
           <div v-else class="avatar-fake"></div>
           <div class="loading">
             <van-loading  v-if="uploadAvatarLoading" vertical color="#FFFFFF">上传中...</van-loading>
@@ -39,6 +39,7 @@
         </van-field>
         <div class="avatar-operate">
           <van-checkbox class="show-avatar" v-model="avatarChecked" name="avatar" shape="square" checked-color="#825621">显示遗像</van-checkbox>
+          <van-checkbox class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#825621">黑白照</van-checkbox>
           <template v-if="avatarChecked">
             <van-button class="switch-btn" size="small" v-if="showSwitchBtn" @click="switchAvatar">切换遗像</van-button>
             <van-uploader :after-read="afterSelectPhoto">
@@ -90,6 +91,7 @@
           avatarDrawDone:false,
           posterDone:false,
           avatarChecked:true,
+          avatarGrayChecked:true,
           avatarUrl:'',
           uploadAvatarLoading:false
         }
@@ -362,7 +364,24 @@ xxx`
           img.src = this.avatarUrl
 
           img.onload = ()=>{
-            this.context.drawImage(img,lx,ly,lw, lh)
+            let ratio = this.ratio
+            let ctx = that.context
+            ctx.drawImage(img,lx,ly,lw, lh)
+            if (that.avatarGrayChecked){
+              const imgData = ctx.getImageData(lx * ratio, ly * ratio, lw * ratio, lh * ratio);
+              let pixels = imgData.data;
+              for(let i = 0 ;i < pixels.length; i += 4){
+                let r = pixels[i]
+                let g = pixels[i+1]
+                let b = pixels[i+2]
+                // 灰色
+                let gray = parseInt((r+g+b)/3)
+                imgData.data[i] = gray
+                imgData.data[i+1] = gray
+                imgData.data[i+2] = gray
+              }
+              ctx.putImageData(imgData, lx * ratio, ly * ratio);
+            }
             that.avatarDrawDone = true
           }
         },
@@ -562,6 +581,14 @@ xxx`
         img{
           width: 80px;
           height: 102px;
+          &.gray{
+            -webkit-filter: grayscale(100%);
+            -moz-filter: grayscale(100%);
+            -ms-filter: grayscale(100%);
+            -o-filter: grayscale(100%);
+            filter: grayscale(100%);
+            filter: gray;
+          }
         }
         .avatar-fake{
           width: 80px;
@@ -580,11 +607,14 @@ xxx`
         display: flex;
         align-items: center;
         padding: 20px;
-        .show-avatar{
+        .show-avatar,.avatar-gray{
           /deep/.van-checkbox__label{
             font-size: 13px;
             color: @FONT_THIRD_COLOR;
           }
+        }
+        .avatar-gray{
+          margin-left: 8px;
         }
         .switch-btn,.upload-btn{
           margin: 0px 8px;
