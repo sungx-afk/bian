@@ -235,9 +235,12 @@
           id:'create',
           name: '创建纪念馆',
         }, {
-            id:'meeting',
-            name: '云追悼会（讣告）',
-          }]
+          id:'meeting',
+          name: '云追悼会（讣告）',
+        },{
+          id:'account',
+          name: '账号信息',
+        }]
         if (config_server.supportFeedback){
           this.menuList.push({
             id:'feedback',
@@ -253,11 +256,6 @@
               name: '处理举报',
             })
           }
-
-          this.menuList.push({
-            id:'account',
-            name: '账号ID: ' + this.user.id,
-          })
         }
         this.isShowMoreMenu = true
       },
@@ -289,6 +287,9 @@
           case 'meeting':
             this.goMeetingIntro()
             break
+          case 'account':
+            this.goAccountCenter()
+            break
           case 'report':
             this.goReportHandle()
             break
@@ -300,6 +301,9 @@
       },
       goMeetingIntro(){
         Link(`/meeting_intro`)
+      },
+      goAccountCenter(){
+        Link(`/account`)
       },
       goReportHandle(){
         Link(`/report_handle/list`)
