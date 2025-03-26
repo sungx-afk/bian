@@ -27,7 +27,7 @@
         <div class="avatar-wrapper">
           <div class="avatar-preview" v-for="(avatar,index) in avatarUrls" :key="index">
             <van-uploader :after-read="afterSelectPhoto" :name="index">
-              <img class="avatar" :src="avatar.url" v-if="avatar.url"/>
+              <img class="avatar" :class="['avatar-type_' + avatarType]" :src="avatar.url" v-if="avatar.url"/>
             </van-uploader>
           </div>
         </div>
@@ -426,7 +426,7 @@
         }
       }
       .van-uploader{
-        padding: 8px 0px;
+        // padding: 8px 0px;
       }
       .avatar-wrapper{
         display: flex;
@@ -434,9 +434,13 @@
         .avatar-preview{
           margin-right: 8px;
           .avatar{
-            width: 80px;
-            height: 103px;
+            width: 62px;
+            height: 80px;
             border-radius: 8px;
+            &.avatar-type_1{
+              width: 124px;
+              height: 80px;
+            }
           }
         }
       }

@@ -355,6 +355,52 @@ export const base64decode=(str) =>{
     return out;
 };
 
+export const convertToGrayscale = (imgSourceData) =>{
+  return new Promise((resolve, reject) => {
+    // 创建 Image 对象
+    const img = new Image();
+    img.onload = () => {
+      // 创建 Canvas 元素
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 设置 Canvas 尺寸与图片一致
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // 将图片绘制到 Canvas
+      ctx.drawImage(img, 0, 0);
+
+      // 获取像素数据
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imgData.data;
+
+      for(let i = 0 ;i < pixels.length; i += 4){
+        let r = pixels[i]
+        let g = pixels[i+1]
+        let b = pixels[i+2]
+        // 灰色
+        let gray = parseInt((r+g+b)/3)
+        imgData.data[i] = gray
+        imgData.data[i+1] = gray
+        imgData.data[i+2] = gray
+      }
+
+      // 将处理后的像素数据写回 Canvas
+      ctx.putImageData(imgData, 0, 0);
+
+      // 转换为 Base64 并返回（默认 PNG 格式）
+      resolve(canvas.toDataURL());
+    };
+
+    // 错误处理
+    img.onerror = (error) => reject(error);
+    
+    // 开始加载图片
+    img.src = imgSourceData;
+  });
+}
+
 export const utf16to8=(str)=> {
     var out, i, len, c;
     out = "";

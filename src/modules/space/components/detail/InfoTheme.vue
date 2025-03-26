@@ -196,7 +196,7 @@
               Link(`/space/meeting/${this.space.id}`)
               break
             case 'setting':
-              Link(`/space/manage/${this.space.id}`)
+              Link(`/space/manage/${this.space.id}?active=setting`)
               break
             case 'add_friends':
             case 'space_detail':

@@ -1,18 +1,18 @@
 <template>
   <div class="space-manage-container">
     <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
-      <van-tab title="记录" v-if="false">
-        <template v-if="tabActive === 0">
+      <van-tab title="记录" name="event" v-if="false">
+        <template v-if="tabActive === 'event' && detail">
           <event :space.sync="detail"></event>
         </template>
       </van-tab>
-      <van-tab title="访客列表">
-        <template v-if="tabActive === 0 && detail">
+      <van-tab title="访客列表" name="visitor">
+        <template v-if="tabActive === 'visitor' && detail">
           <visitor :space.sync="detail"></visitor>
         </template>
       </van-tab>
-      <van-tab title="设置">
-        <template v-if="tabActive === 1 && detail">
+      <van-tab title="设置" name="setting">
+        <template v-if="tabActive === 'setting' && detail">
           <setting :space.sync="detail"></setting>
         </template>
       </van-tab>
@@ -34,7 +34,7 @@
       },
       data(){
         return{
-          tabActive:0,
+          tabActive:'visitor',
           spaceId:'',
           detail:null,
         }
@@ -57,7 +57,9 @@
       created() {
         if(this.$route.params.id){
           this.spaceId = this.$route.params.id
-          console.log(this.spaceId)
+          if (this.$route.query.active){
+            this.tabActive = this.$route.query.active
+          }
           this.getSpaceDetail()
           this.registerEvent()
         }
