@@ -13,7 +13,7 @@
 </template>
 
 <script>
-
+  import constant from '@/config/constant'
   import {mapGetters} from 'vuex'
     export default {
       name: "Charge",
@@ -55,6 +55,7 @@
             this.wechatPay(rsp).then((res)=>{
               if (res === 0){
                 this.$toast("充值成功")
+                eventHub.$emit(constant.EVENT_PAY_SUCCESS,item.point + item.giftPoint)
               }
             }).catch(error=>{
               this.$toast(error.errMsg)

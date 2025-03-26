@@ -60,6 +60,9 @@ const actions = {
   },
   updateRequestParams({commit, state},data){
     commit(types.UPDATE_REQUEST_PARAMS, data)
+  },
+  updateUserInfo({commit, state},user){
+    commit(types.UPDATE_USER_INFO, user)
   }
 }
 

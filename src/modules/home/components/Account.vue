@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import constant from '@/config/constant'
 import {mapGetters, mapActions} from 'vuex';
 import {Link} from '@/config/utils'
 
@@ -38,18 +39,32 @@ export default {
   },
   watch: {},
   methods: {
+    ...mapActions({
+      updateUserInfo: 'userStore/updateUserInfo',
+    }),
     goLogs(){
       Link(`/store/logs`)
     },
     charge(){
       Link(`/store/charge`)
     },
+    updateInfo(point){
+      console.error("updateInfo:",point)
+      let user = this.user
+      user.point += point
+      this.updateUserInfo(user)
+    },
+    registerEvent(){
+      eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
+    }
   },
   created () {
+    this.registerEvent()
   },
   mounted () {
   },
   beforeDestroy(){
+    eventHub.$off(constant.EVENT_PAY_SUCCESS,this.updateInfo)
   }
 }
 </script>

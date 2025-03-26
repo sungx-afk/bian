@@ -93,7 +93,8 @@ export function wechatPay(payData){
     try{
       let isWechat = navigator.userAgent.indexOf('MicroMessenger') > -1
       if(!isWechat) {
-        return resolve('您目前所处的并不是微信内置浏览器')
+        reject({errMsg:'您目前所处的并不是微信内置浏览器'})
+        return
       }
       let url = window.location.href
       console.log("auth signature url:",url)
