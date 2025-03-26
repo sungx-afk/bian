@@ -1,5 +1,6 @@
 <template>
   <div class="story-container">
+    <div class="sub-title">生平文章</div>
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -203,6 +204,15 @@ export default {
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .story-container{
+    .sub-title{
+      color: @FONT_FIRST_COLOR;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 12px 16px;
+      background: #ffffff;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
     .story-list{
       .item-wrapper{
         .item-top{

@@ -1,17 +1,7 @@
 <template>
   <div class="user-summary-container" :class="{'safe-navigator':safeNavigator}">
-    <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
-      <van-tab title="介绍">
-        <template v-if="tabActive === 0">
-          <Summary></Summary>
-        </template>
-      </van-tab>
-      <van-tab title="文章">
-        <template v-if="tabActive === 1">
-          <Story></Story>
-        </template>
-      </van-tab>
-    </van-tabs>
+    <Summary></Summary>
+    <Story></Story>
   </div>
 </template>
 
@@ -29,7 +19,7 @@
       },
       data(){
         return{
-          tabActive:0,
+          
         }
       },
       computed:{
@@ -49,9 +39,7 @@
         }
       },
       methods:{
-        onTabChange(e){
-
-        },
+        
       },
       created() {
         

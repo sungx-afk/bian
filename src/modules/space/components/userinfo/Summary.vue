@@ -1,7 +1,7 @@
 <template>
   <div class="summary-container" :class="{'safe-navigator':safeNavigator}">
     <template v-if="space && space.spaceUsers && space.spaceUsers.length > 0">
-      <van-collapse v-model="activeUserId">
+      <van-collapse v-model="activeUserId" accordion>
         <van-collapse-item v-for="user in space.spaceUsers" :key="user.id" :name="user.id" size="large">
           <div slot="title" class="title-wrapper">
             <div class="name">{{user.name}}</div>
@@ -62,7 +62,7 @@
       data(){
         return{
           spaceId:'',
-          activeUserId:null,
+          activeUserId:'',
           showAction:false,
           actions:[]
         }
@@ -156,14 +156,34 @@
           this.showAction = false
           this.actions = []
         },
-      },
-      created() {
-        if (this.space && this.space.spaceUsers){
-          this.activeUserId = []
-          this.space.spaceUsers.forEach(user=>{
-            this.activeUserId.push(user.id)
+        getStoryList(){ 
+          return new Promise((resovle,reject)=>{
+            let params = {
+              start:0,
+              limit:1,
+              type:'LIFE_EXPERIENCE'
+            }
+            $API.space.getSpaceStoryList(this.space.id,params,rsp=>{
+              resovle(rsp.total)
+            })
+          },error=>{
+
           })
         }
+      },
+      created() {
+        this.getStoryList().then((total)=>{
+          //如果有文章，就默认不打开介绍
+          if (total > 0){
+            return
+          }
+          if (this.space && this.space.spaceUsers){
+            this.activeUserId = ''
+            if (this.space.spaceUsers.length){
+              this.activeUserId = this.space.spaceUsers[0].id
+            }
+          }
+        })
       },
     }
 </script>
@@ -171,10 +191,10 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .summary-container{
-    height: 100%;
+    // height: 100%;
     overflow-y: auto;
     background: @BG_WHITE;
-    padding-bottom: 100px;
+    // padding-bottom: 100px;
     &.safe-navigator{
       padding-top: 40px;
     }
@@ -182,6 +202,7 @@
       display: flex;
       align-items: center;
       .name{
+        color: @FONT_FIRST_COLOR;
         font-size: 18px;
         font-weight: bold;
       }
