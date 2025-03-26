@@ -17,14 +17,14 @@
               <div class="item-content">
                 <div class="item-content-top">
                   <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
-                  <span>余额：{{item.after}}云币</span>
+                  <span>余额：{{item.after}} 云币</span>
                 </div>
                 <div class="item-content-bottom">
                   <span class="summary">{{item.summary}}</span>
                   <span class="change-point" :class="{recharge:item.type == 'RECHARGE'}">
                     <span v-if="item.type == 'CONSUME'"> -</span>
                     <span v-if="item.type == 'RECHARGE'"> +</span>
-                    {{item.change}}云币
+                    {{item.change}} 云币
                   </span>
 
 

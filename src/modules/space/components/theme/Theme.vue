@@ -219,14 +219,19 @@
         }
         .selected-wrapper{
           position: absolute;
-          right: 20px;
+          right: 16px;
           bottom: 40px;
 
           .selected{
             border-radius: 50%;
             background: rgba(130,86,33,1);
-            padding: 4px;
+            height: 22px;
+            width: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             .iconfont{
+              font-size: 13px;
               color: @FONT_WHITE_COLOR;
             }
           }

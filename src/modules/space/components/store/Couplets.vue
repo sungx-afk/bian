@@ -3,18 +3,18 @@
     <div class="wanlian-area">
       <van-field
         v-model="coupletsLeft"
-        label-width="50"
+        label-width="30"
         label="上联"
         maxlength="15"
-        placeholder="请输入上联"
+        placeholder="请输入上联，最多15个字"
       ></van-field>
 
       <van-field
         v-model="coupletsRight"
-        label-width="50"
+        label-width="30"
         label="下联"
         maxlength="15"
-        placeholder="请输入下联">
+        placeholder="请输入下联，最多15个字">
       </van-field>
     </div>
     <div class="bottom-button">

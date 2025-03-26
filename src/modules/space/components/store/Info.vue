@@ -50,22 +50,26 @@
       @open="mask=true"
       @closed="mask=false"
       @click.stop=""
-      :style="{ height: '100%' }"
-    >
+      :style="{ height: '100%' }">
       <div class="info">
         <van-icon name="info"/>
         请选择一个背景
       </div>
-      <div class="wrapper">
-        <van-image
-          v-for="(img, index) in backgrounds"
-          width="50vw"
-          height="65vw"
-          :key="img.id"
-          @click="themeId = img.id"
-          :class="{'right':index % 2 === 1, 'active':themeId == img.id}"
-          :src="img.url"
-        />
+      <div class="theme-wrapper">
+        <div class="theme" v-for="(img, index) in backgrounds">
+          <van-image
+            width="50vw"
+            height="65vw"
+            :key="img.id"
+            @click="themeId = img.id"
+            :class="{'right':index % 2 === 1, 'active':themeId == img.id}"
+            :src="img.url"/>
+          <div class="selected-wrapper" v-if="themeId == img.id">
+            <div class="selected">
+              <i class="iconfont icon-duigou1"></i>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="button-area">
         <van-button type="danger" block @click="changeThemeId">应用</van-button>
@@ -429,21 +433,42 @@
       }
     }
 
-    //
-
-
     &.mask {
       z-index: 999;
       opacity: 1;
     }
 
-    .wrapper {
+    .theme-wrapper {
       position: relative;
       width: 100%;
       height: 100%;
       overflow-y: auto;
       background: white;
       padding: 10px 0px;
+      display: flex;
+      flex-wrap: wrap;
+      .theme{
+        position: relative;
+        .selected-wrapper{
+          position: absolute;
+          right: 16px;
+          bottom: 10px;
+
+          .selected{
+            border-radius: 50%;
+            background: rgba(130,86,33,1);
+            height: 22px;
+            width: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .iconfont{
+              font-size: 13px;
+              color: @FONT_WHITE_COLOR;
+            }
+          }
+        }
+      }
       .van-image {
         box-sizing: border-box;
         padding: 5px 5px 0px 10px;
