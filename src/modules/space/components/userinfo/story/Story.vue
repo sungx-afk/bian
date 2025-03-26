@@ -210,8 +210,8 @@ export default {
       font-weight: bold;
       padding: 12px 16px;
       background: #ffffff;
-      border-top: 1px solid #eee;
-      border-bottom: 1px solid #eee;
+      border-top: 1px solid #ebedf0;
+      border-bottom: 1px solid #ebedf0;
     }
     .story-list{
       .item-wrapper{

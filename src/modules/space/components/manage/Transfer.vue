@@ -20,7 +20,7 @@
     <div class="transfer-copy-link">
       <div class="transfer-title" v-if="transferMember.length > 0">移交的人不在亲属里？</div>
       <span class="copy-link-tip">
-        请点击复制移交链接按钮，然后直接发送给好友，好友点击链接后该纪念馆创建信息会变为该好友信息。请不要将此链接发到聊天群，以免出现多人点击的情况。（此链接48小时过期）
+        请点击复制移交链接按钮，然后直接发送给好友，好友点击链接后该纪念馆创建信息会变为该好友信息。请不要将该链接发到聊天群，以免出现多人点击的情况。（链接48小时过期）
       </span>
       <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制移交链接</button>
     </div>

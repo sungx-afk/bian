@@ -54,6 +54,18 @@ export default {
       errorCb && errorCb(error)
     });
   },
+  getSpaceAllVisitorList({sid, start, limit}, successCb, errorCb) {
+    let param = {
+      start,
+      limit
+    }
+
+    $axios.get(`/spaces/${sid}/all-visited?` + qs.stringify(param, {indices: false})).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb && errorCb(error)
+    });
+  },
 
   updateBlacklist({sid, list}, successCb, errorCb) {
 
@@ -167,7 +179,7 @@ export default {
     })
   },
   getSpaceStoryList(sid,params,successCb, errorCb){
-    let url = `v2/subject/${sid}/comments?` + qs.stringify(params, {indices: false})
+    let url = `/v2/subject/${sid}/comments?` + qs.stringify(params, {indices: false})
     $axios.get(url).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {

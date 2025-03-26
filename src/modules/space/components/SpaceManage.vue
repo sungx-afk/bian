@@ -6,7 +6,7 @@
           <event :space.sync="detail"></event>
         </template>
       </van-tab>
-      <van-tab title="访客列表" name="visitor">
+      <van-tab title="到访人员" name="visitor">
         <template v-if="tabActive === 'visitor' && detail">
           <visitor :space.sync="detail"></visitor>
         </template>

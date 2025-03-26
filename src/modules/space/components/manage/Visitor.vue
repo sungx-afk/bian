@@ -14,11 +14,11 @@
           :key="item.id">
           <div class="list-item">
             <div class="left-content">
-              <img class="avatar" :src="item.user && item.user.avatarUrl" />
-              <div class="title">{{item.user && item.user.name}}</div>
-              <van-tag v-if="item.user && item.user.black" class="black-tag">黑名单用户</van-tag>
+              <img class="avatar" :src="item.avatarUrl" />
+              <div class="title">{{item.name}}</div>
+              <van-tag v-if="item.black" class="black-tag">黑名单用户</van-tag>
             </div>
-            <div class="right-content" @click.stop="showMoreMenu(item.user)" >
+            <div class="right-content" v-if="showMoreMenu(item)" @click.stop="goMoreMenu(item)" >
               <i class="more iconfont icon-gengduo"></i>
             </div>
           </div>
@@ -33,6 +33,7 @@
 
 <script>
   const LIMIT = 20
+  import {mapGetters} from 'vuex';
 
   import NoData from '@/modules/widget/space/NoData'
     export default {
@@ -58,6 +59,9 @@
         }
       },
       computed:{
+        ...mapGetters({
+          user: 'userStore/user',
+        }),
         finishedText(){
           let result = ''
 
@@ -74,33 +78,38 @@
         initContainerHeight(){
           this.containerHeight = document.body.clientHeight - 44
         },
+        showMoreMenu(item){
+          return item.id !== this.user.id
+        },
         getVisitorList(start = 0){
           let that = this
           let limit = LIMIT
-          $API.space.getSpaceVisitorList({
+          $API.space.getSpaceAllVisitorList({
               sid:that.space.id,
               start,
-              limit
+              limit:1000,//暂时没有分页
             }, rsp=>{
             that.loading = false
-            rsp = rsp.map(item=>{
+            let list = rsp
+            list = list.map(item=>{
               let o = item
-              let index = that.space.config.blackListIds.findIndex(id=>id === item.userId)
+              o.black = false
+              let index = that.space.config.blackListIds.findIndex(id=>id === item.id)
               if (index > -1){
-                o.user.black = true
+                o.black = true
               }
               return o
             })
             if (start === 0){
-              this.list = rsp
+              this.list = list
             }else{
-              this.list = this.list.concat(rsp)
+              this.list = this.list.concat(list)
             }
             that.noData = false
             if (that.list.length === 0){
               that.noData = true
               that.finished = true
-            }else if(rsp.length < limit){
+            }else if(list.length < limit){
               that.finished = true
             }
           },error=>{
@@ -115,7 +124,7 @@
             this.getVisitorList(start)
           }
         },
-        showMoreMenu(user){
+        goMoreMenu(user){
           if (user.black){
             this.menuList = [ {
               id:'moveout',
@@ -142,7 +151,7 @@
         moveToBlackList(user){
           let that = this
           this.$dialog.confirm({
-            message: '确定将此游客加入到黑名单吗？'
+            message: '确认将该到访人员加入黑名单吗？'
           }).then(() => {
             let blackListIds = that.space.config.blackListIds
             blackListIds.push(user.id)
@@ -151,9 +160,9 @@
                 sid:this.space.id,
                 list:blackListIds
               }, rsp=>{
-                let index = this.list.findIndex(some=>some.userId === user.id)
+                let index = this.list.findIndex(some=>some.id === user.id)
                 if (index > -1){
-                  this.list[index].user.black = true
+                  this.list[index].black = true
                 }
               }, error=>{
 
@@ -164,23 +173,29 @@
         },
         moveOutBlackList(user){
           let that = this
-          let blackListIds = that.space.config.blackListIds
-          let index = blackListIds.findIndex(id=>id === user.id)
-          if (index > -1){
-            blackListIds.splice(index,1)
-          }
-          $API.space.updateBlacklist({
-              sid:this.space.id,
-              list:blackListIds
-            }, rsp=>{
-              //找到对应的user，把black置为false
-              let index = this.list.findIndex(some=>some.userId === user.id)
-              if (index > -1){
-                this.list[index].user.black = false
-              }
-            }, error=>{
+          this.$dialog.confirm({
+            message: '确认将该到访人员移出黑名单吗？'
+          }).then(() => {
+            let blackListIds = that.space.config.blackListIds
+            let index = blackListIds.findIndex(id=>id === user.id)
+            if (index > -1){
+              blackListIds.splice(index,1)
+            }
+            $API.space.updateBlacklist({
+                sid:this.space.id,
+                list:blackListIds
+              }, rsp=>{
+                //找到对应的user，把black置为false
+                let index = this.list.findIndex(some=>some.id === user.id)
+                if (index > -1){
+                  this.list[index].black = false
+                }
+              }, error=>{
 
-            })
+              })
+          }).catch(() => {
+            // on cancel
+          })
         }
       },
       created() {

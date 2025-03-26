@@ -104,7 +104,7 @@
         deleteFriend(friend){
           let that = this
           this.$dialog.confirm({
-            message: '确定将此人移出亲属空间吗？'
+            message: '确认将该人员移出亲属空间吗？'
           }).then(() => {
             $API.space.deleteFriend({
                 sid:that.spaceId,
@@ -125,7 +125,7 @@
         moveToBlacklist(item){
           let that = this
           this.$dialog.confirm({
-            message: '确定将此人移出亲属空间并加入到黑名单吗？'
+            message: '确认将该人员移出亲属空间并加入到黑名单吗？'
           }).then(() => {
             let p1 = new Promise((resolve, reject) => {
               $API.space.deleteFriend({

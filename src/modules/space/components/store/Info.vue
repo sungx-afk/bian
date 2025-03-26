@@ -36,7 +36,7 @@
         <p class="label">逝者已矣，生者如斯</p>
         <p>到访人次：<span class="num">{{space.visitedTimes}}</span>
           <i class="iconfont icon-wenhao" @click="goShowVisitedTip"></i>
-          <span v-if="isSpaceCreator || true" @click="goViewVisitedLog" class="view-log">查看访客 ></span>
+          <span v-if="isSpaceCreator" @click="goViewVisitedLog" class="view-log">查看到访人员 ></span>
         </p>
         <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
       </div>
