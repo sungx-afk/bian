@@ -1,5 +1,5 @@
 <template>
-  <div class="summary-container" :class="{'safe-navigator':safeNavigator}">
+  <div class="summary-container">
     <template v-if="space && space.spaceUsers && space.spaceUsers.length > 0">
       <van-collapse v-model="activeUserId" accordion>
         <van-collapse-item v-for="user in space.spaceUsers" :key="user.id" :name="user.id" size="large">
@@ -78,16 +78,6 @@
           if (this.space && currentUserId === this.space.creatorId){
             result = true
           }
-          return result
-        },
-        safeNavigator(){
-          let result = false
-
-          let plat = getPlat()
-          if (plat === 'web'){
-            result = true
-          }
-
           return result
         }
       },
