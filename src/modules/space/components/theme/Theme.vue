@@ -4,14 +4,16 @@
       <van-tab title="预置" name="preset">
         <template v-if="tabActive === 'preset'">
           <div class="preset-theme-container">
-            <div v-for="theme in themes" :key="theme.uuid" class="theme-wrapper" @click="goSelectTheme(theme)">
-              <img class="image" :src="theme.url" />
-              <div class="name">
-                {{theme.name}}
-              </div>
-              <div class="selected-wrapper" v-if="selected === theme.uuid">
-                <div class="selected">
-                  <i class="iconfont icon-duigou1"></i>
+            <div class="theme-group" v-for="(group,index) in themes" :key="index">
+              <div v-for="theme in group" :key="theme.uuid" class="theme-wrapper" @click="goSelectTheme(theme)">
+                <img class="image" :src="theme.url" />
+                <div class="name">
+                  {{theme.name}}
+                </div>
+                <div class="selected-wrapper" v-if="selected === theme.uuid">
+                  <div class="selected">
+                    <i class="iconfont icon-duigou1"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -80,7 +82,14 @@
         space:'spaceStore/spaceDetail'
       }),
       themes(){
-        return this.getThemes()
+        let list = this.getThemes()
+        let groupSize = 3
+        let groupCount = list.length / 3
+        let groups = []
+        for (let i = 0; i < groupCount; i++){
+          groups.push(list.slice(i * groupSize, (i + 1) * groupSize))
+        }
+        return groups
       }
     },
     methods:{
@@ -197,42 +206,43 @@
     background: @BG_WHITE;
     overflow-y: auto;
     .preset-theme-container{
-      display: flex;
-      flex-wrap: wrap;
-      align-content: baseline;
-      flex-direction: row;
       overflow-y: auto;
-      .theme-wrapper{
+      .theme-group{
         display: flex;
-        flex-direction: column;
         align-items: center;
-        padding: 12px 8px;
-        position: relative;
-        .image{
-          width: 100px;
-          height: 120px;
-        }
-        .name{
-          font-size: 15px;
-          color: @FONT_THIRD_COLOR;
-          margin-top: 4px;
-        }
-        .selected-wrapper{
-          position: absolute;
-          right: 16px;
-          bottom: 40px;
+        justify-content: center;
+        .theme-wrapper{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 12px 8px;
+          position: relative;
+          .image{
+            width: 100px;
+            height: 120px;
+          }
+          .name{
+            font-size: 15px;
+            color: @FONT_THIRD_COLOR;
+            margin-top: 4px;
+          }
+          .selected-wrapper{
+            position: absolute;
+            right: 16px;
+            bottom: 40px;
 
-          .selected{
-            border-radius: 50%;
-            background: rgba(130,86,33,1);
-            height: 22px;
-            width: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            .iconfont{
-              font-size: 13px;
-              color: @FONT_WHITE_COLOR;
+            .selected{
+              border-radius: 50%;
+              background: rgba(130,86,33,1);
+              height: 22px;
+              width: 22px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              .iconfont{
+                font-size: 13px;
+                color: @FONT_WHITE_COLOR;
+              }
             }
           }
         }
