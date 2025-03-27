@@ -405,7 +405,7 @@
         Link(`/store/info?space_id=${this.spaceId}`)
       },
       goBack(){
-        this.$router.back()
+        Link(`/space/detail/${this.spaceId}`,{},true)
       },
       getSpaceDetail() {
         let that = this;

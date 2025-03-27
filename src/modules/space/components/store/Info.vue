@@ -38,7 +38,11 @@
           <i class="iconfont icon-wenhao" @click="goShowVisitedTip"></i>
           <span v-if="isSpaceCreator" @click="goViewVisitedLog" class="view-log">查看到访人员 ></span>
         </p>
-        <p>上香次数：<span class="num">{{space.worshipTimes}}</span></p>
+        <p>上香次数：<span class="num">{{space.worshipTimes || 0}}</span></p>
+        <p>点烛次数：<span class="num">{{space.lazuTimes || 0}}</span></p>
+        <p>纸钱次数：<span class="num">{{space.zhiQianTimes || 0}}</span></p>
+        <p>送花次数：<span class="num">{{space.huaTimes || 0}}</span></p>
+        <p>长明灯次数：<span class="num">{{space.dengTimes || 0}}</span></p>
       </div>
       <div class="view-history"><span @click="goLogs" v-if="supportPay">充值和扣费记录</span></div>
     </div>
@@ -280,7 +284,7 @@
                 setTimeout(()=>{
                   that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
                   // this.$router.back()
-                }, 1500);
+                }, 1000);
               }
             },error=>{
               this.$toast("购买失败，请稍后重试")
