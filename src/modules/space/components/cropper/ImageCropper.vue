@@ -19,6 +19,7 @@
         :mode="option.mode"
         :canScale="option.canScale"
         :fillColor="option.fillColor"
+        :outputSize="option.outputSize"
       ></vue-cropper>
     </template>
 
@@ -58,12 +59,14 @@
           centerBox: false,
           fixed: true,
           canScale:true,
-          fillColor:'#000000'
+          fillColor:'#000000',
+          outputSize:1
         }
         //普通模式情况下，头像应该是1:1，默认背景填充色是白色
         if (type == 'normal'){
           this.option.fillColor = '#ffffff'
           this.option.fixedNumber = [1, 1]
+          this.option.outputSize = 0.5
         }else if (type == 1){
           this.option.fixedNumber = [244, 157]
         }else {
