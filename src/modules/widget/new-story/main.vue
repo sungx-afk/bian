@@ -4,10 +4,12 @@
       <div class="new-story-box">
         <div class="input-area">
           <van-field class="name-input"
+            ref="name_input"
             v-model="name"
             size="large"
             required
-            placeholder="请输入文章标题">
+            placeholder="请输入文章标题"
+            maxlength="50">
           </van-field>
           <van-field
             v-model="content"
@@ -15,6 +17,7 @@
             type="textarea"
             placeholder="请输入文章内容"
             rows="10"
+            maxlength="5000"
             :autosize="{ maxHeight: 800, minHeight: 240 }">
           </van-field>
         </div>
@@ -183,6 +186,9 @@
     mounted() {
       this.$nextTick(() => {
         this.show = true;
+        setTimeout(() => {
+          this.$refs.name_input && this.$refs.name_input.focus()
+        }, 200);
       });
     },
     created(){

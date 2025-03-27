@@ -1,7 +1,7 @@
 <template>
   <div class="image-cropper-container">
     <div class="operate">
-      <van-checkbox class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#000000">黑白照</van-checkbox>
+      <van-checkbox v-if="avatar_type != 'normal'" class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#000000">黑白照</van-checkbox>
       <span @click.stop="cancel" class="btn">取消</span>
       <van-uploader :after-read="select">
         <span>重新选择</span>
@@ -39,6 +39,7 @@
     },
     data(){
       return{
+        avatar_type:'',
         info:null,
         option:null,
         avatarGrayChecked:true
@@ -59,14 +60,24 @@
           canScale:true,
           fillColor:'#000000'
         }
-        if (type == 1){
+        //普通模式情况下，头像应该是1:1，默认背景填充色是白色
+        if (type == 'normal'){
+          this.option.fillColor = '#ffffff'
+          this.option.fixedNumber = [1, 1]
+        }else if (type == 1){
           this.option.fixedNumber = [244, 157]
         }else {
           this.option.fixedNumber = [122, 157]
         }
       },
       initImgData(){
-        this.info = this.cropData
+        if (this.avatar_type == 'normal'){
+          this.info = global.jumpData
+          global.jumpData = null
+        }else{
+          this.info = this.cropData
+        }
+        
         //做特殊处理，微信图片没有后缀，也拿不到type，data格式中也没有类型，默认jpeg
         if (!this.info.type && this.info.content && this.info.content.indexOf('data:;base64,') >= 0){
           this.info.content = this.info.content.replace(/^data:;base64,/, "data:image/jpeg;base64,");
@@ -110,7 +121,12 @@
       }
     },
     created() {
-      this.initOptions(this.$route.query.avatar_type)
+      this.avatar_type = this.$route.query.avatar_type
+      //如果是普通模式，应该是用来选择用户头像的，不需要灰度
+      if (this.avatar_type == 'normal'){
+        this.avatarGrayChecked = false
+      }
+      this.initOptions(this.avatar_type)
       this.initImgData()
     }
   }

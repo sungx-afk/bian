@@ -4,7 +4,7 @@ const PublicList = () => import(/* webpackChunkName: "list" */ './components/Pub
 const Error = () => import(/* webpackChunkName: "error" */ './components/Error');
 const Notice = () => import(/* webpackChunkName: "notice" */ './components/Notice');
 const MeetingIntro = () => import(/* webpackChunkName: "meeting_intro" */ './components/MeetingIntro');
-const Account = () => import(/* webpackChunkName: "account" */ './components/Account');
+const UserCenter = () => import(/* webpackChunkName: "user-center" */ './components/UserCenter');
 
 const routes = [
 	{
@@ -26,7 +26,7 @@ const routes = [
     path: '/meeting_intro', component: MeetingIntro
   },
   {
-    path: '/account', component: Account
+    path: '/user_center', component: UserCenter
   },
 ]
 

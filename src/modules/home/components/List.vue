@@ -238,8 +238,8 @@
           id:'meeting',
           name: '云追悼会（讣告）',
         },{
-          id:'account',
-          name: '账号信息',
+          id:'user_center',
+          name: '个人信息',
         }]
         if (config_server.supportFeedback){
           this.menuList.push({
@@ -287,8 +287,8 @@
           case 'meeting':
             this.goMeetingIntro()
             break
-          case 'account':
-            this.goAccountCenter()
+          case 'user_center':
+            this.goUserCenter()
             break
           case 'report':
             this.goReportHandle()
@@ -302,8 +302,8 @@
       goMeetingIntro(){
         Link(`/meeting_intro`)
       },
-      goAccountCenter(){
-        Link(`/account`)
+      goUserCenter(){
+        Link(`/user_center`)
       },
       goReportHandle(){
         Link(`/report_handle/list`)

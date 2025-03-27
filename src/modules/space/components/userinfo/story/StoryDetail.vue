@@ -359,16 +359,12 @@ export default {
       .header-top{
         display: flex;
         align-items: center;
-        height: 25px;
         .name{
           font-size: 16px;
           font-weight: bold;
           width: 0;
           flex-grow: 1;
           margin-right: 12px;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
         }
         .operate-wrapper{
           margin-left: auto;

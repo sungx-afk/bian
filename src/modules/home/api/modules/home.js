@@ -46,4 +46,11 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  updateUserInfo({nickName,avatarUrl},successCb,errorCb){
+    $axios.patch(`/users/my`, {nickName,avatarUrl}).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  }
 }
