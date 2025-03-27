@@ -18,7 +18,7 @@
             placeholder="请输入文章内容"
             rows="10"
             maxlength="5000"
-            :autosize="{ maxHeight: 800, minHeight: 240 }">
+            :autosize="{ maxHeight: 400, minHeight: 240 }">
           </van-field>
         </div>
         <div class="media-area">

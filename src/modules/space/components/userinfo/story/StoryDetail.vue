@@ -394,12 +394,13 @@ export default {
     .content{
       margin-top: 20px;
       .story-content{
-        color:@FONT_SECOND_COLOR;
-        font-size:16px;
         height:100%;
         margin: 5px 0px;
-        word-wrap:break-word;
         .content-text{
+          font-size: 15px;
+          color:@FONT_SECOND_COLOR;
+          word-wrap:break-word;
+          text-align: justify;
           user-select: auto;
           -webkit-user-select:auto;
           -khtml-user-select:auto;
