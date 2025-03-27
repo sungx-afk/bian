@@ -39,8 +39,8 @@
         </van-field>
         <div class="avatar-operate">
           <van-checkbox class="show-avatar" v-model="avatarChecked" name="avatar" shape="square" checked-color="#825621">显示遗像</van-checkbox>
-          <van-checkbox class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#825621">黑白照</van-checkbox>
           <template v-if="avatarChecked">
+            <van-checkbox class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#825621">黑白照</van-checkbox>
             <van-button class="switch-btn" size="small" v-if="showSwitchBtn" @click="switchAvatar">切换遗像</van-button>
             <van-uploader :after-read="afterSelectPhoto">
               <van-button class="upload-btn" size="small">重新上传</van-button>
