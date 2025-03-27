@@ -337,6 +337,8 @@
         }).then(() => {
           this.setUserSetting({key:'public_space_close',value:'1'})
           this.showPublic = false
+        }).catch(()=>{
+          
         })
       },
       registerEvent(){

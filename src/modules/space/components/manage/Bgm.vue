@@ -262,6 +262,8 @@
                 this.editCustomIndex = -1
                 this.selectPresetBgm(this.presetBgm[0])
               })
+            }).catch(()=>{
+          
             })
           }
         },

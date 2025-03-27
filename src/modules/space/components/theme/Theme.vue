@@ -106,9 +106,15 @@
         }
       },
       goSelectTheme(theme){
-        this.selected = theme.uuid
-        eventHub.$emit(constant.EVENT_SELECT_THEME,theme)
-        this.$router.back()
+        this.$dialog.confirm({
+          message: '确认应用该预置样式吗？'
+        }).then(() => {
+          this.selected = theme.uuid
+          eventHub.$emit(constant.EVENT_SELECT_THEME,theme)
+          this.$router.back()
+        }).catch(()=>{
+          
+        })
       },
       configShow(option){
         let index = this.config.findIndex(item=> item == option)
