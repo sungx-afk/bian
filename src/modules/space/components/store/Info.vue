@@ -23,7 +23,7 @@
           </van-cell>
           <van-cell class="product-cell" v-for="product in products" :key="product.id">
             <div class="product-top">
-              <span>{{product.name}}</span>
+              <span :class="{'vip-product':product.id == 'item-space-vip'}">{{product.name}}</span>
               <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
             </div>
             <div class="product-bottom" v-if="product.tip">
@@ -400,6 +400,9 @@
             width: 100%;
             display: flex;
             align-items: center;
+            .vip-product{
+              font-weight: bold;
+            }
           }
           .product-bottom{
             margin-top: 4px;
