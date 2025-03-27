@@ -428,14 +428,17 @@ export default {
     /* 评论区 */
     .comment-area {
       width: 100%;
-      margin-top:5px;
+      margin-top:25px;
       display:flex;
       flex-direction:column;
+      border-top: 1px solid @BORDER_COLOR_3;
       .operate-area {
         height:44px;
         display:flex;
         position: relative;
         align-items:center;
+        justify-content: flex-end;
+        padding-right: 4px;
         .date {
           color:@FONT_FOUR_COLOR;
           font-size:12px;
