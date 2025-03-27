@@ -51,6 +51,7 @@ export default {
     return {
       name:'',
       avatarUrl:'',
+      oldName:'',
       isModifyName:false
     }
   },
@@ -130,6 +131,7 @@ export default {
       })
     },
     goModifyName(){
+      this.oldName = this.name
       this.isModifyName = true
       setTimeout(() => {
         this.$refs.name_input && this.$refs.name_input.focus()
@@ -137,6 +139,11 @@ export default {
     },
     nameChanged(){
       this.isModifyName = false
+      //和原来一致就返回
+      if (this.oldName == this.name){
+        this.oldName = ''
+        return
+      }
       $API.home.updateUserInfo({
         nickName:this.name
       },rsp=>{

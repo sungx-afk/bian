@@ -18,8 +18,8 @@
             <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
             <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
           </van-cell>
-          <van-cell class="charge-cell" v-if="isVipSpace">
-            <span>当前馆为尊贵馆，各种祭奠物品免费</span>
+          <van-cell class="charge-cell" v-if="supportPay && isVipSpace">
+            <span style="color: #825621;">当前馆为尊贵馆，各种祭奠物品免费</span>
           </van-cell>
           <van-cell class="product-cell" v-for="product in products" :key="product.id">
             <div class="product-top">
@@ -89,8 +89,8 @@
 
 <script>
   import constant from '@/config/constant'
+  import {mapGetters, mapActions} from 'vuex';
   import {Link} from '@/config/utils'
-  import {mapGetters} from 'vuex'
 
     export default {
       name: "Info",
@@ -152,6 +152,9 @@
         }
       },
       methods:{
+        ...mapActions({
+          updateSpaceDetail: 'spaceStore/updateSpaceDetail',
+        }),
         changeThemeId(e){
           let that = this;
           let spaceId = this.spaceId;
@@ -171,22 +174,26 @@
         charge(){
           Link(`/store/charge`)
         },
-        getDetail(cb){
-          if (!this.spaceId){
-            return
-          }
-          $API.space.getSpaceDetail({
-            sid: this.spaceId,
-          }, (rsp)=>{
-            this.space = rsp;
-            if (this.space.couplets){
-              this.themeId = (this.space.backgroundId||1);
-              this.coupletsLeft = this.space.couplets.left
-              this.coupletsRight = this.space.couplets.right
+        getDetail(){
+          return new Promise((resolve,reject)=>{
+            if (!this.spaceId){
+              reject()
+              return
             }
-            cb && cb()
-          }, error=>{
-
+            $API.space.getSpaceDetail({
+              sid: this.spaceId,
+            }, (rsp)=>{
+              this.space = rsp;
+              this.updateSpaceDetail(this.space)
+              if (this.space.couplets){
+                this.themeId = (this.space.backgroundId||1);
+                this.coupletsLeft = this.space.couplets.left
+                this.coupletsRight = this.space.couplets.right
+              }
+              resolve()
+            }, error=>{
+              reject(error)
+            })
           })
         },
         enterCouplets(){
@@ -199,7 +206,9 @@
           this.showThemes = true
         },
         updateInfo(){
-          this.getDetail()
+          this.getDetail().then(()=>{
+            this.initProducts()
+          })
         },
         initProducts(){
           this.products = [{
@@ -314,7 +323,7 @@
         if(query){
           if (query.space_id){
             this.spaceId = query.space_id
-            this.getDetail((resp) => {
+            this.getDetail().then(()=>{
               this.initProducts()
             })
           }
@@ -376,6 +385,7 @@
             background: @SECOND_THEME_COLOR;
           }
           .purchase-btn{
+            min-width: 64px;
             margin-left: auto;
             color: @SECOND_THEME_COLOR;
             border: 1px solid @SECOND_THEME_COLOR;

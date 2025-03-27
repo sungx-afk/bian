@@ -30,6 +30,9 @@ const actions = {
       })
     })
   },
+  updateSpaceDetail({commit,state},space){
+    commit(types.UPDATE_SPACE_DETAIL, space)
+  },
   updateSpaceUser({commit,state},{sid,user}){
     return new Promise((resolve, reject) => {
       $API.space.updateSpaceUser({sid, user}, rsp=>{
@@ -57,8 +60,15 @@ const actions = {
 // mutations
 const mutations = {
 
-  [types.GET_SPACE_DETAIL] (state,rsp){
-    let detail = rsp
+  [types.GET_SPACE_DETAIL] (state,space){
+    let detail = space
+    if (detail.customThemeId){
+      detail.customThemeId = JSON.parse(detail.customThemeId)
+    }
+    state.spaceDetail = detail
+  },
+  [types.UPDATE_SPACE_DETAIL] (state,space){
+    let detail = space
     if (detail.customThemeId){
       detail.customThemeId = JSON.parse(detail.customThemeId)
     }
