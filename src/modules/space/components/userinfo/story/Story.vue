@@ -23,7 +23,7 @@
             <div class="item-bottom">
               <!-- <img class="avatar" :src="item.creator && item.creator.avatarUrl || '~@/modules/images/default_header.png'" /> -->
               <div class="creator">{{item.creator && item.creator.name}}</div>
-              <div class="create-date">{{ item.createDate | timeAgo }}</div>
+              <div class="create-date">{{ item.createDate | timesToDate('yyyy-MM-dd HH:mm') }}</div>
             </div>
           </div>
         </van-cell>

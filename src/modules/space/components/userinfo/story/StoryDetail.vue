@@ -9,7 +9,7 @@
       </div>
       <div class="header-bottom">
         <div class="creator">{{ detail.creator.name }}</div>
-        <div class="create-date">{{ detail.createDate | timeAgo }}</div>
+        <div class="create-date">{{ detail.createDate | timesToDate('yyyy-MM-dd HH:mm') }}</div>
       </div>
     </div>
     <div class="content">
@@ -327,9 +327,15 @@ export default {
         data: data
       }, comment => {
         this.commentList.unshift(comment)
+        this.clearLastData()
       }, error => {
         console.log(error)
       })
+    },
+    clearLastData() {
+      this.postComment = false
+      this.currentComment = null
+      this.commentContent = ''
     },
   },
   created () {
