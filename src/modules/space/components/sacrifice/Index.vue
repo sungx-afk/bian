@@ -314,7 +314,7 @@
           if (this.space.type !== 2 && this.supportPay && !this.isVipSpace) {
             this.$notify({
               type: 'info',
-              message: '-3云币',
+              message: '-3 云币',
               color: '#825621',
               background: '#ffffff'
             });
@@ -353,7 +353,7 @@
           if (this.space.type !== 2 && this.supportPay && !this.isVipSpace){
             this.$notify({
               type:'info',
-              message: '-9云币',
+              message: '-9 云币',
               color: '#825621',
               background: '#ffffff'
             });
@@ -389,7 +389,7 @@
           if (this.space.type !== 2 && this.supportPay && !this.isVipSpace) {
             this.$notify({
               type: 'info',
-              message: '-8云币',
+              message: '-8 云币',
               color: '#825621',
               background: '#ffffff'
             });
