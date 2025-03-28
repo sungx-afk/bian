@@ -94,7 +94,18 @@ export default {
       return result
     },
     canNewStory(){
-      return this.isSpaceCreator
+      //馆主或者是亲属馆的亲友
+      let result = false
+      if (this.isSpaceCreator){
+        result = true
+      }else if (this.space && this.space.type === 0){
+        let index = this.space.config.friendIds.findIndex(item => item === this.user.id)
+        if (index > -1) { //找到了，那就说明是亲友
+          result = true
+        }
+      }
+
+      return result
     }
   },
   watch: {},

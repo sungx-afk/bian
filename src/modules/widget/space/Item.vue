@@ -59,10 +59,10 @@
     .operate {
       width: 60px;
       display: flex;
+      align-items: center;
       justify-content: flex-end;
       .more {
-        width: 20px;
-        height: 20px;
+        
       }
     }
   }

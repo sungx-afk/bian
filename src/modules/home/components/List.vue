@@ -611,7 +611,7 @@
           display:flex;
           align-items:center;
           height:30px;
-          padding:0 25px;
+          padding: 0px 20px 0px 25px;
           background:#eeeeee;
           .title{
             font-size: 12px;

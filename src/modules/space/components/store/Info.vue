@@ -45,6 +45,7 @@
         <p>纸钱次数：<span class="num">{{space.zhiQianTimes || 0}}</span></p>
         <p>送花次数：<span class="num">{{space.huaTimes || 0}}</span></p>
         <p>长明灯次数：<span class="num">{{space.dengTimes || 0}}</span></p>
+        <p class="create-info">本馆由 {{ space.creator.name }} 于 {{ space.createDate | timesToDate('yyyy-MM-dd HH:mm') }} 创建</p>
       </div>
       <div class="view-history"><span @click="goLogs" v-if="supportPay">充值和扣费记录</span></div>
     </div>
@@ -443,6 +444,11 @@
         .iconfont{
           color: @FONT_THIRD_COLOR;
           margin: 0px 12px;
+        }
+        .create-info{
+          margin-top: 12px;
+          font-size: 12px;
+          color: @FONT_FOUR_COLOR;
         }
         .view-log{
           color: @MAIN_THEME_COLOR;
