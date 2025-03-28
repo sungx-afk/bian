@@ -344,6 +344,7 @@
       registerEvent(){
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
+        eventHub.$on(constant.EVENT_EXIT_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_UPDATE_BGM_SUCCESS,this.updateSpaceBgm)
       },
       tryLogin(){
@@ -555,6 +556,7 @@
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
       eventHub.$off(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
+      eventHub.$off(constant.EVENT_EXIT_SPACE_SUCCESS,this.getSpaceList)
       eventHub.$off(constant.EVENT_UPDATE_BGM_SUCCESS,this.updateSpaceBgm)
     }
   }

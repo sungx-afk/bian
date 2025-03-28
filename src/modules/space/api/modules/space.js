@@ -215,6 +215,13 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  exitSpace({sid, userId},successCb, errorCb){
+    $axios.post(`/spaces/${sid}/config/friends?_method=delete&deleteVisited=1`, JSON.stringify([userId])).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   updateSpaceConfig({sid, viewScope, commentScope}, successCb, errorCb) {
 
     let param = {}

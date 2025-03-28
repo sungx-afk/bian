@@ -1,7 +1,10 @@
 <template>
   <div class="friends-container" v-if="space && space.config.friends">
     <div class="header">
-      <span class="count-info">亲属成员{{space.config.friends.length}}个</span>
+      <span class="count-info">
+        <template v-if="space.config.friends.length > 0">亲属成员 {{space.config.friends.length}} 个</template>
+        <template v-else>还未添加亲属成员</template>
+      </span>
       <div class='invite' @click.stop="goInviteFriends">
         马上去邀请 >
       </div>

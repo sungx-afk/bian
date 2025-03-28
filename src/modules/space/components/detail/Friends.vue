@@ -3,7 +3,10 @@
     <van-cell is-link class="members-cell" @click="goMemberManage" center>
       <div class="members-area" v-if="space">
         <div class="members-title">
-          亲属成员{{space.config.friends.length}}个
+          <template v-if="space.config.friends.length > 0">
+            亲属成员 {{space.config.friends.length}} 个
+          </template>
+          <template v-else>还未添加亲属成员</template>
         </div>
         <div class="members-body">
           <img class="member-avatar" v-for="item in space.config.friends" :key="item.id" :src="item.avatarUrl" />

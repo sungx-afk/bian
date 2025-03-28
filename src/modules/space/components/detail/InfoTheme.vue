@@ -122,6 +122,21 @@
           }
 
           return url
+        },
+        showExitSpace(){
+          //是创建者，不能退出纪念馆
+          if (this.isSpaceCreator){
+            return false
+          }
+          let result = false
+          //亲属馆才有退出一说
+          if (this.space && this.space.type === 0){
+            let index = this.space.config.friendIds.findIndex(item => item === this.user.id)
+            if (index > -1) { //找到了，那就说明是亲友
+              result = true
+            }
+          }
+          return result
         }
       },
       methods:{
@@ -172,7 +187,12 @@
               data:user
             })
           }
-
+          if (this.showExitSpace){
+            this.actions.push({
+              name: '退出纪念馆',
+              id:'exit'
+            })
+          }
           if (!this.isSpaceCreator){
             this.actions.push({
               name: '举报',
@@ -211,6 +231,9 @@
             case 'report':
               Link(`/report?type=space&subject_id=${this.space.id}`)
               break
+            case 'exit':
+              this.exitSpace()
+              break  
           }
         },
         onActionClose(){
@@ -229,6 +252,18 @@
 
           localStorage.setItem(constant.KEY_EXTRA_DATA,extra)
           Link(`/share`)
+        },
+        exitSpace(){
+          this.$dialog.confirm({
+            message: `确认退出该纪念馆吗?`
+          }).then(() => {
+            $API.space.exitSpace({sid:this.space.id,userId:this.user.id},rsp=>{
+              eventHub.$emit(constant.EVENT_EXIT_SPACE_SUCCESS,this.space.id)
+              this.$router.go(-1)
+            })
+          }).catch(() => {
+
+          })
         },
         goSummary(){
           Link(`/space/summary?space_id=${this.space.id}`)
