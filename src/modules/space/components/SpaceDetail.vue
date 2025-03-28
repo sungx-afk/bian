@@ -46,6 +46,12 @@
         </div>
       </template>
     </template>
+    <template v-else>
+      <div class="tip-wrapper" @click="goBackHome" v-if="tipContent">
+        <i class="iconfont icon-warn"></i>
+        <div class="content">{{tipContent}}</div>
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -260,6 +266,10 @@
         }
         this.getSpaceDetail({sid:this.spaceId,scene:this.scene,quiet:quiet?1:0}).then((rsp)=>{
           cb && cb()
+        }).catch((error)=>{     
+          if (error.message.indexOf('status code 404') != -1){
+            this.tipContent = '资源不存在'
+          }
         })
       },
       checkCanIn(space){
@@ -297,6 +307,9 @@
       },
       goBack(){
         this.$router.go(-1)
+      },
+      goBackHome(){
+        Link(`/list`,{},true)
       },
       goSacrifice(){
         Link(`/space/sacrifice/${this.spaceId}`)

@@ -15,10 +15,12 @@
             <span>账号ID：</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay">
-            <span>账号余额：</span><span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span><span>&nbsp;云币</span>
-            <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
+            <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;云币</div>
+            <div class="charge-btn-wrapper">
+              <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
+            </div>
           </van-cell>
-          <van-cell class="charge-cell" v-if="supportPay && isVipSpace">
+          <van-cell class="vip-cell" v-if="supportPay && isVipSpace">
             <span style="color: #825621;">当前馆为尊贵馆，各种祭奠物品免费</span>
           </van-cell>
           <van-cell class="product-cell" v-for="product in products" :key="product.id">
@@ -370,25 +372,33 @@
           color: @FONT_SECOND_COLOR;
         }
 
-        .account-cell,.charge-cell{
+        .account-cell,.charge-cell,.vip-cell{
           padding: 20px 15px;
         }
         .van-cell__value{
           display: flex;
           align-items: center;
-          .charge-remain{
-            font-weight: bold;
-          }
-          .charge-btn{
-            margin-left: auto;
-            color: @FONT_WHITE_COLOR;
-            background: @SECOND_THEME_COLOR;
-          }
           .purchase-btn{
             min-width: 64px;
             margin-left: auto;
             color: @SECOND_THEME_COLOR;
             border: 1px solid @SECOND_THEME_COLOR;
+          }
+        }
+        .charge-cell{
+          /deep/.van-cell__value{
+            flex-wrap: wrap;
+            justify-content: space-between;
+          }
+          .charge-remain-wrapper{
+            flex-shrink: 0;
+          } 
+          .charge-btn-wrapper{
+            flex-shrink: 0;
+            .charge-btn{
+              color: @FONT_WHITE_COLOR;
+              background: @SECOND_THEME_COLOR;
+            }
           }
         }
         .product-cell{

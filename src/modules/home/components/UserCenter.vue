@@ -27,8 +27,10 @@
         <span>账号ID：</span><span>{{user.id}}</span>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay">
-        <span>账号余额：</span><span class="charge-remain">{{user.point }}</span><span>&nbsp;云币</span>
-        <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
+        <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
+        <div class="charge-btn-wrapper">
+          <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
+        </div>
       </van-cell>
       <van-cell class="log-cell" v-if="supportPay" :is-link="true" @click.stop="goLogs">
         <span>充值和扣费记录</span>
@@ -215,10 +217,21 @@ export default {
         .charge-remain{
           font-weight: bold;
         }
-        .charge-btn{
-          margin-left: auto;
-          color: @FONT_WHITE_COLOR;
-          background: @SECOND_THEME_COLOR;
+      }
+      .charge-cell{
+        /deep/.van-cell__value{
+          flex-wrap: wrap;
+          justify-content: space-between;
+        }
+        .charge-remain-wrapper{
+          flex-shrink: 0;
+        } 
+        .charge-btn-wrapper{
+          flex-shrink: 0;
+          .charge-btn{
+            color: @FONT_WHITE_COLOR;
+            background: @SECOND_THEME_COLOR;
+          }
         }
       }
     }
