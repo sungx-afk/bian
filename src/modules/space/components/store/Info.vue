@@ -244,7 +244,7 @@
             })
           }
           //不是尊贵馆，增加对应的VIP购买
-          if (!this.isVipSpace){
+          if (!this.isVipSpace && this.space.type != 2){
             this.products.unshift({
               id:'item-space-vip',
               name:'尊贵馆',
