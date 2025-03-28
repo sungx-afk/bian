@@ -23,7 +23,7 @@
           <van-cell class="vip-cell" v-if="supportPay && isVipSpace">
             <span style="color: #825621;">当前馆为尊贵馆，各种祭奠物品免费</span>
           </van-cell>
-          <van-cell class="product-cell" v-for="product in products" :key="product.id">
+          <van-cell class="product-cell" :class="{'vip-cell':product.id == 'item-space-vip'}" v-for="product in products" :key="product.id">
             <div class="product-top">
               <span :class="{'vip-product':product.id == 'item-space-vip'}">{{product.name}}</span>
               <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
@@ -376,6 +376,10 @@
         .account-cell,.charge-cell,.vip-cell{
           padding: 20px 15px;
         }
+        .vip-cell{
+          border-top: 12px solid #eee;
+          border-bottom: 12px solid #eee;
+        }
         .van-cell__value{
           display: flex;
           align-items: center;
@@ -412,6 +416,7 @@
             display: flex;
             align-items: center;
             .vip-product{
+              font-size: 15px;
               font-weight: bold;
             }
           }
@@ -419,6 +424,7 @@
             margin-top: 4px;
             .product-tip{
               font-size: 12px;
+              font-weight: bold;
               color: @FONT_THIRD_COLOR;
             }
           }
