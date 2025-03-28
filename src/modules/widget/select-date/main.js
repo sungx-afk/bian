@@ -19,7 +19,7 @@ const SelectDate = options => {
     data: options
   });
 
-  let title = options.title || '选择日期';
+  let title = options.title || '彼岸思念';
   instance.closeEnd = removeWidget({key:'select_date',title,cb:() => {
       instance.close();
     }})

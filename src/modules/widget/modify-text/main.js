@@ -19,7 +19,7 @@ const ModifyText = options => {
     data: options
   });
 
-  let title = options.title || '修改文本';
+  let title = options.title || '彼岸思念';
   instance.closeEnd = removeWidget({key:'modify_text',title,cb:() => {
       instance.close();
     }})

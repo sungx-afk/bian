@@ -19,7 +19,7 @@ const NewStory = options => {
     data: options
   });
 
-  let title = options.title || '新建文章';
+  let title = options.title || '彼岸思念';
   instance.closeEnd = removeWidget({key:'new_story',title,cb:() => {
       instance.close();
     }})

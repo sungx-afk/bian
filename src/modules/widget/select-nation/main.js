@@ -19,7 +19,7 @@ const SelectNation = options => {
     data: options
   });
 
-  let title = options.title || '选择民族';
+  let title = options.title || '彼岸思念';
   instance.closeEnd = removeWidget({key:'select_nation',title,cb:() => {
       instance.close();
     }})
