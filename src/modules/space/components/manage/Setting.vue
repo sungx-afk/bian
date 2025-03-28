@@ -106,7 +106,7 @@
             className:'my-delete-dialog',
             confirmButtonText:'取消',
             cancelButtonText:'删除',
-            message: `确认删除该纪念馆吗?`
+            message: `删除纪念馆会导致纪念馆所有数据丢失，请谨慎操作。确认删除该纪念馆吗?`
           }).then(() => {
             // cancel //删除操作特殊处理到左侧按钮
           }).catch(() => {
