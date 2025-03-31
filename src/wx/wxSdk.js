@@ -9,7 +9,8 @@ export function wechatShare(shareData) {
     try {
       let isWechat = navigator.userAgent.indexOf('MicroMessenger') > -1
       if(!isWechat) {
-        return resolve('您目前所处的并不是微信内置浏览器')
+        reject({errMsg:'您目前所处的并不是微信内置浏览器'})
+        return
       }
       //设置默认的分享标题、描述、网页、图片，以及分享成功后的回调
       let link = `${config_server.domain}/home`
