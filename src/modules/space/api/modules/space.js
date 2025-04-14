@@ -153,6 +153,20 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  addSpaceUser({sid,user},successCb, errorCb){
+    $axios.post(`/spaces/${sid}/space_users`, JSON.stringify(user)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  deleteSpaceUser({sid,user},successCb, errorCb){
+    $axios.delete(`/spaces/${sid}/space_users/${user.id}`).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   updateSpaceTheme({sid, themeId,customTheme}, successCb, errorCb) {
     let param = {
       themeId

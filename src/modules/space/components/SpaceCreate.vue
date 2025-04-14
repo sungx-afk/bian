@@ -1,7 +1,7 @@
 <template>
   <div class="space-create-container">
     <div class="info">
-      <van-cell class="type-cell" v-if="!id">
+      <van-cell class="type-cell" v-if="!id || true">
         <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
           <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
         </van-radio-group>
@@ -35,11 +35,11 @@
       </van-cell>
 
       <div class="users-area" v-for="(user,index) in users" :key="index">
-        <user-info :user="user"></user-info>
+        <user-info :user="user" v-on:delete-user="deleteSpaceUser" :showDelete="showDeleteUser"></user-info>
       </div>
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="create">{{id?'修改':'创建'}}</van-button>
+      <van-button type="default" size="large" @click.tap="confirm">{{id?'修改':'创建'}}</van-button>
     </div>
     <div class="agreement" v-if="!id">
       <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
@@ -60,8 +60,10 @@
     data(){
       return {
         id:'',
+        detail:null,
         type:0,// 0 亲属 1，朋友
         users:[{
+          id:'',
           name: '',
           birthday:'',         //诞辰
           birthAddress: '',    //出生地
@@ -86,6 +88,7 @@
         theme:null,
         epitaph:'', //墓志铭
         currentNumberType:0,
+        removedUsers:[],//修改馆从双人到单人的时候移除的人员
         isAgreementChecked: true,  //是否选择了鱼骨协议
       }
     },
@@ -95,15 +98,31 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        detail:'spaceStore/spaceDetail'
+        space:'spaceStore/spaceDetail'
       }),
       isIPhoneX(){
         return false
+      },
+      showDeleteUser(){
+        let result = false
+        if (this.id && this.currentNumberType == 1 && this.users.length > 1){
+          let userValid = true
+          for(let i = 0; i < this.users.length; i++){
+            if (!this.users[i].id){
+              userValid = false
+            }
+          }
+          if (userValid){
+            result = true
+          }
+        }
+        return result
       },
     },
     methods:{
       initSpaceData(){
         if (this.id){
+          this.detail = JSON.parse(JSON.stringify(this.space))
           this.name = this.detail.name
           this.epitaph = this.detail.epitaph
           this.users = this.detail.spaceUsers
@@ -136,22 +155,27 @@
       },
       numberTypeChanged(value){
         this.currentNumberType = value
-        if (this.currentNumberType == 0 && this.users.length > 1){
-          this.users.splice(1,1)
+        this.removedUsers = []
+        if (this.currentNumberType == 0){
+          if (this.users.length > 1){
+            this.removedUsers = this.users.splice(1,1)
+          }
           if (this.avatarUrls.length > 1){
             this.avatarUrls.splice(1,1)
           }
-        }else if(this.currentNumberType == 1 && this.users.length <= 1){
-          this.users.push({
-            name: '',
-            birthday:'',
-            birthAddress: '',
-            dieDay: '',
-            dieAddress: '',
-            sex: 0,
-            nation: '',
-            avatarUrl: '',
-          })
+        }else if(this.currentNumberType == 1){
+          if (this.users.length < 2){
+            this.users.push({
+              name: '',
+              birthday:'',
+              birthAddress: '',
+              dieDay: '',
+              dieAddress: '',
+              sex: 0,
+              nation: '',
+              avatarUrl: '',
+            })
+          }
           if (this.avatarType == 0 && this.avatarUrls.length === 1){
             this.avatarUrls.push({url:''})
           }
@@ -230,7 +254,13 @@
           that.loading = false
         })
       },
-      create() {
+      deleteSpaceUser(user){
+        let index = this.users.findIndex(item=>item.id == user.id)
+        if (index > -1){
+          this.removedUsers = this.users.splice(index,1)
+        }
+      },
+      confirm() {
         //判断所有的dead
         let clearLocalStorage = false
         let secretCode = '*#62334*#'
@@ -314,17 +344,49 @@
           })
           let promises = [p1]
           this.users.forEach(user=>{
-            promises.push(new Promise((resolve, reject) => {
-              $API.space.updateSpaceUser({
+            //判断该用什么接口
+            let p = null
+            if (user.id){
+              p = new Promise((resolve, reject) => {
+                $API.space.updateSpaceUser({
+                  sid:this.id,
+                  user
+                }, rsp=>{
+                  resolve && resolve(rsp)
+                },error=>{
+                  reject && reject(error)
+                })
+              })
+            }else{
+              p = new Promise((resolve, reject) => {
+                $API.space.addSpaceUser({
+                  sid:this.id,
+                  user
+                }, rsp=>{
+                  resolve && resolve(rsp)
+                },error=>{
+                  reject && reject(error)
+                })
+              })
+            }
+            if (p){
+              promises.push(p)
+            }
+          })
+          //如果要删除
+          if (this.removedUsers && this.removedUsers.length > 0 && this.removedUsers[0].id){
+            let p = new Promise((resolve, reject) => {
+              $API.space.deleteSpaceUser({
                 sid:this.id,
-                user
+                user:this.removedUsers[0],
               }, rsp=>{
                 resolve && resolve(rsp)
               },error=>{
                 reject && reject(error)
               })
-            }))
-          })
+            })
+            promises.push(p)
+          }
           Promise.all(promises)
             .then(() => {
               eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)

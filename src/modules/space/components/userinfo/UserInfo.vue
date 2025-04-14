@@ -9,7 +9,9 @@
     <van-cell class="date-wrapper" title="生 卒:" is-link :value="userDate" @click.stop="goSelectDate"></van-cell>
     <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
     <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-
+    <van-cell v-if="showDelete">
+      <div class="delete-btn" @click="deleteUser">删除</div>
+    </van-cell>
     <template v-if="showAvatar">
       <van-cell title="遗 像:" is-link>
         <van-uploader :after-read="afterSelectPhoto">
@@ -45,6 +47,10 @@
           twoWay:true
         },
         showAvatar:{
+          type:Boolean,
+          default:false
+        },
+        showDelete:{
           type:Boolean,
           default:false
         }
@@ -157,6 +163,9 @@
             this.$toast("上传失败，请稍后重试")
             that.loading = false
           })
+        },
+        deleteUser(){
+          this.$emit('delete-user',this.user)
         }
       },
       created() {
@@ -188,6 +197,10 @@
           flex-grow: 0;
           flex-basis: 40px;
         }
+      }
+      .delete-btn{
+        text-align: center;
+        color: @MAIN_THEME_COLOR;
       }
     }
     .avatar-preview{
