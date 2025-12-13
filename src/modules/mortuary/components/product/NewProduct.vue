@@ -1,0 +1,158 @@
+<template>
+  <div class="new-product-container">
+    <div class="info">
+      <van-field v-model="product.name" label="商品名称:" placeholder="请填写商品名称" maxlength="20" input-align="right"></van-field>
+      <van-field v-model="product.price" label="商品价格:" placeholder="请填写商品价格" type="number" input-align="right"></van-field>
+      <van-cell title="图片" :border="false"></van-cell>
+      <van-cell>
+        <div class="avatar-wrapper">
+          <div class="avatar-preview" v-for="(avatar,index) in product.images" :key="index">
+            <van-uploader :after-read="afterSelectPhoto" :name="index">
+              <img class="avatar"  :src="avatar.url" v-if="avatar.url"/>
+            </van-uploader>
+          </div>
+        </div>
+      </van-cell>
+
+    </div>
+    <div class="bottom-button">
+      <van-button type="default" size="large" @click.tap="confirm">{{product.uuid?'修改':'创建'}}</van-button>
+    </div>
+  </div>
+</template>
+<script>
+  import {mapGetters,mapActions} from 'vuex';
+  import {Link,gUuid} from '@/config/utils'
+  import constant from '@/config/constant'
+  import qs from 'qs'
+
+  export default{
+    data(){
+      return {
+        product:{
+          uuid:"",
+          name:"",
+          icon:"",
+          price:0,
+          images:[{url:''}],
+        },
+        avatarType:0
+      }
+    },
+    components: {
+    },
+    computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+      }),
+    },
+    methods:{
+      afterSelectPhoto(photo,detail){
+        this.avatarUploaderIndex = detail.name
+        let data = {}
+        data.identifier = this.product.images[this.avatarUploaderIndex].identifier = gUuid()
+        data.content = photo.content
+        data.name = photo.file.name
+        data.size = photo.file.size
+        data.type = photo.file.type
+        data.lastModified = photo.file.lastModified
+        this.$store.dispatch('spaceStore/setCropImageData',data)
+        this.$nextTick(()=>{
+          Link(`/cropper?avatar_type=${this.avatarType}`)
+        })
+      },
+      updateAvatarData(result){
+        let that = this
+        let info = result.info
+        let index = that.avatarUploaderIndex
+        if (info.identifier !== this.product.images[index].identifier){
+          return
+        }
+
+        let cropperData = result.cropperData
+
+        that.product.images[index] = result.cropperData
+        that.loading = true
+        $API.space.filesQiniuUploadTicket({
+          reqType: 'general_file',
+          name: info.name,
+          expand: info.name.replace(/.+\./, ''),
+          size: info.size,
+        }, resp => {
+          $API.space.filesQiniuUpload({
+            data:cropperData,
+            token:resp.uptoken,
+            key:resp.key
+          },rsp=>{
+            that.product.images.splice(index,1,{url:rsp.url})
+            that.loading = false
+          },error=>{
+            this.$toast("上传失败，请稍后重试")
+            that.loading = false
+          })
+        },error=>{
+          this.$toast("上传失败，请稍后重试")
+          that.loading = false
+        })
+      },
+      confirm(){
+        if (!this.name) {
+          this.$toast('请填写殡仪馆名称');
+          return;
+        }
+
+      }
+    },
+    created() {
+      eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+    },
+    beforeDestroy() {
+      eventHub.$off(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+    }
+  }
+</script>
+
+<style rel="stylesheet/less" lang="less" scoped>
+  @import "~@/config/config.less";
+
+  .new-product-container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #f6f6f6;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 32px;
+    .avatar-wrapper{
+      display: flex;
+      align-items: center;
+      .avatar-preview{
+        margin-right: 8px;
+        .avatar{
+          width: 62px;
+          height: 80px;
+          border-radius: 8px;
+          &.avatar-type_1{
+            width: 124px;
+            height: 80px;
+          }
+        }
+      }
+    }
+
+    .bottom-button {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      .van-button--large{
+        width: 90%;
+        color: white;
+        height: 40px;
+        line-height: 38px;
+        background-color: @MAIN_THEME_COLOR;
+      }
+    }
+
+  }
+
+</style>

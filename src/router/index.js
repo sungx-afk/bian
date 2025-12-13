@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import Home from '@/modules/home/router'
 import Space from '@/modules/space/router'
 import Report from '@/modules/report/router'
-
+import Mortuary from '@/modules/mortuary/router'
 import store from '@/store';
 
 Vue.use(Router)
@@ -18,7 +18,8 @@ const router = new Router({
   routes: [
     ...Home,
     ...Space,
-    ...Report
+    ...Report,
+    ...Mortuary
   ]
 })
 
