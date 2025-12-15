@@ -10,8 +10,10 @@
           <img src="https://app01.yugusoft.com/ftask/api/file/down/CFkkDWUAcHfHkHZSM5YcCb.jpeg"/>
         </div>
       </div>
+      <van-field v-model="order.name" label="逝者姓名:" placeholder="请填写逝者姓名" input-align="right"></van-field>
       <van-field v-model="order.address" label="告别厅:" placeholder="请填写告别厅" input-align="right"></van-field>
-      <van-field v-model="order.user_name" label="送别人:" placeholder="请填写送别人" input-align="right"></van-field>
+      <van-field v-model="order.user_name" label="赠送人:" placeholder="请填写赠送人" input-align="right"></van-field>
+      <van-field v-model="order.tel" label="联系电话:" placeholder="请填写联系电话" input-align="right"></van-field>
       <van-field v-model="order.content" label="挽联内容:" placeholder="请填写挽联内容" type="textarea" input-align="right"></van-field>
     </div>
     <div class="bottom-button">
@@ -33,6 +35,8 @@
           address:"",
           user_name:"",
           content:"",
+          name:"",
+          tel:""
         },
       }
     },
