@@ -34,6 +34,33 @@ export const filter = (Vue) => {
     }
   })
 
+
+    Vue.filter('filterMoney', (money,showPoint = true) => {//金额转换
+      if (money) {
+        let hasPoint = true
+        money = parseFloat(money).toFixed(2)
+        // if (money.toString().indexOf('.') > 0) {
+
+        //   hasPoint = true
+        // }
+        money = money.toString();
+        let str = money
+        let point = ''
+        if (hasPoint) {
+          let box = money.split('.');
+          str = box[0];
+          point = box[1];
+        }
+        let result = str.replace(/\B(?=(?:\d{3})+$)/g, ',');
+        if (showPoint && point) {
+          result = result + '.' + point;
+        }
+        return result;
+      } else {
+        return '0.00';
+      }
+    })
+
 }
 
 

@@ -3,6 +3,7 @@ import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
 import User from './modules/user/api/index'
 import Report from './modules/report/api/index'
+import Mortuary from './modules/mortuary/api/index'
 
 axios.interceptors.request.use(config => {
   return config
@@ -68,5 +69,6 @@ global.$API = {
   home:Home,
   space:Space,
   user:User,
-  report:Report
+  report:Report,
+  mortuary:Mortuary,
 }

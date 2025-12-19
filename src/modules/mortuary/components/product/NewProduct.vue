@@ -16,7 +16,7 @@
 
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="confirm">{{product.uuid?'修改':'创建'}}</van-button>
+      <van-button type="default" size="large" @click.tap="confirm">{{product.id?'修改':'创建'}}</van-button>
     </div>
   </div>
 </template>
@@ -30,9 +30,8 @@
     data(){
       return {
         product:{
-          uuid:"",
+          id:"",
           name:"",
-          icon:"",
           price:0,
           images:[{url:''}],
         },
@@ -96,14 +95,63 @@
         })
       },
       confirm(){
-        if (!this.name) {
-          this.$toast('请填写殡仪馆名称');
+        if (!this.product.name) {
+          this.$toast('请填写商品名称');
           return;
         }
 
+        if(this.product.id){
+          $API.mortuary.modifyProduct(this.product, rsp => {
+            this.$toast.clear()
+            this.$toast({
+              message:'修改成功',
+              type:'success',
+              duration:1500,
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+          }, error => {
+            this.$toast('修改失败，请稍后重试')
+          })
+        }else{
+          let params = JSON.parse(JSON.stringify(this.product))
+          delete params.id;
+          $API.mortuary.createProduct(params, rsp => {
+            this.$toast.clear()
+            this.$toast({
+              message:'创建成功',
+              type:'success',
+              duration:1500,
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+          }, error => {
+            this.$toast('创建失败，请稍后重试')
+          })
+        }
+
+
+      },
+      getProductDetail(id){
+        $API.mortuary.getProductDetail({id}, rsp => {
+          if(rsp.images && rsp.images.length > 0){
+            let t_images = [];
+            rsp.images.forEach(a => {
+              t_images.push(JSON.parse(a))
+            })
+            rsp.images = t_images;
+          }
+          this.product = rsp;
+        })
       }
     },
     created() {
+      console.log(this.$route)
+      if(this.$route.query.id){
+        this.getProductDetail(this.$route.query.id);
+      }
       eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
     },
     beforeDestroy() {

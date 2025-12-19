@@ -2,9 +2,12 @@ import qs from 'qs'
 
 export default {
 
-  loginWithCode({code},successCb, errorCb){
+  loginWithCode({code,app_id},successCb, errorCb){
     let param = {
       code
+    }
+    if(app_id){
+      param.app_id = app_id;
     }
     $axios.get(`/users/oauth2/wechat/service/login_by_code?`+qs.stringify(param, { indices: false })).then(function (response) {
       successCb && successCb(response.data)

@@ -1,21 +1,16 @@
 <template>
-  <div class="list-wrapper">
-    <div class="product-item" v-for="item in list" :key="item.id">
-      <div class="icon">
-        <img v-if="filterImg(item)" :src="filterImg(item)"/>
-        <div class="no-image" v-else></div>
-      </div>
-      <div class="info">
-        <div class="name">{{item.name}}</div>
-        <div class="price">¥{{item.price | filterMoney}}</div>
-      </div>
-      <div class="operate" @click.stop="goEdit(item)">
-        <i class="iconfont icon-gengduo"></i>
-      </div>
-    </div>
-    <div class="new-btn" @click="goNewProduct">
+  <div class="activity-list-wrapper">
+    <van-cell v-for="item in list" :key="item.id" :title="item.name" clickable @click="goViewDetail(item)">
+      <!-- 使用 right-icon 插槽来自定义右侧图标 -->
+      <template #right-icon>
+        <i class="iconfont icon-gengduo" @click.stop="goEdit(item)"></i>
+      </template>
+    </van-cell>
+
+<!--    <div class="new-activity-btn" @click="goNewActivity">
       <i class="iconfont icon-anonymous-iconfont"></i>
-    </div>
+    </div> -->
+
 
     <van-action-sheet
       v-model="showAction"
@@ -35,33 +30,23 @@
     data(){
       return {
         list:[],
+        limit:30,
         showAction:false,
         actions:[],
         opt_obj:null
       }
     },
     methods:{
-      goNewProduct(){
-        let url = '/mortuary/new_product'
-        Link(url)
-      },
-      getList(){
-        $API.mortuary.getProductList({},(rsp) => {
+      getList(start){
+        start = start || 0;
+        let params = {
+          start,
+          limit:this.limit
+        }
+        $API.mortuary.getMortuaryList(params, rsp => {
           this.list = rsp;
         })
-      },
-      filterImg(item){
-        let url = "";
-        if(item.images && item.images.length > 0){
-          for(var i=0;i<item.images.length;i++){
-            let obj = JSON.parse(item.images[i]);
-            if(obj.url){
-              url = obj.url;
-              break;
-            }
-          }
-        }
-        return url;
+
       },
       goEdit(obj){
         console.log(obj);
@@ -80,14 +65,15 @@
         console.log(item)
         if(this.opt_obj){
           if(item.id == 'modify'){
-            Link('/mortuary/new_product?id='+this.opt_obj.id);
+            localStorage.setItem('local_mortuary_'+this.opt_obj.id,JSON.stringify(this.opt_obj))
+            Link('/mortuary/create?id='+this.opt_obj.id);
           }else if(item.id == 'del'){
             this.$dialog.confirm({
               title: '提示',
               message: '确定要删除吗？',
             })
             .then(() => {
-              $API.mortuary.deleteProduct({sid:this.opt_obj.id}, rsp => {
+              $API.mortuary.deleteMortuary({sid:this.opt_obj.id}, rsp => {
                 this.$toast.clear()
                 this.$toast({
                   message:'删除成功',
@@ -111,9 +97,9 @@
         this.showAction = false
         this.actions = []
       },
-    },
-    activated(){
-      this.getList();
+      goViewDetail(obj){
+        Link('/list?mortuary_id='+obj.id);
+      }
     },
     created(){
       this.getList();
@@ -123,49 +109,9 @@
 
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
-  .list-wrapper{
-    .product-item{
-      display: flex;
-      padding:10px 20px;
-      border-bottom:1px solid #f4f4f4;
-      &:last-child{
-        border-bottom: none;
-      }
-      .icon{
-        width:70px;
-        height:70px;
-        flex-shrink: 0;
-        border-radius: 5px;
-        overflow: hidden;
-        img{
-          width:100%;
-        }
-        .no-image{
-          width:100%;
-          height:100%;
-          background: url(~@/modules/images/no_image.png) no-repeat;
-        }
-      }
-      .info{
-        flex-grow:1;
-        padding-left:10px;
-        .name{
-          font-size:16px;
-          font-weight: 700;
-        }
-        .price{
-          font-size: 14px;
-          margin-top: 10px;
-        }
-      }
-      .operate{
-        flex-shrink: 0;
-        .iconfont{
-          font-weight: 700;
-        }
-      }
-    }
-    .new-btn{
+  .activity-list-wrapper{
+
+    .new-activity-btn{
       width:50px;
       height:50px;
       line-height:50px;

@@ -19,8 +19,8 @@ const getters = {
 
 // actions
 const actions = {
-  loginWithCode ({commit, state ,dispatch}, {code}){
-    $API.user.loginWithCode({code},rsp=>{
+  loginWithCode ({commit, state ,dispatch}, {code,app_id}){
+    $API.user.loginWithCode({code,app_id},rsp=>{
       commit(types.UPDATE_USER,rsp)
       dispatch('getUserSetting');
     })
@@ -77,6 +77,9 @@ const mutations = {
     if (param){
       param = JSON.parse(param)
       param.token = data.token
+      let app_id = window.app_id || data.user.appId || '';
+      window.app_id = app_id;
+      param.app_id = app_id;
       localStorage.setItem("bian-requestParam",JSON.stringify(param))
       $axios.defaults.params = param;//重新修改全局联网配置
     }
@@ -113,7 +116,9 @@ const mutations = {
     if (data.mchId){
       param.mchId = data.mchId
     }
-
+    if(window.app_id){
+      param.app_id = data.app_id
+    }
     localStorage.setItem("bian-requestParam",JSON.stringify(param))
     $axios.defaults.params = param;//重新修改全局联网配置
   }

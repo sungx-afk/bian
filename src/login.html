@@ -26,9 +26,16 @@
       let state = request['state']
       if (state == 'wechat_state'){
       	let code = request['code']
+        let localQuery = localStorage.getItem('bian-query')
+        if(localQuery){
+          localQuery = JSON.parse(localQuery)
+        }
+        let app_id = request['appid'] || localQuery.app_id;
       	url = `https://ba.yugusoft.com/home?code=${code}&state=${state}`
+        if(app_id){
+          url = `${url}&app_id=${app_id}`
+        }
       }
-
       url && window.location.replace(url)
     },
     browserRedirect:function() {

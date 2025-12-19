@@ -5,6 +5,9 @@
         您还未关注公众号，关注后可以及时收到通知
       </van-cell>
     </div>
+    <div class="mortuary-container" v-if="merchant && merchant.id">
+      <div class="name">{{merchant.name}} 殡仪馆</div>
+    </div>
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />
       <div class="text-area">
@@ -96,7 +99,8 @@
         actions:[],
         needRefreshList:false,
         showPublic:false,
-        listLoaded:false
+        listLoaded:false,
+        merchant:null,
       }
     },
     components: {
@@ -257,6 +261,12 @@
             })
           }
         }
+        if(this.merchant && this.merchant.id || (this.user && this.user.id == '107102')){
+          this.menuList.push({
+            id:'merchant_setting',
+            name: '殡仪馆设置',
+          })
+        }
         this.isShowMoreMenu = true
       },
       showMoreMenu(item){
@@ -292,6 +302,9 @@
             break
           case 'report':
             this.goReportHandle()
+            break
+          case 'merchant_setting':
+            this.goMerchantSetting()
             break
         }
       },
@@ -338,7 +351,7 @@
           this.setUserSetting({key:'public_space_close',value:'1'})
           this.showPublic = false
         }).catch(()=>{
-          
+
         })
       },
       registerEvent(){
@@ -376,15 +389,14 @@
         this.$store.dispatch('userStore/fetchMyInfo',{token})
       },
       authWechat(){
-        let url = `${config_server.domain}/login.html`
+        let appid = window.app_id || config_server.wechatAppId
+        let url = `${config_server.domain}/login.html?appid=${appid}`
         url = encodeURIComponent(url)
-        let appid = config_server.wechatAppId
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
-
         window.location.replace(url)
       },
-      loginWithCode(code){
-        this.$store.dispatch('userStore/loginWithCode', {code})
+      loginWithCode(code,app_id){
+        this.$store.dispatch('userStore/loginWithCode', {code,app_id})
       },
       loginWithToken(token){
         this.fetchMyInfo(token)
@@ -409,11 +421,19 @@
         let code = ''
         let uid = ''
         let token = ''
+        let app_id = ''
 
         this.query = query
         if(query){
+          if(query.app_id){
+            app_id = query.app_id;
+            window.app_id = app_id;
+            localStorage.setItem('user-appid',app_id)
+          }
+
           if (query.code && query.state === 'wechat_state'){
             code = query.code
+
             let value = localStorage.getItem("bian-query")
             if (value){
               this.query = JSON.parse(value)
@@ -440,7 +460,7 @@
           return
         }
         if (code){
-          this.loginWithCode(code)
+          this.loginWithCode(code,app_id)
         }else{
           this.tryLogin()
         }
@@ -541,10 +561,22 @@
           }
         }
       },
+      initMortuary(){
+        if(this.$route.query.mortuary_id){
+          let id = this.$route.query.mortuary_id;
+          $API.mortuary.getMortuaryDetail({id}, rsp => {
+            this.merchant = rsp;
+          })
+        }
+      },
+      goMerchantSetting(){
+        Link(`/mortuary/setting`)
+      }
     },
     created() {
       this.initLogin()
       this.registerEvent()
+      this.initMortuary();
     },
     activated(){
       if (this.loginState === LoginState.DONE && this.needRefreshList){
@@ -570,6 +602,16 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    .mortuary-container{
+      padding:20px 0;
+      background-color: #825621;
+      .name{
+        padding:0 10px;
+        font-size: 16px;
+        font-weight: 700;
+        color:#fff;
+      }
+    }
 
     .container-top {
       position: relative;

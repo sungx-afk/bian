@@ -4,6 +4,7 @@
     <van-cell @click="goProduct" title="商品" is-link />
     <van-cell @click="goActivity" title="告别活动" is-link />
     <van-cell @click="goOrder" title="订单" is-link />
+    <van-cell @click="goMortuaryList" title="殡仪馆列表" is-link />
   </div>
 </template>
 
@@ -35,7 +36,14 @@
         let query = {
         }
         Link(url,query)
-      }
+      },
+      goMortuaryList(){
+        let url = '/mortuary/list'
+        let query = {
+        }
+        Link(url,query)
+      },
+
     }
   }
 </script>
