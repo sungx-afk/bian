@@ -88,7 +88,6 @@
             })
             .then(() => {
               $API.mortuary.deleteProduct({sid:this.opt_obj.id}, rsp => {
-                this.$toast.clear()
                 this.$toast({
                   message:'删除成功',
                   type:'success',

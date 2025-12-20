@@ -88,19 +88,18 @@
         }
 
         if(this.order.id){
-          // $API.mortuary.modifyOrder(this.product, rsp => {
-          //   this.$toast.clear()
-          //   this.$toast({
-          //     message:'修改成功',
-          //     type:'success',
-          //     duration:1500,
-          //     onClose:()=>{
-          //       this.$router.go(-1)
-          //     }
-          //   })
-          // }, error => {
-          //   this.$toast('修改失败，请稍后重试')
-          // })
+          $API.mortuary.modifyOrder(this.order, rsp => {
+            this.$toast({
+              message:'修改成功',
+              type:'success',
+              duration:1500,
+              onClose:()=>{
+                this.$router.go(-1)
+              }
+            })
+          }, error => {
+            this.$toast('修改失败，请稍后重试')
+          })
         }else{
           let params = JSON.parse(JSON.stringify(this.order))
           delete params.id;
@@ -115,13 +114,12 @@
           params.products = t_products;
 
           $API.mortuary.createOrder(params, rsp => {
-            this.$toast.clear()
             this.$toast({
               message:'创建成功',
               type:'success',
               duration:1500,
               onClose:()=>{
-                this.$router.go(-1)
+                this.goPay(rsp);
               }
             })
           }, error => {
@@ -130,9 +128,33 @@
         }
 
 
-      }
+      },
+      getOrderDetail(id){
+        $API.mortuary.getOrderDetail({id}, rsp => {
+          this.order = rsp;
+        })
+      },
+      goPay(item){
+        let orderId = item.id;
+        $API.mortuary.getPayOrderInfo({orderId},rsp=>{
+          this.wechatPay(rsp).then((res)=>{
+            if (res === 0){
+              this.$toast("支付成功")
+              this.$router.go(-1)
+            }
+          }).catch(error=>{
+            this.$toast(error.errMsg)
+            this.$router.go(-1)
+          })
+        },error=>{
+          this.$toast("获取订单失败，请稍后重试")
+        })
+      },
     },
     created() {
+      if(this.$route.query.id){
+        this.getOrderDetail(this.$route.query.id);
+      }
     },
     beforeDestroy() {
     }

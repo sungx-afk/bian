@@ -55,6 +55,17 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  finishOrder(params, successCb, errorCb) {
+    let orderId = params.orderId;
+    delete params.orderId;
+    $axios.post(`/physical-order/${orderId}/deliver`, JSON.stringify(params)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+
+
 
 
 }

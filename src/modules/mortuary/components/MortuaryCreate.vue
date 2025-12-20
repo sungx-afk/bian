@@ -71,7 +71,6 @@
         }
         if(this.merchant.id){
           $API.mortuary.modifyMortuary(this.merchant, rsp => {
-            this.$toast.clear()
             this.$toast({
               message:'修改成功',
               type:'success',
@@ -87,7 +86,6 @@
           let params = JSON.parse(JSON.stringify(this.merchant))
           delete params.id;
           $API.mortuary.createMortuary(params, rsp => {
-            this.$toast.clear()
             this.$toast({
               message:'创建成功',
               type:'success',
