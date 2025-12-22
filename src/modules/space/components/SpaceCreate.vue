@@ -420,13 +420,23 @@
           $API.space.createSpace(params, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()
-            this.$toast({
-              message:'创建成功',
-              type:'success',
-              duration:1500,
-              onClose:()=>{
-                this.$router.go(-1)
-              }
+            //判断是否马上发起云追悼会？
+            this.$dialog.confirm({
+              message: '您需要发起云追悼会吗？',
+              confirmButtonText:"发起",
+              cancelButtonText:"忽略",
+            }).then((data) => {
+              Link(`/space/meeting/${rsp.id}`,{},true)
+            }).catch((error)=>{
+              // this.$toast({
+              //   message:'创建成功',
+              //   type:'success',
+              //   duration:1500,
+              //   onClose:()=>{
+              //     this.$router.go(-1)
+              //   }
+              // })
+              this.$router.go(-1)
             })
           }, error => {
             this.$toast('创建失败，请稍后重试')
