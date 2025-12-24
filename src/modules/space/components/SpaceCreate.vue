@@ -420,14 +420,50 @@
           $API.space.createSpace(params, rsp => {
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()
-            this.$toast({
-              message:'创建成功',
-              type:'success',
-              duration:1500,
-              onClose:()=>{
-                this.$router.go(-1)
-              }
+            //判断日期
+            let space = rsp
+            let nearBy = false
+            let dieDays = space.spaceUsers.map(item=>{
+              let time = item.dieDay
+              return time
             })
+            let now = new Date().getTime()
+            let delta = 3 * 24 * 3600 * 1000
+            for (let i = 0; i < dieDays.length; i++){
+              if (Math.abs(dieDays[i] - now) < delta){
+                nearBy = true
+                break
+              }
+            }
+            if (nearBy){
+              //判断是否马上发起云追悼会？
+              this.$dialog.confirm({
+                message: '您需要发起云追悼会吗？',
+                confirmButtonText:"发起",
+                cancelButtonText:"忽略",
+              }).then((data) => {
+                Link(`/space/meeting/${space.id}`,{},true)
+              }).catch((error)=>{
+                // this.$toast({
+                //   message:'创建成功',
+                //   type:'success',
+                //   duration:1500,
+                //   onClose:()=>{
+                //     this.$router.go(-1)
+                //   }
+                // })
+                this.$router.go(-1)
+              })
+            }else{
+              this.$toast({
+                message:'创建成功',
+                type:'success',
+                duration:1500,
+                onClose:()=>{
+                  this.$router.go(-1)
+                }
+              })
+            }
           }, error => {
             this.$toast('创建失败，请稍后重试')
           })
