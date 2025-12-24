@@ -154,7 +154,9 @@ const mutations = {
       localStorage.setItem("bian-requestParam",JSON.stringify(param))
       $axios.defaults.params = param;//重新修改全局联网配置
     }
-    cb && cb();
+    setTimeout(() => {//这里稍微延迟一下，因为如果是直接token过来登陆的，不延迟的话，第一个my接口会用老的token，导致过期
+      cb && cb();
+    },500)
   },
 
 
