@@ -18,7 +18,8 @@ axios.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8'; //�
  * @type {{}}
  */
 global.getRequestParam = function() {
-  let param = localStorage.getItem("bian-requestParam");
+  let key = getLocalTokenKey();
+  let param = localStorage.getItem(key);
   if (!param){
     param = {
       plat:'wechat',
@@ -28,16 +29,25 @@ global.getRequestParam = function() {
       mchId:''
     }
     param = JSON.stringify(param)
-    localStorage.setItem("bian-requestParam",param)
+    localStorage.setItem(key,param)
   }
   return JSON.parse(param);
 }
 
 /*获取平台参数*/
 global.getPlat = function() {
-  let param = localStorage.getItem("bian-requestParam");
+  let key = getLocalTokenKey();
+  let param = localStorage.getItem(key);
   param = JSON.parse(param);
   return param.plat
+}
+
+global.getLocalTokenKey = function() {
+ let req_key = "bian-requestParam";
+ if(window.app_id){
+   req_key = req_key + '-' + window.app_id;
+ }
+ return req_key;
 }
 
 global.$axios = axios.create({

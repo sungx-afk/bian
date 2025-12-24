@@ -274,7 +274,8 @@
           }
         })
         if (clearLocalStorage){
-          window.localStorage.removeItem('bian-requestParam');
+          let key = getLocalTokenKey();
+          window.localStorage.removeItem(key);
           this.$toast('清空本地缓存成功')
           return
         }

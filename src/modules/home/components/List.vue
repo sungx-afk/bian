@@ -5,7 +5,7 @@
         您还未关注公众号，关注后可以及时收到通知
       </van-cell>
     </div>
-    <div class="mortuary-container" v-if="user.merchant_manager && user.merchant_id">
+    <div class="mortuary-container" v-if="user && user.merchant_manager && user.merchant_id">
       <div class="name">{{user.merchant_name}} 殡仪馆</div>
       <div class="setting" @click="goMerchantSetting">
         <van-icon name="setting-o" />
@@ -369,7 +369,8 @@
         }
         this.loginState = LoginState.DOING
         //先找本地有没有保存token
-        let param = localStorage.getItem("bian-requestParam");
+        let key = getLocalTokenKey();
+        let param = localStorage.getItem(key);
         let token = ''
         do{
           if (param){
@@ -393,7 +394,7 @@
       },
       authWechat(){
         let appid = window.app_id || config_server.wechatAppId
-        let url = `${config_server.domain}/login.html?appid=${appid}`
+        let url = `${config_server.domain}/login.html`
         url = encodeURIComponent(url)
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
         window.location.replace(url)
@@ -431,7 +432,6 @@
           if(query.app_id){
             app_id = query.app_id;
             window.app_id = app_id;
-            localStorage.setItem('user-appid',app_id)
           }
 
           if (query.code && query.state === 'wechat_state'){

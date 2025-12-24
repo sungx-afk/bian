@@ -90,14 +90,15 @@ const mutations = {
     state.token = data.token
     state.expire = false
     //更新token到bian-requestParam
-    let param = localStorage.getItem("bian-requestParam")
+    let key = getLocalTokenKey();
+    let param = localStorage.getItem(key)
     if (param){
       param = JSON.parse(param)
       param.token = data.token
       let app_id = window.app_id || data.user.appId || '';
       window.app_id = app_id;
       param.app_id = app_id;
-      localStorage.setItem("bian-requestParam",JSON.stringify(param))
+      localStorage.setItem(key,JSON.stringify(param))
       $axios.defaults.params = param;//重新修改全局联网配置
     }
   },
@@ -108,17 +109,19 @@ const mutations = {
     state.user_setting = rsp
   },
   [types.TOKEN_EXPIRE] (state,rsp){
-    let param = localStorage.getItem("bian-requestParam")
+    let key = getLocalTokenKey();
+    let param = localStorage.getItem(key)
     if (param){
       param = JSON.parse(param)
       param.token = ''
-      localStorage.setItem("bian-requestParam",JSON.stringify(param))
+      localStorage.setItem(key,JSON.stringify(param))
       $axios.defaults.params = param;//重新修改全局联网配置
     }
     state.expire = true
   },
   [types.UPDATE_REQUEST_PARAMS](state,data){
-    let param = localStorage.getItem("bian-requestParam")
+    let key = getLocalTokenKey();
+    let param = localStorage.getItem(key)
     if (param){
       param = JSON.parse(param)
     }else {
@@ -136,7 +139,7 @@ const mutations = {
     if(window.app_id){
       param.app_id = data.app_id
     }
-    localStorage.setItem("bian-requestParam",JSON.stringify(param))
+    localStorage.setItem(key,JSON.stringify(param))
     $axios.defaults.params = param;//重新修改全局联网配置
   },
   [types.UPDATE_MERCHANT] (state,rsp){
@@ -147,11 +150,12 @@ const mutations = {
   },
   [types.UPDATE_LOCAL_TOKEN] (state,{token,cb}){
     //更新token到bian-requestParam
-    let param = localStorage.getItem("bian-requestParam")
+    let key = getLocalTokenKey();
+    let param = localStorage.getItem(key)
     if (param){
       param = JSON.parse(param)
       param.token = token
-      localStorage.setItem("bian-requestParam",JSON.stringify(param))
+      localStorage.setItem(key,JSON.stringify(param))
       $axios.defaults.params = param;//重新修改全局联网配置
     }
     setTimeout(() => {//这里稍微延迟一下，因为如果是直接token过来登陆的，不延迟的话，第一个my接口会用老的token，导致过期

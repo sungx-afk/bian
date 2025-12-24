@@ -1,13 +1,25 @@
 <template>
   <div class="notice-container">
     <div class="tip">长按二维码直接识别关注公众号</div>
-    <img src="https://static-app01.yugusoft.com/bian/qrcode.jpg"/>
+    <img :src="url"/>
   </div>
 </template>
 
 <script>
     export default {
-        name: "Notice"
+      name: "Notice",
+      data(){
+        return {
+          app_id:"",
+          url:"",
+        }
+      },
+      created(){
+        let app_id = window.app_id || config_server.wechatAppId
+        this.app_id = app_id;
+        let url = `https://static-app01.yugusoft.com/static/bian/${app_id}.jpg`
+        this.url = url;
+      }
     }
 </script>
 

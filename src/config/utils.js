@@ -7,6 +7,10 @@ export const Link = (url, query,replace) => {
   if(query){
     router.query = query;
   }
+  let appid = window.app_id || config_server.wechatAppId
+  if(appid){
+    router.query.app_id = appid;
+  }
   if(replace){
     $router.replace(router);
   }else{
@@ -363,7 +367,7 @@ export const convertToGrayscale = (imgSourceData) =>{
       // 创建 Canvas 元素
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      
+
       // 设置 Canvas 尺寸与图片一致
       canvas.width = img.width;
       canvas.height = img.height;
@@ -395,7 +399,7 @@ export const convertToGrayscale = (imgSourceData) =>{
 
     // 错误处理
     img.onerror = (error) => reject(error);
-    
+
     // 开始加载图片
     img.src = imgSourceData;
   });

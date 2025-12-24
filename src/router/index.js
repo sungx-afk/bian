@@ -24,13 +24,15 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-
+  if(to.query.app_id){
+      window.app_id = to.query.app_id;
+  }
+  let key = getLocalTokenKey();
   let comm = getRequestParam()
-
   if (to.query && to.query.plat){
     comm.plat = to.query.plat
     $axios.defaults.params = comm;//重新修改全局联网配置
-    localStorage.setItem("bian-requestParam", JSON.stringify(comm));
+    localStorage.setItem(key, JSON.stringify(comm));
   }
 
   if(to.path != '/login' && to.path != '/home'){
@@ -40,7 +42,7 @@ router.beforeEach((to, from, next) => {
       if (to.query.token){
         comm.token = to.query.token
         $axios.defaults.params = comm;//重新修改全局联网配置
-        localStorage.setItem("bian-requestParam", JSON.stringify(comm));
+        localStorage.setItem(key, JSON.stringify(comm));
       }else {
         next({path:'/login'});
         return false;
