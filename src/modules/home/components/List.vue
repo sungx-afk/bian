@@ -396,7 +396,7 @@
         let url = `${config_server.domain}/login.html?appid=${appid}`
         url = encodeURIComponent(url)
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
-        // window.location.replace(url)
+        window.location.replace(url)
       },
       loginWithCode(code,app_id){
         this.$store.dispatch('userStore/loginWithCode', {code,app_id})
