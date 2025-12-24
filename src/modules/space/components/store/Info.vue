@@ -215,14 +215,6 @@
         },
         initProducts(){
           this.products = [{
-            id:'package-hua-quan',
-            name:'花圈装饰（永久）',
-            point:60
-          },{
-            id:'package-xiang-zhu',
-            name:'香烛长燃（1 年）',
-            point:660
-          },{
             id:'package-gua-guo',
             name:'瓜果贡品（7 天）',
             point:9
@@ -230,15 +222,23 @@
             id:'package-jiu-xi',
             name:'酒席（7 天）',
             point:50
+          },{
+            id:'package-hua-quan',
+            name:'花圈装饰（永久）',
+            point:60
+          },{
+            id:'package-xiang-zhu',
+            name:'香烛长燃（1 年）',
+            point:660
           }]
           if (this.supportPay){
-            this.products.unshift({
+            this.products.push({
               id:'item-zhang-min-ding',
               name:'长明灯（永久，每次添加两盏，可多次）',
               point:999
             })
           }else {
-            this.products.unshift({
+            this.products.push({
               id:'item-zhang-min-ding',
               name:'长明灯（永久）',
               point:999
@@ -246,11 +246,11 @@
           }
           //不是尊贵馆，增加对应的VIP购买
           if (!this.isVipSpace && this.space.type != 2){
-            this.products.unshift({
+            this.products.push({
               id:'item-space-vip',
               name:'尊贵馆',
               tip:'对来访所有人员，各种祭奠物品免费。按年支付，方便祭奠',
-              point:2999
+              point:1990
             })
           }
           if (this.space.type === 2 || !this.supportPay){
@@ -397,7 +397,7 @@
           }
           .charge-remain-wrapper{
             flex-shrink: 0;
-          } 
+          }
           .charge-btn-wrapper{
             flex-shrink: 0;
             .charge-btn{
