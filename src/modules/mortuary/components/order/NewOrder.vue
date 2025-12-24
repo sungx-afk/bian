@@ -1,8 +1,13 @@
 <template>
   <div class="new-product-container">
     <div class="info">
-      <div class="select-product" @click="goSelectProduct">
-        <van-icon name="plus" />选择商品
+      <div class="select-product">
+        <div class="left-btn"  @click="goSelectProduct">
+          <van-icon name="plus" />选择商品
+        </div>
+        <div class="right-btn" @click="goViewMyOrder">
+          <van-button type="primary" size="small">我的历史订单</van-button>
+        </div>
       </div>
       <div class="product" v-for="item in order.products">
         <div class="detail">
@@ -76,15 +81,19 @@
         }
         if(!this.order.spaceUserName){
           this.$toast('请填写逝者姓名');
+          return;
         }
         if(!this.order.spaceName){
           this.$toast('请填写告别厅');
+          return;
         }
         if(!this.order.senderName){
           this.$toast('请填写赠送人');
+          return;
         }
         if(!this.order.summary){
           this.$toast('请填写挽联内容');
+          return;
         }
 
         if(this.order.id){
@@ -150,6 +159,9 @@
           this.$toast("获取订单失败，请稍后重试")
         })
       },
+      goViewMyOrder(){
+        Link('/mortuary/order_list?scope=my')
+      }
     },
     created() {
       if(this.$route.query.id){
@@ -180,6 +192,7 @@
       position: relative;
       font-size: 15px;
       color:#825621;
+      justify-content: space-between;
       &:active{
         background-color: #f2f3f5;
       }

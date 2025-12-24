@@ -57,6 +57,9 @@
         },{
           id:'del',
           name:'删除',
+        },{
+          id:'set_manager',
+          name:'设置管理员',
         }]
         this.showAction = true
       },
@@ -89,6 +92,8 @@
             .catch(() => {
               // on cancel
             });
+          }else if(item.id == 'set_manager'){
+            Link('/mortuary/set_manager?id='+this.opt_obj.id);
           }
         }
       },

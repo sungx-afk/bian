@@ -34,6 +34,7 @@
   export default{
     data(){
       return {
+        scope:"",
         list:[],
         showAction:false,
         actions:[],

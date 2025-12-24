@@ -6,7 +6,8 @@ const state = {
   user:null,
   user_setting_keys:['bgm_play_state','bgm_key','public_space_close'],
   user_setting:null,
-  expire:false
+  expire:false,
+  merchant:null,//殡仪馆数据
 }
 
 // getters
@@ -14,7 +15,8 @@ const getters = {
   token: state => state.token,
   user: state => state.user,
   userSetting: state => state.user_setting,
-  expire:state => state.expire
+  expire:state => state.expire,
+  merchant:state => state.merchant,
 }
 
 // actions
@@ -32,14 +34,17 @@ const actions = {
     })
   },
   fetchMyInfo({commit, state ,dispatch}, {token}){
-    $API.user.fetchMyInfo({},rsp=>{
-      if (rsp.result == -10001){
-        commit(types.TOKEN_EXPIRE,rsp)
-      }else{
-        commit(types.UPDATE_USER,{user:rsp,token})
-        dispatch('getUserSetting');
-      }
-    })
+    commit(types.UPDATE_LOCAL_TOKEN,{token,cb:() => {
+      $API.user.fetchMyInfo({},rsp=>{
+        if (rsp.result == -10001){
+          commit(types.TOKEN_EXPIRE,rsp)
+        }else{
+          commit(types.UPDATE_USER,{user:rsp,token})
+          dispatch('getUserSetting');
+        }
+      })
+    }})
+
   },
   getUserSetting({commit, state}){
     return new Promise((resolve, reject) => {
@@ -63,7 +68,19 @@ const actions = {
   },
   updateUserInfo({commit, state},user){
     commit(types.UPDATE_USER_INFO, user)
-  }
+  },
+  getMerchantInfo({commit, state},{id}){
+    return new Promise((resolve, reject) => {
+      $API.user.getMerchantInfo({id}, rsp => {
+        commit(types.UPDATE_MERCHANT, rsp)
+        resolve(rsp);
+      })
+    })
+  },
+  updateMerchantName({commit, state},{name}){
+    commit(types.UPDATE_MERCHANT_NAME, {name})
+  },
+
 }
 
 // mutations
@@ -121,7 +138,32 @@ const mutations = {
     }
     localStorage.setItem("bian-requestParam",JSON.stringify(param))
     $axios.defaults.params = param;//重新修改全局联网配置
-  }
+  },
+  [types.UPDATE_MERCHANT] (state,rsp){
+    state.merchant = rsp.merchant
+  },
+  [types.UPDATE_MERCHANT_NAME] (state,{name}){
+    state.user.merchant_name = name
+  },
+  [types.UPDATE_LOCAL_TOKEN] (state,{token,cb}){
+    //更新token到bian-requestParam
+    let param = localStorage.getItem("bian-requestParam")
+    if (param){
+      param = JSON.parse(param)
+      param.token = token
+      localStorage.setItem("bian-requestParam",JSON.stringify(param))
+      $axios.defaults.params = param;//重新修改全局联网配置
+    }
+    cb && cb();
+  },
+
+
+
+
+
+
+
+
 }
 
 export default {

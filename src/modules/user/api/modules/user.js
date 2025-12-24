@@ -63,5 +63,18 @@ export default {
     }).catch(function (error) {
       errorCb &&  errorCb(error)
     });
-  }
+  },
+  getMerchantInfo({id},successCb, errorCb){
+    // url = encodeURIComponent(url)
+    let param = {
+    }
+    $axios.get(`/merchant/${id}?`+qs.stringify(param, { indices: false })).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb &&  errorCb(error)
+    });
+  },
+
+
+
 }

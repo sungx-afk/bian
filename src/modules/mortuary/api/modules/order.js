@@ -64,6 +64,14 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  cancelOrder({sid}, successCb, errorCb) {
+    let params = {}
+    $axios.post(`/physical-order/${sid}/cancel`, JSON.stringify(params)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
 
 
 

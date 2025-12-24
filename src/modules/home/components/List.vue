@@ -5,8 +5,11 @@
         您还未关注公众号，关注后可以及时收到通知
       </van-cell>
     </div>
-    <div class="mortuary-container" v-if="merchant && merchant.id">
-      <div class="name">{{merchant.name}} 殡仪馆</div>
+    <div class="mortuary-container" v-if="user.merchant_manager && user.merchant_id">
+      <div class="name">{{user.merchant_name}} 殡仪馆</div>
+      <div class="setting" @click="goMerchantSetting">
+        <van-icon name="setting-o" />
+      </div>
     </div>
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />
@@ -261,12 +264,12 @@
             })
           }
         }
-        if(this.merchant && this.merchant.id || (this.user && this.user.id == '107102')){
-          this.menuList.push({
-            id:'merchant_setting',
-            name: '殡仪馆设置',
-          })
-        }
+        // if(this.merchant && this.merchant.id || (this.user && this.user.id == '107102')){
+        //   this.menuList.push({
+        //     id:'merchant_setting',
+        //     name: '殡仪馆设置',
+        //   })
+        // }
         this.isShowMoreMenu = true
       },
       showMoreMenu(item){
@@ -393,7 +396,7 @@
         let url = `${config_server.domain}/login.html?appid=${appid}`
         url = encodeURIComponent(url)
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
-        window.location.replace(url)
+        // window.location.replace(url)
       },
       loginWithCode(code,app_id){
         this.$store.dispatch('userStore/loginWithCode', {code,app_id})
@@ -603,13 +606,17 @@
     display: flex;
     flex-direction: column;
     .mortuary-container{
-      padding:20px 0;
+      display: flex;
+      justify-content: space-between;
+      padding:20px 10px;
       background-color: #825621;
+      color:#fff;
       .name{
-        padding:0 10px;
         font-size: 16px;
         font-weight: 700;
-        color:#fff;
+      }
+      .setting{
+        font-size: 16px;
       }
     }
 

@@ -8,6 +8,7 @@ const NewProduct = () => import(/* webpackChunkName: "mortuary_setting" */ './co
 const OrderList = () => import(/* webpackChunkName: "mortuary_setting" */ './components/order/List')
 const NewOrder = () => import(/* webpackChunkName: "mortuary_setting" */ './components/order/NewOrder')
 const FinishOrder = () => import(/* webpackChunkName: "mortuary_setting" */ './components/order/FinishOrder')
+const SetManager = () => import(/* webpackChunkName: "mortuary" */ './components/SetManager');
 
 const routes = [
   {
@@ -40,6 +41,9 @@ const routes = [
       },{
         path: 'finish_order',
         component: FinishOrder
+      },{
+        path: 'set_manager',
+        component: SetManager
       }
     ]
   },

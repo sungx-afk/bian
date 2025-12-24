@@ -2,20 +2,27 @@
   <div class="mortuary-setting-wrapper">
     <van-cell @click="goEditMortuary" title="设置馆" is-link />
     <van-cell @click="goProduct" title="商品" is-link />
-    <van-cell @click="goActivity" title="告别活动" is-link />
+    <!-- <van-cell @click="goActivity" title="告别活动" is-link /> -->
     <van-cell @click="goOrder" title="订单" is-link />
-    <van-cell @click="goMortuaryList" title="殡仪馆列表" is-link />
+    <!-- <van-cell @click="goMortuaryList" title="殡仪馆列表" is-link /> -->
+    <!-- <van-cell @click="goSetManager" title="设置管理员" is-link /> -->
   </div>
 </template>
 
 <script>
+  import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   export default{
+    computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+      }),
+    },
     methods:{
       goEditMortuary(){
         let url = '/mortuary/create'
         let query = {
-          id:"11"
+          id:this.user.merchant_id
         }
         Link(url,query)
       },
@@ -43,6 +50,12 @@
         }
         Link(url,query)
       },
+      goSetManager(){
+        let url = '/mortuary/set_manager'
+        let query = {
+        }
+        Link(url,query)
+      }
 
     }
   }

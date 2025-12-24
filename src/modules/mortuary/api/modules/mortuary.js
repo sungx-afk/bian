@@ -40,4 +40,14 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  setManager({id,ids}, successCb, errorCb) {
+    $axios.patch(`/merchant/${id}/manager`, ids).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+
+
+
 }

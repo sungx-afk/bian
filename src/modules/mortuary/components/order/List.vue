@@ -5,16 +5,18 @@
         订单编号：{{item.id}}
         <van-tag type="success" v-if="item.status == 'PAID'">已支付</van-tag>
         <van-tag type="danger" v-if="item.status == 'DELIVERED'">已完成</van-tag>
+        <van-tag type="default" v-if="item.status == 'CANCELED'">已取消</van-tag>
       </div>
       <div class="sub-item">下单人：{{item.senderName}}</div>
       <div class="sub-item">下单时间：{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</div>
       <div class="sub-item">挽联留言：{{item.summary}}</div>
       <div class="sub-item">送至：{{item.spaceName}} 逝者：{{item.spaceUserName}}</div>
-      <div class="sub-item btn">
+      <div class="sub-item btn" v-if="item.status != 'CANCELED'">
         <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goPay(item)">支付订单</van-button>
-        <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goDel(item)">删除订单</van-button>
+        <!-- <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goDel(item)">删除订单</van-button> -->
+        <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goCancel(item)">取消订单</van-button>
         <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goEdit(item)">修改订单</van-button>
-        <van-button v-if="item.status != 'DELIVERED'" type="primary" size="small" @click="goFinishOrder(item)">完成订单</van-button>
+        <van-button v-if="item.status != 'DELIVERED' && item.status != 'CANCELED' && user && user.merchant_manager" type="primary" size="small" @click="goFinishOrder(item)">完成订单</van-button>
       </div>
       <div class="deliver" v-if="item.status == 'DELIVERED'">
         <div class="sub-item">交付人：{{item.deliverUser && item.deliverUser.name}}</div>
@@ -59,9 +61,16 @@
         Link(url)
       },
       getList(){
-        $API.mortuary.getOrderList({},(rsp) => {
-          this.list = rsp;
-        })
+        console.log("====>>>",this.$route.query)
+        if(this.$route.query.scope && this.$route.query.scope == 'my'){
+          $API.mortuary.getMyOrderList({},(rsp) => {
+            this.list = rsp;
+          })
+        }else{
+          $API.mortuary.getOrderList({},(rsp) => {
+            this.list = rsp;
+          })
+        }
       },
       goPay(item){
         let orderId = item.id;
@@ -113,6 +122,29 @@
         }else{
           return ''
         }
+      },
+      goCancel(item){
+        this.$dialog.confirm({
+          title: '提示',
+          message: '确定要取消该订单吗？',
+        })
+        .then(() => {
+          $API.mortuary.cancelOrder({sid:item.id}, rsp => {
+            this.$toast({
+              message:'取消成功',
+              type:'success',
+              duration:1500,
+              onClose:()=>{
+                this.getList()
+              }
+            })
+          }, error => {
+            this.$toast('操作失败，请稍后重试')
+          })
+        })
+        .catch(() => {
+          // on cancel
+        });
       }
     },
     activated(){
