@@ -1,18 +1,25 @@
 <template>
   <div class="list-wrapper">
-    <div class="product-item" v-for="item in list" :key="item.id">
-      <div class="icon">
-        <img v-if="filterImg(item)" :src="filterImg(item)"/>
-        <div class="no-image" v-else></div>
+    <template v-if="list.length > 0">
+      <div class="product-item" v-for="item in list" :key="item.id">
+        <div class="icon">
+          <img v-if="filterImg(item)" :src="filterImg(item)"/>
+          <div class="no-image" v-else></div>
+        </div>
+        <div class="info">
+          <div class="name">{{item.name}}</div>
+          <div class="price">¥{{item.price | filterMoney}}</div>
+        </div>
+        <div class="operate" @click.stop="goEdit(item)">
+          <i class="iconfont icon-gengduo"></i>
+        </div>
       </div>
-      <div class="info">
-        <div class="name">{{item.name}}</div>
-        <div class="price">¥{{item.price | filterMoney}}</div>
-      </div>
-      <div class="operate" @click.stop="goEdit(item)">
-        <i class="iconfont icon-gengduo"></i>
-      </div>
+    </template>
+    <div v-else>
+      <van-empty description="暂无商品数据" />
     </div>
+
+
     <div class="new-btn" @click="goNewProduct">
       <i class="iconfont icon-anonymous-iconfont"></i>
     </div>
@@ -38,7 +45,8 @@
         list:[],
         showAction:false,
         actions:[],
-        opt_obj:null
+        opt_obj:null,
+        locked:false,
       }
     },
     methods:{
@@ -47,8 +55,15 @@
         Link(url)
       },
       getList(){
+        if(this.locked){
+          return false;
+        }
+        this.locked = true;
         $API.mortuary.getProductList({},(rsp) => {
           this.list = rsp;
+          this.locked = false;
+        },() => {
+          this.locked = false;
         })
       },
       filterImg(item){

@@ -34,16 +34,19 @@ const actions = {
     })
   },
   fetchMyInfo({commit, state ,dispatch}, {token}){
-    commit(types.UPDATE_LOCAL_TOKEN,{token,cb:() => {
-      $API.user.fetchMyInfo({},rsp=>{
-        if (rsp.result == -10001){
-          commit(types.TOKEN_EXPIRE,rsp)
-        }else{
-          commit(types.UPDATE_USER,{user:rsp,token})
-          dispatch('getUserSetting');
-        }
-      })
-    }})
+    return new Promise((resolve, reject) => {
+      commit(types.UPDATE_LOCAL_TOKEN,{token,cb:() => {
+        $API.user.fetchMyInfo({},rsp=>{
+          if (rsp.result == -10001){
+            commit(types.TOKEN_EXPIRE,rsp)
+          }else{
+            commit(types.UPDATE_USER,{user:rsp,token})
+            dispatch('getUserSetting');
+            resolve();
+          }
+        })
+      }})
+    })
 
   },
   getUserSetting({commit, state}){

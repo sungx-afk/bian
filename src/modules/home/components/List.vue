@@ -390,7 +390,9 @@
         }
       },
       fetchMyInfo(token){
-        this.$store.dispatch('userStore/fetchMyInfo',{token})
+        this.$store.dispatch('userStore/fetchMyInfo',{token}).then(() => {
+          this.checkSwitchPage();
+        })
       },
       authWechat(){
         let appid = window.app_id || config_server.wechatAppId
@@ -441,6 +443,7 @@
             if (value){
               this.query = JSON.parse(value)
               this.updateRequestParams({mchId:this.query.mchId})
+              this.checkSwitchPage();//检测是否要跳转
             }
 
             localStorage.removeItem("bian-query")
@@ -574,6 +577,24 @@
       },
       goMerchantSetting(){
         Link(`/mortuary/setting`)
+      },
+      checkSwitchPage(){
+        let source_query = localStorage.getItem("bian-query")
+        console.log("checkSwitchPage",source_query)
+        if(source_query){
+          source_query = JSON.parse(source_query);
+          if(source_query.redirect_opt){//需要跳转
+            let opt = source_query.redirect_opt;
+            if(opt == 'new_order'){
+              Link('/mortuary/new_order',{},true);
+            }
+            localStorage.removeItem("bian-query")
+          }
+
+
+        }
+
+
       }
     },
     created() {

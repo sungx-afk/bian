@@ -2,7 +2,7 @@
   <div class="info-container">
     <div class="header">
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
-      <div class="header-text">彼岸思念意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思</div>
+      <div class="header-text">{{filterName}}意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思</div>
     </div>
     <div class="content">
       <div class="menu-area" v-if="isSpaceCreator">
@@ -109,7 +109,8 @@
           themeId:1,
           space:null,
           products:[],
-          iconMoney:'https://static-app01.yugusoft.com/bian/money.png'
+          iconMoney:'https://static-app01.yugusoft.com/bian/money.png',
+          products_list:[],//服务器存储的礼物列表
         }
       },
       computed: {
@@ -152,6 +153,15 @@
         },
         supportPay(){
           return config_server.supportPay
+        },
+        filterName(){
+          let result = '彼岸思念';
+          if(this.user && this.user.appId != 'wxdb43de2e1083005a'){
+            if(this.user.merchant_name){
+              result = this.user.merchant_name;
+            }
+          }
+          return result;
         }
       },
       methods:{
@@ -214,45 +224,109 @@
           })
         },
         initProducts(){
-          this.products = [{
-            id:'package-gua-guo',
-            name:'瓜果贡品（7 天）',
-            point:9
-          },{
-            id:'package-jiu-xi',
-            name:'酒席（7 天）',
-            point:50
-          },{
-            id:'package-hua-quan',
-            name:'花圈装饰（永久）',
-            point:60
-          },{
-            id:'package-xiang-zhu',
-            name:'香烛长燃（1 年）',
-            point:660
-          }]
-          if (this.supportPay){
-            this.products.push({
-              id:'item-zhang-min-ding',
-              name:'长明灯（永久，每次添加两盏，可多次）',
-              point:999
+          this.getProductsList().then(() => {
+            let products = [];
+            if(this.showGift('package-gua-guo').show){
+              products.push({
+                id:'package-gua-guo',
+                name:'瓜果贡品（7 天）',
+                point:this.showGift('package-gua-guo').price
+              })
+            }
+            if(this.showGift('package-jiu-xi').show){
+              products.push({
+                id:'package-jiu-xi',
+                name:'酒席（7 天）',
+                point:this.showGift('package-jiu-xi').price
+              })
+            }
+            if(this.showGift('package-hua-quan').show){
+              products.push({
+                id:'package-hua-quan',
+                name:'花圈装饰（永久）',
+                point:this.showGift('package-hua-quan').price
+              })
+            }
+            if(this.showGift('package-xiang-zhu').show){
+              products.push({
+                id:'package-xiang-zhu',
+                name:'香烛长燃（1 年）',
+                point:this.showGift('package-xiang-zhu').price
+              })
+            }
+            if(this.showGift('item-zhang-min-ding').show){
+              if (this.supportPay){
+                products.push({
+                  id:'item-zhang-min-ding',
+                  name:'长明灯（永久，每次添加两盏，可多次）',
+                  point:this.showGift('item-zhang-min-ding').price
+                })
+              }else {
+                products.push({
+                  id:'item-zhang-min-ding',
+                  name:'长明灯（永久）',
+                  point:this.showGift('item-zhang-min-ding').price
+                })
+              }
+            }
+
+            products.sort((a,b) => {
+              return a.price - b.price;
             })
-          }else {
-            this.products.push({
-              id:'item-zhang-min-ding',
-              name:'长明灯（永久）',
-              point:999
-            })
-          }
-          //不是尊贵馆，增加对应的VIP购买
-          if (!this.isVipSpace && this.space.type != 2){
-            this.products.push({
-              id:'item-space-vip',
-              name:'尊贵馆',
-              tip:'对来访所有人员，各种祭奠物品免费。按年支付，方便祭奠',
-              point:1990
-            })
-          }
+
+            //不是尊贵馆，增加对应的VIP购买
+            if (!this.isVipSpace && this.space.type != 2 && this.showGift('item-space-vip').show){
+              products.push({
+                id:'item-space-vip',
+                name:'尊贵馆',
+                tip:'对来访所有人员，各种祭奠物品免费。按年支付，方便祭奠',
+                point:this.showGift('item-space-vip').price
+              })
+            }
+
+
+            this.products = products;
+
+          })
+          // this.products = [{
+          //   id:'package-gua-guo',
+          //   name:'瓜果贡品（7 天）',
+          //   point:9
+          // },{
+          //   id:'package-jiu-xi',
+          //   name:'酒席（7 天）',
+          //   point:50
+          // },{
+          //   id:'package-hua-quan',
+          //   name:'花圈装饰（永久）',
+          //   point:60
+          // },{
+          //   id:'package-xiang-zhu',
+          //   name:'香烛长燃（1 年）',
+          //   point:660
+          // }]
+          // if (this.supportPay){
+          //   this.products.push({
+          //     id:'item-zhang-min-ding',
+          //     name:'长明灯（永久，每次添加两盏，可多次）',
+          //     point:999
+          //   })
+          // }else {
+          //   this.products.push({
+          //     id:'item-zhang-min-ding',
+          //     name:'长明灯（永久）',
+          //     point:999
+          //   })
+          // }
+          // //不是尊贵馆，增加对应的VIP购买
+          // if (!this.isVipSpace && this.space.type != 2){
+          //   this.products.push({
+          //     id:'item-space-vip',
+          //     name:'尊贵馆',
+          //     tip:'对来访所有人员，各种祭奠物品免费。按年支付，方便祭奠',
+          //     point:1990
+          //   })
+          // }
           if (this.space.type === 2 || !this.supportPay){
             this.products = this.products.map(item=>{
               let o = item
@@ -319,6 +393,18 @@
         },
         registerEvent(){
           eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
+        },
+        getProductsList(){
+          return new Promise((resolve, reject) => {
+            $API.mortuary.getGiftList({},(rsp) => {
+              this.products_list = rsp;
+              resolve();
+            })
+          })
+        },
+        showGift(id){
+          let [obj] = this.products_list.filter(a => a.id == id);
+          return obj;
         }
       },
       created() {

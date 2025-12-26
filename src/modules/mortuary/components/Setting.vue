@@ -6,6 +6,7 @@
     <van-cell @click="goOrder" title="订单" is-link />
     <!-- <van-cell @click="goMortuaryList" title="殡仪馆列表" is-link /> -->
     <!-- <van-cell @click="goSetManager" title="设置管理员" is-link /> -->
+    <van-cell @click="goGift" title="纪念馆礼物设置" is-link />
   </div>
 </template>
 
@@ -52,6 +53,12 @@
       },
       goSetManager(){
         let url = '/mortuary/set_manager'
+        let query = {
+        }
+        Link(url,query)
+      },
+      goGift(){
+        let url = '/mortuary/gift'
         let query = {
         }
         Link(url,query)
