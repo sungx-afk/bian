@@ -97,6 +97,10 @@
           flex: 1;
           display: flex;
           align-items: center;
+          .label{
+            display: inline-block;
+            min-width: 46px;
+          }
         }
       }
     }
