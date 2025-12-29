@@ -1,7 +1,7 @@
 <template>
   <div class="share-container">
-    <div class="share-top">
-      <div class="share-title">方式一</div>
+    <div class="share-top" v-if="!isIphone">
+      <div class="share-title">方式一</div> 
       <div class="share-body">
         <div class="share-top-text">
           <span>请先点击右上角"..."</span>
@@ -14,7 +14,7 @@
 
     </div>
     <div class="share-middle">
-      <div class="share-title">方式二</div>
+      <div class="share-title" v-if="!isIphone">方式二</div>
       <div class="share-middle-text">
         <span class="share-middle-tip">{{shareTip2}}</span>
         <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制链接</button>
@@ -77,7 +77,8 @@
       methods:{
         initShare(){
           //try 20241103 sungx:打开限制，不再限制iPhone
-          if (true){
+          //try 20251229 sungx:限制iPhone
+          if (!this.isIphone){
             let data = {
               title: '彼岸思念',
               success: () => { //你重置分享成功后的回调

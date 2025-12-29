@@ -31,6 +31,9 @@
       </div>
     </div>
     <div class="operate-wrapper">
+      <div class="share" @click="goShare">
+        <img src="~@/modules/images/share.svg" />
+      </div>
       <div class="audio anim" :class="{'playing':playState === 'play'}" @click="toggleBgmBtn" >
         <img src="~@/modules/images/music.svg" />
       </div>
@@ -154,17 +157,17 @@
         goMoreOperate(){
           let user = this.user
           this.actions = []
-          if (this.canShareFriend){
-            this.actions.push({
-              name: '发送给亲属',
-              id:'add_friends',
-            })
-          }
+          // if (this.canShareFriend){
+          //   this.actions.push({
+          //     name: '发送给亲属',
+          //     id:'add_friends',
+          //   })
+          // }
 
-          this.actions.push({
-            name: '发送给朋友',
-            id:'space_detail',
-          })
+          // this.actions.push({
+          //   name: '发送给朋友',
+          //   id:'space_detail',
+          // })
           if (this.isSpaceCreator){
             this.actions.push({
               name: '发起云追悼会（讣告）',
@@ -291,6 +294,27 @@
           },error=>{
 
           })
+        },
+        goShare(){
+          this.actions = []
+          if (this.canShareFriend){
+            this.actions.push({
+              name: '发送给亲属',
+              id:'add_friends',
+            })
+          }
+
+          this.actions.push({
+            name: '发送给朋友',
+            id:'space_detail',
+          })
+
+          if (this.actions.length > 1){
+            this.showAction = true
+            this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
+          }else{
+            this.shareSpace('space_detail')
+          }
         }
       },
       created() {
@@ -390,7 +414,7 @@
       right: 8px;
       width: 44px;
       height: 140px;
-      .audio,.summary,.more,.back-home{
+      .audio,.summary,.more,.back-home,.share{
         position: absolute;
         width: 36px;
         height: 36px;
@@ -420,6 +444,9 @@
       }
       .back-home{
         bottom:10px;
+      }
+      .share{
+        bottom: 210px;
       }
     }
   }
