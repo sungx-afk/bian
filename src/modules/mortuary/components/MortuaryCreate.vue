@@ -30,6 +30,7 @@
           service_account_app_id:"",//wxdb43de2e1083005a
           service_account_app_secret:"",//6961f862492261225ff993c9bb7b63ec
           service_account_token:"",//8KdcJI4U7Eung37IOAq1QCpzBD7uQArU
+          service_subscript_message:"",
 
 
 
@@ -72,6 +73,8 @@
         if(this.merchant.id){//
           let params = {
             name:this.merchant.name,
+            virtual_goods_free:this.merchant.virtual_goods_free,
+            service_subscript_message:"感谢您的关注,请点击创建纪念馆",
             id:this.merchant.id
           }
           $API.mortuary.modifyMortuary(params, rsp => {
@@ -135,6 +138,9 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 32px;
+    /deep/ .van-cell{
+      font-size:16px;
+    }
 
     .bottom-button {
       display: flex;

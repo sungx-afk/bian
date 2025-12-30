@@ -258,6 +258,18 @@ Vue.mixin({
       }
       return themes[index]
     }
+  },
+  mounted() {
+    try{
+      // 等待桥接就绪后调用
+      document.addEventListener('WeixinJSBridgeReady', function() {
+        WeixinJSBridge.call('hideToolbar'); // 隐藏底部工具栏
+        // WeixinJSBridge.call('showToolbar'); // 恢复显示
+      });
+    }catch(err){
+      console.log(err)
+    }
+
   }
 })
 

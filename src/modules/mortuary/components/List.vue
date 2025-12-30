@@ -114,6 +114,10 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .activity-list-wrapper{
+    /deep/ .van-cell{
+      font-size:16px;
+    }
+
 
     .new-activity-btn{
       width:50px;

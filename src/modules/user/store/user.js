@@ -25,12 +25,18 @@ const actions = {
     $API.user.loginWithCode({code,app_id},rsp=>{
       commit(types.UPDATE_USER,rsp)
       dispatch('getUserSetting');
+      if(rsp.merchant_id){
+        dispatch('getMerchantInfo',{id:rsp.merchant_id});
+      }
     })
   },
   loginWithUid ({commit, state ,dispatch}, {uid}){
     $API.user.loginWithUid({uid},rsp=>{
       commit(types.UPDATE_USER,rsp)
       dispatch('getUserSetting');
+      if(rsp.merchant_id){
+        dispatch('getMerchantInfo',{id:rsp.merchant_id});
+      }
     })
   },
   fetchMyInfo({commit, state ,dispatch}, {token}){
@@ -42,6 +48,9 @@ const actions = {
           }else{
             commit(types.UPDATE_USER,{user:rsp,token})
             dispatch('getUserSetting');
+            if(rsp.merchant_id){
+              dispatch('getMerchantInfo',{id:rsp.merchant_id});
+            }
             resolve();
           }
         })
@@ -146,7 +155,7 @@ const mutations = {
     $axios.defaults.params = param;//重新修改全局联网配置
   },
   [types.UPDATE_MERCHANT] (state,rsp){
-    state.merchant = rsp.merchant
+    state.merchant = rsp
   },
   [types.UPDATE_MERCHANT_NAME] (state,{name}){
     state.user.merchant_name = name

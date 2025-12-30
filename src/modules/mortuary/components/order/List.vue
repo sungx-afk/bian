@@ -1,43 +1,14 @@
 <template>
   <div class="list-wrapper">
+    <van-dropdown-menu>
+      <van-dropdown-item v-model="status" @change="getList" :options="statusList" />
+    </van-dropdown-menu>
     <template v-if="list.length > 0">
-      <div class="order-item" v-for="item in list" :key="item.id">
-        <div class="sub-item">
-          订单编号：{{item.id}}
-          <van-tag type="success" v-if="item.status == 'PAID'">已支付</van-tag>
-          <van-tag type="danger" v-if="item.status == 'DELIVERED'">已完成</van-tag>
-          <van-tag type="default" v-if="item.status == 'CANCELED'">已取消</van-tag>
-        </div>
-        <div class="sub-item">下单人：{{item.senderName}}</div>
-        <div class="sub-item">下单时间：{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</div>
-        <div class="sub-item">挽联留言：{{item.summary}}</div>
-        <div class="sub-item">送至：{{item.spaceName}} 逝者：{{item.spaceUserName}}</div>
-        <div class="sub-item btn" v-if="item.status != 'CANCELED'">
-          <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goPay(item)">支付订单</van-button>
-          <!-- <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goDel(item)">删除订单</van-button> -->
-          <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goCancel(item)">取消订单</van-button>
-          <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goEdit(item)">修改订单</van-button>
-          <van-button v-if="item.status != 'DELIVERED' && item.status != 'CANCELED' && user && user.merchant_manager" type="primary" size="small" @click="goFinishOrder(item)">完成订单</van-button>
-        </div>
-        <div class="deliver" v-if="item.status == 'DELIVERED'">
-          <div class="sub-item">交付人：{{item.deliverUser && item.deliverUser.name}}</div>
-          <div class="sub-item">交付说明：{{item.deliverSummary}}</div>
-          <div class="sub-item">
-            交付图片：
-          </div>
-          <div class="sub-item">
-            <img v-for="img in item.deliverImages" :src="filterImg(img)"/>
-          </div>
-        </div>
-
-      </div>
+      <order-item v-for="item in list" :key="item.id" :item="item" source="list" @refresh="getList"></order-item>
     </template>
     <div v-else>
       <van-empty description="暂无订单数据" />
     </div>
-
-
-
 
     <div class="new-btn" @click="goNewOrder">
       <i class="iconfont icon-anonymous-iconfont"></i>
@@ -50,11 +21,32 @@
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   import FinishOrder from '@/modules/widget/finish-order'
+  import OrderItem from './OrderItem'
   export default{
+    components:{
+      OrderItem
+    },
     data(){
       return {
         list:[],
         locked:false,
+        status:"ALL",
+        statusList:[{
+          text:"全部订单",
+          value:"ALL"
+        },{
+          text:"已支付订单",
+          value:"PAID"
+        },{
+          text:"未支付订单",
+          value:"CREATED"
+        },{
+          text:"已完成订单",
+          value:"DELIVERED"
+        },{
+          text:"已取消订单",
+          value:"CANCELED"
+        }]
       }
     },
     computed:{
@@ -73,15 +65,19 @@
         }
         this.locked = true;
         console.log("====>>>",this.$route.query)
+        let params = {};
+        if(this.status && this.status != 'ALL'){
+          params.status = this.status;
+        }
         if(this.$route.query.scope && this.$route.query.scope == 'my'){
-          $API.mortuary.getMyOrderList({},(rsp) => {
+          $API.mortuary.getMyOrderList(params,(rsp) => {
             this.list = rsp;
             this.locked = false;
           },() => {
             this.locked = false;
           })
         }else{
-          $API.mortuary.getOrderList({},(rsp) => {
+          $API.mortuary.getOrderList(params,(rsp) => {
             this.list = rsp;
             this.locked = false;
           },() => {
@@ -95,12 +91,14 @@
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
               this.$toast("支付成功")
+              this.getList();
             }
           }).catch(error=>{
             this.$toast(error.errMsg)
           })
         },error=>{
           this.$toast("获取订单失败，请稍后重试")
+          this.getList();
         })
       },
       goDel(item){
@@ -179,31 +177,13 @@
     width:100%;
     height:100%;
     overflow: auto;
-    .order-item{
-      padding:10px 0 0 0;
-      border-bottom:1px solid #f4f4f4;
-      .sub-item{
-        margin-bottom:6px;
-        font-size: 14px;
-        padding:0 20px;
-        &.btn{
-          text-align: right;
-          /deep/ .van-button--primary{
-            background: @MAIN_THEME_COLOR;
-            border:1px solid @MAIN_THEME_COLOR;
-          }
-        }
-      }
-      .deliver{
-        background-color: #f4f4f4;
-        padding:4px 0;
-        .sub-item{
-          img{
-            max-width: 60px;
-          }
-        }
+    /deep/ .van-dropdown-menu{
+      padding:0 16px;
+      .van-dropdown-menu__item{
+        justify-content: flex-start !important;
       }
     }
+
     .new-btn{
       width:50px;
       height:50px;

@@ -115,7 +115,8 @@
       },
       computed: {
         ...mapGetters({
-          user: 'userStore/user'
+          user: 'userStore/user',
+          merchant: 'userStore/merchant',
         }),
         backgrounds() {
           let arr = new Array(16);
@@ -152,7 +153,13 @@
           return result
         },
         supportPay(){
-          return config_server.supportPay
+          let result = true;
+          if(this.merchant && this.merchant.virtual_goods_free == 1){
+            result = false;
+          }else{
+            result = config_server.supportPay;
+          }
+          return result;
         },
         filterName(){
           let result = '彼岸思念';

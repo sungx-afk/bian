@@ -169,6 +169,10 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 32px;
+    /deep/ .van-cell{
+      font-size:16px;
+    }
+
     .avatar-wrapper{
       display: flex;
       align-items: center;

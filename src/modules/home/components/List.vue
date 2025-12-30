@@ -217,14 +217,23 @@
         this.showAction = false
         this.actions = []
         let menu = item.id
-        let type = 0
-        if (menu === 'friends'){
-          type = 1
-        }else if(menu === 'public'){
-          type = 2
+        if(menu == 'setting' || menu == 'order'){
+          if(menu == 'setting'){
+            Link(`/mortuary/setting`)
+          }else if(menu == 'order'){
+            Link(`/mortuary/order_list`)
+          }
+        }else{
+          let type = 0
+          if (menu === 'friends'){
+            type = 1
+          }else if(menu === 'public'){
+            type = 2
+          }
+
+          Link(`/space/create?type=${type}`)
         }
 
-        Link(`/space/create?type=${type}`)
       },
       onActionClose(){
         this.showAction = false
@@ -576,7 +585,15 @@
         }
       },
       goMerchantSetting(){
-        Link(`/mortuary/setting`)
+        // Link(`/mortuary/setting`)
+        this.actions = [{
+          id:'setting',
+          name:'设置',
+        },{
+          id:'order',
+          name:'订单',
+        }]
+        this.showAction = true
       },
       checkSwitchPage(){
         let source_query = localStorage.getItem("bian-query")
@@ -584,9 +601,17 @@
         if(source_query){
           source_query = JSON.parse(source_query);
           if(source_query.redirect_opt){//需要跳转
+            let query = {
+              from:"notice"
+            }
             let opt = source_query.redirect_opt;
             if(opt == 'new_order'){
-              Link('/mortuary/new_order',{},true);
+              Link('/mortuary/new_order',query,true);
+            }else if(opt == 'order_detail'){
+              if(source_query.subject_id){
+                query.id = source_query.subject_id;
+                Link('/mortuary/order_detail',query,true);
+              }
             }
             localStorage.removeItem("bian-query")
           }

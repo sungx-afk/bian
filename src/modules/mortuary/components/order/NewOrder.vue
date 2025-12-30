@@ -1,5 +1,8 @@
 <template>
   <div class="new-product-container">
+    <div class="back-home" v-if="showBack" @click="goHome">
+      <van-icon name="arrow-left" /><span>返回首页</span>
+    </div>
     <div class="info">
       <div class="select-product">
         <div class="left-btn"  @click="goSelectProduct">
@@ -18,7 +21,7 @@
           </div>
         </div>
         <div class="img">
-          <img src="https://app01.yugusoft.com/ftask/api/file/down/CFkkDWUAcHfHkHZSM5YcCb.jpeg"/>
+          <img :src="filterImgIcon(item)"/>
         </div>
       </div>
       <van-field v-model="order.spaceUserName" label="逝者姓名:" placeholder="请填写逝者姓名" input-align="right"></van-field>
@@ -59,6 +62,13 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.from && this.$route.query.from == 'notice'){
+          result = true;
+        }
+        return result;
+      }
     },
     methods:{
       goSelectProduct(){
@@ -161,6 +171,22 @@
       },
       goViewMyOrder(){
         Link('/mortuary/order_list?scope=my')
+      },
+      filterImgIcon(item){
+        let url = "";
+        if(item.images && item.images.length > 0){
+          for(var i=0;i<item.images.length;i++){
+            let obj = JSON.parse(item.images[i]);
+            if(obj.url){
+              url = obj.url;
+              break;
+            }
+          }
+        }
+        return url;
+      },
+      goHome(){
+        Link('/list')
       }
     },
     created() {
@@ -184,13 +210,25 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 32px;
+    .back-home{
+      font-size: 16px;
+      padding:10px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+    }
+    /deep/ .van-cell{
+      font-size:16px;
+    }
+
     .select-product{
       display: flex;
       align-items: center;
       padding:10px;
       background-color: #fff;
       position: relative;
-      font-size: 15px;
+      font-size: 16px;
       color:#825621;
       justify-content: space-between;
       &:active{

@@ -71,7 +71,9 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .mortuary-setting-wrapper{
-
+    /deep/ .van-cell{
+      font-size:16px;
+    }
   }
 
 

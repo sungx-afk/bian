@@ -1,11 +1,15 @@
 <template>
   <div class="list-wrapper">
+    <div class="all_free">
+      <span>全部免费：</span><van-switch  v-model="virtual_goods_free" @change="goSaveGoodsFree" :active-value="1" :inactive-value="0" size="20"/>
+    </div>
     <div class="gift-item" v-for="item in list">
       <div class="name">{{item.name}}</div>
       <div class="content">
         <div class="price">
           <span class="label">单价：</span>
-          <input type="number" @change="goChangeGift(item)" v-model="item.price"/>
+          <span v-if="virtual_goods_free">0</span>
+          <input v-else type="number" @change="goChangeGift(item)" v-model="item.price"/>
         </div>
         <div class="open">
           <span class="label">开启：</span><van-switch @change="goChangeGift(item)" v-model="item.show" size="20"/>
@@ -25,11 +29,14 @@
         list:[],
         support_id:["package-gua-guo","package-jiu-xi","package-hua-quan","package-xiang-zhu","item-zhang-min-ding","item-space-vip"],
         locked:false,
+        gift_locked:false,
+        virtual_goods_free:0,
       }
     },
     computed:{
       ...mapGetters({
         user: 'userStore/user',
+        merchant: 'userStore/merchant',
       }),
     },
     methods:{
@@ -64,13 +71,54 @@
         $API.mortuary.modifyGift(param,(rsp) => {
           // this.getList();
         })
+      },
+      initGoodsFree(){
+        if(this.user){
+          let merchant_id = this.user.merchant_id;
+          if(merchant_id){
+            if(this.gift_locked){
+              return false;
+            }
+            this.gift_locked = true;
+            $API.mortuary.getMortuaryDetail({id:merchant_id},(resp) => {
+              this.virtual_goods_free = resp.virtual_goods_free;
+              this.gift_locked = false;
+            },() => {
+              this.gift_locked = false;
+            })
+          }
+        }
+      },
+      goSaveGoodsFree(){
+        let merchant_id = this.user.merchant_id;
+        if(!merchant_id){
+          return false;
+        }
+        let params = {
+          virtual_goods_free:this.virtual_goods_free,
+          name:this.merchant.name,
+          service_subscript_message:this.merchant.service_subscript_message,
+          id:merchant_id
+        }
+        $API.mortuary.modifyMortuary(params, rsp => {
+          this.$store.dispatch('userStore/getMerchantInfo',{id:merchant_id})
+        })
+      }
+    },
+    watch:{
+      'user'(){
+        this.$nextTick(() => {
+          this.initGoodsFree();
+        })
       }
     },
     activated(){
       this.getList();
+      this.initGoodsFree();
     },
     created(){
       this.getList();
+      this.initGoodsFree();
     }
   }
 </script>
@@ -81,8 +129,14 @@
     width:100%;
     height:100%;
     overflow: auto;
+    .all_free{
+      display: flex;
+      align-items: center;
+      padding:10px;
+      border-bottom: 1px solid #f4f4f4;
+    }
     .gift-item{
-      font-size: 14px;
+      font-size: 16px;
       border-bottom:1px solid #f4f4f4;
       margin-bottom: 10px;
       padding:10px;
