@@ -1,4 +1,5 @@
 import * as types from './mutation-types'
+import { setPageTitle } from '@/config/utils'
 
 // initial state
 const state = {
@@ -101,6 +102,8 @@ const mutations = {
     state.user = data.user
     state.token = data.token
     state.expire = false
+    let page_title = data.user.merchant_name || '彼岸思念'
+    setPageTitle(page_title);
     //更新token到bian-requestParam
     let key = getLocalTokenKey();
     let param = localStorage.getItem(key)

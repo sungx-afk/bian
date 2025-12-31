@@ -182,6 +182,7 @@
           height: 40px;
           line-height: 38px;
           background-color: @MAIN_THEME_COLOR;
+          border-radius: 20px;
           &:first-child{
             color:#666666;
             background-color:white;

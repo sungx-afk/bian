@@ -1,18 +1,27 @@
 <template>
   <div class="list-wrapper">
-    <div class="all_free">
-      <span>全部免费：</span><van-switch  v-model="virtual_goods_free" @change="goSaveGoodsFree" :active-value="1" :inactive-value="0" size="20"/>
+    <div class="back-home">
+      <div class="left-btn" @click="goHome">
+        <span>⬅</span>
+      </div>
     </div>
-    <div class="gift-item" v-for="item in list">
-      <div class="name">{{item.name}}</div>
-      <div class="content">
-        <div class="price">
-          <span class="label">单价：</span>
-          <span v-if="virtual_goods_free">0</span>
-          <input v-else type="number" @change="goChangeGift(item)" v-model="item.price"/>
+    <div class="info">
+      <div class="info-container">
+        <div class="all_free">
+          <span>全部免费：</span><van-switch  v-model="virtual_goods_free" @change="goSaveGoodsFree" :active-value="1" :inactive-value="0" size="20"/>
         </div>
-        <div class="open">
-          <span class="label">开启：</span><van-switch @change="goChangeGift(item)" v-model="item.show" size="20"/>
+        <div class="gift-item" v-for="item in list">
+          <div class="name">{{item.name}}</div>
+          <div class="content">
+            <div class="price">
+              <span class="label">单价：</span>
+              <span v-if="virtual_goods_free">0</span>
+              <input v-else type="number" @change="goChangeGift(item)" v-model="item.price"/>
+            </div>
+            <div class="open">
+              <span class="label">开启：</span><van-switch @change="goChangeGift(item)" v-model="item.show" size="20"/>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -38,6 +47,13 @@
         user: 'userStore/user',
         merchant: 'userStore/merchant',
       }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
+          result = true;
+        }
+        return result;
+      }
     },
     methods:{
       getList(){
@@ -103,6 +119,13 @@
         $API.mortuary.modifyMortuary(params, rsp => {
           this.$store.dispatch('userStore/getMerchantInfo',{id:merchant_id})
         })
+      },
+      goHome(){
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
       }
     },
     watch:{
@@ -128,7 +151,41 @@
   .list-wrapper{
     width:100%;
     height:100%;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    .back-home{
+      font-size: 16px;
+      padding:12px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left-btn,.right-btn{
+        display: flex;
+        align-items: center;
+      }
+      .right-btn{
+        font-size: 14px;
+        color:#999;
+      }
+    }
+    /deep/ .van-cell{
+      font-size:16px;
+    }
+    .info{
+      flex-grow:1;
+      height:0;
+      overflow:auto;
+      padding:16px;
+      box-sizing: border-box;
+      .info-container{
+        background-color: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    }
     .all_free{
       display: flex;
       align-items: center;

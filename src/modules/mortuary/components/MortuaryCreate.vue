@@ -1,12 +1,19 @@
 <template>
   <div class="mortuary-create-container">
+    <div class="back-home">
+      <div class="left-btn" @click="goHome">
+        <span>⬅</span>
+      </div>
+    </div>
     <div class="info">
-      <van-field v-model="merchant.name" label="殡仪馆名称:" placeholder="请填写殡仪馆名称" maxlength="20" input-align="right"></van-field>
-     <!-- <van-field v-model="merchant.pay_api_key" label="支付API_KEY:" placeholder="请填写支付API_KEY" maxlength="50" input-align="right"></van-field>
-      <van-field v-model="merchant.pay_mch_id" label="支付商户ID:" placeholder="请填写支付商户ID" maxlength="50" input-align="right"></van-field>
-      <van-field v-model="merchant.service_account_app_id" label="服务号应用ID:" placeholder="请填写服务号应用ID" maxlength="50" input-align="right"></van-field>
-      <van-field v-model="merchant.service_account_app_secret" label="服务号密钥:" placeholder="请填写服务号密钥" maxlength="50" input-align="right"></van-field>
-      <van-field v-model="merchant.service_account_token" :label-width="110" label="服务号验证凭证:" placeholder="请填写服务号验证凭证" maxlength="50" input-align="right"></van-field> -->
+      <div class="info-container">
+        <van-field v-model="merchant.name" label="殡仪馆名称:" placeholder="请填写殡仪馆名称" maxlength="20" input-align="right"></van-field>
+       <!-- <van-field v-model="merchant.pay_api_key" label="支付API_KEY:" placeholder="请填写支付API_KEY" maxlength="50" input-align="right"></van-field>
+        <van-field v-model="merchant.pay_mch_id" label="支付商户ID:" placeholder="请填写支付商户ID" maxlength="50" input-align="right"></van-field>
+        <van-field v-model="merchant.service_account_app_id" label="服务号应用ID:" placeholder="请填写服务号应用ID" maxlength="50" input-align="right"></van-field>
+        <van-field v-model="merchant.service_account_app_secret" label="服务号密钥:" placeholder="请填写服务号密钥" maxlength="50" input-align="right"></van-field>
+        <van-field v-model="merchant.service_account_token" :label-width="110" label="服务号验证凭证:" placeholder="请填写服务号验证凭证" maxlength="50" input-align="right"></van-field> -->
+      </div>
     </div>
     <div class="bottom-button">
       <van-button type="default" size="large" @click.tap="confirm">{{merchant.id?'修改':'创建'}}</van-button>
@@ -43,6 +50,13 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
+          result = true;
+        }
+        return result;
+      }
     },
     methods:{
       confirm(){
@@ -114,6 +128,13 @@
         $API.mortuary.getMortuaryDetail({id}, rsp => {
           this.merchant = rsp;
         })
+      },
+      goHome(){
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
       }
     },
     created() {
@@ -135,9 +156,42 @@
     height: 100%;
     box-sizing: border-box;
     background-color: #f6f6f6;
-    overflow-x: hidden;
-    overflow-y: auto;
     padding-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    .back-home{
+      font-size: 16px;
+      padding:12px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left-btn,.right-btn{
+        display: flex;
+        align-items: center;
+      }
+      .right-btn{
+        font-size: 14px;
+        color:#999;
+      }
+    }
+    /deep/ .van-cell{
+      font-size:16px;
+    }
+    .info{
+      flex-grow:1;
+      height:0;
+      overflow:auto;
+      padding:16px;
+      box-sizing: border-box;
+      .info-container{
+        background-color: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    }
     /deep/ .van-cell{
       font-size:16px;
     }
@@ -152,6 +206,7 @@
         height: 40px;
         line-height: 38px;
         background-color: @MAIN_THEME_COLOR;
+        border-radius: 20px;
       }
     }
 

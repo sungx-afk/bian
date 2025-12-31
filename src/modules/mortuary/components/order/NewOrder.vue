@@ -1,34 +1,56 @@
 <template>
   <div class="new-product-container">
-    <div class="back-home" v-if="showBack" @click="goHome">
-      <van-icon name="arrow-left" /><span>返回首页</span>
+    <div class="back-home">
+      <div class="left-btn" @click="goHome">
+        <span>⬅</span>
+      </div>
+      <div class="right-btn" @click="goViewMyOrder">
+        <span>历史订单</span>
+      </div>
     </div>
     <div class="info">
-      <div class="select-product">
-        <div class="left-btn"  @click="goSelectProduct">
-          <van-icon name="plus" />选择商品
-        </div>
-        <div class="right-btn" @click="goViewMyOrder">
-          <van-button type="primary" size="small">我的历史订单</van-button>
-        </div>
+      <div class="select-product" @click="goSelectProduct" v-if="order.products.length == 0">
+        <div class="add-icon">+</div>
+        <div class="add-text">点击添加商品</div>
       </div>
-      <div class="product" v-for="item in order.products">
-        <div class="detail">
-          <div class="name">{{item.name}}</div>
-          <div class="price">¥{{item.price | filterMoney}}</div>
-          <div class="num">
-            <van-stepper v-model="item.num" min="1"/>
+      <div class="product-wrapper" v-if="order.products.length > 0">
+        <div class="product" v-for="item in order.products">
+          <div class="img">
+            <img :src="filterImgIcon(item)"/>
+          </div>
+          <div class="detail">
+            <div class="name">{{item.name}}</div>
+            <div class="num_price">
+              <div class="price">¥ {{item.price | filterMoney}}</div>
+              <div class="num">
+                <van-stepper v-model="item.num" min="1"/>
+              </div>
+            </div>
+
           </div>
         </div>
-        <div class="img">
-          <img :src="filterImgIcon(item)"/>
+        <div class="add-more-dashed" @click="goSelectProduct">
+          <span class="icon">+</span> <span>添加更多商品</span>
         </div>
+        <div class="total-bar">
+          <span>商品小计</span>
+          <span class="total-price">¥ {{filterTotal | filterMoney}}</span>
+        </div>
+
       </div>
-      <van-field v-model="order.spaceUserName" label="逝者姓名:" placeholder="请填写逝者姓名" input-align="right"></van-field>
-      <van-field v-model="order.spaceName" label="告别厅:" placeholder="请填写告别厅" input-align="right"></van-field>
-      <van-field v-model="order.senderName" label="赠送人:" placeholder="请填写赠送人" input-align="right"></van-field>
-      <van-field v-model="order.senderPhone" label="联系电话:" placeholder="请填写联系电话" input-align="right"></van-field>
-      <van-field v-model="order.summary" label="挽联内容:" placeholder="请填写挽联内容" type="textarea" input-align="right"></van-field>
+
+
+
+
+      <div class="other-info">
+        <van-field v-model="order.spaceUserName" label="逝者姓名:" placeholder="请填写逝者姓名" input-align="right"></van-field>
+        <van-field v-model="order.spaceName" label="告别厅:" placeholder="请填写告别厅" input-align="right"></van-field>
+        <van-field v-model="order.senderName" label="赠送人:" placeholder="请填写赠送人" input-align="right"></van-field>
+        <van-field v-model="order.senderPhone" label="联系电话:" placeholder="请填写联系电话" input-align="right"></van-field>
+        <van-field v-model="order.summary" label="挽联内容:" placeholder="请填写挽联内容" type="textarea" input-align="right"></van-field>
+
+      </div>
+
     </div>
     <div class="bottom-button">
       <van-button type="default" size="large" @click.tap="confirm">{{order.id?'修改':'创建'}}</van-button>
@@ -37,7 +59,7 @@
 </template>
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {Link,gUuid} from '@/config/utils'
+  import {Link,gUuid,accAdd,accMul} from '@/config/utils'
   import constant from '@/config/constant'
   import qs from 'qs'
   import SelectProduct from '@/modules/widget/select-product'
@@ -64,8 +86,18 @@
       }),
       showBack(){
         let result = false;
-        if(this.$route && this.$route.query.from && this.$route.query.from == 'notice'){
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
           result = true;
+        }
+        return result;
+      },
+      filterTotal(){
+        let result = 0;
+        if(this.order.products && this.order.products.length > 0){
+          this.order.products.forEach(a => {
+            let money = accMul(a.num,a.price);
+            result = accAdd(result,money)
+          })
         }
         return result;
       }
@@ -159,11 +191,19 @@
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
               this.$toast("支付成功")
-              this.$router.go(-1)
+              if(this.showBack){
+                this.goHome();
+              }else{
+                this.$router.go(-1)
+              }
             }
           }).catch(error=>{
             this.$toast(error.errMsg)
-            this.$router.go(-1)
+            if(this.showBack){
+              this.goHome();
+            }else{
+              this.$router.go(-1)
+            }
           })
         },error=>{
           this.$toast("获取订单失败，请稍后重试")
@@ -186,7 +226,11 @@
         return url;
       },
       goHome(){
-        Link('/list')
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
       }
     },
     created() {
@@ -212,43 +256,106 @@
     padding-bottom: 32px;
     .back-home{
       font-size: 16px;
-      padding:10px;
+      padding:12px 16px;
       background-color: #fff;
       border-bottom: 1px solid #ccc;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      .left-btn,.right-btn{
+        display: flex;
+        align-items: center;
+      }
+      .right-btn{
+        font-size: 14px;
+        color:#999;
+      }
     }
     /deep/ .van-cell{
       font-size:16px;
     }
+    .info{
+      padding:16px;
+      .other-info{
+        background-color: #fff;
+        border-radius: 12px;
+        overflow:hidden;
+      }
+      .product-wrapper{
+        background-color: #fff;
+        border-radius: 12px;
+        overflow:hidden;
+        margin-bottom: 16px;
+        padding:0 16px;
+        .add-more-dashed{
+          margin: 16px 0;
+          width: 100%;
+          height: 48px;
+          border: 1px dashed #c0c4cc;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: @MAIN_THEME_COLOR;
+          font-size: 14px;
+          background-color: #fafafa;
+          cursor: pointer;
+          .icon{
+            font-size: 18px;
+            margin-right: 6px;
+            font-weight: bold;
+          }
+        }
+        .total-bar{
+          display: flex;
+          justify-content: space-between;
+          padding: 12px 0;
+          border-top: 1px solid #ebedf0;
+          margin-top: 4px;
+          font-size: 15px;
+          .total-price{
+            font-size: 18px;
+            font-weight: bold;
+            color: @MAIN_THEME_COLOR;
+          }
+        }
+      }
+    }
 
     .select-product{
-      display: flex;
-      align-items: center;
-      padding:10px;
+      width: 100%;
+      height: 140px;
       background-color: #fff;
-      position: relative;
-      font-size: 16px;
-      color:#825621;
-      justify-content: space-between;
+      border: 2px dashed #c0c4cc;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-sizing: border-box;
       &:active{
-        background-color: #f2f3f5;
+        background-color: #fafafa;
+        border-color: #8d6e63;
       }
-      &::after{
-        position: absolute;
-        box-sizing: border-box;
-        content: ' ';
-        pointer-events: none;
-        right: 0;
-        bottom: 0;
-        left: 16px;
-        border-bottom: 1px solid #ebedf0;
-        transform: scaleY(.5);
+      .add-icon{
+        font-size: 40px;
+        color: #c0c4cc;
+        line-height: 1;
+        margin-bottom: 8px;
       }
+      .add-text{
+        font-size: 16px;
+        color: #c0c4cc;
+        font-weight: bold;
+      }
+
     }
     .product{
       display: flex;
-      padding:10px;
+      padding:16px 0;
       background-color: #fff;
       position: relative;
       &::after{
@@ -256,7 +363,7 @@
         box-sizing: border-box;
         content: ' ';
         pointer-events: none;
-        right: 0;
+        right: 16px;
         bottom: 0;
         left: 16px;
         border-bottom: 1px solid #ebedf0;
@@ -264,23 +371,33 @@
       }
       .detail{
         flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         .name{
           font-size: 16px;
-          font-weight: 700;
+          font-weight: 500;
+          color:#333;
         }
-        .price{
-          margin-top:5px;
+        .num_price{
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          .price{
+            font-size: 16px;
+            font-weight: bold;
+            color:@MAIN_THEME_COLOR;
+          }
         }
-        .num{
-          margin-top:5px;
-        }
+
       }
       .img{
-        width:70px;
-        height:70px;
+        width:72px;
+        height:72px;
         flex-shrink: 0;
-        border-radius: 5px;
+        border-radius: 8px;
         overflow: hidden;
+        margin-right: 12px;
         img{
           width:100%;
         }
@@ -294,9 +411,12 @@
       .van-button--large{
         width: 90%;
         color: white;
-        height: 40px;
+        height: 48px;
         line-height: 38px;
         background-color: @MAIN_THEME_COLOR;
+        border-radius: 24px;
+        font-size: 16px;
+        font-weight: bold;
       }
     }
 

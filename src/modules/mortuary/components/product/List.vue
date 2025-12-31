@@ -1,23 +1,31 @@
 <template>
   <div class="list-wrapper">
-    <template v-if="list.length > 0">
-      <div class="product-item" v-for="item in list" :key="item.id">
-        <div class="icon">
-          <img v-if="filterImg(item)" :src="filterImg(item)"/>
-          <div class="no-image" v-else></div>
-        </div>
-        <div class="info">
-          <div class="name">{{item.name}}</div>
-          <div class="price">¥{{item.price | filterMoney}}</div>
-        </div>
-        <div class="operate" @click.stop="goEdit(item)">
-          <i class="iconfont icon-gengduo"></i>
-        </div>
+    <div class="back-home">
+      <div class="left-btn" @click="goHome">
+        <span>⬅</span>
       </div>
-    </template>
-    <div v-else>
-      <van-empty description="暂无商品数据" />
     </div>
+    <div class="list-container">
+      <template v-if="list.length > 0">
+        <div class="product-item" v-for="item in list" :key="item.id">
+          <div class="icon">
+            <img v-if="filterImg(item)" :src="filterImg(item)"/>
+            <div class="no-image" v-else></div>
+          </div>
+          <div class="info">
+            <div class="name">{{item.name}}</div>
+            <div class="price">¥{{item.price | filterMoney}}</div>
+          </div>
+          <div class="operate" @click.stop="goEdit(item)">
+            <i class="iconfont icon-gengduo"></i>
+          </div>
+        </div>
+      </template>
+      <div v-else>
+        <van-empty description="暂无商品数据" />
+      </div>
+    </div>
+
 
 
     <div class="new-btn" @click="goNewProduct">
@@ -37,6 +45,7 @@
 </template>
 
 <script>
+  import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   export default{
     data(){
@@ -47,6 +56,18 @@
         actions:[],
         opt_obj:null,
         locked:false,
+      }
+    },
+    computed:{
+      ...mapGetters({
+        user: 'userStore/user',
+      }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
+          result = true;
+        }
+        return result;
       }
     },
     methods:{
@@ -126,6 +147,13 @@
         this.showAction = false
         this.actions = []
       },
+      goHome(){
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
+      }
     },
     activated(){
       this.getList();
@@ -139,10 +167,41 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .list-wrapper{
+    width: 100%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    .back-home{
+      font-size: 16px;
+      padding:12px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left-btn,.right-btn{
+        display: flex;
+        align-items: center;
+      }
+      .right-btn{
+        font-size: 14px;
+        color:#999;
+      }
+    }
+    .list-container{
+      flex-grow:1;
+      height:0;
+      overflow:auto;
+      padding:16px;
+      box-sizing: border-box;
+    }
     .product-item{
       display: flex;
       padding:10px 20px;
-      border-bottom:1px solid #f4f4f4;
+      background: #fff;
+      border-radius: 16px;
+      margin-bottom: 16px;
       &:last-child{
         border-bottom: none;
       }

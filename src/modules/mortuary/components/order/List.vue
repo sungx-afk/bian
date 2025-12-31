@@ -1,14 +1,22 @@
 <template>
   <div class="list-wrapper">
-    <van-dropdown-menu>
-      <van-dropdown-item v-model="status" @change="getList" :options="statusList" />
-    </van-dropdown-menu>
-    <template v-if="list.length > 0">
-      <order-item v-for="item in list" :key="item.id" :item="item" source="list" @refresh="getList"></order-item>
-    </template>
-    <div v-else>
-      <van-empty description="暂无订单数据" />
+    <div class="back-home">
+      <div class="left-btn" @click="goHome">
+        <span>⬅</span>
+      </div>
+      <van-dropdown-menu>
+        <van-dropdown-item v-model="status" @change="getList" :options="statusList" />
+      </van-dropdown-menu>
     </div>
+    <div class="list-container">
+      <template v-if="list.length > 0">
+        <order-item v-for="item in list" :key="item.id" :item="item" source="list" @refresh="getList"></order-item>
+      </template>
+      <div v-else>
+        <van-empty description="暂无订单数据" />
+      </div>
+    </div>
+
 
     <div class="new-btn" @click="goNewOrder">
       <i class="iconfont icon-anonymous-iconfont"></i>
@@ -53,6 +61,13 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
+          result = true;
+        }
+        return result;
+      },
     },
     methods:{
       goNewOrder(){
@@ -160,6 +175,13 @@
         .catch(() => {
           // on cancel
         });
+      },
+      goHome(){
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
       }
     },
     activated(){
@@ -176,12 +198,34 @@
   .list-wrapper{
     width:100%;
     height:100%;
-    overflow: auto;
-    /deep/ .van-dropdown-menu{
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    .back-home{
+      font-size: 16px;
       padding:0 16px;
-      .van-dropdown-menu__item{
-        justify-content: flex-start !important;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      .left-btn,.right-btn{
+        display: flex;
+        align-items: center;
       }
+      /deep/ .van-dropdown-menu{
+        padding:0 16px;
+        .van-dropdown-menu__item{
+          justify-content: flex-start !important;
+        }
+      }
+    }
+    .list-container{
+      flex-grow:1;
+      height:0;
+      overflow:auto;
+      padding:16px;
+      box-sizing: border-box;
     }
 
     .new-btn{

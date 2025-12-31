@@ -250,6 +250,9 @@
         this.menuList = [ {
           id:'create',
           name: '创建纪念馆',
+        },{
+          id:'create_order',
+          name: '送祭品',
         }, {
           id:'meeting',
           name: '云追悼会（讣告）',
@@ -318,6 +321,11 @@
           case 'merchant_setting':
             this.goMerchantSetting()
             break
+          case 'create_order':
+            this.goNewOrder()
+            break
+
+
         }
       },
       goFeedback(){
@@ -426,6 +434,9 @@
         this.getSpaceList()
         this.getSpacesVisited()
         this.updateNotice()
+
+
+
       },
       tokenExpire(){
         //token过期了，重新尝试授权登录
@@ -595,6 +606,9 @@
         }]
         this.showAction = true
       },
+      goNewOrder(){
+        Link('/mortuary/new_order');
+      },
       checkSwitchPage(){
         let source_query = localStorage.getItem("bian-query")
         console.log("checkSwitchPage",source_query)
@@ -602,7 +616,7 @@
           source_query = JSON.parse(source_query);
           if(source_query.redirect_opt){//需要跳转
             let query = {
-              from:"notice"
+              opt_from:"notice"
             }
             let opt = source_query.redirect_opt;
             if(opt == 'new_order'){

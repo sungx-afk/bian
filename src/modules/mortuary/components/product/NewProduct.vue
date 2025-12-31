@@ -1,18 +1,25 @@
 <template>
   <div class="new-product-container">
+    <div class="back-home">
+      <div class="left-btn" @click="goHome">
+        <span>⬅</span>
+      </div>
+    </div>
     <div class="info">
-      <van-field v-model="product.name" label="商品名称:" placeholder="请填写商品名称" maxlength="20" input-align="right"></van-field>
-      <van-field v-model="product.price" label="商品价格:" placeholder="请填写商品价格" type="number" input-align="right"></van-field>
-      <van-cell title="图片" :border="false"></van-cell>
-      <van-cell>
-        <div class="avatar-wrapper">
-          <div class="avatar-preview" v-for="(avatar,index) in product.images" :key="index">
-            <van-uploader :after-read="afterSelectPhoto" :name="index">
-              <img class="avatar"  :src="avatar.url" v-if="avatar.url"/>
-            </van-uploader>
+      <div class="info-container">
+        <van-field v-model="product.name" label="商品名称:" placeholder="请填写商品名称" maxlength="20" input-align="right"></van-field>
+        <van-field v-model="product.price" label="商品价格:" placeholder="请填写商品价格" type="number" input-align="right"></van-field>
+        <van-cell title="图片" :border="false"></van-cell>
+        <van-cell>
+          <div class="avatar-wrapper">
+            <div class="avatar-preview" v-for="(avatar,index) in product.images" :key="index">
+              <van-uploader :after-read="afterSelectPhoto" :name="index">
+                <img class="avatar"  :src="avatar.url" v-if="avatar.url"/>
+              </van-uploader>
+            </div>
           </div>
-        </div>
-      </van-cell>
+        </van-cell>
+      </div>
 
     </div>
     <div class="bottom-button">
@@ -44,6 +51,13 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
+          result = true;
+        }
+        return result;
+      }
     },
     methods:{
       afterSelectPhoto(photo,detail){
@@ -143,6 +157,13 @@
           }
           this.product = rsp;
         })
+      },
+      goHome(){
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
       }
     },
     created() {
@@ -167,12 +188,42 @@
     box-sizing: border-box;
     background-color: #f6f6f6;
     overflow-x: hidden;
-    overflow-y: auto;
     padding-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    .back-home{
+      font-size: 16px;
+      padding:12px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left-btn,.right-btn{
+        display: flex;
+        align-items: center;
+      }
+      .right-btn{
+        font-size: 14px;
+        color:#999;
+      }
+    }
     /deep/ .van-cell{
       font-size:16px;
     }
-
+    .info{
+      flex-grow:1;
+      height:0;
+      overflow:auto;
+      padding:16px;
+      box-sizing: border-box;
+      .info-container{
+        background-color: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    }
     .avatar-wrapper{
       display: flex;
       align-items: center;
@@ -200,6 +251,7 @@
         height: 40px;
         line-height: 38px;
         background-color: @MAIN_THEME_COLOR;
+        border-radius: 20px;
       }
     }
 
