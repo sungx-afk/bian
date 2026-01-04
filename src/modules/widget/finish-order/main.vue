@@ -2,6 +2,11 @@
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="finish-order-box" v-show="show">
       <div class="item-box">
+        <div class="back-home">
+          <div class="left-btn" @click="goHome">
+            <van-icon name="arrow-left" /><span>返回</span>
+          </div>
+        </div>
         <div class="list-wrapper">
           <van-field v-model="deliverSummary" label="交付说明:" placeholder="请填写交付说明" type="textarea" input-align="right"></van-field>
           <van-cell title="图片" :border="false"></van-cell>
@@ -134,6 +139,24 @@
       box-sizing: border-box;
       overflow-x: hidden;
       overflow-y: hidden;
+      .back-home{
+        font-size: 16px;
+        padding:12px 16px;
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        .left-btn,.right-btn{
+          display: flex;
+          align-items: center;
+        }
+        .right-btn{
+          font-size: 14px;
+          color:#999;
+        }
+      }
       .list-wrapper{
         flex-grow:1;
         height:0;

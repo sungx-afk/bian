@@ -2,7 +2,7 @@
   <div class="list-wrapper">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <span>⬅</span>
+        <van-icon name="arrow-left" /><span>返回</span>
       </div>
       <van-dropdown-menu>
         <van-dropdown-item v-model="status" @change="getList" :options="statusList" />

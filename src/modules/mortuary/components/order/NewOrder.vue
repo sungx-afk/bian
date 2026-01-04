@@ -2,7 +2,7 @@
   <div class="new-product-container">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <span>⬅</span>
+        <van-icon name="arrow-left" /><span>返回</span>
       </div>
       <div class="right-btn" @click="goViewMyOrder">
         <span>历史订单</span>
@@ -133,6 +133,10 @@
           this.$toast('请填写赠送人');
           return;
         }
+        if(!this.order.senderPhone){
+          this.$toast('请填写联系电话');
+          return;
+        }
         if(!this.order.summary){
           this.$toast('请填写挽联内容');
           return;
@@ -233,6 +237,11 @@
         }
       }
     },
+    activated(){
+      if(this.$route.query.id){
+        this.getOrderDetail(this.$route.query.id);
+      }
+    },
     created() {
       if(this.$route.query.id){
         this.getOrderDetail(this.$route.query.id);
@@ -254,6 +263,8 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 32px;
+    display: flex;
+    flex-direction: column;
     .back-home{
       font-size: 16px;
       padding:12px 16px;
@@ -262,6 +273,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
       .left-btn,.right-btn{
         display: flex;
         align-items: center;
@@ -276,6 +288,9 @@
     }
     .info{
       padding:16px;
+      overflow: auto;
+      flex-grow: 1;
+      height:0;
       .other-info{
         background-color: #fff;
         border-radius: 12px;

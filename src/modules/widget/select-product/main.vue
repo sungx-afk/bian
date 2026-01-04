@@ -2,6 +2,11 @@
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="select-product-box" v-show="show">
       <div class="item-box">
+        <div class="back-home">
+          <div class="left-btn" @click="goHome">
+            <van-icon name="arrow-left" /><span>返回</span>
+          </div>
+        </div>
         <div class="list-wrapper">
           <div class="product-item" @click="goSelect(item)" v-for="item in list" :key="item.id">
             <div class="icon">
@@ -12,8 +17,9 @@
               <div class="name">{{item.name}}</div>
               <div class="price">¥{{item.price | filterMoney}}</div>
             </div>
-            <div class="operate" v-if="isSelect(item)">
-              <van-icon name="checked" />
+            <div class="operate">
+              <van-icon v-if="isSelect(item)" name="checked" />
+              <van-icon v-else name="circle" />
             </div>
           </div>
         </div>
@@ -92,6 +98,9 @@
         }else{
           this.select.push(item)
         }
+      },
+      goHome(){
+        this.close();
       }
     },
     mounted() {
@@ -115,22 +124,43 @@
       z-index: 10;
       width: 100%;
       height: 100%;
-      background: #ffffff;
+      background: #f6f6f6;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
       overflow-x: hidden;
       overflow-y: hidden;
+      .back-home{
+        font-size: 16px;
+        padding:12px 16px;
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        .left-btn,.right-btn{
+          display: flex;
+          align-items: center;
+        }
+        .right-btn{
+          font-size: 14px;
+          color:#999;
+        }
+      }
       .list-wrapper{
         flex-grow:1;
         height:0;
         overflow: auto;
+        padding:16px;
 
         .product-item{
           display: flex;
           padding:10px 20px;
-          border-bottom:1px solid #f4f4f4;
           align-items: center;
+          background: #fff;
+          border-radius: 12px;
+          margin-bottom: 16px;
           &:last-child{
             border-bottom: none;
           }

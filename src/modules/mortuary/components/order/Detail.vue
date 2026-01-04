@@ -2,7 +2,7 @@
   <div class="order_detail">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <span>⬅</span>
+        <van-icon name="arrow-left" /><span>返回</span>
       </div>
     </div>
     <div class="detail-wrapper" v-if="order">

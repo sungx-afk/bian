@@ -259,6 +259,9 @@
         },{
           id:'user_center',
           name: '个人信息',
+        },{
+          id:'my_order',
+          name: '我的订单',
         }]
         if (config_server.supportFeedback){
           this.menuList.push({
@@ -324,6 +327,11 @@
           case 'create_order':
             this.goNewOrder()
             break
+          case 'my_order':
+            this.goMyOrder()
+            break
+
+
 
 
         }
@@ -608,6 +616,9 @@
       },
       goNewOrder(){
         Link('/mortuary/new_order');
+      },
+      goMyOrder(){
+        Link('/mortuary/order_list?scope=my')
       },
       checkSwitchPage(){
         let source_query = localStorage.getItem("bian-query")

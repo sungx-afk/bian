@@ -35,6 +35,9 @@
       <van-cell class="log-cell" v-if="supportPay" :is-link="true" @click.stop="goLogs">
         <span>充值和扣费记录</span>
       </van-cell>
+      <van-cell class="account-cell" @click="goViewMyOrder" :is-link="true">
+        <span>我的订单</span>
+      </van-cell>
     </div>
   </div>
 </template>
@@ -97,7 +100,7 @@ export default {
     updateAvatarData(result){
       let that = this
       let info = result.info
-  
+
       let cropperData = result.cropperData
 
       that.loading = true
@@ -159,6 +162,9 @@ export default {
     registerEvent(){
       eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
       eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+    },
+    goViewMyOrder(){
+      Link('/mortuary/order_list?scope=my')
     }
   },
   created () {
@@ -186,7 +192,7 @@ export default {
     height: 100%;
     .user-center-wrapper{
       background: @BG_WHITE;
-     
+
       /deep/.van-cell__value{
         display: flex;
         align-items: center;
@@ -198,7 +204,7 @@ export default {
             flex-shrink:0;
           }
         }
-        
+
         .name-wrapper{
           margin-left: 12px;
           .name{
@@ -225,7 +231,7 @@ export default {
         }
         .charge-remain-wrapper{
           flex-shrink: 0;
-        } 
+        }
         .charge-btn-wrapper{
           flex-shrink: 0;
           .charge-btn{

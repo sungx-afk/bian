@@ -1,19 +1,25 @@
 <template>
   <div class="finish-order-box">
     <div class="item-box">
+      <div class="back-home">
+        <div class="left-btn" @click="goHome">
+          <van-icon name="arrow-left" /><span>返回</span>
+        </div>
+      </div>
       <div class="list-wrapper">
-        <van-field v-model="deliverSummary" label="交付说明:" placeholder="请填写交付说明" type="textarea" input-align="right"></van-field>
-        <van-cell title="交付图片" :border="false"></van-cell>
-        <van-cell>
-          <div class="avatar-wrapper">
-            <div class="avatar-preview" v-for="(avatar,index) in deliverImages" :key="index">
-              <van-uploader :after-read="afterSelectPhoto" :name="index">
-                <img class="avatar"  :src="avatar.url" v-if="avatar.url"/>
-              </van-uploader>
+        <div class="list-container">
+          <van-field v-model="deliverSummary" label="交付说明:" placeholder="请填写交付说明" type="textarea" input-align="right"></van-field>
+          <van-cell title="交付图片" :border="false"></van-cell>
+          <van-cell>
+            <div class="avatar-wrapper">
+              <div class="avatar-preview" v-for="(avatar,index) in deliverImages" :key="index">
+                <van-uploader :after-read="afterSelectPhoto" :name="index">
+                  <img class="avatar"  :src="avatar.url" v-if="avatar.url"/>
+                </van-uploader>
+              </div>
             </div>
-          </div>
-        </van-cell>
-
+          </van-cell>
+        </div>
       </div>
       <div class="bottom-button">
         <van-button type="default" @click.tap="cancel">取消</van-button>
@@ -41,6 +47,13 @@
       ...mapGetters({
         user: 'userStore/user',
       }),
+      showBack(){
+        let result = false;
+        if(this.$route && this.$route.query.opt_from && this.$route.query.opt_from == 'notice'){
+          result = true;
+        }
+        return result;
+      }
     },
     methods: {
       afterSelectPhoto(photo,detail){
@@ -122,6 +135,13 @@
           this.$toast('提交失败，请稍后重试')
         })
 
+      },
+      goHome(){
+        if(this.showBack){
+          Link('/list')
+        }else{
+          this.$router.go(-1)
+        }
       }
     },
     created() {
@@ -144,16 +164,38 @@
       z-index: 10;
       width: 100%;
       height: 100%;
-      background: #ffffff;
+      background: #f6f6f6;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
       overflow-x: hidden;
       overflow-y: hidden;
+      .back-home{
+        font-size: 16px;
+        padding:12px 16px;
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .left-btn,.right-btn{
+          display: flex;
+          align-items: center;
+        }
+        .right-btn{
+          font-size: 14px;
+          color:#999;
+        }
+      }
       .list-wrapper{
         flex-grow:1;
         height:0;
         overflow: auto;
+        padding:16px;
+        .list-container{
+          border-radius: 16px;
+          overflow: hidden;
+        }
         .avatar-wrapper{
           display: flex;
           align-items: center;
