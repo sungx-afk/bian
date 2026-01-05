@@ -1,12 +1,12 @@
 <template>
   <div class="mortuary-setting-wrapper">
-    <van-cell @click="goEditMortuary" title="设置馆" is-link />
-    <van-cell @click="goProduct" title="商品" is-link />
+    <van-cell @click="goEditMortuary" title="设置馆名称" is-link />
+    <van-cell @click="goProduct" title="商品服务" is-link />
     <!-- <van-cell @click="goActivity" title="告别活动" is-link /> -->
     <van-cell @click="goOrder" title="订单" is-link />
     <!-- <van-cell @click="goMortuaryList" title="殡仪馆列表" is-link /> -->
     <!-- <van-cell @click="goSetManager" title="设置管理员" is-link /> -->
-    <van-cell @click="goGift" title="纪念馆礼物设置" is-link />
+    <van-cell @click="goGift" title="在线纪念馆礼物设置" is-link />
   </div>
 </template>
 

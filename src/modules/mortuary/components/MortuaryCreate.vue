@@ -7,7 +7,7 @@
     </div>
     <div class="info">
       <div class="info-container">
-        <van-field v-model="merchant.name" label="殡仪馆名称:" placeholder="请填写殡仪馆名称" maxlength="20" input-align="right"></van-field>
+        <van-field v-model="merchant.name"  :disabled="user && user.appId == 'wx502b2e237549374c'" label="殡仪馆名称:" placeholder="请填写殡仪馆名称" maxlength="20" input-align="right"></van-field>
        <!-- <van-field v-model="merchant.pay_api_key" label="支付API_KEY:" placeholder="请填写支付API_KEY" maxlength="50" input-align="right"></van-field>
         <van-field v-model="merchant.pay_mch_id" label="支付商户ID:" placeholder="请填写支付商户ID" maxlength="50" input-align="right"></van-field>
         <van-field v-model="merchant.service_account_app_id" label="服务号应用ID:" placeholder="请填写服务号应用ID" maxlength="50" input-align="right"></van-field>
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="confirm">{{merchant.id?'修改':'创建'}}</van-button>
+      <van-button type="default" :disabled="user && user.appId == 'wx502b2e237549374c'" size="large" @click.tap="confirm">{{merchant.id?'修改':'创建'}}</van-button>
     </div>
   </div>
 </template>

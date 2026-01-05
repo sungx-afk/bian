@@ -103,6 +103,9 @@ const mutations = {
     state.token = data.token
     state.expire = false
     let page_title = data.user.merchant_name || '彼岸思念'
+    if(data.user.appId && data.user.appId == 'wx502b2e237549374c'){
+      page_title = '殡仪馆微信公众号服务系统'
+    }
     setPageTitle(page_title);
     //更新token到bian-requestParam
     let key = getLocalTokenKey();

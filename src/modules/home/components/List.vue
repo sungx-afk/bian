@@ -8,7 +8,7 @@
     <div class="mortuary-container" v-if="user && user.merchant_manager && user.merchant_id">
       <div class="name">{{user.merchant_name}} 殡仪馆</div>
       <div class="setting" @click="goMerchantSetting">
-        <van-icon name="setting-o" />
+        后台管理
       </div>
     </div>
     <div class="container-top">
@@ -614,11 +614,11 @@
       goMerchantSetting(){
         // Link(`/mortuary/setting`)
         this.actions = [{
-          id:'setting',
-          name:'设置',
-        },{
           id:'order',
-          name:'订单',
+          name:'服务订单',
+        },{
+          id:'setting',
+          name:'管理设置',
         }]
         this.showAction = true
       },
@@ -695,7 +695,7 @@
         font-weight: 700;
       }
       .setting{
-        font-size: 16px;
+        font-size: 14px;
       }
     }
 

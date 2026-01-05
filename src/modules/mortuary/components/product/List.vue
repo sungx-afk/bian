@@ -9,14 +9,14 @@
       <template v-if="list.length > 0">
         <div class="product-item" v-for="item in list" :key="item.id">
           <div class="icon">
-            <img v-if="filterImg(item)" :src="filterImg(item)"/>
+            <img @click="goViewImg(item)" v-if="filterImg(item)" :src="filterImg(item)"/>
             <div class="no-image" v-else></div>
           </div>
           <div class="info">
             <div class="name">{{item.name}}</div>
             <div class="price">¥{{item.price | filterMoney}}</div>
           </div>
-          <div class="operate" @click.stop="goEdit(item)">
+          <div class="operate" v-if="showOperate(item)" @click.stop="goEdit(item)">
             <i class="iconfont icon-gengduo"></i>
           </div>
         </div>
@@ -152,6 +152,22 @@
           Link('/list')
         }else{
           this.$router.go(-1)
+        }
+      },
+      showOperate(item){
+        let result = true;
+        if(item.creatorId && item.creatorId == '701638'){
+          result = false;
+        }
+        if(this.user && this.user.id == 701638){
+          result = true;
+        }
+        return result;
+      },
+      goViewImg(item){
+        let url = this.filterImg(item);
+        if(url){
+          window.open(url);
         }
       }
     },

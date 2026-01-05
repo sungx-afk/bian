@@ -204,13 +204,23 @@
         display: flex;
         align-items: center;
         margin-top: 6px;
+        justify-content: space-between;
+        .price{
+          flex-grow: 1;
+        }
+        .open{
+          flex-shrink: 0;
+        }
         .price,.open{
-          flex: 1;
           display: flex;
           align-items: center;
           .label{
             display: inline-block;
             min-width: 46px;
+            flex-shrink: 0;
+          }
+          .num{
+            flex-grow: 1;
           }
         }
       }
