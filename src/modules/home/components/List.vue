@@ -250,19 +250,27 @@
         this.menuList = [ {
           id:'create',
           name: '创建纪念馆',
-        },{
-          id:'create_order',
-          name: '送祭品',
         }, {
           id:'meeting',
           name: '云追悼会（讣告）',
         },{
           id:'user_center',
           name: '个人信息',
-        },{
-          id:'my_order',
-          name: '我的订单',
         }]
+        let appid = window.app_id
+        if(appid != 'wxdb43de2e1083005a'){
+          this.menuList.push({
+            id:'create_order',
+            name: '送祭品',
+          })
+          this.menuList.push({
+            id:'my_order',
+            name: '我的订单',
+          })
+        }
+
+
+
         if (config_server.supportFeedback){
           this.menuList.push({
             id:'feedback',
