@@ -1,5 +1,7 @@
 <template>
   <div class="main-container">
+    <!-- 引导页：首次进入且未登录时展示，用户主动点"进入"后才走微信授权 -->
+    <Guide v-if="showGuideFlag" @enter="onGuideEnter" />
     <div class="notice-container" v-if="showNotice">
       <van-cell is-link @click.stop="goNotice">
         您还未关注公众号，关注后可以及时收到通知
@@ -79,6 +81,7 @@
   import constant from '@/config/constant'
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
+  import Guide from '@/modules/widget/guide/Guide'  // 引导页组件
 
   import base64 from 'js-base64'
 
@@ -104,10 +107,12 @@
         showPublic:false,
         listLoaded:false,
         merchant:null,
+        showGuideFlag:false,   // 控制引导页显示（方案B：用 data 变量，不依赖 $refs）
       }
     },
     components: {
-      Item
+      Item,
+      Guide
     },
     computed:{
       ...mapGetters({
@@ -156,6 +161,16 @@
         this.showNotice = false
         // Link(`/notice`)
         window.location.href = '/notice'
+      },
+      /**
+       * 引导页"进入纪念馆"回调：用户主动触发 -> 走微信授权
+       * Guide 内部已记录"本轮已展示"，再次 tryLogin 时不会重复弹出
+       */
+      onGuideEnter(){
+        sessionStorage.setItem('GUIDE_SHOWN', '1')
+        this.showGuideFlag = false
+        this.loginState = LoginState.UNDO  // 复位，让 tryLogin 能重新进入授权分支
+        this.tryLogin()
       },
       getSpaceList(){
         this.getSpacesPersonal()
@@ -257,8 +272,8 @@
           id:'user_center',
           name: '个人信息',
         }]
-        let appid = window.app_id
-        if(appid != 'wxdb43de2e1083005a'){
+        let appid = window.app_id || config_server.wechatAppId
+        if(appid && appid != 'wxdb43de2e1083005a'){
           this.menuList.push({
             id:'create_order',
             name: '送祭品',
@@ -307,6 +322,11 @@
       },
       moreMenuPressed(menu){
         this.isShowMoreMenu = false
+        //这里判断是否登录了，如果没有登录，应该走授权
+        if (this.loginState !== LoginState.DONE){
+          this.authWechat()
+          return
+        }
         switch (menu.id) {
           case 'create':
             this.createSpace()
@@ -419,7 +439,13 @@
         if (token){
           this.fetchMyInfo(token)
         }else {
-          this.authWechat()
+          // 未登录：先展示引导页，用户主动点"进入"后再走微信授权（避免 created 阶段 $refs 尚未挂载的问题）
+          const shown = sessionStorage.getItem('GUIDE_SHOWN')
+          if (!shown) {
+            this.showGuideFlag = true   // 弹出引导页
+          } else {
+            this.authWechat()           // 本轮已展示过，直接走授权，避免卡死
+          }
         }
       },
       fetchMyInfo(token){
