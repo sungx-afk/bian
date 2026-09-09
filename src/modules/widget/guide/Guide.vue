@@ -6,12 +6,30 @@
         <div class="guide-title">{{ title }}</div>
         <div class="guide-slogan">{{ slogan }}</div>
         <div class="guide-desc" v-html="desc"></div>
+
+        <!-- 关注公众号引导区 -->
+        <div class="guide-follow" v-if="showFollow && qrcodeImg">
+          <div class="follow-label">关注公众号，及时收到追悼通知</div>
+          <van-button class="follow-btn" type="default" @click.stop="showQrcode = true">
+            立即关注
+          </van-button>
+        </div>
+
         <van-button class="guide-enter"
                     type="default"
                     @click.stop="enter">
           {{ buttonText }}
         </van-button>
         <div class="guide-tip" v-if="tip">{{ tip }}</div>
+      </div>
+
+      <!-- 公众号二维码弹层 -->
+      <div class="qrcode-mask" v-if="showQrcode" @click="showQrcode = false">
+        <div class="qrcode-box" @click.stop>
+          <div class="qrcode-title">长按识别，关注公众号</div>
+          <img class="qrcode-img" :src="qrcodeImg" />
+          <div class="qrcode-close" @click="showQrcode = false">关闭</div>
+        </div>
       </div>
     </div>
   </transition>
@@ -25,54 +43,52 @@
    *   <Guide v-if="showGuideFlag" @enter="onGuideEnter" />
    *
    * 流程：
-   *   1. 父组件在合适时机把 showGuideFlag 置为 true，本组件被挂载并显示
-   *   2. 用户点击“进入”按钮 -> 触发 @enter 事件 -> 父组件执行 authWechat()
-   *   3. 父组件处理完（记录已展示、关闭引导页）后把 showGuideFlag 置为 false，本组件被卸载
-   *
-   * 说明：
-   *   - “是否已展示过”的判断、storage 记录统一由父组件负责，本组件只负责展示 + 通知
+   *   1. 父组件把 showGuideFlag 置为 true，本组件被挂载并显示
+   *   2. 用户点击"进入"按钮 -> 触发 @enter 事件 -> 父组件执行 authWechat()
+   *   3. 父组件把 showGuideFlag 置为 false，本组件被卸载
    * ------------------------------------------------------------
    */
   export default {
     name: 'Guide',
     props: {
-      // 品牌 logo
       logo: {
         type: String,
         default: require('@/modules/images/index_header.jpg')
       },
-      // 主标题
       title: {
         type: String,
         default: '彼岸思念'
       },
-      // 标语（副标题）
       slogan: {
         type: String,
         default: '爱，永存'
       },
-      // 描述文案（支持 <br/>）
       desc: {
         type: String,
         default: '为逝去的亲友创建一个永久的纪念馆<br/>在线追悼 · 留言祈福 · 私密祭奠'
       },
-      // 按钮文字
       buttonText: {
         type: String,
         default: '进入纪念馆'
       },
-      // 底部提示
       tip: {
         type: String,
         default: '点击进入即表示同意获取微信授权以登录'
+      },
+      // true=显示关注区块，false=隐藏
+      showFollow: {
+        type: Boolean,
+        default: true
+      }
+    },
+    data() {
+      return {
+        showQrcode: false,
+        qrcodeImg: require('@/modules/images/qrcode_bian.jpg'),
       }
     },
     methods: {
-      /**
-       * 用户点击“进入纪念馆”
-       */
       enter() {
-        // 通知父组件：此时再执行 authWechat() 走微信授权
         this.$emit('enter')
       }
     }
@@ -81,7 +97,7 @@
 
 <style lang='less' rel="stylesheet/less" scoped >
   @import '~@/config/config.less';
-  /* ===== 引导页 ===== */
+
   .guide-mask {
     position: fixed;
     inset: 0;
@@ -133,8 +149,67 @@
         font-size: 11px;
         color: rgba(255, 255, 255, 0.4);
       }
+
+      /* 关注公众号区块 */
+      .guide-follow {
+        width: 100%;
+        margin: 0 0 24px;
+        padding: 12px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(212, 184, 135, 0.4);
+        .follow-label {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.85);
+          margin-bottom: 10px;
+        }
+        .follow-btn {
+          width: 100%;
+          height: 36px;
+          border: 1px solid #d4b887;
+          border-radius: 18px;
+          color: #d4b887;
+          font-size: 14px;
+          background: transparent;
+        }
+      }
     }
   }
+
+  /* 二维码弹层 */
+  .qrcode-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    .qrcode-box {
+      width: 260px;
+      padding: 24px 20px 16px;
+      border-radius: 16px;
+      text-align: center;
+      background: #fff;
+      .qrcode-title {
+        margin-bottom: 16px;
+        font-size: 15px;
+        color: #333;
+      }
+      .qrcode-img {
+        width: 200px;
+        height: 200px;
+        object-fit: contain;
+      }
+      .qrcode-close {
+        margin-top: 16px;
+        font-size: 14px;
+        color: #999;
+      }
+    }
+  }
+
   .guide-fade-enter-active,
   .guide-fade-leave-active {
     transition: opacity 0.4s;
