@@ -126,23 +126,23 @@
         <canvas id="smoke-box"></canvas>
 
         <div class="side-buttons">
-          <div class="button home-button" @click="goHome">
-            <img class="home-icon" src="~@/modules/images/home.svg" alt="首页" />
+          <div class="button" @click="goHome">
+            <img src="~@/modules/images/survey.svg" alt="概况" />
           </div>
-          <div class="button jibai-button" @click="goSacrifice">
-            <img class="jibai-icon" src="~@/modules/images/jibai.svg" alt="祭拜" />
+          <div class="button" @click="goSacrifice">
+            <img src="~@/modules/images/jibai.svg" alt="祭拜" />
           </div>
-          <div class="button message-button" @click="goMessage">
-            <img class="message-icon" src="~@/modules/images/message.svg" alt="留言" />
+          <div class="button" @click="goMessage">
+            <img src="~@/modules/images/message.svg" alt="留言" />
           </div>
           <div class="button music-button" :class="{'playing':playState === 'play'}" @click="bgmAction">
-            <img class="music-icon" src="~@/modules/images/music.svg" alt="音乐" />
+            <img src="~@/modules/images/music.svg" alt="音乐" />
           </div>
-          <div class="button setting-button" @click="goSettingOperate">
-            <img class="setting-icon" src="~@/modules/images/setting.svg" alt="设置" />
+          <div class="button" @click="goSettingOperate">
+            <img src="~@/modules/images/setting.svg" alt="设置" />
           </div>
-          <div class="button more-button" @click="goMoreOperate">
-            <img class="more-icon" src="~@/modules/images/more.svg" alt="更多" />
+          <div class="button" @click="goMoreOperate">
+            <img src="~@/modules/images/more.svg" alt="更多" />
           </div>
         </div>
 
@@ -2341,31 +2341,20 @@
     right: 12px;
     bottom: 40px;
     z-index: 9;
-  }
 
-  .side-buttons .button:not(.music-button):not(.setting-button):not(.more-button):not(.message-button):not(.home-button):not(.jibai-button) {
-    background: #C58233;
-    width: 48px;
-    height: 48px;
-    padding: 0px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    text-align: center;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
-    &.primary {
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .55), 0 2px 8px rgba(0, 0, 0, .3);
+    .button {
+      margin-bottom: 10px;
+
+      img {
+        width: 36px;
+        height: 36px;
+        display: block;
+      }
     }
-  }
 
-  .side-buttons .button {
-    margin-bottom: 10px;
+    .music-button.playing {
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, .7);
+    }
   }
 
   .share-button {
@@ -2373,72 +2362,12 @@
     top: 12px;
     right: 12px;
     z-index: 999;
-  }
-  .share-button .share-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
-  }
-  .side-buttons .music-button {
-    background: transparent;
-    box-shadow: none;
-    &.playing {
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, .7);
+
+    .share-icon {
+      width: 36px;
+      height: 36px;
+      display: block;
     }
-  }
-  .side-buttons .music-button .music-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
-  }
-  .side-buttons .setting-button {
-    background: transparent;
-    box-shadow: none;
-  }
-  .side-buttons .setting-button .setting-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
-  }
-
-  .side-buttons .more-button {
-    background: transparent;
-    box-shadow: none;
-  }
-  .side-buttons .more-button .more-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
-  }
-
-  .side-buttons .message-button {
-    background: transparent;
-    box-shadow: none;
-  }
-  .side-buttons .message-button .message-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
-  }
-
-  .side-buttons .home-button {
-    background: transparent;
-    box-shadow: none;
-  }
-  .side-buttons .home-button .home-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
-  }
-
-  .side-buttons .jibai-button {
-    background: transparent;
-    box-shadow: none;
-  }
-  .side-buttons .jibai-button .jibai-icon {
-    width: 36px;
-    height: 36px;
-    display: block;
   }
 
   #item-xuan-hua.item-xuan-hua {
