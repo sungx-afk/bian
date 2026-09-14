@@ -168,7 +168,7 @@
     /deep/ .van-tabs {
       height: 100%;
       .van-tabs__content {
-        height: calc(100% - 44px);
+        height: ~'calc(100% - 44px)';
         .van-tab__pane {
           height: 100%;
         }

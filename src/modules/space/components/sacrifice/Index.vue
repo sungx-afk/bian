@@ -135,7 +135,7 @@
           <div class="button" @click="goMessage">
             <img src="~@/modules/images/message.svg" alt="留言" />
           </div>
-          <div class="button music-button" :class="{'playing':playState === 'play'}" @click="bgmAction">
+          <div class="button music-button" :class="{'playing':playState === 'play'}" @click="goBgmAction">
             <img src="~@/modules/images/music.svg" alt="音乐" />
           </div>
           <div class="button" @click="goSettingOperate">
@@ -633,7 +633,7 @@
         Link(`/share`)
       },
       //音乐（与纪念馆详情页音乐按钮逻辑一致）
-      bgmAction() {
+      goBgmAction() {
         if (this.isSpaceCreator) {
           this.bgmActions = []
           this.bgmActions.push({
@@ -2352,9 +2352,19 @@
       }
     }
 
-    .music-button.playing {
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, .7);
+    .music-button {
+      animation: music-rotate 3s linear infinite;
+      animation-play-state: paused;
+
+      &.playing {
+        animation-play-state: running;
+      }
     }
+  }
+
+  @keyframes music-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(359deg); }
   }
 
   .share-button {
