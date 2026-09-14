@@ -162,6 +162,7 @@
         }
       },
       created() {
+        console.error("here")
         this.getStoryList().then((total)=>{
           //如果有文章，就默认不打开介绍
           if (total > 0){

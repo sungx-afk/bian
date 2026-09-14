@@ -18,6 +18,7 @@ const IssueDetail = () => import(/* webpackChunkName: "issue_detail" */ './compo
 const ImageCropper = () => import(/* webpackChunkName: "image_cropper" */ './components/cropper/ImageCropper')
 
 const Sacrifice = () => import(/* webpackChunkName: "space_manage" */ './components/sacrifice/Index')
+const SpaceMessageContainer = () => import(/* webpackChunkName: "space_message_container" */ './components/detail/MessageContainer')
 
 const Share = () => import(/* webpackChunkName: "share" */ './components/share/Share')
 
@@ -46,6 +47,9 @@ const routes = [
       }, {
         path: 'sacrifice/:id',
         component: Sacrifice
+      }, {
+        path: 'message_container/:id',
+        component: SpaceMessageContainer
       }, {
         path: 'manage/:id',
         component: SpaceManage

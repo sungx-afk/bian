@@ -126,9 +126,15 @@
         <canvas id="smoke-box"></canvas>
 
         <div class="side-buttons">
-          <div class="button" @click="goHome">首页</div>
-          <div class="button primary" @click="showSacrificeAction = true">祭拜</div>
-          <div class="button" @click="goMessage">留言</div>
+          <div class="button home-button" @click="goHome">
+            <img class="home-icon" src="~@/modules/images/home.svg" alt="首页" />
+          </div>
+          <div class="button jibai-button" @click="goSacrifice">
+            <img class="jibai-icon" src="~@/modules/images/jibai.svg" alt="祭拜" />
+          </div>
+          <div class="button message-button" @click="goMessage">
+            <img class="message-icon" src="~@/modules/images/message.svg" alt="留言" />
+          </div>
           <div class="button music-button" :class="{'playing':playState === 'play'}" @click="bgmAction">
             <img class="music-icon" src="~@/modules/images/music.svg" alt="音乐" />
           </div>
@@ -522,11 +528,14 @@
       },
       //留言板
       goMessage() {
-        
+        Link(`/space/message_container/${this.spaceId}`)
       },
       //首页（返回纪念馆首页）
       goHome() {
         Link(`/space/detail/${this.spaceId}`)
+      },
+      goSacrifice(){
+        this.showSacrificeAction = true
       },
       //设置（与 InfoTheme 中"更多"按钮逻辑一致）
       goSettingOperate() {
@@ -2334,7 +2343,7 @@
     z-index: 9;
   }
 
-  .side-buttons .button:not(.music-button):not(.setting-button):not(.more-button) {
+  .side-buttons .button:not(.music-button):not(.setting-button):not(.more-button):not(.message-button):not(.home-button):not(.jibai-button) {
     background: #C58233;
     width: 48px;
     height: 48px;
@@ -2397,6 +2406,36 @@
     box-shadow: none;
   }
   .side-buttons .more-button .more-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+  }
+
+  .side-buttons .message-button {
+    background: transparent;
+    box-shadow: none;
+  }
+  .side-buttons .message-button .message-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+  }
+
+  .side-buttons .home-button {
+    background: transparent;
+    box-shadow: none;
+  }
+  .side-buttons .home-button .home-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+  }
+
+  .side-buttons .jibai-button {
+    background: transparent;
+    box-shadow: none;
+  }
+  .side-buttons .jibai-button .jibai-icon {
     width: 36px;
     height: 36px;
     display: block;
