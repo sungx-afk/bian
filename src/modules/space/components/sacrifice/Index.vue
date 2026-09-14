@@ -488,7 +488,7 @@
       },
       //留言板
       goMessage() {
-        Link(`/space/detail/${this.spaceId}?tab=message`)
+        
       },
       //首页（返回纪念馆首页）
       goHome() {

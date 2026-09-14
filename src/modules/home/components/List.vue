@@ -219,10 +219,10 @@
       },
       goSpaceDetail(item){
         //this.tryHandleBgm(item)
-        Link(`/space/detail/${item.id}`)
+        Link(`/space/sacrifice/${item.id}`)
       },
       linkToSpaceDetail(spaceId,scene){
-        let url = `/space/detail/${spaceId}`
+        let url = `/space/sacrifice/${spaceId}`
         if (scene){
           url = `${url}?scene=${scene}`
         }

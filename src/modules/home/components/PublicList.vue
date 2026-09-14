@@ -43,7 +43,7 @@
           this.linkToSpaceDetail(item.id)
         },
         linkToSpaceDetail(spaceId){
-          Link(`/space/detail/${spaceId}`)
+          Link(`/space/sacrifice/${spaceId}`)
         },
         onLoadMoreData(){
 
