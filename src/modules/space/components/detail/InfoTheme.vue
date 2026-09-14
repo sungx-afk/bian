@@ -30,7 +30,7 @@
         {{space && space.epitaph}}
       </div>
     </div>
-    <div class="operate-wrapper">
+    <div class="operate-wrapper" v-if="false">
       <div class="share" @click="goShare">
         <img src="~@/modules/images/share.svg" />
       </div>

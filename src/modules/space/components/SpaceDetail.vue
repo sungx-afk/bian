@@ -33,7 +33,7 @@
           @select="onActionSelect"
           @click-overlay="onActionClose">
         </van-action-sheet>
-        <template v-if="showTab">
+        <template v-if="showTab && false">
           <van-tabbar @change="onTabChange">
             <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
           </van-tabbar>
@@ -425,9 +425,9 @@
       }
     }
     .container-content{
-      height: ~'calc(100% - 50px)';
+      height: ~'calc(100% - 0px)';
       &.iphonex-height{
-        height: ~'calc(100% - 80px)';
+        height: ~'calc(100% - 30px)';
       }
       .message-container{
         height: 100%;

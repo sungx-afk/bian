@@ -132,8 +132,12 @@
           <div class="button music-button" :class="{'playing':playState === 'play'}" @click="bgmAction">
             <img class="music-icon" src="~@/modules/images/music.svg" alt="音乐" />
           </div>
-          <div class="button" @click="goSetting">设置</div>
-          <div class="button" @click="more">更多</div>
+          <div class="button setting-button" @click="goSettingOperate">
+            <img class="setting-icon" src="~@/modules/images/setting.svg" alt="设置" />
+          </div>
+          <div class="button more-button" @click="goMoreOperate">
+            <img class="more-icon" src="~@/modules/images/more.svg" alt="更多" />
+          </div>
         </div>
 
         <div class="share-button" @click="goShare">
@@ -176,6 +180,15 @@
       close-on-popstate
       close-on-click-action
       @select="onShareSelect">
+    </van-action-sheet>
+
+    <van-action-sheet
+      v-model="showSettingAction"
+      :actions="settingActions"
+      cancel-text="取消"
+      close-on-popstate
+      close-on-click-action
+      @select="onMoreSelect">
     </van-action-sheet>
   </div>
 </template>
@@ -234,7 +247,9 @@
         showBgmAction: false,
         bgmActions: [],
         showShareAction: false,
-        shareActions: []
+        shareActions: [],
+        showSettingAction:false,
+        settingActions:[]
       }
     },
     components: {
@@ -296,6 +311,21 @@
         //如果是亲属馆，同时是创建人或者亲属成员
         if (this.space && this.space.type === 0 && (this.isSpaceCreator || this.isSpaceFriend)){
           result = true
+        }
+        return result
+      },
+      showExitSpace(){
+        //是创建者，不能退出纪念馆
+        if (this.isSpaceCreator){
+          return false
+        }
+        let result = false
+        //亲属馆才有退出一说
+        if (this.space && this.space.type === 0){
+          let index = this.space.config.friendIds.findIndex(item => item === this.user.id)
+          if (index > -1) {
+            result = true
+          }
         }
         return result
       },
@@ -498,12 +528,65 @@
       goHome() {
         Link(`/space/detail/${this.spaceId}`)
       },
-      //设置（与纪念馆详情页“更多-设置”一致）
-      goSetting() {
-        Link(`/space/manage/${this.spaceId}?active=setting`)
+      //设置（与 InfoTheme 中"更多"按钮逻辑一致）
+      goSettingOperate() {
+        let user = this.user
+        this.settingActions = []
+        if (this.isSpaceCreator) {
+          this.settingActions.push({ name: '发起云追悼会（讣告）', id: 'meeting', data: user })
+          this.settingActions.push({ name: '纪念馆样式', id: 'style', data: user })
+          this.settingActions.push({ name: '修改纪念馆', id: 'modify_space', data: user })
+          this.settingActions.push({ name: '设置', id: 'setting', data: user })
+        }
+        if (this.showExitSpace) {
+          this.settingActions.push({ name: '退出纪念馆', id: 'exit' })
+        }
+        if (!this.isSpaceCreator) {
+          this.settingActions.push({ name: '举报', id: 'report', data: user })
+        }
+        this.showSettingAction = true
+        this.$emit('action-changed', {actions: this.settingActions, showSettingAction: this.showSettingAction})
+      },
+      onMoreSelect(item) {
+        this.showSettingAction = false
+        this.$emit('action-changed', {showSettingAction: this.showSettingAction})
+
+        let menu = item.id
+        let user = item.data
+
+        switch (menu) {
+          case 'meeting':
+            Link(`/space/meeting/${this.space.id}`)
+            break
+          case 'setting':
+            Link(`/space/manage/${this.space.id}?active=setting`)
+            break
+          case 'modify_space':
+            Link(`/space/create?space_id=${this.space.id}`)
+            break
+          case 'style':
+            Link(`/space/theme?theme_id=${this.space.themeId}&space_id=${this.space.id}`)
+            break
+          case 'report':
+            Link(`/report?type=space&subject_id=${this.space.id}`)
+            break
+          case 'exit':
+            this.exitSpace()
+            break
+        }
+      },
+      exitSpace() {
+        this.$dialog.confirm({
+          message: `确认退出该纪念馆吗?`
+        }).then(() => {
+          $API.space.exitSpace({sid: this.space.id, userId: this.user.id}, rsp => {
+            eventHub.$emit(constant.EVENT_EXIT_SPACE_SUCCESS, this.space.id)
+            this.$router.go(-1)
+          })
+        }).catch(() => {})
       },
       //更多（商城）
-      more() {
+      goMoreOperate() {
         Link(`/store/info?space_id=${this.spaceId}`)
       },
       //转发（与纪念馆详情页转发逻辑一致）
@@ -2251,7 +2334,7 @@
     z-index: 9;
   }
 
-  .side-buttons .button:not(.music-button) {
+  .side-buttons .button:not(.music-button):not(.setting-button):not(.more-button) {
     background: #C58233;
     width: 48px;
     height: 48px;
@@ -2295,6 +2378,25 @@
     }
   }
   .side-buttons .music-button .music-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+  }
+  .side-buttons .setting-button {
+    background: transparent;
+    box-shadow: none;
+  }
+  .side-buttons .setting-button .setting-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+  }
+
+  .side-buttons .more-button {
+    background: transparent;
+    box-shadow: none;
+  }
+  .side-buttons .more-button .more-icon {
     width: 36px;
     height: 36px;
     display: block;
