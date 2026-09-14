@@ -125,16 +125,16 @@
 
         <canvas id="smoke-box"></canvas>
 
-        <div class="buttons">
-          <div class="button" @click="jibai()">上香</div>
-          <div class="button" @click="dianlazu()">点烛</div>
-          <div class="button" @click="shaozhi()">纸钱</div>
-          <div class="button" @click="flower()">送花</div>
-          <div class="button" @click="more()">更多</div>
+        <div class="side-buttons">
+          <div class="button" @click="goHome">首页</div>
+          <div class="button primary" @click="showSacrificeAction = true">祭拜</div>
+          <div class="button" @click="goMessage">留言</div>
+          <div class="button" :class="{'playing':playState === 'play'}" @click="bgmAction">音乐</div>
+          <div class="button" @click="goSetting">设置</div>
+          <div class="button" @click="more">更多</div>
         </div>
-        <div class="back" @click="goBack">
-          <img src="~@/modules/images/back.svg" />
-        </div>
+
+        <div class="share-button" @click="goShare">转发</div>
       </div>
 
 
@@ -146,11 +146,38 @@
       <div id="item-xuan-hua" class="item-xuan-hua"></div>
     </div>
     <message v-if="showMessage" v-on:confirm="messageConfirm" v-on:cancel="messageCancel" :product="currentProduct"></message>
+
+    <van-action-sheet
+      v-model="showSacrificeAction"
+      :actions="sacrificeActions"
+      cancel-text="取消"
+      close-on-popstate
+      close-on-click-action
+      @select="onSacrificeSelect">
+    </van-action-sheet>
+
+    <van-action-sheet
+      v-model="showBgmAction"
+      :actions="bgmActions"
+      cancel-text="取消"
+      close-on-popstate
+      close-on-click-action
+      @select="onBgmSelect">
+    </van-action-sheet>
+
+    <van-action-sheet
+      v-model="showShareAction"
+      :actions="shareActions"
+      cancel-text="取消"
+      close-on-popstate
+      close-on-click-action
+      @select="onShareSelect">
+    </van-action-sheet>
   </div>
 </template>
 <script>
 
-  import {mapGetters} from 'vuex'
+  import {mapGetters,mapActions} from 'vuex'
 
   import {Link} from '@/config/utils';
   import constant from '@/config/constant';
@@ -191,6 +218,19 @@
         showLaZuCanvas: false,
         showXiangCanvas: false,
         showZhiQianCanvas: false,
+        playState: 'stop',
+        bgmInited: false,
+        showSacrificeAction: false,
+        sacrificeActions: [
+          {name: '上香', id: 'shang_xiang'},
+          {name: '点烛', id: 'dian_la_zu'},
+          {name: '纸钱', id: 'zhi_qian'},
+          {name: '送花', id: 'song_hua'}
+        ],
+        showBgmAction: false,
+        bgmActions: [],
+        showShareAction: false,
+        shareActions: []
       }
     },
     components: {
@@ -230,6 +270,31 @@
       theme(){
         return 'theme_'+(this.space&&this.space.backgroundId||1);
       },
+      isSpaceCreator(){
+        let result = false
+        if (this.space && this.user && this.user.id === this.space.creatorId){
+          result = true
+        }
+        return result
+      },
+      isSpaceFriend(){
+        let result = false
+        if (this.space && this.space.config && this.space.config.friendIds && this.space.config.friendIds.length > 0 && this.user){
+          let index = this.space.config.friendIds.findIndex(item=>item === this.user.id)
+          if (index > -1){
+            result = true
+          }
+        }
+        return result
+      },
+      canShareFriend(){
+        let result = false
+        //如果是亲属馆，同时是创建人或者亲属成员
+        if (this.space && this.space.type === 0 && (this.isSpaceCreator || this.isSpaceFriend)){
+          result = true
+        }
+        return result
+      },
       combineAvatarUrl(){
         let url = ''
 
@@ -251,6 +316,9 @@
       },
     },
     methods: {
+      ...mapActions({
+        setUserSetting: 'userStore/setUserSetting'
+      }),
       //购买，通用
       buy(productId, callback) {
         let that = this;
@@ -401,17 +469,119 @@
         });
       },
 
+      //祭拜方式选择
+      onSacrificeSelect(item) {
+        switch (item.id) {
+          case 'shang_xiang':
+            this.jibai()
+            break
+          case 'dian_la_zu':
+            this.dianlazu()
+            break
+          case 'zhi_qian':
+            this.shaozhi()
+            break
+          case 'song_hua':
+            this.flower()
+            break
+        }
+      },
+      //留言板
+      goMessage() {
+        Link(`/space/detail/${this.spaceId}?tab=message`)
+      },
+      //首页（返回纪念馆首页）
+      goHome() {
+        this.$router.back()
+      },
+      //设置（与纪念馆详情页“更多-设置”一致）
+      goSetting() {
+        Link(`/space/manage/${this.spaceId}?active=setting`)
+      },
+      //更多（商城）
       more() {
         Link(`/store/info?space_id=${this.spaceId}`)
       },
-      goBack(){
-        Link(`/space/detail/${this.spaceId}`,{},true)
+      //转发（与纪念馆详情页转发逻辑一致）
+      goShare() {
+        this.shareActions = []
+        if (this.canShareFriend) {
+          this.shareActions.push({
+            name: '发送给亲属',
+            id: 'add_friends'
+          })
+        }
+        this.shareActions.push({
+          name: '发送给朋友',
+          id: 'space_detail'
+        })
+        if (this.shareActions.length > 1) {
+          this.showShareAction = true
+        } else {
+          this.shareSpace('space_detail')
+        }
+      },
+      onShareSelect(item) {
+        if (item.id === 'add_friends' || item.id === 'space_detail') {
+          this.shareSpace(item.id)
+        }
+      },
+      shareSpace(from) {
+        let extra = {}
+        extra.origin_from = from
+        extra.invite_user_id = this.user.id
+        extra.space_id = this.space.id
+        extra.space_name = this.space.name
+        extra = JSON.stringify(extra)
+        localStorage.setItem(constant.KEY_EXTRA_DATA, extra)
+        Link(`/share`)
+      },
+      //音乐（与纪念馆详情页音乐按钮逻辑一致）
+      bgmAction() {
+        if (this.isSpaceCreator) {
+          this.bgmActions = []
+          this.bgmActions.push({
+            name: this.playState === 'play' ? '停止音乐' : '播放音乐',
+            id: this.playState === 'play' ? 'stop_bgm' : 'play_bgm'
+          })
+          this.bgmActions.push({
+            name: '设置音乐',
+            id: 'setting_bgm'
+          })
+          this.showBgmAction = true
+        } else {
+          this.togglePlayBgm()
+        }
+      },
+      onBgmSelect(item) {
+        if (item.id === 'stop_bgm' || item.id === 'play_bgm') {
+          this.togglePlayBgm()
+        } else if (item.id === 'setting_bgm') {
+          Link(`/space/bgm/${this.spaceId}`)
+        }
+      },
+      togglePlayBgm() {
+        if (this.playState === 'play') {
+          this.stopBgm()
+          this.setUserSetting({key: 'bgm_play_state', value: 'stop'})
+        } else if (this.playState === 'stop') {
+          this.playBgm()
+          this.setUserSetting({key: 'bgm_play_state', value: 'play'})
+        }
+      },
+      updatePlayState(state) {
+        this.playState = state
       },
       getSpaceDetail() {
         let that = this;
         $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
           if (resp.id && resp.id > 0) {
             that.space = resp;
+            //首次进入时初始化背景音乐，与纪念馆详情页保持一致
+            if (!that.bgmInited) {
+              that.bgmInited = true;
+              that.tryHandleBgm(that.space);
+            }
             if (that.space.products.indexOf('item-la-zu') >= 0) {
               this.showLaZuHuo();
             }
@@ -1466,6 +1636,7 @@
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
         eventHub.$on(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
         eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
+        eventHub.$on(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
       }
     },
     created() {
@@ -1488,6 +1659,7 @@
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
       eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
+      eventHub.$off(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
     }
   }
 </script>
@@ -2065,44 +2237,50 @@
       visibility: visible;
     }
   }
-  .back{
-    position: fixed;
-    z-index: 999;
-    bottom: 56px;
-    right: 20px;
-    box-sizing: border-box;
-    width: 36px;
-    height: 36px;
-    img{
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .buttons {
+  .side-buttons {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
     position: fixed;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    box-sizing: border-box;
-    padding: 5px;
+    right: 12px;
+    bottom: 40px;
     z-index: 9;
   }
 
-  .button {
+  .side-buttons .button, .share-button {
     background: #C58233;
-    padding: 6px 2px;
-    margin-right: 4px;
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
+    width: 48px;
+    height: 48px;
+    padding: 0px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     text-align: center;
     color: white;
     font-size: 14px;
     font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+    &.primary {
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .55), 0 2px 8px rgba(0, 0, 0, .3);
+    }
+    &.playing {
+      background: #A2651B;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, .7), 0 2px 8px rgba(0, 0, 0, .3);
+    }
+  }
+
+  .side-buttons .button {
+    margin-bottom: 10px;
+  }
+
+  .share-button {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 999;
   }
 
   #item-xuan-hua.item-xuan-hua {
