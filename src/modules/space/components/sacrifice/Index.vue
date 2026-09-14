@@ -129,12 +129,16 @@
           <div class="button" @click="goHome">首页</div>
           <div class="button primary" @click="showSacrificeAction = true">祭拜</div>
           <div class="button" @click="goMessage">留言</div>
-          <div class="button" :class="{'playing':playState === 'play'}" @click="bgmAction">音乐</div>
+          <div class="button music-button" :class="{'playing':playState === 'play'}" @click="bgmAction">
+            <img class="music-icon" src="~@/modules/images/music.svg" alt="音乐" />
+          </div>
           <div class="button" @click="goSetting">设置</div>
           <div class="button" @click="more">更多</div>
         </div>
 
-        <div class="share-button" @click="goShare">转发</div>
+        <div class="share-button" @click="goShare">
+          <img class="share-icon" src="~@/modules/images/share.svg" alt="转发" />
+        </div>
       </div>
 
 
@@ -492,7 +496,7 @@
       },
       //首页（返回纪念馆首页）
       goHome() {
-        this.$router.back()
+        Link(`/space/detail/${this.spaceId}`)
       },
       //设置（与纪念馆详情页“更多-设置”一致）
       goSetting() {
@@ -2247,7 +2251,7 @@
     z-index: 9;
   }
 
-  .side-buttons .button, .share-button {
+  .side-buttons .button:not(.music-button) {
     background: #C58233;
     width: 48px;
     height: 48px;
@@ -2266,10 +2270,6 @@
     &.primary {
       box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .55), 0 2px 8px rgba(0, 0, 0, .3);
     }
-    &.playing {
-      background: #A2651B;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, .7), 0 2px 8px rgba(0, 0, 0, .3);
-    }
   }
 
   .side-buttons .button {
@@ -2281,6 +2281,23 @@
     top: 12px;
     right: 12px;
     z-index: 999;
+  }
+  .share-button .share-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+  }
+  .side-buttons .music-button {
+    background: transparent;
+    box-shadow: none;
+    &.playing {
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, .7);
+    }
+  }
+  .side-buttons .music-button .music-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
   }
 
   #item-xuan-hua.item-xuan-hua {
