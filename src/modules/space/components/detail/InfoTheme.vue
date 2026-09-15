@@ -15,21 +15,60 @@
 
             </div>
           </div>
-
-          <div class="name-wrapper" :class="{hide:configHide('info'),combine:space.combineImage === 1}">
-            <div class="name" :style="{color:theme.color}">{{user.name}}</div>
-            <div class="date" :style="{color:theme.dateColor}">
-              <span>{{user.birthday | timesToDate('yyyy')}}</span>
-              -
-              <span>{{user.dieDay | timesToDate('yyyy')}}</span>
-            </div>
-          </div>
         </div>
       </div>
       <div class="epitaph-wrapper" v-if="space.showEpitaph && space.epitaph && !configHide('epitaph')" :style="{color:theme.epitaphColor}">
         {{space && space.epitaph}}
       </div>
     </div>
+
+    <div class="summary-section" v-if="space.spaceUsers && space.spaceUsers.length > 0 && !configHide('summary')">
+      <div class="summary-card" v-for="user in space.spaceUsers" :key="user.id">
+        <div class="summary-card-header">
+          <div class="summary-card-name">
+            {{user.name}}
+            <span class="iconfont icon-bianji summary-card-edit" v-if="isSpaceCreator" @click.stop="goEditUser(user)"></span>
+          </div>
+          <div class="summary-card-date" v-if="user.birthday || user.dieDay">
+            <span v-if="user.birthday">{{user.birthday | timesToDate('yyyy')}}</span>
+            <span v-if="user.birthday && user.dieDay"> - </span>
+            <span v-if="user.dieDay">{{user.dieDay | timesToDate('yyyy')}}</span>
+          </div>
+        </div>
+        <div class="summary-card-body">
+          <div class="summary-row">
+            <span class="summary-label">出生地</span>
+            <span class="summary-value">{{user.birthAddress || '未填写'}}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">安葬地</span>
+            <span class="summary-value">{{user.dieAddress || '未填写'}}</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-text" v-if="user.summary && user.summary.length > 0">{{user.summary}}</div>
+          <div class="summary-empty" v-else>暂无生平介绍</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="story-list-section" v-if="!configHide('summary')">
+      <template v-if="storyNoData">
+        <div class="story-empty">暂无生平文章</div>
+      </template>
+      <template v-else>
+        <div class="story-item" v-for="item in storyList" :key="item.id" @click="goStoryDetail(item)">
+          <div class="story-item-row">
+            <div class="story-item-name">{{item.name}}</div>
+            <span class="story-item-arrow">›</span>
+          </div>
+          <div class="story-item-meta">
+            <span class="story-item-creator">{{item.creator && item.creator.name}}</span>
+            <span class="story-item-date">{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
+          </div>
+        </div>
+      </template>
+    </div>
+
     <div class="operate-wrapper" v-if="false">
       <div class="share" @click="goShare">
         <img src="~@/modules/images/share.svg" />
@@ -56,9 +95,11 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex';
+  import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
+  import ModifyText from '@/modules/widget/modify-text'
+  import NewStory from '@/modules/widget/new-story'
 
     export default {
       name: "InfoTheme",
@@ -76,6 +117,10 @@
         return{
           actions:[],
           showAction:false,
+          storyList:[],
+          storyLoading:false,
+          storyFinished:false,
+          storyNoData:false,
         }
       },
       computed:{
@@ -148,6 +193,9 @@
         }
       },
       methods:{
+        ...mapActions({
+          updateSpaceUser:'spaceStore/updateSpaceUser'
+        }),
         configHide(type){
           let result = false
           if (this.space && this.space.themeId === 'custom' && this.space.customThemeId){
@@ -158,6 +206,64 @@
           }
 
           return result
+        },
+        goEditUser(user){
+          this.actions = [{
+            name: '逝者基本信息',
+            id: 'base',
+            data: user
+          },{
+            name: '逝者生平',
+            id: 'summary',
+            data: user
+          }]
+          this.showAction = true
+          this.$emit('action-changed', {actions: this.actions, showAction: this.showAction})
+        },
+        modifySummary(user, summary){
+          user.summary = summary
+          this.updateSpaceUser({sid: this.space.id, user}).then(() => {
+
+          }).catch(() => {
+            this.$toast('修改失败，请稍后重试')
+          })
+        },
+        getStoryList(){
+          let params = {
+            start: 0,
+            limit: 20,
+            type: 'LIFE_EXPERIENCE'
+          }
+          $API.space.getSpaceStoryList(this.space.id, params, rsp => {
+            this.storyLoading = false
+            this.storyList = rsp.result || []
+            this.storyFinished = true
+            this.storyNoData = this.storyList.length === 0
+          }, error => {
+            this.storyLoading = false
+            this.storyFinished = true
+          })
+        },
+        onStoryDeleted(storyId){
+          //文章被删除后，先本地过滤，再重新拉取，避免列表残留
+          if (storyId !== undefined && storyId !== null && this.storyList){
+            this.storyList = this.storyList.filter(item => item.id !== storyId)
+            this.storyNoData = this.storyList.length === 0
+          }
+          if (this.space && this.space.id){
+            this.getStoryList()
+          }
+        },
+        goNewStory(){
+          NewStory({
+            spaceId: this.space.id,
+            callback: () => {
+              this.getStoryList()
+            }
+          })
+        },
+        goStoryDetail(item){
+          Link(`/space/story/${item.id}`)
         },
         goMoreOperate(){
           let user = this.user
@@ -215,7 +321,15 @@
         goMoreOperateV2(){
           let user = this.user
           this.actions = []
-          
+
+          if (this.isSpaceCreator){
+            this.actions.push({
+              name: '新增生平文章',
+              id:'new_story',
+              data:user
+            })
+          }
+
           this.actions.push({
             name: '纪念馆样式',
             id:'style',
@@ -241,6 +355,9 @@
             case 'meeting':
               Link(`/space/meeting/${this.space.id}`)
               break
+            case 'new_story':
+              this.goNewStory()
+              break
             case 'setting':
               Link(`/space/manage/${this.space.id}?active=setting`)
               break
@@ -259,7 +376,21 @@
               break
             case 'exit':
               this.exitSpace()
-              break  
+              break
+            case 'base':
+              localStorage.setItem(constant.KEY_EDIT_USER_INFO, JSON.stringify(user))
+              Link(`/user_edit?space_id=${this.space.id}&avatar_type=${this.space.combineImage}`)
+              break
+            case 'summary':
+              ModifyText({
+                content: user.summary,
+                multiline: true,
+                placeholder: '请输入生平简介',
+                callback: data => {
+                  this.modifySummary(user, data)
+                }
+              })
+              break
           }
         },
         onActionClose(){
@@ -342,9 +473,14 @@
       },
       created() {
         eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)
+        eventHub.$on(constant.EVENT_SPACE_STORY_DELETED,this.onStoryDeleted)
+        if (this.space && this.space.id){
+          this.getStoryList()
+        }
       },
       beforeDestroy() {
         eventHub.$off(constant.EVENT_SELECT_THEME,this.updateTheme)
+        eventHub.$off(constant.EVENT_SPACE_STORY_DELETED,this.onStoryDeleted)
       }
     }
 </script>
@@ -392,27 +528,6 @@
               margin:0 5px;
             }
           }
-          .name-wrapper{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-            &.combine{
-              padding: 0px 20px;
-            }
-            .name{
-              font-size: 18px;
-              font-weight: bold;
-              color: @FONT_WHITE_COLOR;
-              text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
-            }
-            .date{
-              font-size: 15px;
-              color: @FONT_WHITE_COLOR;
-              margin-top: 8px;
-              text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -0.5px 0 0, #000 0 -1px 0;
-            }
-          }
           .hide{
             opacity: 0 !important;
           }
@@ -428,6 +543,160 @@
         text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
         &.hide{
           opacity: 0 !important;
+        }
+      }
+    }
+    .summary-section{
+      margin: 28px 18px 28px;
+      .summary-section-title{
+        position: relative;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 16px;
+        text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
+        &::before, &::after{
+          content: '';
+          display: inline-block;
+          width: 28px;
+          height: 1px;
+          background: rgba(255,255,255,0.6);
+          vertical-align: middle;
+          margin: 0 10px;
+        }
+      }
+      .summary-card{
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        color: @FONT_FIRST_COLOR;
+        .summary-card-header{
+          text-align: center;
+          padding-bottom: 10px;
+          margin-bottom: 10px;
+          border-bottom: 1px solid #eee;
+        }
+        .summary-card-name{
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 4px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          .summary-card-edit{
+            font-size: 14px;
+            color: @MAIN_THEME_COLOR;
+            margin-left: 6px;
+            padding: 2px 4px;
+          }
+        }
+        .summary-card-date{
+          font-size: 13px;
+          color: @FONT_THIRD_COLOR;
+          letter-spacing: 0.5px;
+        }
+        .summary-card-body{
+          font-size: 14px;
+          line-height: 1.7;
+          color: @FONT_SECOND_COLOR;
+          .summary-row{
+            display: flex;
+            align-items: flex-start;
+            padding: 3px 0;
+            .summary-label{
+              flex: 0 0 64px;
+              color: @FONT_THIRD_COLOR;
+            }
+            .summary-value{
+              flex: 1;
+              word-break: break-all;
+            }
+          }
+          .summary-divider{
+            height: 1px;
+            background: #eee;
+            margin: 10px 0;
+          }
+          .summary-text{
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: @FONT_SECOND_COLOR;
+          }
+          .summary-empty{
+            color: @FONT_THIRD_COLOR;
+            font-style: italic;
+          }
+        }
+      }
+    }
+    .story-list-section{
+      margin: 0 18px 80px;
+      .story-section-title{
+        position: relative;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 16px;
+        text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
+        &::before, &::after{
+          content: '';
+          display: inline-block;
+          width: 28px;
+          height: 1px;
+          background: rgba(255,255,255,0.6);
+          vertical-align: middle;
+          margin: 0 10px;
+        }
+      }
+      .story-empty{
+        background: #fff;
+        border-radius: 10px;
+        padding: 24px 16px;
+        text-align: center;
+        color: @FONT_THIRD_COLOR;
+        font-size: 14px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      }
+      .story-item{
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        .story-item-row{
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .story-item-name{
+          font-size: 15px;
+          font-weight: bold;
+          color: @FONT_FIRST_COLOR;
+          flex: 1;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          margin-right: 8px;
+        }
+        .story-item-meta{
+          margin-top: 6px;
+          font-size: 12px;
+          color: @FONT_THIRD_COLOR;
+          display: flex;
+          align-items: center;
+          line-height: 1.5;
+          .story-item-creator{
+            margin-right: 10px;
+          }
+        }
+        .story-item-arrow{
+          flex: 0 0 auto;
+          color: @FONT_THIRD_COLOR;
+          font-size: 20px;
+          line-height: 1;
         }
       }
     }

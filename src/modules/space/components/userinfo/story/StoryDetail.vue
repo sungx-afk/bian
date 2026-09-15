@@ -185,7 +185,7 @@ export default {
         message: `确认删除该文章吗?`
       }).then(() => {
         $API.space.deleteSpaceStory({sid:this.space.id,cid:this.uuid},rsp=>{
-          eventHub.$emit(constant.EVENT_SPACE_STORY_DELETED)
+          eventHub.$emit(constant.EVENT_SPACE_STORY_DELETED, this.uuid)
           this.$router.go(-1)
         })
       }).catch(() => {
