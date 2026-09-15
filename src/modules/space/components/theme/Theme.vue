@@ -33,21 +33,21 @@
             <div class="config-wrapper">
               <van-checkbox-group v-model="config" @change="configChanged">
                 <van-checkbox name="avatar" shape="square" checked-color="#825621">显示遗像</van-checkbox>
-                <van-checkbox name="info" shape="square" checked-color="#825621">显示姓名和日期</van-checkbox>
-                <van-checkbox name="epitaph" shape="square" checked-color="#825621">显示墓志铭</van-checkbox>
+                <!-- <van-checkbox name="info" shape="square" checked-color="#825621">显示姓名和日期</van-checkbox>
+                <van-checkbox name="epitaph" shape="square" checked-color="#825621">显示墓志铭</van-checkbox> -->
               </van-checkbox-group>
             </div>
             <div class="preview-wrapper">
               <div class="title">预览效果图</div>
               <div class="preview-content" :style="{'background-image':`url(${backgroundImage})`}">
                 <div class="avatar" :class="{show:configShow('avatar')}"></div>
-                <div class="info" :class="{show:configShow('info')}">
+                <!-- <div class="info" :class="{show:configShow('info')}">
                   <div>xxx</div>
                   <div>1900 - 1999</div>
                 </div>
                 <div class="epitaph" :class="{show:configShow('epitaph')}">
                   这里是墓志铭
-                </div>
+                </div> -->
               </div>
             </div>
             <div class="footer">
