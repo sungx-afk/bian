@@ -79,7 +79,7 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users,themeId,customTheme,epitaph,combineImage}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,customTheme,epitaph,combineImage,showEpitaph,showCouplet}, successCb, errorCb) {
     let param = {
       type,
       name,
@@ -97,6 +97,14 @@ export default {
 
     if (epitaph){
       param.epitaph = epitaph
+    }
+
+    if (showEpitaph !== undefined){
+      param.showEpitaph = showEpitaph
+    }
+
+    if (showCouplet !== undefined){
+      param.showCouplet = showCouplet
     }
 
     $axios.post(`/spaces`, JSON.stringify(param)).then(response => {
