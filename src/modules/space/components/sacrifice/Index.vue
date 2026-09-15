@@ -125,6 +125,13 @@
 
         <canvas id="smoke-box"></canvas>
 
+        <div class="buttons">
+          <div class="button" @click="jibai()">上香</div>
+          <div class="button" @click="dianlazu()">点烛</div>
+          <div class="button" @click="shaozhi()">纸钱</div>
+          <div class="button" @click="more()">更多</div>
+        </div>
+
         <div class="side-buttons">
           <div class="button" @click="goHome">
             <img src="~@/modules/images/survey.svg" alt="概况" />
@@ -138,7 +145,7 @@
           <div class="button music-button" :class="{'playing':playState === 'play'}" @click="goBgmAction">
             <img src="~@/modules/images/music.svg" alt="音乐" />
           </div>
-          <div class="button" @click="goSettingOperate">
+          <div class="button" @click="goSetting">
             <img src="~@/modules/images/setting.svg" alt="设置" />
           </div>
           <div class="button" @click="goMoreOperate">
@@ -191,7 +198,7 @@
     <van-action-sheet
       v-model="showSettingAction"
       :actions="settingActions"
-      cancel-text="取消"
+
       close-on-popstate
       close-on-click-action
       @select="onMoreSelect">
@@ -537,14 +544,16 @@
       goSacrifice(){
         this.showSacrificeAction = true
       },
-      //设置（与 InfoTheme 中"更多"按钮逻辑一致）
+      goSetting(){
+        Link(`/space/manage/${this.space.id}?active=setting`)
+      },
       goSettingOperate() {
         let user = this.user
         this.settingActions = []
         if (this.isSpaceCreator) {
           this.settingActions.push({ name: '发起云追悼会（讣告）', id: 'meeting', data: user })
-          this.settingActions.push({ name: '纪念馆样式', id: 'style', data: user })
-          this.settingActions.push({ name: '修改纪念馆', id: 'modify_space', data: user })
+          // this.settingActions.push({ name: '纪念馆样式', id: 'style', data: user })
+          // this.settingActions.push({ name: '修改纪念馆', id: 'modify_space', data: user })
           this.settingActions.push({ name: '设置', id: 'setting', data: user })
         }
         if (this.showExitSpace) {
@@ -2333,6 +2342,33 @@
       visibility: visible;
     }
   }
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    box-sizing: border-box;
+    padding: 5px;
+    z-index: 9;
+
+    .button {
+      background: #C58233;
+      padding: 6px 2px;
+      margin-right: 4px;
+      -webkit-box-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+
   .side-buttons {
     display: flex;
     flex-direction: column;

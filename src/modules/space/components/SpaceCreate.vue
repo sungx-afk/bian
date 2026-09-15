@@ -8,7 +8,7 @@
       </van-cell>
       <van-field v-model="name" label="纪念馆名:" placeholder="请填写纪念馆名" maxlength="20" input-align="right"></van-field>
       <van-cell title="纪念馆样式:" is-link :value="theme && theme.name" @click="goTheme"></van-cell>
-      <van-field
+      <van-field v-if="false"
         ref="input"
         label="墓志铭:"
         v-model="epitaph"

@@ -47,6 +47,11 @@
         <img src="~@/modules/images/back.svg" />
       </div>
     </div>
+    <div class="operate-wrapper" v-if="isSpaceCreator">
+      <div class="more" @click="goMoreOperateV2">
+        <img src="~@/modules/images/more.svg" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -203,6 +208,24 @@
               data:user
             })
           }
+
+          this.showAction = true
+          this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
+        },
+        goMoreOperateV2(){
+          let user = this.user
+          this.actions = []
+          
+          this.actions.push({
+            name: '纪念馆样式',
+            id:'style',
+            data:user
+          })
+          this.actions.push({
+            name: '修改纪念馆',
+            id:'modify_space',
+            data:user
+          })
 
           this.showAction = true
           this.$emit('action-changed',{actions:this.actions,showAction:this.showAction})
@@ -437,7 +460,7 @@
         }
       }
       .more{
-        bottom: 60px;
+        bottom: 0px;
       }
       .summary{
         bottom: 110px;
