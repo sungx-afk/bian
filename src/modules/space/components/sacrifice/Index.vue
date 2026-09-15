@@ -1,5 +1,6 @@
 <template>
-  <div class="sacrifice" :class="theme">
+  <div class="sacrifice" :class="checkResult === 0 ? theme : 'no-theme'">
+    <template v-if="checkResult === 0">
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
         <div class="xiang_kuang" @click="goSurvey">
@@ -29,7 +30,7 @@
       {{space.epitaph}}
     </div>
 
-    <div id="dui_lian_box" v-if="space.showCouplet">
+    <div id="dui_lian_box" v-if="space && space.showCouplet">
       <div class="inner" style="padding: 30px 15px 0px;" v-if="space && space.id>0">
         <div class="dui_lian" style="float: left;">{{space &&space.couplets && space.couplets.left}}</div>
         <div class="dui_lian" style="float: right;">{{space &&space.couplets && space.couplets.right}}</div>
@@ -206,6 +207,13 @@
       close-on-click-action
       @select="onMoreSelect">
     </van-action-sheet>
+    </template>
+    <template v-else>
+      <div class="tip-wrapper" @click="goBack" v-if="tipContent">
+        <i class="iconfont icon-warn"></i>
+        <div class="content">{{tipContent}}</div>
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -245,6 +253,8 @@
         item_02: new Array(9).fill({}),
         spaceId: 0,
         space: null,
+        checkResult: 0,
+        tipContent: '',
         showMessage:false,
         currentProduct:null,
         action:null,
@@ -680,11 +690,52 @@
       updatePlayState(state) {
         this.playState = state
       },
+      checkCanIn(space) {
+        let result = 0
+        //如果是开启了仅亲属进入，同时当前用户又不在亲属空间返回-1
+        //如果没有开启仅亲属进入，判断当前用户是否在黑名单用户，如果是返回-2
+        //如果已经被举报，直接返回-3
+        let currentUserId = this.user && this.user.id
+        if (space.deleted === 1) {
+          result = -3
+          this.tipContent = '纪念馆已被屏蔽，请联系客服申诉'
+        } else if (currentUserId === space.creatorId) { //创建者永远能进入
+          result = 0
+        } else if (space.config.viewScope == 'member') {
+          let index = space.config.friendIds.findIndex(id => id === currentUserId)
+          if (index === -1) { //如果没有找到，说明不在好友列表
+            this.tipContent = '纪念馆已禁止访客进入，请联系馆主进行操作'
+            result = -1
+          } else {
+            let index = space.config.blackListIds.findIndex(id => id === currentUserId)
+            if (index > -1) { //找到了，则说明在黑名单里
+              result = -2
+              this.tipContent = '您无法浏览该馆'
+            }
+          }
+        } else {
+          let index = space.config.blackListIds.findIndex(id => id === currentUserId)
+          if (index > -1) { //找到了，则说明在黑名单里
+            result = -2
+            this.tipContent = '您无法浏览该馆'
+          }
+        }
+        return result
+      },
+      goBack() {
+        this.$router.go(-1)
+      },
       getSpaceDetail() {
         let that = this;
         $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
           if (resp.id && resp.id > 0) {
+            //权限校验，与纪念馆详情页保持一致
+            that.checkResult = that.checkCanIn(resp);
             that.space = resp;
+            //无权限时仅展示提示，不再初始化祭拜场景
+            if (that.checkResult !== 0) {
+              return;
+            }
             //首次进入时初始化背景音乐，与纪念馆详情页保持一致
             if (!that.bgmInited) {
               that.bgmInited = true;
@@ -1786,6 +1837,26 @@
 <style rel="stylesheet/less" lang="less">
   @import "~@/config/config.less";
 
+  .sacrifice .tip-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50%;
+    height: 100%;
+    .iconfont{
+      font-size: 60px;
+      color: @MAIN_THEME_COLOR;
+    }
+    .content{
+      color: @FONT_THIRD_COLOR;
+    }
+  }
+
+  /*无权限进入时，不展示纪念馆主题背景图*/
+  .sacrifice.no-theme{
+    background-image: none !important;
+    background-color: #fff;
+  }
 
   .sacrifice.theme_1 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_1.jpeg?v=11) !important;
