@@ -72,11 +72,11 @@
             @click="themeId = img.id"
             :class="{'right':index % 2 === 1, 'active':themeId == img.id}"
             :src="img.url"/>
-          <div class="selected-wrapper" v-if="themeId == img.id">
+          <!-- <div class="selected-wrapper" v-if="themeId == img.id">
             <div class="selected">
               <i class="iconfont icon-duigou1"></i>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="button-area">
