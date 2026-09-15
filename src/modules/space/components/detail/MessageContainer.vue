@@ -13,7 +13,7 @@
             <van-tab title="私语" name="private">
               <private v-if="detail" :space="detail" type="PRIVATE"></private>
             </van-tab>
-            <van-tab title="生平" name="info">
+            <van-tab title="生平" name="info" v-if="false">
               <user-summary v-if="detail"></user-summary>
             </van-tab>
           </van-tabs>

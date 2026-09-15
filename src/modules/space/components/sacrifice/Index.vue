@@ -2,23 +2,23 @@
   <div class="sacrifice" :class="theme">
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
-        <div class="xiang_kuang">
+        <div class="xiang_kuang" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${combineAvatarUrl})`}"></div>
         </div>
       </div>
     </template>
     <template v-else>
       <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
-        <div class="xiang_kuang">
+        <div class="xiang_kuang" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
         </div>
       </div>
 
       <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
-        <div class="xiang_kuang">
+        <div class="xiang_kuang" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
         </div>
-        <div class="xiang_kuang">
+        <div class="xiang_kuang" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
         </div>
       </div>
@@ -129,27 +129,26 @@
           <div class="button" @click="jibai()">上香</div>
           <div class="button" @click="dianlazu()">点烛</div>
           <div class="button" @click="shaozhi()">纸钱</div>
-          <div class="button" @click="more()">更多</div>
-        </div>
-
-        <div class="side-buttons">
-          <div class="button" @click="goHome">
-            <img src="~@/modules/images/survey.svg" alt="概况" />
-          </div>
-          <div class="button" @click="goSacrifice">
-            <img src="~@/modules/images/jibai.svg" alt="祭拜" />
-          </div>
-          <div class="button" @click="goMessage">
-            <img src="~@/modules/images/message.svg" alt="留言" />
-          </div>
-          <div class="button music-button" :class="{'playing':playState === 'play'}" @click="goBgmAction">
-            <img src="~@/modules/images/music.svg" alt="音乐" />
-          </div>
-          <div class="button" @click="goSetting">
-            <img src="~@/modules/images/setting.svg" alt="设置" />
-          </div>
-          <div class="button" @click="goMoreOperate">
-            <img src="~@/modules/images/more.svg" alt="更多" />
+          <div class="button" @click="goMoreOperate()">更多</div>
+          <div class="side-buttons">
+            <div class="button" @click="goSurvey" v-if="false">
+              <img src="~@/modules/images/survey.svg" alt="概况" />
+            </div>
+            <div class="button" @click="goSacrifice" v-if="false">
+              <img src="~@/modules/images/jibai.svg" alt="祭拜" />
+            </div>
+            <div class="button" @click="goMessage">
+              <img src="~@/modules/images/message.svg" alt="留言" />
+            </div>
+            <div class="button music-button" :class="{'playing':playState === 'play'}" @click="goBgmAction">
+              <img src="~@/modules/images/music.svg" alt="音乐" />
+            </div>
+            <div class="button" @click="goSetting">
+              <img src="~@/modules/images/setting.svg" alt="设置" />
+            </div>
+            <div class="button" @click="goMoreOperate" v-if="false">
+              <img src="~@/modules/images/more.svg" alt="更多" />
+            </div>
           </div>
         </div>
 
@@ -538,7 +537,7 @@
         Link(`/space/message_container/${this.spaceId}`)
       },
       //首页（返回纪念馆首页）
-      goHome() {
+      goSurvey() {
         Link(`/space/detail/${this.spaceId}`)
       },
       goSacrifice(){
@@ -2027,6 +2026,7 @@
     padding: 0px;
     margin: 0px;
     display: flex;
+    pointer-events: none;
   }
 
   .inner {
@@ -2345,6 +2345,7 @@
   .buttons {
     display: flex;
     flex-direction: row;
+    align-items: flex-end;
     position: fixed;
     bottom: 0px;
     left: 0px;
@@ -2353,7 +2354,7 @@
     padding: 5px;
     z-index: 9;
 
-    .button {
+    > .button {
       background: #C58233;
       padding: 6px 2px;
       margin-right: 4px;
@@ -2373,13 +2374,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: fixed;
-    right: 12px;
-    bottom: 40px;
-    z-index: 9;
+    margin-left: 6px;
 
     .button {
       margin-bottom: 10px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
 
       img {
         width: 36px;

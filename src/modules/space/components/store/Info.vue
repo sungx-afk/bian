@@ -233,6 +233,12 @@
         initProducts(){
           this.getProductsList().then(() => {
             let products = [];
+            products.push({
+              id:'item-xuan-hua',
+              name:'送花',
+              point:this.space.type == 2?0:9
+            })
+
             if(this.showGift('package-gua-guo').show){
               products.push({
                 id:'package-gua-guo',
