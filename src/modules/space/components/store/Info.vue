@@ -6,6 +6,7 @@
     </div>
     <div class="content">
       <div class="menu-area" v-if="isSpaceCreator">
+        <van-cell title="自定义墓志铭" :is-link="true" @click.stop="enterEpitaph"></van-cell>
         <van-cell title="自定义挽联" :is-link="true" @click.stop="enterCouplets"></van-cell>
         <van-cell title="自定义主题" :is-link="true" @click.stop="goSwitchTheme"></van-cell>
       </div>
@@ -215,6 +216,12 @@
               reject(error)
             })
           })
+        },
+        enterEpitaph(){
+          if (!this.isSpaceCreator){
+            return
+          }
+          Link(`/store/epitaph?space_id=${this.spaceId}`)
         },
         enterCouplets(){
           if (!this.isSpaceCreator){

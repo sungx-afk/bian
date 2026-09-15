@@ -410,6 +410,8 @@
             name: spaceName,
             users: this.users,
             epitaph:this.epitaph,
+            showEpitaph:0,
+            showCouplet:0,
             combineImage:this.avatarType
           }
           if (this.theme){

@@ -229,6 +229,7 @@ export default {
       errorCb && errorCb(error)
     })
   },
+
   exitSpace({sid, userId},successCb, errorCb){
     $axios.post(`/spaces/${sid}/config/friends?_method=delete&deleteVisited=1`, JSON.stringify([userId])).then(response => {
       successCb && successCb(response.data)
@@ -355,6 +356,13 @@ export default {
       right
     }
     $axios.put(`/spaces/${sid}/couplets`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  updateSpace({sid,param}, successCb, errorCb) {
+    $axios.patch(`/spaces/${sid}`, JSON.stringify(param)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

@@ -27,6 +27,7 @@ const Info = () => import(/* webpackChunkName: "Info" */ './components/store/Inf
 const Charge = () => import(/* webpackChunkName: "charge" */ './components/store/Charge')
 const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Logs')
 const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/store/Couplets')
+const Epitaph = () => import(/* webpackChunkName: "epitaph" */ './components/store/Epitaph')
 
 const Report = () => import(/* webpackChunkName: "report" */ './components/report/Report')
 const Theme = () => import(/* webpackChunkName: "theme" */ './components/theme/Theme')
@@ -132,7 +133,12 @@ const routes = [
       {
         path:'couplets',
         component:Couplets,
-      }
+      },
+      {
+        path:'epitaph',
+        component:Epitaph,
+      },
+      
     ]
   },
   {

@@ -15,6 +15,7 @@ module.exports = {
   EVENT_UPDATE_SPACE_USER_SUCCESS:'update_space_user_success',
   EVENT_PAY_SUCCESS:'pay_success',
   EVENT_UPDATE_COUPLETS_SUCCESS:'update_couplets_success',
+  EVENT_UPDATE_EPITAPH_SUCCESS:'update_epitaph_success',
   EVENT_BUY_PRODUCT_SUCCESS:'buy_product_success',
   EVENT_DELETE_FRIENDS_SUCCESS:'delete_friends_success',
   EVENT_UPDATE_BGM_SUCCESS:'update_bgm_success',

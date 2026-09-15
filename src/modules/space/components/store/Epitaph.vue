@@ -1,26 +1,21 @@
 <template>
-  <div class="couplets-container">
-    <div class="wanlian-area">
+  <div class="epitaph-container">
+    <div class="epitaph-area">
       <van-field
-        v-model="coupletsLeft"
-        label-width="30"
-        label="上联"
-        maxlength="15"
-        placeholder="请输入上联，最多15个字"
-      ></van-field>
-
-      <van-field
-        v-model="coupletsRight"
-        label-width="30"
-        label="下联"
-        maxlength="15"
-        placeholder="请输入下联，最多15个字">
+        ref="input"
+        label="墓志铭:"
+        v-model="epitaph"
+        type="textarea"
+        placeholder="请输入墓志铭"
+        maxlength="120"
+        rows="2"
+        :autosize="{ maxHeight: 150, minHeight: 50 }">
       </van-field>
 
       <van-switch-cell
-          title="显示挽联"
+          title="显示墓志铭"
           active-color="#825621"
-          v-model="showCouplet"
+          v-model="showEpitaph"
           :active-value="1" 
           :inactive-value="0">
         </van-switch-cell>
@@ -41,9 +36,8 @@
       data(){
         return{
           spaceId:'',
-          coupletsLeft:'',
-          coupletsRight:'',
-          showCouplet:0
+          epitaph:'',
+          showEpitaph:0
         }
       },
       computed: {
@@ -59,11 +53,8 @@
           $API.space.getSpaceDetail({
             sid: this.spaceId,
           }, (rsp)=>{
-            if (rsp.couplets){
-              this.coupletsLeft = rsp.couplets.left
-              this.coupletsRight = rsp.couplets.right
-            }
-            this.showCouplet = rsp.showCouplet
+            this.epitaph = rsp.epitaph
+            this.showEpitaph = rsp.showEpitaph
             cb && cb()
           }, error=>{
 
@@ -73,40 +64,18 @@
           this.$router.go(-1)
         },
         confirm(){
-          if (!this.coupletsLeft || !this.coupletsRight){
-            this.$toast("请输入挽联内容")
+          if (!this.epitaph || !this.epitaph.trim()){
+            this.$toast("请输入墓志铭内容")
             return
           }
-          let p1 = new Promise((resolve, reject) => {
-            $API.space.modifyCouplets({
-              sid:this.spaceId,
-              left:this.coupletsLeft,
-              right:this.coupletsRight,
-              showCouplet:this.showCouplet
-            },rsp=>{
-              resolve()
-            },error=>{
-              reject(error)
-            })
-          })
-
-          let p2 = new Promise((resolve, reject) => {
-            $API.space.updateSpace({
-              sid:this.spaceId,
-              param:{
-                showCouplet:this.showCouplet
-              }
-            },rsp=>{
-              resolve()
-            },error=>{
-              reject(error)
-            })
-          })
-          
-          let promises = [p1,p2]
-          Promise.all(promises).then(() => {
-            eventHub.$emit(constant.EVENT_UPDATE_COUPLETS_SUCCESS,{left:this.coupletsLeft,right:this.coupletsRight,showCouplet:this.showCouplet})
-            
+          $API.space.updateSpace({
+            sid:this.spaceId,
+            param:{
+              epitaph:this.epitaph,
+              showEpitaph:this.showEpitaph
+            }
+          },rsp=>{
+            eventHub.$emit(constant.EVENT_UPDATE_EPITAPH_SUCCESS,{epitaph:this.epitaph,showEpitaph:this.showEpitaph})
             this.$toast({
               message:'修改成功',
               type:'success',
@@ -115,9 +84,9 @@
                 this.$router.go(-1)
               }
             })
-          }).catch((error) => {
+          },error=>{
             this.$toast("修改失败，请稍后重试")
-          });
+          })
         }
       },
       created() {
@@ -136,12 +105,12 @@
 
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
-  .couplets-container{
+  .epitaph-container{
     background: @BG_GRAY;
     display: flex;
     flex-direction: column;
     height: 100%;
-    .wanlian-area{
+    .epitaph-area{
       background: @BG_WHITE;
       .van-cell{
         line-height: 40px;

@@ -24,8 +24,12 @@
       </div>
     </template>
 
+    <div class="epitaph-wrapper"
+         v-if="space && space.showEpitaph && space.epitaph">
+      {{space.epitaph}}
+    </div>
 
-    <div id="dui_lian_box">
+    <div id="dui_lian_box" v-if="space.showCouplet">
       <div class="inner" style="padding: 30px 15px 0px;" v-if="space && space.id>0">
         <div class="dui_lian" style="float: left;">{{space &&space.couplets && space.couplets.left}}</div>
         <div class="dui_lian" style="float: right;">{{space &&space.couplets && space.couplets.right}}</div>
@@ -1704,9 +1708,18 @@
         // }, 1000)
       },
       updateCouplets(data) {
-        if (data && this.space && this.space.couplets) {
-          this.space.couplets.left = data.left
-          this.space.couplets.right = data.right
+        if (data && this.space) {
+          if (this.space.couplets){
+            this.space.couplets.left = data.left
+            this.space.couplets.right = data.right
+          }
+          this.space.showCouplet = data.showCouplet
+        }
+      },
+      updateEpitaph(data){
+        if (data && this.space) {
+          this.space.epitaph = data.epitaph
+          this.space.showEpitaph = data.showEpitaph
         }
       },
       buySuccess(){
@@ -1738,6 +1751,7 @@
       },
       registerEvent() {
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
+        eventHub.$on(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
         eventHub.$on(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
         eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
         eventHub.$on(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
@@ -1761,6 +1775,7 @@
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
+      eventHub.$off(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
       eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
       eventHub.$off(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
@@ -1995,6 +2010,16 @@
         }
       }
     }
+  }
+
+  .epitaph-wrapper {
+    text-align: center;
+    margin: 16px 60px 0;
+    max-height: 60px;
+    overflow: auto;
+    font-size: 14px;
+    color: @FONT_WHITE_COLOR;
+    text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
   }
 
   .view1-box {
