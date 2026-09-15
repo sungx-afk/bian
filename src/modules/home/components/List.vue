@@ -77,7 +77,7 @@
 </template>
 <script>
   import {mapGetters,mapActions} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {Link, getLastSpaceId, clearLastSpaceId} from '@/config/utils'
   import constant from '@/config/constant'
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
@@ -108,6 +108,8 @@
         listLoaded:false,
         merchant:null,
         showGuideFlag:false,   // 控制引导页显示（方案B：用 data 变量，不依赖 $refs）
+        enteredLastSpace:false,// 本次是否已自动进入"最后访问的纪念馆"
+        hasJumpIntent:false,   // 本次是否带有分享/移交/通知等指定跳转意图
       }
     },
     components: {
@@ -476,6 +478,7 @@
         this.getSpaceList()
         this.getSpacesVisited()
         this.updateNotice()
+        this.tryEnterLastSpace()
 
 
 
@@ -492,6 +495,7 @@
         let app_id = ''
 
         this.query = query
+        this.checkJumpIntent(query)
         if(query){
           if(query.app_id){
             app_id = query.app_id;
@@ -504,6 +508,7 @@
             let value = localStorage.getItem("bian-query")
             if (value){
               this.query = JSON.parse(value)
+              this.checkJumpIntent(this.query)
               this.updateRequestParams({mchId:this.query.mchId})
               this.checkSwitchPage();//检测是否要跳转
             }
@@ -562,6 +567,11 @@
           let now = new Date().getTime()
           if (timestamp && now > parseInt(timestamp) + 2 * 24 * 60 * 60 * 1000){
             return
+          }
+
+          //分享、加好友、云追悼会、移交等指定跳转，优先于"最后访问的纪念馆"
+          if (from === 'space_detail' || from === 'meeting' || from === 'add_friends' || from === 'transfer_space'){
+            this.hasJumpIntent = true
           }
 
           if (from === 'space_detail'){
@@ -653,6 +663,32 @@
       },
       goMyOrder(){
         Link('/mortuary/order_list?scope=my')
+      },
+      /*================= 记住"最后访问的纪念馆" =================*/
+      //判断本次进入是否带有指定跳转意图（分享、加好友、云追悼会、移交、通知、殡仪馆等），有则让位
+      checkJumpIntent(query){
+        if (query && (query.copylink || query.origin_from || query.space_id || query.redirect_opt || query.mortuary_id)){
+          this.hasJumpIntent = true
+        }
+      },
+      //自动进入"最后访问的纪念馆"
+      tryEnterLastSpace(){
+        if (this.enteredLastSpace || this.hasJumpIntent){
+          return
+        }
+        let userId = this.user && this.user.id
+        if (!userId){
+          return
+        }
+        let spaceId = getLastSpaceId(userId)
+        if (!spaceId){
+          return
+        }
+        this.enteredLastSpace = true
+        //用 replace：自动进馆后历史栈就是 [/space/sacrifice/<id>]，
+        //这样按返回一定是退出 WebView（不依赖 WeChat/WebView 是否把瞬时 /list 计入返回栈），
+        //需要回 /list 时点祭拜页左上角的"返回列表"按钮（仅在 auto=1 时显示）。
+        Link(`/space/sacrifice/${spaceId}?auto=1`, {}, true)
       },
       checkSwitchPage(){
         let source_query = localStorage.getItem("bian-query")

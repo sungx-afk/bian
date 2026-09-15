@@ -1,6 +1,11 @@
 <template>
   <div class="sacrifice" :class="checkResult === 0 ? theme : 'no-theme'">
     <template v-if="checkResult === 0">
+    <div class="sacrifice-back-btn" v-if="isAutoEntered" @click="backToList" aria-label="返回列表">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path fill="currentColor" d="M15.5 4.5L7 12l8.5 7.5 1.5-1.7L10 12l7-6z"/>
+      </svg>
+    </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
         <div class="xiang_kuang" @click="goSurvey">
@@ -220,7 +225,7 @@
 
   import {mapGetters,mapActions} from 'vuex'
 
-  import {Link} from '@/config/utils';
+  import {Link,setLastSpaceId,getLastSpaceId,clearLastSpaceId} from '@/config/utils';
   import constant from '@/config/constant';
 
   import Message from '../Message';
@@ -275,7 +280,9 @@
         showShareAction: false,
         shareActions: [],
         showSettingAction:false,
-        settingActions:[]
+        settingActions:[],
+        //是否从 /list 自动跳进来的：仅此场景显示"返回列表"按钮（详情页、分享链接直跳不显示）
+        isAutoEntered:false
       }
     },
     components: {
@@ -722,8 +729,27 @@
         }
         return result
       },
+      //记忆"最后访问的纪念馆"
+      rememberLastSpace(spaceId) {
+        if (this.user && this.user.id) {
+          setLastSpaceId(this.user.id, spaceId);
+        }
+      },
+      //当前馆进不去（无权限、已删除）时，清掉与它相同的"最后访问"记录，避免每次进入都被带过来
+      clearLastSpaceOfCurrent() {
+        let userId = this.user && this.user.id;
+        if (userId && `${getLastSpaceId(userId)}` === `${this.spaceId}`) {
+          clearLastSpaceId(userId);
+        }
+      },
       goBack() {
         this.$router.go(-1)
+      },
+      //左上角"返回列表"：清掉当前馆的"最后访问"记录，避免被 /list 自动带回来；
+      //用 replace 回到 /list，按返回即退出 WebView（与自动进馆行为保持一致）
+      backToList() {
+        this.clearLastSpaceOfCurrent();
+        this.$router.replace('/list');
       },
       getSpaceDetail() {
         let that = this;
@@ -734,8 +760,12 @@
             that.space = resp;
             //无权限时仅展示提示，不再初始化祭拜场景
             if (that.checkResult !== 0) {
+              //进不去的馆不再记忆，避免每次打开都被带进来
+              that.clearLastSpaceOfCurrent();
               return;
             }
+            //能正常祭拜，记为"最后访问的纪念馆"
+            that.rememberLastSpace(resp.id);
             //首次进入时初始化背景音乐，与纪念馆详情页保持一致
             if (!that.bgmInited) {
               that.bgmInited = true;
@@ -781,6 +811,9 @@
                 }
               }
             })
+          } else {
+            //馆不存在（可能已被删除），不再记忆，避免每次进入都停在这里
+            that.clearLastSpaceOfCurrent();
           }
         }, (error) => {
           console.log(error);
@@ -1810,6 +1843,7 @@
     },
     created() {
       this.spaceId = this.$route.params.id;
+      this.isAutoEntered = this.$route.query && this.$route.query.auto === '1';
       console.log(this.spaceId);
       this.getSpaceDetail();
       this.registerEvent()
@@ -1837,6 +1871,24 @@
 <style rel="stylesheet/less" lang="less">
   @import "~@/config/config.less";
 
+  .sacrifice .sacrifice-back-btn{
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 18px;
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    z-index: 1000;
+    cursor: pointer;
+    svg{
+      vertical-align: middle;
+      fill: currentColor;
+    }
+  }
   .sacrifice .tip-wrapper{
     display: flex;
     flex-direction: column;

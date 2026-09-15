@@ -668,3 +668,54 @@ export const accMul = (num1, num2) => {
   ;
   return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 }
+
+/*======================== 记住"最后访问的纪念馆" ========================*/
+const LAST_SPACE_KEY = 'bian-last-space';
+
+//按用户区分，避免同一浏览器不同账号之间相互影响
+const lastSpaceKey = (userId) => {
+  if (!userId){
+    return '';
+  }
+  return `${LAST_SPACE_KEY}-${userId}`;
+}
+
+//记录最后访问的纪念馆
+export const setLastSpaceId = (userId, spaceId) => {
+  let key = lastSpaceKey(userId);
+  if (!key || !spaceId){
+    return;
+  }
+  try{
+    localStorage.setItem(key, `${spaceId}`);
+  }catch(e){
+    console.log(e);
+  }
+}
+
+//获取最后访问的纪念馆
+export const getLastSpaceId = (userId) => {
+  let key = lastSpaceKey(userId);
+  if (!key){
+    return '';
+  }
+  try{
+    return localStorage.getItem(key) || '';
+  }catch(e){
+    console.log(e);
+    return '';
+  }
+}
+
+//清除最后访问的纪念馆
+export const clearLastSpaceId = (userId) => {
+  let key = lastSpaceKey(userId);
+  if (!key){
+    return;
+  }
+  try{
+    localStorage.removeItem(key);
+  }catch(e){
+    console.log(e);
+  }
+}
