@@ -315,7 +315,7 @@
         Link(`/space/sacrifice/${this.spaceId}`)
       },
       registerEvent(){
-        eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+        // eventHub.$on(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
         eventHub.$on(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.updateSpaceDetail)
       },
@@ -386,7 +386,7 @@
         this.spaceId = this.$route.params.id
         this.getDetail(false,()=>{
           this.initTab()
-          this.tryHandleBgm(this.detail)
+          // this.tryHandleBgm(this.detail)
           this.initShare()
         })
         this.registerEvent()
@@ -394,10 +394,10 @@
       }
     },
     beforeDestroy() {
-      this.stopBgm(true)
+      // this.stopBgm(true)
       this.setDetailShowTab(true)
-      this.clearSpaceDetail()
-      eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
+      // this.clearSpaceDetail()
+      // eventHub.$off(constant.EVENT_AUDIO_PLAY,this.updatePlayState)
       eventHub.$off(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.updateSpaceDetail)
     }
