@@ -271,12 +271,125 @@ Vue.mixin({
     },
     getThemes(){
       let themes = [
+        //以下 16 项取自 store/Info.vue 的 backgrounds（bg_1 ~ bg_16），uuid 与上面风格一致：16 位定长串
+        {
+          uuid: 'b7Kq2RmZxT4pLw9A',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_1.jpeg?v=2'
+        },
+        {
+          uuid: 'Fg3nYe5vBq8HtUcJ',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_2.jpeg?v=2'
+        },
+        {
+          uuid: 'mP6rDz1sWk4XoNvE',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_3.jpeg?v=2'
+        },
+        {
+          uuid: 'Qa9tLc2jRh7YbGfM',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_4.jpeg?v=2'
+        },
+        {
+          uuid: 'uX4wVp8nZd3KqTsB',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_5.jpeg?v=2'
+        },
+        {
+          uuid: 'Hs1gJm6cFy9RlPoW',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_6.jpeg?v=2'
+        },
+        {
+          uuid: 'tN7bQx4dAz2VeUkC',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_7.jpeg?v=2'
+        },
+        {
+          uuid: 'Lo5vRf8mYt1WgPnJ',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_8.jpeg?v=2'
+        },
+        {
+          uuid: 'pZ3kTd6sBq9UxHcV',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_9.jpeg?v=2'
+        },
+        {
+          uuid: 'wM8nYc1vFg4RtLbQ',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_10.jpeg?v=2'
+        },
+        {
+          uuid: 'xQ2jLp7dKm5WsTfN',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_11.jpeg?v=2'
+        },
+        {
+          uuid: 'Ce6rHv9bZt3XnUqA',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_12.jpeg?v=2'
+        },
+        {
+          uuid: 'vY1sGm4kPd8QwBfR',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_13.jpeg?v=2'
+        },
+        {
+          uuid: 'bK5tNc2xLh7JrVqW',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_14.jpeg?v=2'
+        },
+        {
+          uuid: 'fD9wQz3mRn6YtGpB',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_15.jpeg?v=2'
+        },
+        {
+          uuid: 'sR4vBm8cJx1KqLwT',
+          color: '#FFFFFF',
+          dateColor:'#FFFFFF',
+          epitaphColor: '#FFFFFF',
+          url: 'https://static-app01.yugusoft.com/bian/bg_16.jpeg?v=2'
+        },
         {
           uuid: '5oLlWLeWV3KFtgIg',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '无限思念-1',
+          // name: '无限思念-1',
           url: 'https://static-app01.yugusoft.com/bian/theme_sinian2.png'
         },
         {
@@ -284,7 +397,7 @@ Vue.mixin({
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '无限思念-2',
+          // name: '无限思念-2',
           url: 'https://static-app01.yugusoft.com/bian/theme_sinian1.png'
         },
         {
@@ -292,7 +405,7 @@ Vue.mixin({
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '山水',
+          // name: '山水',
           url: 'https://static-app01.yugusoft.com/bian/theme_shanshui.png'
         },
         {
@@ -300,7 +413,7 @@ Vue.mixin({
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '星空-1',
+          // name: '星空-1',
           url: 'https://static-app01.yugusoft.com/bian/theme_xingkong1.png'
         },
         {
@@ -308,14 +421,14 @@ Vue.mixin({
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '星空-2',
+          // name: '星空-2',
           url: 'https://static-app01.yugusoft.com/bian/theme_xingkong2.png'
         }, {
           uuid: 'rvkTYJmBDC3tVTWE',
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '星空-3',
+          // name: '星空-3',
           url: 'https://static-app01.yugusoft.com/bian/theme_xingkong3.png'
         },
         {
@@ -323,20 +436,22 @@ Vue.mixin({
           color: '#FFFFFF',
           dateColor:'#FFFFFF',
           epitaphColor: '#FFFFFF',
-          name: '祥云',
+          // name: '祥云',
           url: 'https://static-app01.yugusoft.com/bian/theme_xiangyun.png'
-        }]
+        },
+        ]
 
       return themes
     },
     getPresetTheme(themeId){
+      let defaultIndex = 16 //默认还是取以前的无限思念-1
       let themes = this.getThemes()
       if (!themeId){
-        return themes[0]
+        return themes[defaultIndex]
       }
       let index = themes.findIndex(item=>item.uuid === themeId)
       if (index < 0){
-        index = 0
+        index = defaultIndex
       }
       return themes[index]
     }
