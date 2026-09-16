@@ -1857,6 +1857,8 @@
       }, 1000);
     },
     beforeDestroy() {
+      this.stopBgm(true)
+      this.clearSpaceDetail()
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
       eventHub.$off(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
