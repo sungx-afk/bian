@@ -139,9 +139,6 @@
           <div class="button" @click="shaozhi()">纸钱</div>
           <div class="button" @click="goMoreOperate()">更多</div>
           <div class="side-buttons">
-            <div class="button" @click="goSurvey" v-if="false">
-              <img src="~@/modules/images/survey.svg" alt="概况" />
-            </div>
             <div class="button" @click="goSacrifice" v-if="false">
               <img src="~@/modules/images/jibai.svg" alt="祭拜" />
             </div>
@@ -150,6 +147,9 @@
             </div>
             <div class="button music-button" :class="{'playing':playState === 'play'}" @click="goBgmAction">
               <img src="~@/modules/images/music.svg" alt="音乐" />
+            </div>
+            <div class="button" @click="goSurvey">
+              <img src="~@/modules/images/shengping.svg" alt="生平" />
             </div>
             <div class="button" @click="goSetting">
               <img src="~@/modules/images/setting.svg" alt="设置" />
