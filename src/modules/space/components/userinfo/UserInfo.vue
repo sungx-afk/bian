@@ -7,8 +7,8 @@
       </van-radio-group>
     </van-cell>
     <van-cell class="date-wrapper" title="生 卒:" is-link :value="userDate" @click.stop="goSelectDate"></van-cell>
-    <van-field v-model="user.birthAddress" label="出生地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-    <van-field v-model="user.dieAddress" label="安葬地点:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-field v-model="user.birthAddress" label="出生地:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-field v-if="false" v-model="user.dieAddress" label="安葬地:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
     <van-cell v-if="showDelete">
       <div class="delete-btn" @click="deleteUser">删除</div>
     </van-cell>

@@ -40,7 +40,7 @@
             <span class="summary-label">出生地</span>
             <span class="summary-value">{{user.birthAddress || '未填写'}}</span>
           </div>
-          <div class="summary-row">
+          <div class="summary-row" v-if="false">
             <span class="summary-label">安葬地</span>
             <span class="summary-value">{{user.dieAddress || '未填写'}}</span>
           </div>
@@ -547,7 +547,7 @@
       }
     }
     .summary-section{
-      margin: 28px 18px 28px;
+      margin: 28px 0px 28px;
       .summary-section-title{
         position: relative;
         text-align: center;
@@ -633,7 +633,7 @@
       }
     }
     .story-list-section{
-      margin: 0 18px 80px;
+      margin: 0 0px 80px;
       .story-section-title{
         position: relative;
         text-align: center;

@@ -36,10 +36,10 @@
               <span style="margin-left: 15px;">逝世：{{user.dieDayStr || (user.dieDay | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
             </div>
             <div class="address-info">
-              出生地点：{{user.birthAddress || '未填写'}}
+              出生地：{{user.birthAddress || '未填写'}}
             </div>
-            <div class="address-info">
-              安葬地点：{{user.dieAddress || '未填写'}}
+            <div class="address-info" v-if="false">
+              安葬地：{{user.dieAddress || '未填写'}}
             </div>
           </div>
           <div class="summary-area">

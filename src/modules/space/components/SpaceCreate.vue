@@ -68,7 +68,7 @@
           birthday:'',         //诞辰
           birthAddress: '',    //出生地
           dieDay: '',         //忌日
-          dieAddress: '',     //安葬地点
+          dieAddress: '',     //安葬地
           sex: 0,
           avatarUrl: '',      //遗像地址
           notifyStatus: 1
