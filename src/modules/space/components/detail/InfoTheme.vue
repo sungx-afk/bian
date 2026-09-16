@@ -567,7 +567,6 @@
       }
       .summary-card{
         background: #fff;
-        border-radius: 10px;
         padding: 14px 16px;
         margin-bottom: 14px;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
@@ -653,7 +652,6 @@
       }
       .story-empty{
         background: #fff;
-        border-radius: 10px;
         padding: 24px 16px;
         text-align: center;
         color: @FONT_THIRD_COLOR;
