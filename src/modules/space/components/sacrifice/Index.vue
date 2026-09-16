@@ -4,6 +4,9 @@
     <div class="sacrifice-back-btn" v-if="isAutoEntered" @click="backToList" aria-label="返回列表">
       <img src="~@/modules/images/back.svg" alt="返回" />
     </div>
+    <div class="sacrifice-header" v-if="space">
+      {{space.name || '纪念堂'}}
+    </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
         <div class="xiang_kuang" @click="goSurvey">
@@ -1907,6 +1910,26 @@
       height: 100%;
       object-fit: cover;
     }
+  }
+  //顶部纪念馆名称：纯文字 + 多层阴影，深浅背景都能压住；居中显示、不挡左右两侧的固定按钮
+  .sacrifice .sacrifice-header{
+    position: fixed;
+    top: 12px;                            // 与左上/右上按钮同高
+    left: 56px;                           // 用左右各 56px 把元素直接撑成 100vw - 112px
+    right: 56px;                          // 宽度由 left/right 决定，不再受内容影响（inline-block + 空内容会 width=0）
+    z-index: 1000;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    text-align: center;                   // 在固定宽容器内居中显示文字
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    //深色背景图上靠阴影压字；浅色图上靠阴影+白字压住
+    text-shadow:
+      0 1px 4px rgba(0,0,0,0.75),
+      0 0 2px rgba(0,0,0,0.6);
   }
   .sacrifice .tip-wrapper{
     display: flex;
