@@ -84,7 +84,8 @@
       themes(){
         let list = this.getThemes()
         let groupSize = 3
-        let groupCount = list.length / 3
+        //向上取整：最后不足一行的也要成组，避免依赖循环条件的隐式取整
+        let groupCount = Math.ceil(list.length / groupSize)
         let groups = []
         for (let i = 0; i < groupCount; i++){
           groups.push(list.slice(i * groupSize, (i + 1) * groupSize))
@@ -216,11 +217,19 @@
       .theme-group{
         display: flex;
         align-items: center;
-        justify-content: center;
+        //每行固定3列：不满一行时靠左排（整行仍然水平居中）
+        justify-content: flex-start;
+        width: 100%;
+        max-width: 348px; //3 × 116px
+        margin: 0 auto;
         .theme-wrapper{
           display: flex;
           flex-direction: column;
           align-items: center;
+          //100px 图片 + 左右各 8px 内边距，固定列宽保证每行列对齐
+          width: 116px;
+          box-sizing: border-box;
+          flex: none;
           padding: 12px 8px;
           position: relative;
           .image{

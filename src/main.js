@@ -325,20 +325,6 @@ Vue.mixin({
           epitaphColor: '#FFFFFF',
           name: '祥云',
           url: 'https://static-app01.yugusoft.com/bian/theme_xiangyun.png'
-        }, {
-          uuid: 't37lsByGDFkTfLj6',
-          color: '#FFFFFF',
-          dateColor:'#FFFFFF',
-          epitaphColor: '#FFFFFF',
-          name: '红色-1',
-          url: 'https://static-app01.yugusoft.com/bian/theme_dangjian1.png'
-        }, {
-          uuid: 'MozabJlp2wvKAjAu',
-          color: '#FFFFFF',
-          dateColor:'#FFFFFF',
-          epitaphColor: '#FFFFFF',
-          name: '红色-2',
-          url: 'https://static-app01.yugusoft.com/bian/theme_dangjian2.png'
         }]
 
       return themes
