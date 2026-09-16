@@ -280,7 +280,9 @@
         showSettingAction:false,
         settingActions:[],
         //是否从 /list 自动跳进来的：仅此场景显示"返回列表"按钮（详情页、分享链接直跳不显示）
-        isAutoEntered:false
+        isAutoEntered:false,
+        //离开祭拜页时是否因跳转暂停了音乐（回来时续播；用户手动停的不续播）
+        bgmPausedOnLeave:false
       }
     },
     components: {
@@ -1855,6 +1857,22 @@
       setTimeout(function(){
         that.initZhuHuo();
       }, 1000);
+    },
+    activated() {
+      //返回祭拜页：续播离开前正在播的音乐（playBgm 不传 seek 会从上次暂停位置继续）
+      if (this.bgmPausedOnLeave) {
+        this.bgmPausedOnLeave = false
+        this.playBgm()
+      }
+    },
+    deactivated() {
+      //离开祭拜页进入其他页面（留言、详情、设置等）时暂停音乐，避免页面间声音混着响
+      if (this.playState === 'play') {
+        this.bgmPausedOnLeave = true
+        this.stopBgm()
+      } else {
+        this.bgmPausedOnLeave = false
+      }
     },
     beforeDestroy() {
       this.stopBgm(true)
