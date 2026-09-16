@@ -41,6 +41,80 @@ if (window.entryUrl === 'undefined' || window.entryUrl === '') {
   window.entryUrl = window.location.href.split('#')[0];
 }
 
+/*======================== 背景音乐（全局只有 App.vue 里一个 audio#bgMusic） ========================*/
+//当前是否"期望在播放"：自动播放被拦截时用它判断要不要兜底补播
+let bgmWantPlay = false
+//"首次交互补播"是否已挂上
+let bgmGestureRetryBound = false
+
+//播放（audio 是全局唯一的 #bgMusic）
+const playBgmAudio = (audio) => {
+  if (!audio || !bgmWantPlay) {
+    return
+  }
+  const result = audio.play()
+  if (result && typeof result.catch === 'function') {
+    result.catch(() => {
+      armBgmGestureRetry()
+    })
+  }
+}
+
+//兜底：页面刚加载、用户还没有任何手势时，audio.play() 会被自动播放策略拒掉
+//（iOS 微信 / 安卓 WebView(X5) / Chrome 都会拦），此时挂一次性交互监听补播。
+//用 capture 阶段监听，避免被页面里 canvas 的 stopPropagation 挡掉；
+//真正播起来了就解绑；用户已手动停止（bgmWantPlay=false）则不补播。
+const armBgmGestureRetry = () => {
+  if (bgmGestureRetryBound) {
+    return
+  }
+  bgmGestureRetryBound = true
+  const events = ['touchstart', 'click']
+  const handler = () => {
+    const audio = document.getElementById('bgMusic')
+    if (!audio || !bgmWantPlay) {
+      unbind()
+      return
+    }
+    if (!audio.paused) {//已经在播了
+      unbind()
+      return
+    }
+    const result = audio.play()
+    if (result && typeof result.then === 'function') {
+      result.then(unbind).catch(() => {})
+    } else {
+      unbind()
+    }
+  }
+  const unbind = () => {
+    bgmGestureRetryBound = false
+    events.forEach((ev) => document.removeEventListener(ev, handler, true))
+  }
+  events.forEach((ev) => document.addEventListener(ev, handler, true))
+}
+
+//微信内：借原生桥调用（getNetworkType）的回调来触发播放。
+//微信 iOS 里"由原生桥回调触发"等同可信上下文，是解锁自动播放的常规做法；
+//安卓部分内核版本同样有效，失效时由首次交互补播兜底。
+const playBgmViaWeixinBridge = (audio) => { 
+  const play = () => {
+    playBgmAudio(audio)
+  }
+  if (window.WeixinJSBridge && typeof window.WeixinJSBridge.invoke === 'function') {
+    try {
+      window.WeixinJSBridge.invoke('getNetworkType', {}, play)
+      return
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  if (!playBgmViaWeixinBridge.bound) {
+    playBgmViaWeixinBridge.bound = true
+    document.addEventListener('WeixinJSBridgeReady', play, false)
+  }
+}
+
 Vue.mixin({
   data(){
     return{
@@ -139,29 +213,51 @@ Vue.mixin({
         }else{
           audio.currentTime = this.currentAudioTime
         }
-        if (isIphone()){
-          wx.config({
-            // 配置信息, 即使不正确也能使用 wx.ready
-            debug: false,
-            appId: '',
-            timestamp: new Date().getTime(),
-            nonceStr: '',
-            signature: '',
-            jsApiList: []
-          });
-          wx.ready(function() {
-            audio.play();
-          });
-        }else {
-          audio.play();
+        //本次是"期望播放"状态
+        bgmWantPlay = true
+        if (isIphone() && typeof wx !== 'undefined' && typeof wx.config === 'function'){
+          try {
+            wx.config({
+              // 配置信息, 即使不正确也能使用 wx.ready
+              debug: false,
+              appId: '',
+              timestamp: new Date().getTime(),
+              nonceStr: '',
+              signature: '',
+              jsApiList: [],
+              //check:false —— 跳过签名校验，wx.ready 会立刻同步执行回调。
+              //不传 check 时走真校验：wx.ready 只在"本页已经成功 config 过一次"后才同步执行回调，
+              //否则回调进队列等校验响应。而"自动进馆"（/list 直接跳祭拜页）这条链路上没有任何真配置，
+              //这里又是伪造的 config（appId/signature 为空）→ 校验失败/无响应 → 队列永不触发，
+              //audio.play() 永远不执行，iOS 上音乐就出不来了。
+              check: false
+            });
+            wx.ready(function() {
+              playBgmAudio(audio);
+            });
+          } catch (err) {
+            console.log(err)
+          }
         }
+        //直连播放：iPhone 上若上面那条没生效、以及非 iPhone 都靠这里
+        if (audio.paused){
+          playBgmAudio(audio)
+        }
+        //微信内再借桥回调触发一次（iOS 解锁自动播放；安卓部分内核有效）
+        playBgmViaWeixinBridge(audio)
 
         setTimeout(()=>{
+          //自动播放被拦且内核没抛 Promise（老 WebView）时，兜底等用户首次交互
+          if (bgmWantPlay && audio.paused){
+            armBgmGestureRetry()
+          }
           eventHub.$emit(constant.EVENT_AUDIO_PLAY,'play')
         },500)
       }
     },
     stopBgm(quit){
+      //用户/业务主动停止后，不再做"触摸补播"
+      bgmWantPlay = false;
       let audio = document.getElementById('bgMusic');
       if (audio){
         audio.pause();
