@@ -120,7 +120,7 @@
           merchant: 'userStore/merchant',
         }),
         backgrounds() {
-          let arr = new Array(16);
+          let arr = new Array(23);
           for (let i = 1; i <= arr.length; i++) {
             let item = {
               id: i,
