@@ -28,7 +28,7 @@
       </div>
     </template>
 
-    <div class="epitaph-wrapper"
+    <div class="epitaph-wrapper" :class="{'adjust':space.combineImage == 1 || space.spaceUsers.length == 2}"
          v-if="space && space.showEpitaph && space.epitaph">
       {{space.epitaph}}
     </div>
@@ -2083,8 +2083,8 @@
   }
 
   .yi-xiang-box {
-    margin-top: 12vh;
     &.single {
+      margin-top: 8vh;
       .xiang_kuang {
         background: url("./images/item_xiang_kuang_black.png");
         background-size: cover;
@@ -2156,12 +2156,15 @@
 
   .epitaph-wrapper {
     text-align: center;
-    margin: 16px 60px 0;
+    margin: 4px 60px 0;
     max-height: 60px;
     overflow: auto;
     font-size: 14px;
     color: @FONT_WHITE_COLOR;
     text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
+    &.adjust{
+      margin-top: 16px;
+    }
   }
 
   .view1-box {
