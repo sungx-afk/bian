@@ -2,9 +2,7 @@
   <div class="sacrifice" :class="checkResult === 0 ? theme : 'no-theme'">
     <template v-if="checkResult === 0">
     <div class="sacrifice-back-btn" v-if="isAutoEntered" @click="backToList" aria-label="返回列表">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-        <path fill="currentColor" d="M15.5 4.5L7 12l8.5 7.5 1.5-1.7L10 12l7-6z"/>
-      </svg>
+      <img src="~@/modules/images/back.svg" alt="返回" />
     </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
@@ -1884,9 +1882,10 @@
     color: #fff;
     z-index: 1000;
     cursor: pointer;
-    svg{
-      vertical-align: middle;
-      fill: currentColor;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
   .sacrifice .tip-wrapper{
