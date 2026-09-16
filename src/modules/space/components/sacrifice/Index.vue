@@ -5,7 +5,7 @@
       <img src="~@/modules/images/back.svg" alt="返回" />
     </div>
     <div class="sacrifice-header" v-if="space">
-      {{space.name || '纪念堂'}}
+      {{space.name}}
     </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
@@ -1923,6 +1923,9 @@
     font-weight: 500;
     line-height: 24px;
     text-align: center;                   // 在固定宽容器内居中显示文字
+    padding: 4px 2px;                       // 给半透明底色留点呼吸
+    background: rgba(0, 0, 0, 0.22);      // 半透明黑底，深浅背景图都能压住文字
+    border-radius: 4px;                  // 圆角胶囊感
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
