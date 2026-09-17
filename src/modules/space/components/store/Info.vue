@@ -195,7 +195,7 @@
         },
         filterName(){
           let result = '彼岸思念';
-          if(this.user && this.user.appId != 'wxdb43de2e1083005a'){
+          if(this.user && this.user.appId == 'wx502b2e237549374c'){
             if(this.user.merchant_name){
               result = this.user.merchant_name;
             }

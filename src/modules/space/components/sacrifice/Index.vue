@@ -1817,13 +1817,14 @@
       //直接用事件携带的 backgroundId 更新本地数据，避免走 getSpaceDetail 网络请求造成背景延迟切换
       updateBackground(data){
         if (data && this.space) {
-          this.space.backgroundId = data.backgroundId
+          this.$set(this.space, 'backgroundId', data.backgroundId)
         }
       },
       //同理，用事件携带的 frameId 直接更新本地数据，即时切换相框
+      //普通赋值（this.space.frameId = xxx）在 Vue2 里不是响应式的，必须用 $set 新增
       updateFrame(data){
         if (data && this.space) {
-          this.space.backgroundId = data.frameId
+          this.$set(this.space, 'frameId', data.frameId)
         }
       },
       buySuccess(){

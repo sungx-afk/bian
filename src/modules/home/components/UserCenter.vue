@@ -35,7 +35,7 @@
       <van-cell class="log-cell" v-if="supportPay" :is-link="true" @click.stop="goLogs">
         <span>充值和扣费记录</span>
       </van-cell>
-      <van-cell class="account-cell" @click="goViewMyOrder" :is-link="true">
+      <van-cell class="account-cell" v-if="showOrder" @click="goViewMyOrder" :is-link="true">
         <span>我的订单</span>
       </van-cell>
     </div>
@@ -66,6 +66,13 @@ export default {
     }),
     supportPay(){
       return config_server.supportPay
+    },
+    showOrder(){
+      let appid = window.app_id || config_server.wechatAppId
+      if(appid && appid == 'wx502b2e237549374c'){
+        return true
+      }
+      return false
     }
   },
   watch: {},

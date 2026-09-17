@@ -275,7 +275,7 @@
           name: '个人信息',
         }]
         let appid = window.app_id || config_server.wechatAppId
-        if(appid && appid != 'wxdb43de2e1083005a'){
+        if(appid && appid == 'wx502b2e237549374c'){
           this.menuList.push({
             id:'create_order',
             name: '送祭品',
