@@ -22,6 +22,8 @@ export const FRAMES = [
   { id: 2, key: 'cream', title: '米白' },
   { id: 3, key: 'gray', title: '雅灰' },
   { id: 4, key: 'oak', title: '原木' },
+  { id: 5, key: 'baroque', title: '巴洛克' },
+  { id: 6, key: 'silver', title: '银雕' },
 ]
 
 const frameImages = {
@@ -29,6 +31,8 @@ const frameImages = {
   cream: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_cream.png'),
   gray: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_gray.png'),
   oak: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_oak.png'),
+  baroque: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_baroque.png'),
+  silver: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_silver.png'),
 }
 
 /*根据 frameId 取相框配置，取不到（含 frameId 为空、非法值）时回退默认相框*/
