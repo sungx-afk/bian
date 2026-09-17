@@ -1809,6 +1809,12 @@
           this.space.showEpitaph = data.showEpitaph
         }
       },
+      //直接用事件携带的 backgroundId 更新本地数据，避免走 getSpaceDetail 网络请求造成背景延迟切换
+      updateBackground(data){
+        if (data && this.space) {
+          this.space.backgroundId = data.backgroundId
+        }
+      },
       buySuccess(){
         this.getSpaceDetail();
       },
@@ -1840,7 +1846,7 @@
         eventHub.$on(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
         eventHub.$on(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
         eventHub.$on(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
-        eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
+        eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.updateBackground)
         eventHub.$on(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
       }
     },
@@ -1883,7 +1889,7 @@
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
       eventHub.$off(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
-      eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.getSpaceDetail)
+      eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.updateBackground)
       eventHub.$off(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
     }
   }

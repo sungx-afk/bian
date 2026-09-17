@@ -184,10 +184,13 @@
             backgroundId: that.themeId
           }, rsp => {
             that.showThemes = false;
+            //与 Epitaph/Couplets 一致的模式：emit 通知缓存中的 sacrifice 实例刷新
+            //（vue-navigation 返回时复用缓存组件，created 不会重新执行），
+            //再 go(-1) 返回原 sacrifice 历史记录，不新增记录，再按返回即退出
             eventHub.$emit(constant.EVENT_CHANGE_BACKGROUND_SUCCESS,{
               backgroundId:that.themeId
             })
-            that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
+            that.$router.go(-1);
           }, error => {
             reject && reject(error)
           })
