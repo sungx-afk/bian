@@ -391,8 +391,8 @@
                 this.updateInfo()
               }else{
                 setTimeout(()=>{
-                  that.$router.push(`/space/sacrifice/${spaceId}?q=${new Date().getTime()}`);
-                  // this.$router.back()
+                  //go(-1) 返回原 sacrifice 历史记录，不新增记录，避免返回时再次显示本页
+                  that.$router.go(-1);
                 }, 1000);
               }
             },error=>{
