@@ -9,23 +9,23 @@
     </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
-        <div class="xiang_kuang" @click="goSurvey">
+        <div class="xiang_kuang" :style="frameStyle" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${combineAvatarUrl})`}"></div>
         </div>
       </div>
     </template>
     <template v-else>
       <div class="yi-xiang-box single" v-if="space && space.spaceUsers.length <= 1">
-        <div class="xiang_kuang" @click="goSurvey">
+        <div class="xiang_kuang" :style="frameStyle" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
         </div>
       </div>
 
       <div class="yi-xiang-box double" v-if="space && space.spaceUsers.length == 2">
-        <div class="xiang_kuang" @click="goSurvey">
+        <div class="xiang_kuang" :style="frameStyle" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[0].avatarUrl})`}"></div>
         </div>
-        <div class="xiang_kuang" @click="goSurvey">
+        <div class="xiang_kuang" :style="frameStyle" @click="goSurvey">
           <div class="yi_xiang" :style="{'background-image':`url(${space && space.spaceUsers[1].avatarUrl})`}"></div>
         </div>
       </div>
@@ -228,6 +228,7 @@
 
   import {Link,setLastSpaceId,getLastSpaceId,clearLastSpaceId} from '@/config/utils';
   import constant from '@/config/constant';
+  import {getFrameImage} from '@/config/frame';
 
   import Message from '../Message';
   import ChangeMingDeng from './ChangeMingDeng.vue';
@@ -324,6 +325,10 @@
       },
       theme(){
         return 'theme_'+(this.space&&this.space.backgroundId||1);
+      },
+      //相框图片：按 space.frameId 取，缺失或非法时回退默认相框
+      frameStyle(){
+        return {'background-image': `url(${getFrameImage(this.space && this.space.frameId)})`}
       },
       isSpaceCreator(){
         let result = false
@@ -1815,6 +1820,12 @@
           this.space.backgroundId = data.backgroundId
         }
       },
+      //同理，用事件携带的 frameId 直接更新本地数据，即时切换相框
+      updateFrame(data){
+        if (data && this.space) {
+          this.space.backgroundId = data.frameId
+        }
+      },
       buySuccess(){
         this.getSpaceDetail();
       },
@@ -1847,6 +1858,7 @@
         eventHub.$on(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
         eventHub.$on(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
         eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.updateBackground)
+        eventHub.$on(constant.EVENT_CHANGE_FRAME_SUCCESS, this.updateFrame)
         eventHub.$on(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
       }
     },
@@ -1890,6 +1902,7 @@
       eventHub.$off(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
       eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.updateBackground)
+      eventHub.$off(constant.EVENT_CHANGE_FRAME_SUCCESS, this.updateFrame)
       eventHub.$off(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
     }
   }

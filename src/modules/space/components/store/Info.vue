@@ -9,6 +9,7 @@
         <van-cell title="自定义墓志铭" :is-link="true" @click.stop="enterEpitaph"></van-cell>
         <van-cell title="自定义挽联" :is-link="true" @click.stop="enterCouplets"></van-cell>
         <van-cell title="自定义主题" :is-link="true" @click.stop="goSwitchTheme"></van-cell>
+        <van-cell title="自定义相框" :is-link="true" @click.stop="goSwitchFrame"></van-cell>
       </div>
       <div class="charge-area">
         <van-cell-group :title="chargeTitle">
@@ -83,6 +84,30 @@
         <van-button type="danger" block @click="changeThemeId">应用</van-button>
       </div>
     </van-popup>
+    <van-popup
+      v-model="showFrames"
+      closeable
+      position="bottom"
+      @open="mask=true"
+      @closed="mask=false"
+      @click.stop=""
+      :style="{ height: '100%' }">
+      <div class="info">
+        <van-icon name="info"/>
+        请选择一个相框
+      </div>
+      <div class="frame-wrapper">
+        <div class="frame" v-for="frame in frames" :key="frame.id" @click="frameId = frame.id">
+          <div class="frame-preview" :class="{'active':frameId === frame.id}"
+               :style="{'background-image':`url(${frame.image})`}">
+          </div>
+          <div class="frame-title" :class="{'active':frameId === frame.id}">{{frame.title}}</div>
+        </div>
+      </div>
+      <div class="button-area">
+        <van-button type="danger" block @click="changeFrameId">应用</van-button>
+      </div>
+    </van-popup>
     <van-popup class="visited-tip-popup-area" v-model="showVisitedTip" closeable :round="false" close-on-popstate @closed="tipPopupClosed">
       <div class="text">
         到访人次以每次进入纪念馆详情页为准，包括创建者本人进入记录
@@ -95,6 +120,9 @@
   import constant from '@/config/constant'
   import {mapGetters, mapActions} from 'vuex';
   import {Link} from '@/config/utils'
+  import {getFrames, DEFAULT_FRAME_ID} from '@/config/frame'
+  //相框选择弹窗里预览用的遗像占位图
+  const PLACEHOLDER_AVATAR = require('@/modules/space/components/sacrifice/images/item_yi_xiang.png')
 
     export default {
       name: "Info",
@@ -104,10 +132,13 @@
       data(){
         return{
           showThemes: false,
+          showFrames: false,
           showVisitedTip:false,
           mask: false,
           spaceId:'',
           themeId:1,
+          frameId:DEFAULT_FRAME_ID,
+          frames:getFrames(),
           space:null,
           products:[],
           iconMoney:'https://static-app01.yugusoft.com/bian/money.png',
@@ -170,7 +201,7 @@
             }
           }
           return result;
-        }
+        },
       },
       methods:{
         ...mapActions({
@@ -179,9 +210,11 @@
         changeThemeId(e){
           let that = this;
           let spaceId = this.spaceId;
-          $API.space.modifySpace({
+          $API.space.updateSpace({
             sid: spaceId,
-            backgroundId: that.themeId
+            param:{
+              backgroundId:that.themeId,
+            }
           }, rsp => {
             that.showThemes = false;
             //与 Epitaph/Couplets 一致的模式：emit 通知缓存中的 sacrifice 实例刷新
@@ -193,6 +226,24 @@
             that.$router.go(-1);
           }, error => {
             reject && reject(error)
+          })
+        },
+        changeFrameId(){
+          let that = this;
+          $API.space.updateSpace({
+            sid: this.spaceId,
+            param:{
+              frameId:that.frameId,
+            }
+          }, rsp => {
+            that.showFrames = false;
+            //与 changeThemeId 一致：emit 通知缓存中的 sacrifice 实例即时换框，再返回，不新增历史记录
+            eventHub.$emit(constant.EVENT_CHANGE_FRAME_SUCCESS,{
+              frameId:that.frameId
+            })
+            that.$router.go(-1);
+          }, error => {
+            that.$toast("设置失败，请稍后重试")
           })
         },
         charge(){
@@ -209,6 +260,10 @@
             }, (rsp)=>{
               this.space = rsp;
               this.updateSpaceDetail(this.space)
+              //相框：服务端尚未返回 frameId 时回退默认相框
+              this.frameId = (this.space.frameId === undefined || this.space.frameId === null)
+                ? DEFAULT_FRAME_ID
+                : this.space.frameId
               if (this.space.couplets){
                 this.themeId = (this.space.backgroundId||1);
                 this.coupletsLeft = this.space.couplets.left
@@ -234,6 +289,12 @@
         },
         goSwitchTheme(){
           this.showThemes = true
+        },
+        goSwitchFrame(){
+          if (!this.isSpaceCreator){
+            return
+          }
+          this.showFrames = true
         },
         updateInfo(){
           this.getDetail().then(()=>{
@@ -648,6 +709,57 @@
             font-family: vant-icon;
             padding-top: 50%;
             text-align: center;
+          }
+        }
+      }
+    }
+
+    .frame-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      background: white;
+      padding: 10px 0px;
+      display: flex;
+      flex-wrap: wrap;
+      .frame {
+        width: 50%;
+        box-sizing: border-box;
+        padding: 8px 12px;
+        text-align: center;
+        .frame-preview {
+          position: relative;
+          width: 100%;
+          /* 与相框图片 160x200 的比例保持一致 */
+          padding-top: 125%;
+          background-position: center;
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          transition: all 0.35s;
+          &.active::after {
+            content: "\F02B";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.4);
+            color: #ff6034;
+            font-size: 30px;
+            font-family: vant-icon;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+        .frame-title {
+          margin-top: 6px;
+          font-size: 13px;
+          color: @FONT_SECOND_COLOR;
+          &.active {
+            color: @MAIN_THEME_COLOR;
+            font-weight: bold;
           }
         }
       }

@@ -22,6 +22,7 @@ module.exports = {
   EVENT_AUDIO_PLAY:'audio_play',
   EVENT_SELECT_THEME:'select_theme',
   EVENT_CHANGE_BACKGROUND_SUCCESS:'event_change_background_success',
+  EVENT_CHANGE_FRAME_SUCCESS:'event_change_frame_success',
   EVENT_SPACE_STORY_DELETED:'space_story_deleted',
 
   KEY_TOKEN:'token',
