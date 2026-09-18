@@ -18,12 +18,12 @@
 export const DEFAULT_FRAME_ID = 1
 
 export const FRAMES = [
-  { id: 1, key: 'black', title: '经典黑' },
-  { id: 2, key: 'cream', title: '米白' },
-  { id: 3, key: 'gray', title: '雅灰' },
-  { id: 4, key: 'oak', title: '原木' },
-  { id: 5, key: 'baroque', title: '巴洛克' },
-  { id: 6, key: 'silver', title: '银雕' },
+  { id: 1, key: 'black', title: '经典黑', slice: [80, 120, 90, 110] },
+  { id: 2, key: 'cream', title: '米白', slice: [80, 120, 90, 110] },
+  { id: 3, key: 'gray', title: '雅灰', slice: [80, 120, 90, 110] },
+  { id: 4, key: 'oak', title: '原木', slice: [80, 120, 90, 110] },
+  { id: 5, key: 'baroque', title: '巴洛克', slice: [140, 185, 140, 170] },
+  { id: 6, key: 'silver', title: '银雕', slice: [100, 170, 110, 170] },
 ]
 
 const frameImages = {
@@ -33,6 +33,16 @@ const frameImages = {
   oak: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_oak.png'),
   baroque: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_baroque.png'),
   silver: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_silver.png'),
+}
+
+//合影（combine）模式用的横版相框：竖版图顺时针旋转90°生成（test/make_combine_frames.py）
+const combineFrameImages = {
+  black: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_black_h.png'),
+  cream: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_cream_h.png'),
+  gray: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_gray_h.png'),
+  oak: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_oak_h.png'),
+  baroque: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_baroque_h.png'),
+  silver: require('@/modules/space/components/sacrifice/images/item_xiang_kuang_silver_h.png'),
 }
 
 /*根据 frameId 取相框配置，取不到（含 frameId 为空、非法值）时回退默认相框*/
@@ -48,6 +58,12 @@ export const getFrame = (frameId) => {
 export const getFrameImage = (frameId) => {
   const frame = getFrame(frameId)
   return frameImages[frame.key] || frameImages.black
+}
+
+/*根据 frameId 取合影模式横版相框图片地址*/
+export const getFrameCombineImage = (frameId) => {
+  const frame = getFrame(frameId)
+  return combineFrameImages[frame.key] || combineFrameImages.black
 }
 
 /*取全部相框（含图片地址），供相框选择弹窗使用*/

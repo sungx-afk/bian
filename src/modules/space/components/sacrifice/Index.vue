@@ -9,8 +9,8 @@
     </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
-        <div class="xiang_kuang" :style="frameStyle" @click="goSurvey">
-          <div class="yi_xiang" :style="{'background-image':`url(${combineAvatarUrl})`}"></div>
+        <div class="xiang_kuang" :style="combineFrameStyle" @click="goSurvey">
+          <div class="yi_xiang" :style="combineInnerStyle"></div>
         </div>
       </div>
     </template>
@@ -228,7 +228,11 @@
 
   import {Link,setLastSpaceId,getLastSpaceId,clearLastSpaceId} from '@/config/utils';
   import constant from '@/config/constant';
-  import {getFrameImage} from '@/config/frame';
+  import {getFrameImage, getFrame, getFrameCombineImage} from '@/config/frame';
+
+  //合影横版图（竖版旋转90°后 993x850）铺满 244x130 的显示缩放
+  const COMBINE_SCALE_X = 244 / 993
+  const COMBINE_SCALE_Y = 130 / 850
 
   import Message from '../Message';
   import ChangeMingDeng from './ChangeMingDeng.vue';
@@ -326,6 +330,13 @@
       theme(){
         return 'theme_'+(this.space&&this.space.backgroundId||1);
       },
+      //合影横版相框：用旋转90°的横版图铺满显示，相框完整不被截
+      combineFrameStyle(){
+        return {
+          'background-image': `url(${getFrameCombineImage(this.space && this.space.frameId)})`,
+          'background-size': '100% 100%'
+        }
+      },
       //相框图片：按 space.frameId 取，缺失或非法时回退默认相框
       frameStyle(){
         return {'background-image': `url(${getFrameImage(this.space && this.space.frameId)})`}
@@ -382,6 +393,17 @@
         }
 
         return url
+      },
+      //合影照片窗口：内边距按旋转后的窗口位置换算（slice=[上,右,下,左]，顺时针旋转后：下→左、上→右、左→上、右→下）
+      combineInnerStyle(){
+        const s = getFrame(this.space && this.space.frameId).slice
+        return {
+          'background-image': `url(${this.combineAvatarUrl})`,
+          left: Math.round(s[2] * COMBINE_SCALE_X) + 'px',
+          right: Math.round(s[0] * COMBINE_SCALE_X) + 'px',
+          top: Math.round(s[3] * COMBINE_SCALE_Y) + 'px',
+          bottom: Math.round(s[1] * COMBINE_SCALE_Y) + 'px'
+        }
       },
       supportPay(){
         return config_server.supportPay
