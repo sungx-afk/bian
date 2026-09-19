@@ -5,6 +5,8 @@ const SpaceManage = () => import(/* webpackChunkName: "space_manage" */ './compo
 const Blacklist = () => import(/* webpackChunkName: "blacklist" */ './components/blacklist/Blacklist')
 const Bgm = () => import(/* webpackChunkName: "bgm" */ './components/manage/Bgm')
 const Transfer = () => import(/* webpackChunkName: "transfer" */ './components/manage/Transfer')
+const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/manage/Couplets')
+const Epitaph = () => import(/* webpackChunkName: "epitaph" */ './components/manage/Epitaph')
 const FriendsManage = () => import(/* webpackChunkName: "friends-manage" */ './components/friends/FriendsManage')
 const Meeting = () => import(/* webpackChunkName: "meeting" */ './components/meeting/Meeting')
 
@@ -26,8 +28,6 @@ const Store = () => import(/* webpackChunkName: "store" */ './components/store/S
 const Info = () => import(/* webpackChunkName: "Info" */ './components/store/Info')
 const Charge = () => import(/* webpackChunkName: "charge" */ './components/store/Charge')
 const Logs = () => import(/* webpackChunkName: "logs" */ './components/store/Logs')
-const Couplets = () => import(/* webpackChunkName: "couplets" */ './components/store/Couplets')
-const Epitaph = () => import(/* webpackChunkName: "epitaph" */ './components/store/Epitaph')
 
 const Report = () => import(/* webpackChunkName: "report" */ './components/report/Report')
 const Theme = () => import(/* webpackChunkName: "theme" */ './components/theme/Theme')
@@ -70,6 +70,14 @@ const routes = [
       {
         path: 'bgm/:id',
         component: Bgm
+      },
+      {
+        path: 'couplets/:id',
+        component: Couplets
+      },
+      {
+        path: 'epitaph/:id',
+        component: Epitaph
       },
       {
         path: 'transfer/:id',
@@ -130,15 +138,6 @@ const routes = [
         path:'logs',
         component:Logs,
       },
-      {
-        path:'couplets',
-        component:Couplets,
-      },
-      {
-        path:'epitaph',
-        component:Epitaph,
-      },
-      
     ]
   },
   {

@@ -32,7 +32,7 @@
   import {mapGetters} from 'vuex'
 
     export default {
-      name: "Couplets",
+      name: "Epitaph",
       data(){
         return{
           spaceId:'',
@@ -92,14 +92,11 @@
         }
       },
       created() {
-        let query = this.$route.query
-        if(query){
-          if (query.space_id){
-            this.spaceId = query.space_id
-            this.getDetail(() => {
+        if(this.$route.params.id){
+          this.spaceId = this.$route.params.id
+          this.getDetail(() => {
 
-            })
-          }
+          })
         }
       }
     }

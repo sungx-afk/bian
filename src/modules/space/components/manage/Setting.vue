@@ -176,13 +176,13 @@
           if (!this.isSpaceCreator){
             return
           }
-          Link(`/store/epitaph?space_id=${this.space.id}`)
+          Link(`/space/epitaph/${this.space.id}`)
         },
         enterCouplets(){
           if (!this.isSpaceCreator){
             return
           }
-          Link(`/store/couplets?space_id=${this.space.id}`)
+          Link(`/space/couplets/${this.space.id}`)
         },
         goSwitchTheme(){
           this.showThemes = true
