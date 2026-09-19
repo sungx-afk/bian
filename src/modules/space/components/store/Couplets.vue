@@ -70,7 +70,8 @@
           })
         },
         cancel(){
-          this.$router.go(-1)
+          //入口链路：祭拜页/详情页 -> 管理页(设置) -> 本页，回退 2 层跨过管理页直接返回来源页
+          this.$router.go(-2)
         },
         confirm(){
           if (!this.coupletsLeft || !this.coupletsRight){
@@ -112,7 +113,8 @@
               type:'success',
               duration:1500,
               onClose:()=>{
-                this.$router.go(-1)
+                //与 changeThemeId 一致的交互：跨过管理页直接返回祭拜页，不新增历史记录
+                this.$router.go(-2)
               }
             })
           }).catch((error) => {
