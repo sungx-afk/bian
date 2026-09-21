@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { appPlat } from './native/platform'
 import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
 import User from './modules/user/api/index'
@@ -22,7 +23,8 @@ global.getRequestParam = function() {
   let param = localStorage.getItem(key);
   if (!param){
     param = {
-      plat:'wechat',
+      // 以前写死 wechat，App 内会导致后端按微信渠道处理登录/订单；改为按实际环境取值
+      plat: appPlat(),
       build:'999999',
       token:'',
       platVersion:'1.0.1',

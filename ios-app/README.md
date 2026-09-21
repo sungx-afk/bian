@@ -53,3 +53,32 @@
 | 微信登录/分享失效 | App 内无微信 JS-SDK 环境 | 后续接微信 OpenSDK（改造清单 P0-9） |
 | 构建报签名失败 | API 密钥权限或证书不匹配 | 确认密钥为 App Manager 权限、Bundle ID 一致 |
 | 企业自签包掉签 | 使用第三方签名服务 | 仅用于体验，正式上架必须走自己的开发者账号 |
+
+## 七、已完成的桥接改造（src/native）
+
+Web 端与 App 共用一套业务代码，平台差异统一收敛在 `src/native/`：
+
+| 模块 | H5（微信） | App（iOS） |
+|---|---|---|
+| `platform.js` | 判定 wechat / h5 / ios / android；`appPlat()` 决定上传后端的 `plat` 字段 | 同左 |
+| `auth.js` | 跳微信 OAuth 授权页拿 code | `SignInWithApple.authorize()`（@capacitor-community/apple-sign-in），拿到 identityToken |
+| `pay.js` | 微信 JSAPI `chooseWXPay` | 预留 IAP 入口，未接入时给出明确报错，不静默失败 |
+| `share.js` | 微信 JS-SDK 自定义分享 | `@capacitor/share` 系统分享面板 |
+
+挂载方式：`src/main.js` 里 `installNativeBridge(Vue)`，`this.wechatPay / this.wechatShare` 仍可用，业务页面无需改动。
+登录入口：`List.vue` 在 iOS App 内只展示引导页（不再自动跳微信授权），引导页新增「通过 Apple 登录」按钮。
+
+## 八、后端需要配合实现的接口
+
+| 接口 | 用途 | 备注 |
+|---|---|---|
+| `POST /users/oauth2/apple/service/login_by_token` | 校验 Apple identityToken（Apple JWKS 公钥）、建号/绑号、下发 token | 前端已实现调用（`user.js` 的 `loginWithApple`），返回结构需与微信登录一致 |
+| `POST /users/my/delete` | 注销账号并清除/脱敏数据 | 审核 5.1.1(v) 硬性要求 |
+| `POST /pay/apple/service/verify` | IAP receipt 校验与发货（下一步接入内购时用） | 需防重复发货 |
+| 现有接口 | 需识别 `plat=ios`，不要再按微信渠道处理登录与订单 | 前端已在 `api.js` 按环境上报 plat |
+
+## 九、当前仍不能用的功能（App 内）
+
+- **微信登录 / 分享 / 支付**：App 内无 JS-SDK 环境。登录已降级到 Apple 登录；分享已走系统面板；支付需接 IAP（改造清单 P0-1）。
+- **微信 OpenSDK 登录**：需微信开放平台移动应用 AppID + Universal Link，已在 entitlements 预留 `applinks:ba.yugusoft.com`。
+- **拍照上传**：iOS WKWebView 支持 `input[type=file]` 调相机/相册，plist 权限文案已加，待真机验证。

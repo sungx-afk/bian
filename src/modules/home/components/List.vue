@@ -1,7 +1,11 @@
 <template>
   <div class="main-container">
     <!-- 引导页：首次进入且未登录时展示，用户主动点"进入"后才走微信授权 -->
-    <Guide v-if="showGuideFlag" @enter="onGuideEnter" />
+    <Guide v-if="showGuideFlag"
+           :show-apple-login="appleLoginAvailable"
+           :show-follow="!appleLoginAvailable"
+           @enter="onGuideEnter"
+           @apple-login="authApple" />
     <div class="notice-container" v-if="showNotice">
       <van-cell is-link @click.stop="goNotice">
         您还未关注公众号，关注后可以及时收到通知
@@ -82,6 +86,8 @@
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
   import Guide from '@/modules/widget/guide/Guide'  // 引导页组件
+  import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录，H5 走微信授权）
+  import { isNative } from '@/native/platform'
 
   import base64 from 'js-base64'
 
@@ -110,6 +116,7 @@
         showGuideFlag:false,   // 控制引导页显示（方案B：用 data 变量，不依赖 $refs）
         enteredLastSpace:false,// 本次是否已自动进入"最后访问的纪念馆"
         hasJumpIntent:false,   // 本次是否带有分享/移交/通知等指定跳转意图
+        appleLoginAvailable:false, // iOS App 内且已装 Apple 登录插件时为 true
       }
     },
     components: {
@@ -441,9 +448,10 @@
         if (token){
           this.fetchMyInfo(token)
         }else {
-          // 未登录：先展示引导页，用户主动点"进入"后再走微信授权（避免 created 阶段 $refs 尚未挂载的问题）
+          // 未登录：先展示引导页，用户主动点"进入"后再走授权（避免 created 阶段 $refs 尚未挂载的问题）
+          // App 内不自动跳微信授权（无 JS-SDK 环境会卡死），只展示引导页让用户选 Apple 登录
           const shown = sessionStorage.getItem('GUIDE_SHOWN')
-          if (!shown) {
+          if (!shown || isNative()) {
             this.showGuideFlag = true   // 弹出引导页
           } else {
             this.authWechat()           // 本轮已展示过，直接走授权，避免卡死
@@ -456,11 +464,22 @@
         })
       },
       authWechat(){
-        let appid = window.app_id || config_server.wechatAppId
-        let url = `${config_server.domain}/login.html`
-        url = encodeURIComponent(url)
-        url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=wechat_state#wechat_redirect`
-        window.location.replace(url)
+        auth.loginByWechat().catch((err)=>{
+          console.log('wechat login unavailable:', err && err.message)
+        })
+      },
+      // iOS App：Sign in with Apple（审核 4.8）
+      async authApple(){
+        try {
+          const res = await auth.loginByApple()
+          this.$store.dispatch('userStore/loginWithApple', res)
+        } catch (e) {
+          console.log('apple login failed:', e)
+          // 用户主动取消不打扰；其余情况给一次提示
+          if (e && e.message && e.message.indexOf('不可用') > -1){
+            this.$toast && this.$toast(e.message)
+          }
+        }
       },
       loginWithCode(code,app_id){
         this.$store.dispatch('userStore/loginWithCode', {code,app_id})
@@ -484,8 +503,12 @@
 
       },
       tokenExpire(){
-        //token过期了，重新尝试授权登录
-        this.authWechat()
+        //token过期了，重新尝试授权登录：App 内走 Apple 登录，H5 走微信授权
+        if (this.appleLoginAvailable){
+          this.authApple()
+        }else {
+          this.authWechat()
+        }
       },
       initLogin(){
         let query = this.$route.query
@@ -718,6 +741,8 @@
       }
     },
     created() {
+      // iOS App 内且已安装 Apple 登录插件时，引导页显示「通过 Apple 登录」
+      this.appleLoginAvailable = auth.appleLoginAvailable()
       this.initLogin()
       this.registerEvent()
       this.initMortuary();

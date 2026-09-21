@@ -15,6 +15,12 @@
           </van-button>
         </div>
 
+        <!-- Apple 登录：App 内（iOS）显示，审核 4.8 要求必须提供 -->
+        <div class="guide-apple" v-if="showAppleLogin" @click.stop="appleLogin">
+          <span class="apple-mark"></span>
+          <span>通过 Apple 登录</span>
+        </div>
+
         <van-button class="guide-enter"
                     type="default"
                     @click.stop="enter">
@@ -79,6 +85,11 @@
       showFollow: {
         type: Boolean,
         default: true
+      },
+      // true=显示「通过 Apple 登录」（仅 iOS App 内为 true）
+      showAppleLogin: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -90,6 +101,9 @@
     methods: {
       enter() {
         this.$emit('enter')
+      },
+      appleLogin() {
+        this.$emit('apple-login')
       }
     }
   }
@@ -134,6 +148,27 @@
         font-size: 14px;
         line-height: 1.8;
         color: rgba(255, 255, 255, 0.75);
+      }
+      /* Apple 登录按钮：遵循 Apple 规范，黑底白字、圆角、高度 >= 44 */
+      .guide-apple {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 44px;
+        margin-bottom: 12px;
+        border-radius: 22px;
+        background: #000;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+        .apple-mark {
+          width: 16px;
+          height: 16px;
+          margin-right: 8px;
+          border-radius: 3px;
+          background: #fff;
+        }
       }
       .guide-enter {
         width: 100%;

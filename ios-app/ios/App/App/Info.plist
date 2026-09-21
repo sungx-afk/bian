@@ -33,8 +33,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -45,5 +43,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<!-- 上传头像/照片：WKWebView 的 input[type=file] 调起相机与相册时需要 -->
+	<key>NSCameraUsageDescription</key>
+	<string>用于上传逝者照片、纪念馆相册与头像</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>用于从相册选择逝者照片、纪念馆相册与头像</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>用于保存分享海报与纪念馆图片到相册</string>
+	<!-- 仅使用标准 HTTPS 且不涉及专有加密：免去向苹果申报加密出口合规 -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

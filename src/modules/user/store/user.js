@@ -31,6 +31,18 @@ const actions = {
       }
     })
   },
+  // Apple 登录：identityToken 由后端校验后返回本站 token
+  loginWithApple ({commit, state ,dispatch}, payload){
+    $API.user.loginWithApple(payload,rsp=>{
+      commit(types.UPDATE_USER,rsp)
+      dispatch('getUserSetting');
+      if(rsp.merchant_id){
+        dispatch('getMerchantInfo',{id:rsp.merchant_id});
+      }
+    },error=>{
+      console.log('apple login error',error)
+    })
+  },
   loginWithUid ({commit, state ,dispatch}, {uid}){
     $API.user.loginWithUid({uid},rsp=>{
       commit(types.UPDATE_USER,rsp)

@@ -26,9 +26,9 @@ import store from './store/index';
 import './api'
 import './config/config'
 
-import { wechatShare,wechatPay } from './wx/wxSdk'
-Vue.prototype.wechatShare  = wechatShare
-Vue.prototype.wechatPay  = wechatPay
+// 支付/分享改为按环境分发：微信内走 JS-SDK，App 内走原生（见 src/native）
+import { installNativeBridge } from './native'
+installNativeBridge(Vue)
 
 Vue.config.productionTip = false
 

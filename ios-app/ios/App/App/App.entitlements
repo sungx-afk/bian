@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Sign in with Apple（审核 4.8）：需在 Apple Developer 的 App ID 上开启同一能力 -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+	<!-- 微信 OpenSDK 用 Universal Link 回调，接入后把域名改成实际域名 -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:ba.yugusoft.com</string>
+	</array>
+</dict>
+</plist>
