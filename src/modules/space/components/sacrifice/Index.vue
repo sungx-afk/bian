@@ -89,7 +89,7 @@
                   <change-ming-deng v-else></change-ming-deng>
                 </template>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-1" style="width: 10vw; height: 10vw;" :style="{'visibility': showLaZuCanvas?'visible':'hidden'}"></canvas>
+                  <div id="zu-huo-1" class="zu-huo-anchor"></div>
                 </div>
                 <div class="item item-xiang-lu">
                   <div class="item-xiang-lu-box" :style="{'visibility': showXiangCanvas?'visible':'hidden'}">
@@ -101,7 +101,7 @@
                   </div>
                 </div>
                 <div class="item item-la-zu">
-                  <canvas id="zu-huo-2" style="width: 10vw; height: 10vw;" :style="{'visibility': showLaZuCanvas?'visible':'hidden'}"></canvas>
+                  <div id="zu-huo-2" class="zu-huo-anchor"></div>
                 </div>
                 <template v-for="(item, index) in item02" v-if="index>=6 && index <=8">
                   <div
@@ -236,6 +236,8 @@
 
   import Message from '../Message';
   import ChangeMingDeng from './ChangeMingDeng.vue';
+  // 全页烛火共用一个 PIXI 应用（见 flameLayer.js），避免每个烛火各占一个 WebGL 上下文
+  import flameLayer from './flameLayer';
 
   const noItems = [
     'item-xuan-hua',
@@ -269,7 +271,6 @@
         showMessage:false,
         currentProduct:null,
         action:null,
-        showLaZuCanvas: false,
         showXiangCanvas: false,
         showZhiQianCanvas: false,
         playState: 'stop',
@@ -490,12 +491,18 @@
       },
 
       showLaZuHuo() {
-        // var dom1 = document.getElementById("zu-huo-1");
-        // var dom2 = document.getElementById("zu-huo-2");
-        // dom1.style.visibility = 'visible'
-        // dom2.style.visibility = 'visible'
-
-        this.showLaZuCanvas = true;
+        // 把两支蜡烛的火苗挂到统一渲染层；同一个锚点只注册一次，避免重复点烛后叠加多个 sprite
+        if (!this.laZuFlames) {
+          this.laZuFlames = {};
+        }
+        this.$nextTick(() => {
+          ['zu-huo-1', 'zu-huo-2'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && !this.laZuFlames[id]) {
+              this.laZuFlames[id] = flameLayer.addFlame(el);
+            }
+          });
+        });
       },
 
       //送花
@@ -1659,129 +1666,6 @@
       },
 
 
-      initZhuHuo() {
-        const flameFrag = document.querySelector("#flame-frag").textContent;
-        const baseUrl = "/static/bian-mobile/images/";
-
-        const manifest = [
-          {name: "noise", url: "noise-texture-11.png?v=9"}
-        ]
-
-
-//
-// FLAME FILTER
-// ===========================================================================
-        class FlameFilter extends PIXI.Filter {
-
-          constructor(texture, time = 0.0) {
-            super(null, flameFrag);
-
-            this.uniforms.dimensions = new Float32Array(2);
-            this.texture = texture;
-            this.time = time;
-          }
-
-          get texture() {
-            return this.uniforms.mapSampler;
-          }
-
-          set texture(texture) {
-            texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-            this.uniforms.mapSampler = texture;
-          }
-
-          apply(filterManager, input, output, clear) {
-
-            this.uniforms.dimensions[0] = input.sourceFrame.width;
-            this.uniforms.dimensions[1] = input.sourceFrame.height;
-            this.uniforms.time = this.time;
-
-            filterManager.applyFilter(this, input, output, clear);
-          }
-        }
-
-
-//
-// APPLICATION
-// ===========================================================================
-
-        let width = document.body.clientWidth;
-        let itemWidth = width / 10;
-
-        class Application extends PIXI.Application {
-
-          constructor(config) {
-
-            if (window.devicePixelRatio > 1) {
-              PIXI.settings.RESOLUTION = 2;
-            }
-
-            PIXI.settings.PRECISION_FRAGMENT = "highp";
-
-            super({
-              view: config.view,
-              width: itemWidth,
-              height: itemWidth,
-              backgroundColor: 0x000000,
-              autoResize: true,
-              antialias: false,
-              transparent: true
-            });
-
-            this.isResized = true;
-            this.loader.baseUrl = baseUrl;
-          }
-
-          load(manifest) {
-            var that = this;
-            that.loader
-              .add(manifest)
-              .load(function (l, r) {
-                that.init(r)
-              });
-          }
-
-          init(resources) {
-            var that = this;
-            this.flame = new FlameFilter(resources.noise.texture);
-            this.stage.filterArea = this.screen;
-            this.stage.filters = [this.flame];
-            this.ticker.add(this.update, this);
-            window.addEventListener("resize", function () {
-                that.isResized = true
-              }
-            )
-          }
-
-          update(delta) {
-
-            if (this.isResized) {
-              this.renderer.resize(itemWidth, itemWidth);
-              this.isResized = false;
-            }
-
-            this.flame.time += 0.1 * delta;
-          }
-        }
-
-        const app1 = new Application({
-          view: document.querySelector("#zu-huo-1"),
-        });
-        const app2 = new Application({
-          view: document.querySelector("#zu-huo-2"),
-        });
-        const app3 = new Application({
-          view: document.querySelector("#change-ming-ding-1"),
-        });
-        const app4 = new Application({
-          view: document.querySelector("#change-ming-ding-2"),
-        });
-        app1.load(manifest);
-        app2.load(manifest);
-        app3.load(manifest);
-        app4.load(manifest);
-      },
-
       initSmoke() {
         // var canvas = document.getElementById('smoke-box');
         // var ctx = canvas.getContext('2d');
@@ -1893,14 +1777,11 @@
       this.registerEvent()
     },
     mounted() {
-      let that = this;
       this.initBigFire();
       this.initSmoke();
       this.initXiangHuo();
       // this.initYan();
-      setTimeout(function(){
-        that.initZhuHuo();
-      }, 1000);
+      // 烛火不再自建 PIXI：flameLayer 在第一次 addFlame 时懒初始化（点烛/长明灯挂载时）
     },
     activated() {
       //返回祭拜页：续播离开前正在播的音乐（playBgm 不传 seek 会从上次暂停位置继续）
@@ -1921,6 +1802,8 @@
     beforeDestroy() {
       this.stopBgm(true)
       this.clearSpaceDetail()
+      // 销毁统一火焰层：释放唯一的 WebGL 上下文、ticker 和全屏画布，防止来回进页反复累积
+      flameLayer.destroy()
       eventHub.$off(constant.EVENT_UPDATE_COUPLETS_SUCCESS, this.updateCouplets)
       eventHub.$off(constant.EVENT_UPDATE_EPITAPH_SUCCESS, this.updateEpitaph)
       eventHub.$off(constant.EVENT_BUY_PRODUCT_SUCCESS, this.buySuccess)
@@ -2560,25 +2443,26 @@
     }
   }
 
-  .item-la-zu canvas, .item-zhang-min-ding canvas {
+  // 火苗锚点：只负责给 flameLayer 提供位置/尺寸（视觉由统一画布渲染）
+  .zu-huo-anchor {
     position: absolute;
     left: 0px;
     right: 0;
     top: -31px;
-    touch-action: none;
-    cursor: inherit;
     width: 10vw;
     height: 10vw;
-    visibility: hidden;
+    pointer-events: none;
   }
 
-  .item-zhang-min-ding canvas {
-    transform: scale(0.5);
+  .item-zhang-min-ding .ming-deng-anchor {
+    position: absolute;
+    left: 0px;
+    right: 0;
     top: -16px;
-    visibility: visible;
-    &.active{
-      visibility: visible;
-    }
+    width: 10vw;
+    height: 10vw;
+    transform: scale(0.5);
+    pointer-events: none;
   }
   .buttons {
     display: flex;
