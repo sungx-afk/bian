@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+  <title>纪念馆</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #1a1a1a; }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      color: #c9a06a; font: 14px/1.8 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .box { text-align: center; padding: 24px; }
+    .dot { width: 8px; height: 8px; border-radius: 4px; background: #c9a06a; margin: 0 auto 12px;
+           animation: pulse 1.2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: .3; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.2); } }
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="dot"></div>
+  <div>正在打开纪念馆…</div>
+</div>
+</body>
+</html>

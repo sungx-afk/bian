@@ -1,0 +1,106 @@
+# Codemagic 云端打包配置（云端 macOS 构建机，本机无需安装 Xcode / CocoaPods）
+# 文档：https://docs.codemagic.io/yaml-basic-configuration/
+workflows:
+  ios-testflight:
+    name: iOS TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: 20.18
+      xcode: latest
+      cocoapods: default
+      vars:
+        XCODE_WORKSPACE: "ios-app/ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "com.yugusoft.bian"
+      # Codemagic -> Teams -> Integrations 里填入以下变量（勿写进仓库）：
+      #   APP_STORE_CONNECT_ISSUER_ID
+      #   APP_STORE_CONNECT_KEY_IDENTIFIER
+      #   APP_STORE_CONNECT_PRIVATE_KEY   (.p8 文件内容，含 -----BEGIN PRIVATE KEY-----)
+      #   CERTIFICATE_PRIVATE_KEY         (分发证书的私钥)
+      #   APP_STORE_CONNECT_KEY / APP_STORE_CONNECT_KEY_PASSWORD 等由 Integration 提供
+      groups:
+        - app_store_credentials
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: feature/ios-capacitor
+          include: true
+        - pattern: master
+          include: true
+      file_patterns:
+        - "ios-app/**"
+        - "codemagic.yaml"
+    scripts:
+      - name: 安装 npm 依赖
+        script: |
+          cd ios-app
+          npm ci
+      - name: 同步 Web 资源与 iOS 平台（云端执行 pod install）
+        script: |
+          cd ios-app
+          npx cap sync ios
+      - name: 构建并自动签名 IPA
+        script: |
+          cd ios-app
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --archive \
+            --export-method app-store
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/xcarchive/*.xcarchive
+    publishing:
+      email:
+        recipients:
+          - liushuang@yugusoft.com
+        notify:
+          success: true
+          failure: true
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - 内部测试组
+
+  ios-adhoc:
+    name: iOS Ad Hoc（指定设备）
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: 20.18
+      xcode: latest
+      cocoapods: default
+      vars:
+        XCODE_WORKSPACE: "ios-app/ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "com.yugusoft.bian"
+      groups:
+        - app_store_credentials
+    scripts:
+      - name: 安装 npm 依赖
+        script: |
+          cd ios-app
+          npm ci
+      - name: 同步 Web 资源与 iOS 平台
+        script: |
+          cd ios-app
+          npx cap sync ios
+      - name: 构建 Ad Hoc 包（设备需已注册 UDID）
+        script: |
+          cd ios-app
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --export-method ad-hoc
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - liushuang@yugusoft.com
+        notify:
+          success: true
+          failure: true
