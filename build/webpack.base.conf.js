@@ -46,7 +46,14 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        // Capacitor 插件（@capacitor/*、@capacitor-community/*）发布的是 ES6+ 代码，
+        // webpack3 自带的 UglifyJs 压不动 ES6，必须让 babel 先转译成 ES5
+        include: [
+          resolve('src'),
+          resolve('test'),
+          resolve('node_modules/@capacitor'),
+          resolve('node_modules/@capacitor-community')
+        ]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

@@ -1,5 +1,7 @@
 import { isNative, isWechat, plugin } from './platform'
 import { wechatShare } from '@/wx/wxSdk'
+// 同 auth.js：插件需要 import 才会注册到运行时
+import { Share as NativeShare } from '@capacitor/share'
 
 /**
  * 统一分享入口
@@ -9,7 +11,7 @@ import { wechatShare } from '@/wx/wxSdk'
  */
 export function share(data) {
   if (isNative()) {
-    const Share = plugin('Share')
+    const Share = NativeShare || plugin('Share')
     if (!Share) return Promise.reject(new Error('分享插件未安装'))
     return Share.share({
       title: data && data.title,

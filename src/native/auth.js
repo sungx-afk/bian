@@ -1,5 +1,8 @@
 import config_server from '@/config/config'
 import { isNative, isNativeIOS, plugin } from './platform'
+// Capacitor 插件必须在 Web 代码里 import 才会注册（运行时不会自动注册），
+// 否则 App 里 window.SignInWithApple 不存在，Apple 登录按钮不会出现。
+import { SignInWithApple as AppleSignIn } from '@capacitor-community/apple-sign-in'
 
 // @capacitor-community/apple-sign-in 挂载的全局对象
 const APPLE_PLUGIN = 'SignInWithApple'
@@ -37,7 +40,8 @@ export function appleLoginAvailable() {
  * 由后端校验 identityToken 后换取本站 token。
  */
 export async function loginByApple() {
-  const apple = plugin(APPLE_PLUGIN)
+  // 优先用 import 进来的实例，兜底再查运行时挂载（两种挂载方式都兼容）
+  const apple = AppleSignIn || plugin(APPLE_PLUGIN)
   if (!apple) {
     throw new Error('Apple 登录不可用（插件未安装，或当前不是 iOS App）')
   }

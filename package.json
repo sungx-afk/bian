@@ -13,6 +13,9 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@capacitor-community/apple-sign-in": "^6.0.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/share": "^6.0.0",
     "axios": "^0.17.1",
     "clipboard": "^2.0.4",
     "js-base64": "^2.5.1",
