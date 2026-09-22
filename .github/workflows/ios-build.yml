@@ -132,16 +132,21 @@ jobs:
           xcrun altool --upload-app --type ios --file "$IPA" \
             --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
 
-      # ---------- 没签名材料：只做编译校验 ----------
-      - name: 编译校验（未签名，产出 .app）
+      # ---------- 没签名材料：产出未签名 IPA，供 Sideloadly / AltStore 用 Apple ID 自签安装 ----------
+      - name: 编译并打包未签名 IPA
         if: env.HAS_SIGNING != 'true'
         run: |
           set -e
+          # 个人 Apple ID 自签不支持 Sign in with Apple / 关联域名，这里清空 entitlements 以免装不上
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug \
             -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_ENTITLEMENTS="" \
             -derivedDataPath build/dd
-          mkdir -p build/unsigned
-          cp -R build/dd/Build/Products/Debug-iphoneos/App.app build/unsigned/ 2>/dev/null || true
+          APP=build/dd/Build/Products/Debug-iphoneos/App.app
+          mkdir -p build/ipa/Payload
+          cp -R "$APP" build/ipa/Payload/
+          cd build/ipa && zip -qr Bian-unsigned.ipa Payload
+          echo "产出：$(pwd)/Bian-unsigned.ipa"
 
       - name: 上传产物
         uses: actions/upload-artifact@v4
@@ -149,5 +154,4 @@ jobs:
           name: ios-build-${{ github.run_number }}
           path: |
             build/ipa/*.ipa
-            build/unsigned
           if-no-files-found: warn
