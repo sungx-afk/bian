@@ -53,5 +53,22 @@
 	<!-- 仅使用标准 HTTPS 且不涉及专有加密：免去向苹果申报加密出口合规 -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<!-- ATS：页面里混有后端返回的 http 图片（背景图/头像等），
+	     只放开 WebView 内的 http 加载，不影响原生请求（接口仍强制 HTTPS） -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>static-app01.yugusoft.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 </dict>
 </plist>
