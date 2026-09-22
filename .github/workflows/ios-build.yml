@@ -13,9 +13,9 @@ on:
   workflow_dispatch:
     inputs:
       export_method:
-        description: '导出方式：development | ad-hoc | app-store'
+        description: '导出方式：app-store（传 TestFlight，推荐）| ad-hoc | development'
         required: true
-        default: 'ad-hoc'
+        default: 'app-store'
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
       WORKSPACE: ios-app/ios/App/App.xcworkspace
       SCHEME: App
       BUNDLE_ID: com.yugusoft.bian
-      EXPORT_METHOD: ${{ github.event.inputs.export_method || 'ad-hoc' }}
+      EXPORT_METHOD: ${{ github.event.inputs.export_method || 'app-store' }}
       # secrets 不能用在 if 里，先转成 env 布尔串
       HAS_SIGNING: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
       HAS_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' }}
@@ -60,8 +60,22 @@ jobs:
           security import "$RUNNER_TEMP/cert.p12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security list-keychain -d user -s "$KEYCHAIN_PATH"
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          echo -n "$PROFILE_BASE64" | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          if [ -n "$PROFILE_BASE64" ]; then
+            mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+            echo -n "$PROFILE_BASE64" | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          fi
+
+      # 有 App Store Connect API Key 时用它做自动签名：不用手动管描述文件、也不用收集 UDID
+      - name: 写入 App Store Connect API Key
+        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true'
+        env:
+          API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+        run: |
+          set -e
+          mkdir -p private_keys
+          echo -n "$API_KEY_P8" | base64 --decode -o "private_keys/AuthKey_$KEY_ID.p8"
+          echo "AUTH_FLAGS=-allowProvisioningUpdates -authenticationKeyPath $PWD/private_keys/AuthKey_$KEY_ID.p8 -authenticationKeyID $KEY_ID -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" >> $GITHUB_ENV
 
       - name: 生成 ExportOptions.plist
         if: env.HAS_SIGNING == 'true'
@@ -69,7 +83,21 @@ jobs:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
         run: |
-          cat > ExportOptions.plist <<EOF
+          if [ "$EXPORT_METHOD" = "app-store" ]; then
+            # 上架/TestFlight：自动签名，只需 teamID
+            cat > ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>destination</key><string>upload</string>
+          </dict></plist>
+          EOF
+          else
+            # Ad Hoc / Development：手动签名，需要描述文件
+            cat > ExportOptions.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0"><dict>
@@ -81,26 +109,25 @@ jobs:
             </dict>
           </dict></plist>
           EOF
+          fi
 
       - name: 归档并导出 IPA
         if: env.HAS_SIGNING == 'true'
         run: |
           set -e
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
+            $AUTH_FLAGS \
             -archivePath build/App.xcarchive archive
           xcodebuild -exportArchive -archivePath build/App.xcarchive \
-            -exportPath build/ipa -exportOptionsPlist ExportOptions.plist
+            -exportPath build/ipa -exportOptionsPlist ExportOptions.plist $AUTH_FLAGS
 
-      - name: 上传到 TestFlight（仅有 API Key 时）
-        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true'
+      - name: 上传到 TestFlight
+        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'
         env:
-          API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
         run: |
           set -e
-          mkdir -p private_keys
-          echo -n "$API_KEY_P8" | base64 --decode -o "private_keys/AuthKey_$KEY_ID.p8"
           IPA=$(ls build/ipa/*.ipa | head -1)
           xcrun altool --upload-app --type ios --file "$IPA" \
             --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
