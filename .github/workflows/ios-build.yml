@@ -1,0 +1,123 @@
+name: iOS Build
+
+# 云端打包：无需本地 Xcode。
+# 没配签名 Secrets 时只做「编译校验」并上传未签名产物；
+# 配了签名 Secrets 才产出可安装的 IPA（ad-hoc / development / app-store）。
+on:
+  push:
+    branches: [feature/ios-capacitor, main]
+    paths:
+      - 'ios-app/**'
+      - 'src/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+    inputs:
+      export_method:
+        description: '导出方式：development | ad-hoc | app-store'
+        required: true
+        default: 'ad-hoc'
+
+jobs:
+  build:
+    runs-on: macos-14
+    env:
+      WORKSPACE: ios-app/ios/App/App.xcworkspace
+      SCHEME: App
+      BUNDLE_ID: com.yugusoft.bian
+      EXPORT_METHOD: ${{ github.event.inputs.export_method || 'ad-hoc' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 安装 npm 依赖
+        run: cd ios-app && npm ci
+
+      - name: 同步 iOS 平台（云端 pod install）
+        run: cd ios-app && npx cap sync ios
+
+      # ---------- 有签名材料才走签名流程 ----------
+      - name: 导入签名证书与描述文件
+        if: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        env:
+          P12_BASE64: ${{ secrets.SIGNING_CERTIFICATE_P12 }}
+          P12_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+          PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -e
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
+          echo -n "$P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$RUNNER_TEMP/cert.p12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo -n "$PROFILE_BASE64" | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+
+      - name: 生成 ExportOptions.plist
+        if: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
+        run: |
+          cat > ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>$EXPORT_METHOD</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>provisioningProfiles</key><dict>
+              <key>$BUNDLE_ID</key><string>$PROFILE_NAME</string>
+            </dict>
+          </dict></plist>
+          EOF
+
+      - name: 归档并导出 IPA
+        if: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        run: |
+          set -e
+          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
+            -archivePath build/App.xcarchive archive
+          xcodebuild -exportArchive -archivePath build/App.xcarchive \
+            -exportPath build/ipa -exportOptionsPlist ExportOptions.plist
+
+      - name: 上传到 TestFlight（仅有 API Key 时）
+        if: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' && secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        env:
+          API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+        run: |
+          set -e
+          mkdir -p private_keys
+          echo -n "$API_KEY_P8" | base64 --decode -o "private_keys/AuthKey_$KEY_ID.p8"
+          IPA=$(ls build/ipa/*.ipa | head -1)
+          xcrun altool --upload-app --type ios --file "$IPA" \
+            --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
+
+      # ---------- 没签名材料：只做编译校验 ----------
+      - name: 编译校验（未签名，产出 .app）
+        if: ${{ secrets.SIGNING_CERTIFICATE_P12 == '' }}
+        run: |
+          set -e
+          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug \
+            -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            -derivedDataPath build/dd
+          mkdir -p build/unsigned
+          cp -R build/dd/Build/Products/Debug-iphoneos/App.app build/unsigned/ 2>/dev/null || true
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-${{ github.run_number }}
+          path: |
+            build/ipa/*.ipa
+            build/unsigned
+          if-no-files-found: warn
