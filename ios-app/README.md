@@ -12,6 +12,14 @@
 | `ios/App/` | Capacitor 生成的 Xcode 工程（`App.xcworkspace`），Pods 已 gitignore |
 | 根目录 `codemagic.yaml` | 云端打包配置（TestFlight / Ad Hoc 两套 workflow） |
 
+## 零、安全红线（务必遵守）
+
+**签名证书、p8 私钥、描述文件绝对不要提交进仓库。** 本仓库已在 `.gitignore` 里屏蔽 `*.p8 / *.p12 / *.mobileprovision / *.cer / private_keys/`。
+
+- 云端签名只用 GitHub Actions 的 **Encrypted Secrets**（加密存储，不进 git，运行日志里也会打码）；
+- 如果密钥不小心被提交过：立刻去 Apple Developer 后台**吊销**对应的 API Key / 证书，重新生成，再清掉 git 历史里的文件；
+- 本仓库当前是**公开**仓库，源码里的接口地址、Bundle ID 都是公开信息，但密钥不是。
+
 ## 一、上架前要确认的两处配置
 
 1. Bundle ID：`com.yugusoft.bian`（`capacitor.config.json` 的 `appId`），必须与 Apple Developer 后台的 App ID 一致。

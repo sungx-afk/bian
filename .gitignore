@@ -16,3 +16,17 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+
+# ===== 签名证书与密钥：一律禁止提交 =====
+# 公开仓库里的 p8/证书会被自动扫描盗用，只能去 Apple 后台吊销重签
+*.p8
+AuthKey_*.p8
+*.p12
+*.mobileprovision
+*.cer
+*.certSigningRequest
+*.provisionprofile
+private_keys/
+ios-app/ExportOptions.plist
+ios-app/*.ipa
+ios-app/build/

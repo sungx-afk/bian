@@ -1,4 +1,12 @@
 node_modules/
+# 签名材料（不要提交）
+*.p8
+*.p12
+*.mobileprovision
+*.cer
+private_keys/
+ExportOptions.plist
+build/
 ios/App/Pods/
 ios/App/build/
 ios/App/App/public/
