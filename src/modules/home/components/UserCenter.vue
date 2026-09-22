@@ -38,6 +38,17 @@
       <van-cell class="account-cell" v-if="showOrder" @click="goViewMyOrder" :is-link="true">
         <span>我的订单</span>
       </van-cell>
+      <!-- 上架必填：App 内必须能访问隐私政策与订阅条款 -->
+      <van-cell class="doc-cell" @click="goPrivacy" :is-link="true">
+        <span>隐私政策</span>
+      </van-cell>
+      <van-cell class="doc-cell" @click="goTerms" :is-link="true">
+        <span>服务条款（自动续期订阅）</span>
+      </van-cell>
+      <!-- 审核 5.1.1(v)：App 内必须提供注销账号入口 -->
+      <van-cell class="delete-cell">
+        <div class="delete-btn" @click="goDeleteAccount">注销账号</div>
+      </van-cell>
     </div>
   </div>
 </template>
@@ -82,6 +93,43 @@ export default {
     }),
     goLogs(){
       Link(`/store/logs`)
+    },
+    goPrivacy(){
+      Link(`/privacy`)
+    },
+    goTerms(){
+      Link(`/terms`)
+    },
+    // 注销账号：后端脱敏并标记删除，本地清 token 后回到首页
+    goDeleteAccount(){
+      this.$dialog.confirm({
+        title: '注销账号',
+        message: '注销后账号内的个人信息将被清除且无法恢复，已创建的纪念馆将保留。确认注销吗？'
+      }).then(() => {
+        $API.user.deleteAccount({}, rsp => {
+          if (rsp && (rsp.result === 0 || rsp.result === '0')){
+            this.clearLocalLogin()
+            this.$toast && this.$toast('账号已注销')
+            Link(`/home`)
+          }else{
+            this.$toast && this.$toast((rsp && rsp.msg) || '注销失败，请稍后重试')
+          }
+        }, error => {
+          this.$toast && this.$toast('注销失败，请稍后重试')
+        })
+      }).catch(()=>{})
+    },
+    clearLocalLogin(){
+      let key = getLocalTokenKey()
+      let param = localStorage.getItem(key)
+      if (param){
+        try{
+          param = JSON.parse(param)
+          param.token = ''
+          localStorage.setItem(key, JSON.stringify(param))
+        }catch(e){}
+      }
+      localStorage.removeItem('bian-query')
     },
     charge(){
       Link(`/store/charge`)
@@ -245,6 +293,18 @@ export default {
             color: @FONT_WHITE_COLOR;
             background: @SECOND_THEME_COLOR;
           }
+        }
+      }
+      .doc-cell{
+        margin-top: 12px;
+      }
+      .delete-cell{
+        margin-top: 12px;
+        .delete-btn{
+          width: 100%;
+          text-align: center;
+          color: #d43c33;
+          font-size: 14px;
         }
       }
     }
