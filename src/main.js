@@ -30,6 +30,30 @@ import './config/config'
 import { installNativeBridge } from './native'
 installNativeBridge(Vue)
 
+/*======================== 内测调试面板 ========================*/
+// 内测包（USE_DEBUG_UID=true）或 URL 带 ?debug=1 时启用：
+// 1) vConsole：在真机上直接看 console / 报错 / 资源
+// 2) 全局错误捕获：JS 异常与未处理的 Promise 拒绝不再静默
+// 3) 点击追踪：真机"点了没反应"时能立刻看到点到的是哪个元素
+import { USE_DEBUG_UID } from './native/debug'
+if (USE_DEBUG_UID || (typeof location !== 'undefined' && location.search.indexOf('debug=1') > -1)) {
+  const VConsole = require('vconsole')
+  /* eslint-disable no-new */
+  new VConsole()
+  window.__BIAN_DEBUG__ = true
+
+  window.addEventListener('error', e => {
+    console.error('[onerror]', e.message, e.filename + ':' + e.lineno)
+  })
+  window.addEventListener('unhandledrejection', e => {
+    console.error('[unhandledrejection]', e.reason && (e.reason.message || e.reason))
+  })
+  document.addEventListener('click', e => {
+    const t = e.target
+    console.log('[click]', t.tagName, 'class=' + (t.className || ''), 'id=' + (t.id || ''))
+  }, true)
+}
+
 Vue.config.productionTip = false
 
 import {Link,isIphone} from '@/config/utils'
