@@ -100,6 +100,7 @@
   import Guide from '@/modules/widget/guide/Guide'  // 引导页组件
   import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录，H5 走微信授权）
   import { isNative } from '@/native/platform'
+  import { USE_DEBUG_UID, DEBUG_UID } from '@/native/debug'   // 内测包自动登录（提审前关闭）
 
   import base64 from 'js-base64'
 
@@ -461,6 +462,10 @@
         //token存在，则直接获取信息
         if (token){
           this.fetchMyInfo(token)
+        }else if (isNative() && USE_DEBUG_UID){
+          // 内测包：自签环境下 Apple 登录/微信都不可用，用固定 UID 直接登录，便于真机验证
+          this.loginWithUid(DEBUG_UID)
+          return
         }else {
           // 未登录：先展示引导页，用户主动点"进入"后再走授权（避免 created 阶段 $refs 尚未挂载的问题）
           // App 内不自动跳微信授权（无 JS-SDK 环境会卡死），只展示引导页让用户选 Apple 登录

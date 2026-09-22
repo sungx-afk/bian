@@ -11,7 +11,10 @@ if [ ! -f dist/index.html ]; then
   exit 1
 fi
 
-rm -rf ios-app/www
+# 旧资源包移到 /tmp 而不是直接删（避免一次删几百个文件触发安全策略）
+if [ -d ios-app/www ]; then
+  mv ios-app/www "/tmp/bian_www_old_$$"
+fi
 mkdir -p ios-app/www
 
 # Webpack 产物（页面 + JS/CSS chunk）
