@@ -1,6 +1,7 @@
 // Capacitor 5 起 CapacitorHttp 已并入 @capacitor/core，不需要单独装插件
 import { CapacitorHttp } from '@capacitor/core'
 import { isNative } from './platform'
+import config_server from '@/config/config'
 
 /**
  * App 内用原生网络层发请求（@capacitor/http）
@@ -14,7 +15,22 @@ import { isNative } from './platform'
  */
 
 function buildUrl(config) {
-  let url = (config.baseURL || '') + (config.url || '')
+  const base = String(config.baseURL || '').replace(/\/+$/, '')
+  const path = String(config.url || '')
+  let url
+  if (/^https?:\/\//i.test(path)) {
+    // url 本身已经是绝对地址，不能再用 baseURL 拼（否则会变成 /api/v1https://...）
+    url = path
+  } else {
+    url = base + (path.charAt(0) === '/' ? path : '/' + path)
+  }
+  // 兜底：baseURL 与 url 里都带 /api/v1 时去重
+  url = url.replace(/\/api\/v1(?:\/api\/v1)+/, '/api/v1')
+  // 仍然不是绝对地址（H5 默认配置）时，用线上域名兜底，原生层发不了相对地址
+  if (!/^https?:\/\//i.test(url)) {
+    url = config_server.domain + (url.charAt(0) === '/' ? url : '/' + url)
+  }
+
   const params = config.params
   if (params) {
     const query = Object.keys(params)
