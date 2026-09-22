@@ -463,8 +463,18 @@
         if (token){
           this.fetchMyInfo(token)
         }else if (isNative() && USE_DEBUG_UID){
-          // 内测包：自签环境下 Apple 登录/微信都不可用，用固定 UID 直接登录，便于真机验证
-          this.loginWithUid(DEBUG_UID)
+          // 内测包：自签环境下 Apple 登录/微信都不可用，用固定 UID 直接登录，便于真机验证。
+          // 这里直接调接口并显式处理失败，避免 UID 无效时静默卡在空白页。
+          $API.user.loginWithUid({uid: DEBUG_UID}, rsp => {
+            if (rsp && rsp.token){
+              this.fetchMyInfo(rsp.token)
+            }else{
+              this.$toast && this.$toast('测试登录失败：' + ((rsp && rsp.error) || '未返回 token'))
+            }
+          }, error => {
+            console.log('debug login error', error)
+            this.$toast && this.$toast('测试登录失败，请检查网络')
+          })
           return
         }else {
           // 未登录：先展示引导页，用户主动点"进入"后再走授权（避免 created 阶段 $refs 尚未挂载的问题）

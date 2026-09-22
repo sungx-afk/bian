@@ -8,4 +8,4 @@
  * 正式版登录走 Apple 登录 + 微信 OpenSDK。
  */
 export const USE_DEBUG_UID = true
-export const DEBUG_UID = 300764
+export const DEBUG_UID = 700364
