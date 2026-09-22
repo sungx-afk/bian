@@ -405,6 +405,20 @@ export default {
       errorCb && errorCb(error)
     })
   },
+  // Apple 内购校验：把 StoreKit 票据交给后端校验并发货（App 内购买必须走这条）
+  verifyAppleReceipt({receipt_data, product_id, transaction_id, space_id}, successCb, errorCb) {
+    let param = {
+      receipt_data,
+      product_id,
+      transaction_id,
+      space_id
+    }
+    $axios.post(`/pay/apple/service/verify`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
   getChargeLogs({type, start, limit}, successCb, errorCb) {
     let param = {
       start,

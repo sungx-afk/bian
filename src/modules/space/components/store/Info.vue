@@ -15,6 +15,10 @@
             <div class="charge-btn-wrapper">
               <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
             </div>
+            <!-- App 内必须提供「恢复购买」（审核 3.1.2） -->
+            <div class="charge-btn-wrapper" v-if="nativeApp">
+              <van-button size="small" class="charge-btn" @click="restorePurchases">恢复购买</van-button>
+            </div>
           </van-cell>
           <van-cell class="vip-cell" v-if="supportPay && isVipSpace">
             <span style="color: #825621;">当前馆为尊贵馆，各种祭奠物品免费</span>
@@ -58,6 +62,8 @@
   import constant from '@/config/constant'
   import {mapGetters, mapActions} from 'vuex';
   import {Link} from '@/config/utils'
+  import { isNative } from '@/native/platform'
+  import * as iap from '@/native/iap'
 
     export default {
       name: "Info",
@@ -88,6 +94,9 @@
         },
         isVipSpace(){
           return this.space && this.space.vip == 1
+        },
+        nativeApp(){
+          return isNative()
         },
         chargeTitle(){
           let result = ''
@@ -272,6 +281,49 @@
             })
           }
         },
+        // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅
+        restorePurchases(){
+          iap.restore().then(()=>{
+            this.$toast && this.$toast('已向 App Store 发起恢复，完成后刷新本页')
+          }).catch((e)=>{
+            this.$toast && this.$toast((e && e.message) || '暂不支持恢复购买')
+          })
+        },
+        // iOS App：尊贵馆按年订阅走 App Store 内购，票据交后端校验后发货
+        async buyVipByIap(){
+          try {
+            this.$toast && this.$toast('正在唤起 App Store…')
+            const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
+            if (!result || !result.receipt){
+              this.$toast && this.$toast('未取到支付票据，请稍后重试')
+              return
+            }
+            $API.space.verifyAppleReceipt({
+              receipt_data: result.receipt,
+              product_id: iap.IAP_PRODUCTS.VIP_YEARLY,
+              transaction_id: result.transactionId,
+              space_id: this.spaceId
+            }, rsp => {
+              if (rsp && (rsp.result === 0 || rsp.result === '0')){
+                iap.finish()
+                this.$toast && this.$toast('尊贵馆已开通')
+                eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
+                this.updateInfo()
+              }else{
+                this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+              }
+            }, error => {
+              this.$toast && this.$toast('校验失败，请联系客服')
+            })
+          } catch (e) {
+            console.log('iap error:', e)
+            const msg = e && e.message ? e.message : '购买失败'
+            // 用户主动取消不提示
+            if (msg.indexOf('取消') < 0){
+              this.$toast && this.$toast(msg)
+            }
+          }
+        },
         buyProductBtnText(product){
           let result = '祭奠'
           if (!this.isVipSpace && product.point > 0){
@@ -281,6 +333,11 @@
         },
         buyProduct(product){
           let that = this;
+          // iOS App：尊贵馆按年订阅必须走 App Store 内购（审核 3.1.1），不能扣云币
+          if (isNative() && product.id == 'item-space-vip'){
+            this.buyVipByIap()
+            return
+          }
           if (this.space){
             if (!this.isVipSpace && this.space.currentUser.point < product.point){
               this.$toast("余额不足，请先充值")

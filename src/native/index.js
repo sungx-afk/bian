@@ -2,8 +2,9 @@ import * as platform from './platform'
 import * as auth from './auth'
 import { pay } from './pay'
 import { share } from './share'
+import * as iap from './iap'
 
-export { platform, auth, pay, share }
+export { platform, auth, pay, share, iap }
 
 export const native = {
   isNative: platform.isNative,
@@ -15,7 +16,8 @@ export const native = {
   loginByWechat: auth.loginByWechat,
   appleLoginAvailable: auth.appleLoginAvailable,
   pay,
-  share
+  share,
+  iap
 }
 
 /**
