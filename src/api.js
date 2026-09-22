@@ -1,6 +1,7 @@
 import axios from 'axios'
 import config_server from './config/config'
 import { appPlat, isNative } from './native/platform'
+import { installHttpAdapter } from './native/http'
 import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
 import User from './modules/user/api/index'
@@ -14,7 +15,9 @@ axios.interceptors.request.use(config => {
 })
 
 axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
-axios.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8'; //默认是JSON格式
+// 只给 POST 设置 Content-Type：App 内页面源是 capacitor://localhost（跨域），
+// GET 带 Content-Type 会被判定为非简单请求，多一次 OPTIONS 预检，还可能被 CORS 直接拦掉
+axios.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8'; //默认是JSON格式
 /**
  * 公共上行信息
  * @type {{}}
@@ -64,6 +67,9 @@ global.$axios = axios.create({
   },
   params: getRequestParam()
 });
+
+// App 内改用原生网络层发请求（绕开 WebView 的跨域限制与 OPTIONS 预检）
+installHttpAdapter(global.$axios)
 
 global.$axios.interceptors.response.use((response) => {
   /*新增拦截器，处理服务器返回*/
