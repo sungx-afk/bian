@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+          name="viewport">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title></title>
+    <style type="text/css">
+        body{
+            margin: 0px;
+        }
+        .content-wrapper {
+
+        }
+        .content-wrapper .poster-area{
+
+        }
+        .content-wrapper .poster-area .image{
+           width: 100%;
+        }
+        .content-wrapper .content{
+            padding: 0px 20px 120px;
+            color: #333;
+            font-size: 16px;
+            line-height: 28px;
+        }
+        .content-wrapper .content .label{
+          font-weight: bold;
+          font-size: 18px;
+          color: #000;
+        }
+        .bold{
+          font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="content-wrapper">
+    <div class="poster-area">
+        <img class='image' src=".././static/images/poster.jpg">
+    </div>
+    <div class="content bian" id="bian">
+        <p>彼岸思念是基于微信的在线祈福祭奠平台。 关注微信服务号后，可为逝去的亲友创建一个永久的纪念馆。</p>
+        <p>- 支持单人和双人馆</p>
+        <p>- 留言板、亲属空间、私语适用于不同场景</p>
+        <p>- 追悼会功能发送讣告，朋友点击后进行网上祭奠</p>
+        <p class="label">服务说明</p>
+        <p>1. 彼岸思念是免费的服务，用户可自行选择使用部分收费功能。</p>
+        <p>2. 每个纪念馆创建后由创建人选择共享的亲友，我们不会公开纪念馆，也不提供名称搜索。创建人可自行设置仅亲属可访问。</p>
+        <p>3. 创建人自行管理纪念馆的留言，访问黑名单。</p>
+        <p>4.请遵守国家的法律法规，不发布违法违规信息，并对自己的行为承担全部民事和刑事责任。请尊重网络道德，不侵犯他人的权利和个人隐私。</p>
+        <p>5.创建人可随时删除创建的纪念馆和相关联的内容。</p>
+    </div>
+    <div class="content other" id="other_plat" style="display: none;">
+        <p class="bold">殡仪馆微信公众号服务系统</p>
+        <p>在微信公众号底部添加菜单提供在线祭奠和在线送花圈挽联服务。</p>
+        <p class="bold">1. 在线祭奠</p>
+        <p> - 在告别厅张贴服务海报，家属扫码创建逝者纪念馆。</p>
+        <p> - 不能到现场告别的亲友可以远程在线祭奠寄哀思</p>
+        <p class="bold">2. 在线送花圈挽联</p>
+        <p> - 在系统配置商品、价格和收款二维码</p>
+        <p> - 不能到现场告别的亲友可以在微信服务号点击底部菜单购买花圈、挽联等并指定送达的告别厅</p>
+        <p class="bold">3. 每个殡仪馆独立系统，可根据需求增加、修改功能。</p>
+        <p>如需更多信息，联系：400-898-0813</p>
+    </div>
+    <script type="text/javascript">
+      function getRequest(key){
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+        var str = url.substr(1);
+        strs = str.split("&");
+        for(var i = 0; i < strs.length; i ++) {
+          theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+        }
+        }
+        if(key){
+          return theRequest[key];
+        }else{
+          return theRequest;
+        }
+      }
+      var app_id = getRequest('app_id');
+      if(app_id && app_id == 'wx502b2e237549374c'){
+        document.getElementById('bian').style.display = 'none';
+        document.getElementById('other_plat').style.display = 'block';
+        document.title = '殡仪馆微信公众号服务系统介绍';
+      }else{
+        document.title = '彼岸思念介绍';
+      }
+    </script>
+
+</div>
+</body>
+
+</html>

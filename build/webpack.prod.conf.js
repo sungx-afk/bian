@@ -40,7 +40,8 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
-    publicPath : qiniu.domain,
+    // iOS App 打包时用相对路径（资源全部本地化），线上发布仍走 CDN
+    publicPath : process.env.ASSET_PUBLIC_PATH || qiniu.domain,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
     chunkFilename: utils.assetsPath('js/[name].[chunkhash].js')
   },
@@ -79,7 +80,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       filename: process.env.NODE_ENV === 'testing'
         ? 'index.html'
         : config.build.index,
-      url:qiniu.domain,
+      url:process.env.ASSET_PUBLIC_PATH || qiniu.domain,
       template: './src/index.html',
       inject: true,
       minify: {

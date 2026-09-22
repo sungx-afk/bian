@@ -16,6 +16,8 @@ const router = new Router({
   history: true,
   mode: 'history', //'hash'则一切正常
   routes: [
+    // App 打开的是根路径（capacitor://localhost/），没有这条会匹配不到路由导致白屏
+    {path: '/', redirect: '/home'},
     ...Home,
     ...Space,
     ...Report,
