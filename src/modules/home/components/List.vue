@@ -1,6 +1,17 @@
 <template>
   <div class="main-container">
     <!-- 引导页：首次进入且未登录时展示，用户主动点"进入"后才走微信授权 -->
+    <!-- 内测包临时登录：连点引导页 logo 5 次触发 -->
+    <div class="debug-login-mask" v-if="showDebugLogin">
+      <div class="debug-login-box">
+        <div class="debug-login-title">测试登录</div>
+        <input class="debug-login-input" v-model="debugUid" type="number" placeholder="请输入用户 ID" />
+        <div class="debug-login-btns">
+          <span @click="showDebugLogin = false">取消</span>
+          <span class="primary" @click="submitDebugLogin">登录</span>
+        </div>
+      </div>
+    </div>
     <Guide v-if="showGuideFlag"
            :show-apple-login="appleLoginAvailable"
            :show-follow="!appleLoginAvailable"
@@ -118,6 +129,8 @@
         enteredLastSpace:false,// 本次是否已自动进入"最后访问的纪念馆"
         hasJumpIntent:false,   // 本次是否带有分享/移交/通知等指定跳转意图
         appleLoginAvailable:false, // iOS App 内且已装 Apple 登录插件时为 true
+        showDebugLogin:false,      // 内测包临时登录弹层
+        debugUid:'',
       }
     },
     components: {
@@ -474,12 +487,18 @@
         })
       },
       // 临时登录：输入用户 ID 直接登录（后端 /user/sessions/uid）。
+      // 注意：不能用 window.prompt，WKWebView 默认不弹 prompt，点了会毫无反应。
       // 仅用于 iOS 自签包/内测包验证功能，正式版走 Apple 登录与微信 OpenSDK。
       debugLogin(){
-        const uid = window.prompt('测试登录：请输入用户 ID')
+        this.debugUid = ''
+        this.showDebugLogin = true
+      },
+      submitDebugLogin(){
+        const uid = (this.debugUid || '').trim()
         if (!uid){
           return
         }
+        this.showDebugLogin = false
         this.$store.dispatch('userStore/loginWithUid', {uid})
       },
       // iOS App：Sign in with Apple（审核 4.8）
@@ -779,6 +798,53 @@
 
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
+
+  /* 内测包临时登录弹层 */
+  .debug-login-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .6);
+    .debug-login-box {
+      width: 260px;
+      padding: 18px 16px 12px;
+      border-radius: 12px;
+      background: #fff;
+      .debug-login-title {
+        margin-bottom: 12px;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+      }
+      .debug-login-input {
+        width: 100%;
+        height: 38px;
+        padding: 0 10px;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+      .debug-login-btns {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 14px;
+        font-size: 14px;
+        span {
+          padding: 6px 10px;
+          color: #999;
+        }
+        .primary {
+          color: @MAIN_THEME_COLOR;
+          font-weight: bold;
+        }
+      }
+    }
+  }
 
   .main-container {
     height: 100%;

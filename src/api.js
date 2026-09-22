@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { appPlat } from './native/platform'
+import config_server from './config/config'
+import { appPlat, isNative } from './native/platform'
 import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
 import User from './modules/user/api/index'
@@ -52,8 +53,12 @@ global.getLocalTokenKey = function() {
  return req_key;
 }
 
+// App 内页面是从 capacitor://localhost 加载的，相对路径 /api/v1 会被解析成
+// capacitor://localhost/api/v1（404），必须用绝对地址；H5 保持相对路径走同源部署。
+const API_BASE_URL = isNative() ? `${config_server.domain}/api/v1` : '/api/v1';
+
 global.$axios = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
   validateStatus: function(status) {
     return status < 400;
   },
