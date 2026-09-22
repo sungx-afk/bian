@@ -30,6 +30,10 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<!-- 强制全屏运行：不这样 iPad 上会进入分屏/侧拉，页面只剩窄窄一条，
+	     布局错乱且难以点击 -->
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

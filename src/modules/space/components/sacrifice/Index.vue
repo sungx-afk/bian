@@ -119,7 +119,7 @@
 
 
         <div class="big-fire-box">
-          <div class="inner">]
+          <div class="inner">
             <canvas id="big-fire" style="width: 100px;height: 100px;visibility: hidden;" :style="{'visibility': showZhiQianCanvas?'visible':'hidden'}"></canvas>
           </div>
         </div>
@@ -2031,6 +2031,8 @@
     position: absolute;
     visibility: hidden;
     bottom: 0;
+    /* 烟雾画布铺在下半屏，不加这行会挡住底部按钮的点击（真机上表现为"点了没反应"） */
+    pointer-events: none;
   }
 
   .yi-xiang-box {
