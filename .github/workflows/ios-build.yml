@@ -25,6 +25,9 @@ jobs:
       SCHEME: App
       BUNDLE_ID: com.yugusoft.bian
       EXPORT_METHOD: ${{ github.event.inputs.export_method || 'ad-hoc' }}
+      # secrets 不能用在 if 里，先转成 env 布尔串
+      HAS_SIGNING: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+      HAS_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -40,7 +43,7 @@ jobs:
 
       # ---------- 有签名材料才走签名流程 ----------
       - name: 导入签名证书与描述文件
-        if: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        if: env.HAS_SIGNING == 'true'
         env:
           P12_BASE64: ${{ secrets.SIGNING_CERTIFICATE_P12 }}
           P12_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
@@ -61,7 +64,7 @@ jobs:
           echo -n "$PROFILE_BASE64" | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
 
       - name: 生成 ExportOptions.plist
-        if: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        if: env.HAS_SIGNING == 'true'
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
@@ -80,7 +83,7 @@ jobs:
           EOF
 
       - name: 归档并导出 IPA
-        if: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        if: env.HAS_SIGNING == 'true'
         run: |
           set -e
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
@@ -89,7 +92,7 @@ jobs:
             -exportPath build/ipa -exportOptionsPlist ExportOptions.plist
 
       - name: 上传到 TestFlight（仅有 API Key 时）
-        if: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' && secrets.SIGNING_CERTIFICATE_P12 != '' }}
+        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true'
         env:
           API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
@@ -104,7 +107,7 @@ jobs:
 
       # ---------- 没签名材料：只做编译校验 ----------
       - name: 编译校验（未签名，产出 .app）
-        if: ${{ secrets.SIGNING_CERTIFICATE_P12 == '' }}
+        if: env.HAS_SIGNING != 'true'
         run: |
           set -e
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug \
