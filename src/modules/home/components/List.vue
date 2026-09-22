@@ -5,7 +5,8 @@
            :show-apple-login="appleLoginAvailable"
            :show-follow="!appleLoginAvailable"
            @enter="onGuideEnter"
-           @apple-login="authApple" />
+           @apple-login="authApple"
+           @debug-login="debugLogin" />
     <div class="notice-container" v-if="showNotice">
       <van-cell is-link @click.stop="goNotice">
         您还未关注公众号，关注后可以及时收到通知
@@ -466,7 +467,20 @@
       authWechat(){
         auth.loginByWechat().catch((err)=>{
           console.log('wechat login unavailable:', err && err.message)
+          // App 内没有微信 JS-SDK 环境，静默失败会让人以为卡死，这里明确提示
+          if (isNative()){
+            this.$toast && this.$toast('App 内暂不支持微信登录，请用 Apple 登录')
+          }
         })
+      },
+      // 临时登录：输入用户 ID 直接登录（后端 /user/sessions/uid）。
+      // 仅用于 iOS 自签包/内测包验证功能，正式版走 Apple 登录与微信 OpenSDK。
+      debugLogin(){
+        const uid = window.prompt('测试登录：请输入用户 ID')
+        if (!uid){
+          return
+        }
+        this.$store.dispatch('userStore/loginWithUid', {uid})
       },
       // iOS App：Sign in with Apple（审核 4.8）
       async authApple(){

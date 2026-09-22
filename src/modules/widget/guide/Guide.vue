@@ -2,7 +2,8 @@
   <transition name="guide-fade">
     <div class="guide-mask">
       <div class="guide-content">
-        <img class="guide-logo" :src="logo" />
+        <!-- 连点 5 次 logo：App 内临时登录入口（iOS 自签包没有 Apple 登录/微信，用它进应用测试） -->
+        <img class="guide-logo" :src="logo" @click.stop="onLogoClick" />
         <div class="guide-title">{{ title }}</div>
         <div class="guide-slogan">{{ slogan }}</div>
         <div class="guide-desc" v-html="desc"></div>
@@ -96,6 +97,7 @@
       return {
         showQrcode: false,
         qrcodeImg: require('@/modules/images/qrcode_bian.jpg'),
+        logoTaps: 0
       }
     },
     methods: {
@@ -104,6 +106,14 @@
       },
       appleLogin() {
         this.$emit('apple-login')
+      },
+      // 隐藏入口：连点 logo 5 次
+      onLogoClick() {
+        this.logoTaps++
+        if (this.logoTaps >= 5) {
+          this.logoTaps = 0
+          this.$emit('debug-login')
+        }
       }
     }
   }
