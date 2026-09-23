@@ -13,7 +13,7 @@
 <script>
   /**
    * 统一页面顶部栏：返回按钮 + 居中标题
-   * 与纪念馆详情页的墨色顶区同一套视觉（#2c3140 → #2c3140 实色），
+   * 与纪念馆详情页的顶区同一套视觉（主题色 #825621 实色），
    * 箭头用 CSS 画，不依赖图标字体；触控区 44px。
    */
   export default {
@@ -51,7 +51,7 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    background: #2c3140;
+    background: @MAIN_THEME_COLOR;
     color: #fff;
 
     .back-btn {
