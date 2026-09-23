@@ -1,5 +1,6 @@
 <template>
   <div class="edit-user-container">
+    <page-header title="逝者信息"></page-header>
     <template v-if="user">
       <user-info :user.sync="user" :show-avatar="avatarType === 0"></user-info>
       <div class="bottom-button">
@@ -15,10 +16,12 @@
   import constant from '@/config/constant'
 
   import UserInfo from './UserInfo'
+  import PageHeader from '@/modules/widget/PageHeader'
     export default {
       name: "EditUserInfo",
       components:{
-        UserInfo
+        UserInfo,
+        PageHeader
       },
       data(){
         return{

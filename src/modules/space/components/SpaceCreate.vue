@@ -1,5 +1,6 @@
 <template>
   <div class="space-create-container">
+    <page-header :title="id ? '修改纪念馆' : '创建纪念馆'"></page-header>
     <div class="info">
       <van-cell class="type-cell" v-if="!id || true">
         <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
@@ -54,6 +55,7 @@
   import constant from '@/config/constant'
 
   import UserInfo from './userinfo/UserInfo'
+  import PageHeader from '@/modules/widget/PageHeader'
   import qs from 'qs'
 
   export default{
@@ -93,7 +95,8 @@
       }
     },
     components: {
-      UserInfo
+      UserInfo,
+      PageHeader
     },
     computed:{
       ...mapGetters({

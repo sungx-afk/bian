@@ -2,6 +2,7 @@
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="new-story-container" v-show="show">
       <div class="new-story-box">
+        <page-header title="新增生平文章" @back="close"></page-header>
         <div class="input-area">
           <van-field class="name-input"
             ref="name_input"
@@ -40,8 +41,12 @@
 <script>
 
   import * as api from './api'
+  import PageHeader from '@/modules/widget/PageHeader'
 
   export default {
+    components: {
+      PageHeader
+    },
     data(){
       return {
         show:false,
