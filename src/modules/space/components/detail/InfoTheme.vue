@@ -1,5 +1,7 @@
 <template>
-  <div class="info-theme-container" :style="{'background-image':`url(${theme.url})`}">
+  <!-- 主题背景图暂时去掉（原:background-image:url(theme.url)），需要时恢复这一行即可
+  <div class="info-theme-container" :style="{'background-image':`url(${theme.url})`}"> -->
+  <div class="info-theme-container">
     <div class="base-info-wrapper">
       <div class="combine-avatar" v-if="space.combineImage === 1" :class="{hide:configHide('avatar')}">
         <img class="avatar" v-if="combineAvatarUrl" :src="combineAvatarUrl" />
