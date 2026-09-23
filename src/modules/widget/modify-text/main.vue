@@ -2,6 +2,8 @@
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="box-wrapper" v-show="show">
       <div class="item-box">
+        <!-- 传入 headerTitle 时显示统一页头（返回=取消，不触发保存回调） -->
+        <page-header v-if="headerTitle" :title="headerTitle" @back="cancel"></page-header>
         <template v-if="multiline">
           <van-field
             ref="input"
@@ -31,8 +33,9 @@
 
 <script>
 
+import PageHeader from '@/modules/widget/PageHeader'
 
-  export default {
+export default {
     data(){
       return {
         show:false,
@@ -44,10 +47,18 @@
         maxH:500,
         minH:300,
         rows:10,
+        headerTitle:'',   // 页头标题：传了才显示统一页头
         oldContent:''
       }
     },
+    components: {
+      PageHeader
+    },
     methods: {
+      // 取消：不触发保存回调
+      cancel(){
+        this.show = false
+      },
       afterLeave(){
         this.$el &&
         this.$el.parentNode &&

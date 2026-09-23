@@ -236,6 +236,7 @@
         // 直接编辑生平简介
         editSummary(user){
           ModifyText({
+            headerTitle: '编辑生平',
             content: user.summary,
             multiline: true,
             placeholder: '请输入生平简介',
@@ -696,10 +697,11 @@
           align-items: center;
           justify-content: center;
           .summary-card-edit{
-            font-size: 14px;
+            font-size: 16px;
             color: @MAIN_THEME_COLOR;
             margin-left: 6px;
-            padding: 2px 4px;
+            padding: 6px;      // 扩大触控区
+            cursor: pointer;
           }
         }
         .summary-card-date{
@@ -748,7 +750,8 @@
             .summary-inline-edit{
               flex: 0 0 auto;
               margin: 2px 0 0 8px;
-              font-size: 14px;
+              padding: 6px;
+              font-size: 18px;     // 之前 14px 太小，点不中
               color: @MAIN_THEME_COLOR;
               cursor: pointer;
             }
@@ -868,8 +871,9 @@
         .story-item-arrow{
           flex: 0 0 auto;
           color: @FONT_THIRD_COLOR;
-          font-size: 20px;
+          font-size: 26px;     // 之前 20px 太小
           line-height: 1;
+          padding: 4px 2px 4px 10px;
         }
       }
     }
