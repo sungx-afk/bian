@@ -37,7 +37,8 @@
         <div class="summary-card-header">
           <div class="summary-card-name">
             {{user.name}}
-            <span class="iconfont icon-bianji summary-card-edit" v-if="isSpaceCreator" @click.stop="goEditUser(user)"></span>
+            <!-- 直接进基本信息编辑，不再弹底部菜单 -->
+            <span class="iconfont icon-bianji summary-card-edit" v-if="isSpaceCreator" @click.stop="goEditUserBase(user)"></span>
           </div>
           <div class="summary-card-date" v-if="user.birthday || user.dieDay">
             <span v-if="user.birthday">{{user.birthday | timesToDate('yyyy')}}</span>
@@ -55,13 +56,22 @@
             <span class="summary-value">{{user.dieAddress || '未填写'}}</span>
           </div>
           <div class="summary-divider"></div>
-          <div class="summary-text" v-if="user.summary && user.summary.length > 0">{{user.summary}}</div>
-          <div class="summary-empty" v-else>暂无生平介绍</div>
+          <div class="summary-text-row">
+            <div class="summary-text" v-if="user.summary && user.summary.length > 0">{{user.summary}}</div>
+            <div class="summary-empty" v-else>暂无生平介绍</div>
+            <!-- 直接编辑生平简介 -->
+            <span class="iconfont icon-bianji summary-inline-edit" v-if="isSpaceCreator" @click.stop="editSummary(user)" aria-label="编辑生平"></span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="story-list-section" v-if="!configHide('summary')">
+      <!-- 生平文章：创建者可直接新增/编辑，不再走底部菜单 -->
+      <div class="story-head" v-if="isSpaceCreator">
+        <span class="story-head-title">生平文章</span>
+        <span class="iconfont icon-bianji story-head-edit" @click.stop="goNewStory" aria-label="新增生平文章"></span>
+      </div>
       <template v-if="storyNoData">
         <div class="story-empty">暂无生平文章</div>
       </template>
@@ -217,18 +227,21 @@
 
           return result
         },
-        goEditUser(user){
-          this.actions = [{
-            name: '逝者基本信息',
-            id: 'base',
-            data: user
-          },{
-            name: '逝者生平',
-            id: 'summary',
-            data: user
-          }]
-          this.showAction = true
-          this.$emit('action-changed', {actions: this.actions, showAction: this.showAction})
+        // 直接进逝者基本信息编辑页
+        goEditUserBase(user){
+          localStorage.setItem(constant.KEY_EDIT_USER_INFO, JSON.stringify(user))
+          Link(`/user_edit?space_id=${this.space.id}&avatar_type=${this.space.combineImage}`)
+        },
+        // 直接编辑生平简介
+        editSummary(user){
+          ModifyText({
+            content: user.summary,
+            multiline: true,
+            placeholder: '请输入生平简介',
+            callback: data => {
+              this.modifySummary(user, data)
+            }
+          })
         },
         modifySummary(user, summary){
           user.summary = summary
@@ -711,6 +724,21 @@
             color: @FONT_THIRD_COLOR;
             font-style: italic;
           }
+          .summary-text-row{
+            display: flex;
+            align-items: flex-start;
+            .summary-text,
+            .summary-empty{
+              flex: 1;
+            }
+            .summary-inline-edit{
+              flex: 0 0 auto;
+              margin: 2px 0 0 8px;
+              font-size: 14px;
+              color: @MAIN_THEME_COLOR;
+              cursor: pointer;
+            }
+          }
         }
       }
     }
@@ -719,6 +747,23 @@
       max-width: 560px;
       padding: 0 12px;
       box-sizing: border-box;
+      .story-head{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 4px 10px;
+        .story-head-title{
+          font-size: 15px;
+          font-weight: bold;
+          color: @FONT_FIRST_COLOR;
+        }
+        .story-head-edit{
+          font-size: 18px;
+          color: @MAIN_THEME_COLOR;
+          padding: 6px;
+          cursor: pointer;
+        }
+      }
       .story-section-title{
         position: relative;
         text-align: center;
