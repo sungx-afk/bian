@@ -1,245 +1,111 @@
-// 祭拜页烛火统一渲染层
+// 祭拜页火苗统一渲染层（DOM + 预渲染 GIF 版）
 // ------------------------------------------------------------------
-// 背景：以前每支烛火（#zu-huo-1、#zu-huo-2、每个长明灯组件、以及两个查不到 DOM 的孤儿
-// #change-ming-ding-1/2）都会各自 new PIXI.Application，带来两个硬伤：
-//   1) 每个 Application 独占总算一个 WebGL 上下文和一个独立 ticker。浏览器同时存活的
-//      WebGL 上下文只有 8~16 个（低端安卓更少），超过后最早的上下文会被浏览器强制丢弃，
-//      于是"烛火一多后面的就渲染不出来"。
-//   2) N 个 fullscreen  shader filter 每帧各算一遍多层 noise 采样，
-//      开销随蜡烛数量线性上涨，手机上直接掉帧。
-// 改为：全页只有一个 Application / 一个上下文 / 一个 ticker，
-//      每支烛火只是 stage 上一个带同一套 FlameFilter 的小 sprite（10vw 左右），
-//      位置每帧用锚点元素 getBoundingClientRect 同步即可。
+// 历史：
+//   v1 每支烛火一个 PIXI.Application —— 每个 WebGL 上下文 + 独立 ticker，
+//      蜡烛一多超出浏览器上下文上限，后面的火苗渲染不出来；
+//   v2 合并成单一 PIXI Canvas —— 上下文问题解决了，但 iPad 真机上
+//      FlameFilter 着色器应用失败，白色贴图直接画成白方块（Mac 上正常）；
+//   v3 现在：预渲染火苗 GIF + DOM 定位。
+//      不依赖 WebGL/GPU，所有设备表现完全一致；不再占用 WebGL 上下文，
+//      也不再每帧跑 shader，性能问题一并消失。
+//
+// 对外接口保持不变（addFlame / removeFlame / destroy），
+// ChangeMingDeng.vue 与 Index.vue 无需感知实现变化。
 
-const NOISE_URL = '/static/bian-mobile/images/noise-texture-11.png?v=9';
-// fixed 全屏画布：低于 .messages(6) / .buttons(9)，高于祭拜台
-const OVERLAY_Z_INDEX = 5;
-
-function createWhiteTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 2;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, 2, 2);
-  return PIXI.Texture.fromCanvas(canvas);
-}
+const FLAME_GIF = require('./images/flame.gif')
+// 位置同步：滚动/resize 实时 + 低频轮询兜底（锚点可能因图片加载等被动变化）
+const SYNC_INTERVAL = 400
 
 class FlameLayer {
   constructor() {
-    this.app = null;
-    this.noise = null;
-    this.white = null;
-    this.FlameFilter = null;
-    this.flames = [];
-    this.pending = [];
-    this.loading = false;
-    this.frames = 0;
-    this.dirty = false;
-
-    this.onResize = () => this.resizeApp();
-    this.onReposition = () => { this.dirty = true; };
-    this.onVisibility = () => this.syncTicker();
+    this.layer = null
+    this.flames = []
+    this.timer = null
+    this.onReposition = () => this.updatePositions()
   }
 
-  // 懒加载：没有烛火时完全不创建 PIXI / 不占 WebGL 上下文
-  ensureApp() {
-    if (this.app || this.loading || typeof PIXI === 'undefined') return;
-    const fragElement = document.querySelector('#flame-frag');
-    if (!fragElement) return;
+  ensureLayer() {
+    if (this.layer) return
+    const layer = document.createElement('div')
+    // 全屏透明层：只负责画火苗，不能挡住下面的按钮（pointer-events:none）
+    layer.style.cssText = [
+      'position:fixed', 'left:0', 'top:0', 'width:100%', 'height:100%',
+      'pointer-events:none', 'z-index:5', 'overflow:hidden'
+    ].join(';')
+    document.body.appendChild(layer)
+    this.layer = layer
 
-    this.loading = true;
-    const flameFrag = fragElement.textContent;
-
-    class FlameFilter extends PIXI.Filter {
-      constructor(texture, time = 0.0) {
-        super(null, flameFrag);
-        this.uniforms.dimensions = new Float32Array(2);
-        this.texture = texture;
-        this.time = time;
-      }
-
-      get texture() {
-        return this.uniforms.mapSampler;
-      }
-
-      set texture(texture) {
-        texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-        this.uniforms.mapSampler = texture;
-      }
-
-      apply(filterManager, input, output, clear) {
-        this.uniforms.dimensions[0] = input.sourceFrame.width;
-        this.uniforms.dimensions[1] = input.sourceFrame.height;
-        this.uniforms.time = this.time;
-        filterManager.applyFilter(this, input, output, clear);
-      }
-    }
-    this.FlameFilter = FlameFilter;
-
-    if (window.devicePixelRatio > 1) {
-      PIXI.settings.RESOLUTION = Math.min(window.devicePixelRatio, 2);
-    }
-    PIXI.settings.PRECISION_FRAGMENT = 'highp';
-
-    this.white = createWhiteTexture();
-
-    this.app = new PIXI.Application({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      backgroundColor: 0x000000,
-      transparent: true,
-      antialias: false,
-      autoResize: true
-    });
-
-    const view = this.app.view;
-    view.style.cssText = [
-      'position:fixed', 'left:0px', 'top:0px',
-      'width:100%', 'height:100%',
-      'pointer-events:none', `z-index:${OVERLAY_Z_INDEX}`
-    ].join(';');
-    document.body.appendChild(view);
-
-    // 没有烛火（或纹理还没回来）前不跑渲染循环
-    this.app.ticker.stop();
-    this.app.ticker.add(this.update, this);
-
-    window.addEventListener('resize', this.onResize);
-    // 页面滚动时锚点位置变化，用捕获阶段监听任意滚动容器
-    window.addEventListener('scroll', this.onReposition, true);
-    document.addEventListener('visibilitychange', this.onVisibility);
-
-    new PIXI.loaders.Loader().add('noise', NOISE_URL).load((loader, resources) => {
-      this.loading = false;
-      if (!resources.noise || !resources.noise.texture) return;
-      this.noise = resources.noise.texture;
-      this.pending.splice(0).forEach(flame => this.createSprite(flame));
-      this.syncTicker();
-    });
+    window.addEventListener('resize', this.onReposition)
+    window.addEventListener('scroll', this.onReposition, true)
+    this.timer = setInterval(() => this.updatePositions(), SYNC_INTERVAL)
   }
 
   addFlame(el) {
-    if (!el) return null;
-    this.ensureApp();
-    const flame = { el: el, sprite: null, filter: null };
-    this.flames.push(flame);
-    if (this.noise) {
-      this.createSprite(flame);
-    } else {
-      this.pending.push(flame);
-    }
-    return flame;
+    if (!el) return null
+    this.ensureLayer()
+
+    const img = document.createElement('img')
+    img.src = FLAME_GIF
+    img.alt = ''
+    img.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;'
+    this.layer.appendChild(img)
+
+    const flame = { el: el, img: img }
+    this.flames.push(flame)
+
+    // 等 DOM 插入后下一帧再定位
+    const raf = window.requestAnimationFrame || function (fn) { setTimeout(fn, 16) }
+    raf(() => this.updatePositions())
+    return flame
   }
 
   removeFlame(flame) {
-    if (!flame) return;
-    const index = this.flames.indexOf(flame);
-    if (index > -1) this.flames.splice(index, 1);
-    const pendingIndex = this.pending.indexOf(flame);
-    if (pendingIndex > -1) this.pending.splice(pendingIndex, 1);
-
-    if (flame.sprite) {
-      if (flame.sprite.filters) {
-        flame.sprite.filters.forEach(filter => filter.destroy && filter.destroy());
-      }
-      flame.sprite.destroy({ texture: false, children: true });
+    if (!flame) return
+    const index = this.flames.indexOf(flame)
+    if (index > -1) this.flames.splice(index, 1)
+    if (flame.img && flame.img.parentNode) {
+      flame.img.parentNode.removeChild(flame.img)
     }
-    flame.sprite = null;
-    flame.filter = null;
-    flame.el = null;
-    this.syncTicker();
-  }
-
-  createSprite(flame) {
-    if (!this.app || !this.noise || flame.sprite) return;
-    const sprite = new PIXI.Sprite(this.white);
-    sprite.anchor.set(0.5);
-    // 每支烛火随机相位，避免所有火焰完全同步跳动
-    const filter = new this.FlameFilter(this.noise, Math.random() * 200);
-    sprite.filters = [filter];
-    this.app.stage.addChild(sprite);
-    flame.sprite = sprite;
-    flame.filter = filter;
-    this.dirty = true;
-    this.updatePositions();
-    this.syncTicker();
+    flame.img = null
+    flame.el = null
   }
 
   updatePositions() {
-    if (!this.app) return;
+    if (!this.layer) return
     for (let i = 0; i < this.flames.length; i++) {
-      const flame = this.flames[i];
-      if (!flame.sprite) continue;
-      const el = flame.el;
+      const flame = this.flames[i]
+      const el = flame.el
       if (!el || !el.isConnected) {
-        flame.sprite.visible = false;
-        continue;
+        flame.img.style.display = 'none'
+        continue
       }
-      const rect = el.getBoundingClientRect();
-      // 锚点被隐藏 / 未布局时不渲染
+      const rect = el.getBoundingClientRect()
+      // 锚点被隐藏 / 未布局时不显示
       if (!rect.width || !rect.height) {
-        flame.sprite.visible = false;
-        continue;
+        flame.img.style.display = 'none'
+        continue
       }
-      flame.sprite.visible = true;
-      flame.sprite.position.set(rect.left + rect.width / 2, rect.top + rect.height / 2);
-      flame.sprite.width = rect.width;
-      flame.sprite.height = rect.height;
-    }
-  }
-
-  update(delta) {
-    // getBoundingClientRect 不必每帧算：滚动/resize 时脏标记 + 兜底轮询
-    this.frames++;
-    if (this.dirty || this.frames % 20 === 0) {
-      this.dirty = false;
-      this.updatePositions();
-    }
-    const step = 0.1 * delta;
-    for (let i = 0; i < this.flames.length; i++) {
-      if (this.flames[i].filter) {
-        this.flames[i].filter.time += step;
-      }
-    }
-  }
-
-  resizeApp() {
-    if (this.app && this.app.renderer) {
-      this.app.renderer.resize(window.innerWidth, window.innerHeight);
-    }
-    this.dirty = true;
-  }
-
-  syncTicker() {
-    if (!this.app) return;
-    const shouldRun = !!this.noise && this.flames.length > 0 && !document.hidden;
-    if (shouldRun && !this.app.ticker.started) {
-      this.app.ticker.start();
-    } else if (!shouldRun && this.app.ticker.started) {
-      this.app.ticker.stop();
+      flame.img.style.display = 'block'
+      flame.img.style.left = rect.left + 'px'
+      flame.img.style.top = rect.top + 'px'
+      flame.img.style.width = rect.width + 'px'
+      flame.img.style.height = rect.height + 'px'
     }
   }
 
   destroy() {
-    this.flames = [];
-    this.pending = [];
-    this.dirty = false;
-    this.frames = 0;
-    this.loading = false;
-    if (!this.app) return;
-
-    this.app.ticker.stop();
-    this.app.destroy(true);
-    window.removeEventListener('resize', this.onResize);
-    window.removeEventListener('scroll', this.onReposition, true);
-    document.removeEventListener('visibilitychange', this.onVisibility);
-
-    if (this.white) this.white.destroy(true);
-    this.app = null;
-    this.noise = null;
-    this.white = null;
-    this.FlameFilter = null;
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+    window.removeEventListener('resize', this.onReposition)
+    window.removeEventListener('scroll', this.onReposition, true)
+    if (this.layer && this.layer.parentNode) {
+      this.layer.parentNode.removeChild(this.layer)
+    }
+    this.layer = null
+    this.flames = []
   }
 }
 
-export default new FlameLayer();
+export default new FlameLayer()
