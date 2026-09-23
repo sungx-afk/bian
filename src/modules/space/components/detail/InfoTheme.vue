@@ -2,7 +2,14 @@
   <!-- 主题背景图暂时去掉（原:background-image:url(theme.url)），需要时恢复这一行即可
   <div class="info-theme-container" :style="{'background-image':`url(${theme.url})`}"> -->
   <div class="info-theme-container">
-    <div class="base-info-wrapper">
+    <!-- 返回按钮 -->
+    <div class="back-btn" @click.stop="goBack" aria-label="返回">
+      <i class="chevron"></i>
+    </div>
+
+    <!-- 顶部：遗像与基本信息（墨色底，庄重素雅） -->
+    <div class="hero">
+      <div class="base-info-wrapper">
       <div class="combine-avatar" v-if="space.combineImage === 1" :class="{hide:configHide('avatar')}">
         <img class="avatar" v-if="combineAvatarUrl" :src="combineAvatarUrl" />
         <div class="placeholder" v-else>
@@ -21,6 +28,7 @@
       </div>
       <div class="epitaph-wrapper" v-if="space.showEpitaph && space.epitaph && !configHide('epitaph')" :style="{color:theme.epitaphColor}">
         {{space && space.epitaph}}
+      </div>
       </div>
     </div>
 
@@ -494,8 +502,62 @@
     overflow-y: scroll;
     background-size: cover;
     background-repeat: no-repeat;
+    background-color: #f6f5f1;   // 暖纸色
+
+    // 返回按钮：固定左上，44px 触控区
+    .back-btn{
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      cursor: pointer;
+      transition: background 0.2s;
+      .chevron{
+        width: 12px;
+        height: 12px;
+        border-left: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: rotate(45deg);
+        margin-left: 5px;
+      }
+      &:active{
+        background: rgba(255, 255, 255, 0.26);
+      }
+    }
+
+    // 顶部墨色区：庄重素雅，头像后一圈暖金微光
+    .hero{
+      position: relative;
+      background: linear-gradient(180deg, #2c3140 0%, #1e2230 100%);
+      padding: 56px 16px 26px;
+      &::before{
+        content: '';
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        width: 240px;
+        height: 240px;
+        transform: translateX(-50%);
+        background: radial-gradient(circle, rgba(196, 130, 44, 0.30) 0%, rgba(196, 130, 44, 0) 70%);
+        pointer-events: none;
+      }
+      .base-info-wrapper{
+        position: relative;
+        max-width: 560px;
+        margin: 0 auto;
+      }
+    }
+
     .base-info-wrapper{
-      margin-top: 20%;
+      margin-top: 0;
       .combine-avatar{
         display: flex;
         justify-content: center;
@@ -503,12 +565,19 @@
           width: 244px;
           height: 157px;
           margin:0 5px;
+          border: 2px solid rgba(196, 130, 44, 0.85);
+          border-radius: 6px;
+          background: #14171f;
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
         }
         .placeholder{
-          border: 2px solid @MAIN_THEME_COLOR;
+          border: 2px solid rgba(196, 130, 44, 0.85);
+          border-radius: 6px;
+          background: #14171f;
           width: 244px;
           height: 157px;
           margin:0 5px;
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
         }
       }
       .user-wrapper{
@@ -522,12 +591,19 @@
               width: 122px;
               height: 157px;
               margin:0 5px;
+              border: 2px solid rgba(196, 130, 44, 0.85);
+              border-radius: 6px;
+              background: #14171f;
+              box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
             }
             .placeholder{
-              border: 2px solid @MAIN_THEME_COLOR;
+              border: 2px solid rgba(196, 130, 44, 0.85);
+              border-radius: 6px;
+              background: #14171f;
               width: 122px;
               height: 157px;
               margin:0 5px;
+              box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
             }
           }
           .hide{
@@ -537,19 +613,23 @@
       }
       .epitaph-wrapper{
         text-align: center;
-        margin: 0px 60px;
+        margin: 18px 60px 0;
         max-height: 140px;
         overflow: auto;
         font-size: 14px;
-        color: @FONT_WHITE_COLOR;
-        text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.88);
+        letter-spacing: 1px;
         &.hide{
           opacity: 0 !important;
         }
       }
     }
     .summary-section{
-      margin: 28px 0px 28px;
+      margin: 20px auto 24px;
+      max-width: 560px;
+      padding: 0 12px;
+      box-sizing: border-box;
       .summary-section-title{
         position: relative;
         text-align: center;
@@ -571,7 +651,8 @@
         background: #fff;
         padding: 14px 16px;
         margin-bottom: 14px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(31, 35, 48, 0.08);
         color: @FONT_FIRST_COLOR;
         .summary-card-header{
           text-align: center;
@@ -634,7 +715,10 @@
       }
     }
     .story-list-section{
-      margin: 0 0px 80px;
+      margin: 0 auto 80px;
+      max-width: 560px;
+      padding: 0 12px;
+      box-sizing: border-box;
       .story-section-title{
         position: relative;
         text-align: center;
@@ -658,14 +742,17 @@
         text-align: center;
         color: @FONT_THIRD_COLOR;
         font-size: 14px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(31, 35, 48, 0.08);
       }
       .story-item{
         background: #fff;
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 14px 16px;
         margin-bottom: 10px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 2px 12px rgba(31, 35, 48, 0.08);
+        transition: box-shadow 0.2s;
+        cursor: pointer;
         .story-item-row{
           display: flex;
           align-items: center;
@@ -730,6 +817,14 @@
       }
       .more{
         bottom: 0px;
+        background: #2c3140;
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        img{
+          width: 20px;
+          height: 20px;
+          margin: 8px;
+        }
       }
       .summary{
         bottom: 110px;
