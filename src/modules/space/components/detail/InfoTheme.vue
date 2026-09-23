@@ -558,7 +558,7 @@
     // 顶部墨色区：庄重素雅，头像后一圈暖金微光
     .hero{
       position: relative;
-      background: linear-gradient(180deg, #2c3140 0%, #1e2230 100%);
+      background: linear-gradient(180deg, @MAIN_THEME_COLOR 0%, #5b3c17 100%);
       padding: 56px 16px 26px;
       &::before{
         content: '';
@@ -568,7 +568,7 @@
         width: 240px;
         height: 240px;
         transform: translateX(-50%);
-        background: radial-gradient(circle, rgba(196, 130, 44, 0.30) 0%, rgba(196, 130, 44, 0) 70%);
+        background: radial-gradient(circle, fade(@SECOND_THEME_COLOR, 35%) 0%, fade(@SECOND_THEME_COLOR, 0%) 70%);
         pointer-events: none;
       }
       .base-info-wrapper{
@@ -587,13 +587,13 @@
           width: 244px;
           height: 157px;
           margin:0 5px;
-          border: 2px solid rgba(196, 130, 44, 0.85);
+          border: 2px solid @SECOND_THEME_COLOR;
           border-radius: 6px;
           background: #14171f;
           box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
         }
         .placeholder{
-          border: 2px solid rgba(196, 130, 44, 0.85);
+          border: 2px solid @SECOND_THEME_COLOR;
           border-radius: 6px;
           background: #14171f;
           width: 244px;
@@ -613,13 +613,13 @@
               width: 122px;
               height: 157px;
               margin:0 5px;
-              border: 2px solid rgba(196, 130, 44, 0.85);
+              border: 2px solid @SECOND_THEME_COLOR;
               border-radius: 6px;
               background: #14171f;
               box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
             }
             .placeholder{
-              border: 2px solid rgba(196, 130, 44, 0.85);
+              border: 2px solid @SECOND_THEME_COLOR;
               border-radius: 6px;
               background: #14171f;
               width: 122px;
@@ -637,7 +637,7 @@
         text-align: center;
         margin: 18px 30px 0;
         .epitaph-label{
-          color: rgba(196, 130, 44, 0.95);
+          color: @SECOND_THEME_COLOR;
           font-size: 13px;
           letter-spacing: 1px;
         }
@@ -833,7 +833,7 @@
         padding: 13px 14px 13px 16px;
         margin-bottom: 10px;
         box-shadow: 0 2px 12px rgba(31, 35, 48, 0.08);
-        border-left: 3px solid rgba(196, 130, 44, 0.7);   // 暖金竖条，和品牌呼应
+        border-left: 3px solid @SECOND_THEME_COLOR;   // 暖金竖条，和品牌呼应
         transition: box-shadow 0.2s, transform 0.2s;
         cursor: pointer;
         &:active{
@@ -903,7 +903,7 @@
       }
       .more{
         bottom: 0px;
-        background: #2c3140;
+        background: @MAIN_THEME_COLOR;
         border-radius: 50%;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
         img{
