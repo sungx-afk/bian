@@ -1,5 +1,6 @@
 <template>
   <div class="theme-container">
+    <page-header title="纪念馆样式"></page-header>
     <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
       <van-tab title="预置" name="preset">
         <template v-if="tabActive === 'preset'">
@@ -64,8 +65,12 @@
   import {mapGetters} from 'vuex';
   import constant from '@/config/constant'
   import {gUuid} from '@/config/utils'
+  import PageHeader from '@/modules/widget/PageHeader'
   export default {
     name: "Style",
+    components: {
+      PageHeader
+    },
     data(){
       return{
         tabActive:'preset',

@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="epitaph-wrapper" v-if="space.showEpitaph && space.epitaph && !configHide('epitaph')" :style="{color:theme.epitaphColor}">
-        {{space && space.epitaph}}
+        <span class="epitaph-label">墓志铭：</span>{{space && space.epitaph}}
       </div>
       </div>
     </div>
@@ -70,7 +70,8 @@
       <!-- 生平文章：创建者可直接新增/编辑，不再走底部菜单 -->
       <div class="story-head" v-if="isSpaceCreator">
         <span class="story-head-title">生平文章</span>
-        <span class="iconfont icon-bianji story-head-edit" @click.stop="goNewStory" aria-label="新增生平文章"></span>
+        <!-- 生平文章可以有多篇，这里是「添加」 -->
+        <span class="story-head-add" @click.stop="goNewStory" aria-label="添加生平文章"><i></i></span>
       </div>
       <template v-if="storyNoData">
         <div class="story-empty">暂无生平文章</div>
@@ -351,6 +352,11 @@
               id:'new_story',
               data:user
             })
+            this.actions.push({
+              name: '墓志铭',
+              id:'epitaph',
+              data:user
+            })
           }
 
           this.actions.push({
@@ -380,6 +386,9 @@
               break
             case 'new_story':
               this.goNewStory()
+              break
+            case 'epitaph':
+              Link(`/space/epitaph/${this.space.id}`)
               break
             case 'setting':
               Link(`/space/manage/${this.space.id}?active=setting`)
@@ -626,7 +635,12 @@
       }
       .epitaph-wrapper{
         text-align: center;
-        margin: 18px 60px 0;
+        margin: 18px 30px 0;
+        .epitaph-label{
+          color: rgba(196, 130, 44, 0.95);
+          font-size: 13px;
+          letter-spacing: 1px;
+        }
         max-height: 140px;
         overflow: auto;
         font-size: 14px;
@@ -757,11 +771,34 @@
           font-weight: bold;
           color: @FONT_FIRST_COLOR;
         }
-        .story-head-edit{
-          font-size: 18px;
-          color: @MAIN_THEME_COLOR;
-          padding: 6px;
+        // 「添加」按钮：生平文章可以有多篇
+        .story-head-add{
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: @MAIN_THEME_COLOR;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           cursor: pointer;
+          transition: opacity 0.2s;
+          i{
+            position: relative;
+            display: block;
+            width: 12px;
+            height: 12px;
+            &::before,
+            &::after{
+              content: '';
+              position: absolute;
+              background: #fff;
+            }
+            &::before{ left: 5px; top: 0; width: 2px; height: 12px; }
+            &::after{ left: 0; top: 5px; width: 12px; height: 2px; }
+          }
+          &:active{
+            opacity: 0.8;
+          }
         }
       }
       .story-section-title{
@@ -793,11 +830,15 @@
       .story-item{
         background: #fff;
         border-radius: 12px;
-        padding: 14px 16px;
+        padding: 13px 14px 13px 16px;
         margin-bottom: 10px;
         box-shadow: 0 2px 12px rgba(31, 35, 48, 0.08);
-        transition: box-shadow 0.2s;
+        border-left: 3px solid rgba(196, 130, 44, 0.7);   // 暖金竖条，和品牌呼应
+        transition: box-shadow 0.2s, transform 0.2s;
         cursor: pointer;
+        &:active{
+          transform: scale(0.99);
+        }
         .story-item-row{
           display: flex;
           align-items: center;

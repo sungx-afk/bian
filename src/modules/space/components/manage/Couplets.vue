@@ -1,5 +1,6 @@
 <template>
   <div class="couplets-container">
+    <page-header title="挽联"></page-header>
     <div class="wanlian-area">
       <van-field
         v-model="coupletsLeft"
@@ -35,9 +36,13 @@
 <script>
   import constant from '@/config/constant'
   import {mapGetters} from 'vuex'
+  import PageHeader from '@/modules/widget/PageHeader'
 
     export default {
       name: "Couplets",
+      components: {
+        PageHeader
+      },
       data(){
         return{
           spaceId:'',

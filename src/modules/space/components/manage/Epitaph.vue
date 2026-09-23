@@ -1,5 +1,6 @@
 <template>
   <div class="epitaph-container">
+    <page-header title="墓志铭"></page-header>
     <div class="epitaph-area">
       <van-field
         ref="input"
@@ -30,9 +31,13 @@
 <script>
   import constant from '@/config/constant'
   import {mapGetters} from 'vuex'
+  import PageHeader from '@/modules/widget/PageHeader'
 
     export default {
       name: "Epitaph",
+      components: {
+        PageHeader
+      },
       data(){
         return{
           spaceId:'',
