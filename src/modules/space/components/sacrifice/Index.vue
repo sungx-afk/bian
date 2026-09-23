@@ -329,7 +329,9 @@
         return result
       },
       theme(){
-        return 'theme_'+(this.space&&this.space.backgroundId||1);
+        // 祭拜页暂时去掉主题背景大图（原: 'theme_' + backgroundId），需要时恢复下一行即可
+        return 'no-theme'
+        // return 'theme_'+(this.space&&this.space.backgroundId||1);
       },
       //合影横版相框：用旋转90°的横版图铺满显示，相框完整不被截
       combineFrameStyle(){
@@ -1874,10 +1876,19 @@
     }
   }
 
-  /*无权限进入时，不展示纪念馆主题背景图*/
+  /*去掉主题背景大图后统一纯色墨底（与纪念馆详情页顶区同色系）*/
   .sacrifice.no-theme{
     background-image: none !important;
-    background-color: #fff;
+    background-color: #14171f;
+    background: linear-gradient(180deg, #14171f 0%, #2b2118 100%);
+    .tip-wrapper{
+      .iconfont{
+        color: @SECOND_THEME_COLOR;
+      }
+      .content{
+        color: rgba(255,255,255,0.8);
+      }
+    }
   }
 
   .sacrifice.theme_1 {
