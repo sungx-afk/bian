@@ -59,10 +59,10 @@
       @blur="showKeyboard = false"/>
     <van-popup
       v-model="showThemes"
-      closeable
       position="bottom"
       @click.stop=""
       :style="{ height: '100%' }">
+      <page-header title="选择背景" @back="showThemes = false"></page-header>
       <div class="info">
         <van-icon name="info"/>
         请选择一个背景
@@ -84,10 +84,10 @@
     </van-popup>
     <van-popup
       v-model="showFrames"
-      closeable
       position="bottom"
       @click.stop=""
       :style="{ height: '100%' }">
+      <page-header title="选择相框" @back="showFrames = false"></page-header>
       <div class="info">
         <van-icon name="info"/>
         请选择一个相框
@@ -113,6 +113,7 @@
   import constant from '@/config/constant'
 
   import {mapGetters} from 'vuex';
+  import PageHeader from '@/modules/widget/PageHeader'
 
   import {getFrames, DEFAULT_FRAME_ID} from '@/config/frame'
 
@@ -126,6 +127,9 @@
 
     export default {
       name: "Setting",
+    components: {
+      PageHeader
+    },
       props:{
         space:{
           type:Object,

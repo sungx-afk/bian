@@ -1,5 +1,6 @@
 <template>
   <div class="bgm-container">
+    <page-header title="背景音乐"></page-header>
     <van-cell-group title="预置">
       <van-cell v-for="item in presetBgm" :key="item.key" :title="item.name" :label="item.author" size="large" @click.stop="selectPresetBgm(item)">
         <div v-if="isPresetSelected(item)">
@@ -60,11 +61,15 @@
 <script>
   import constant from '@/config/constant'
   import {checkUrlHttpOrHttps,isIphone} from '@/config/utils'
+  import PageHeader from '@/modules/widget/PageHeader'
 
   const MAX_BGM_SIZE = 50 * 1024 * 1024
 
     export default {
       name: "Bgm",
+      components:{
+        PageHeader
+      },
       data(){
         return{
           spaceId:'',

@@ -14,6 +14,7 @@
 
     </template>
     <template v-else>
+      <page-header title="云追悼会"></page-header>
       <div class="tip">
         <i class="iconfont icon-tishi1"></i>为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。
       </div>
@@ -65,6 +66,7 @@
   import constant from '@/config/constant'
 
   import base64 from 'js-base64'
+  import PageHeader from '@/modules/widget/PageHeader'
 
   const MAIN_COLOR = '#FFFFFF' //#000000
   const TIP_COLOR = '#FFFFFF' //#666666
@@ -72,6 +74,9 @@
 
     export default {
       name: "Meeting",
+      components:{
+        PageHeader
+      },
       data(){
         return{
           spaceId:'',

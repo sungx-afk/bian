@@ -1,5 +1,6 @@
 <template>
   <div class="blacklist-container">
+    <page-header title="黑名单"></page-header>
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -34,9 +35,11 @@
 
 <script>
   import NoData from '@/modules/widget/space/NoData'
+  import PageHeader from '@/modules/widget/PageHeader'
     export default {
       name: "Blacklist",
       components:{
+      PageHeader,
         NoData
       },
       data(){

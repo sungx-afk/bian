@@ -1,5 +1,6 @@
 <template>
   <div class="transfer-container">
+    <page-header title="移交纪念馆"></page-header>
     <div class="transfer-member-list-area" v-if="transferMember.length > 0">
       <div class="transfer-title-area">
         <div class="transfer-title">移交给亲属</div>
@@ -37,9 +38,13 @@
 
   import base64 from 'js-base64'
   import ClipboardJS from 'clipboard'
+  import PageHeader from '@/modules/widget/PageHeader'
 
     export default {
       name: "Transfer",
+      components:{
+        PageHeader
+      },
       data(){
         return{
           spaceId:'',
