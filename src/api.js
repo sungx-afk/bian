@@ -15,9 +15,15 @@ axios.interceptors.request.use(config => {
 })
 
 axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
-// 只给 POST 设置 Content-Type：App 内页面源是 capacitor://localhost（跨域），
-// GET 带 Content-Type 会被判定为非简单请求，多一次 OPTIONS 预检，还可能被 CORS 直接拦掉
-axios.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8'; //默认是JSON格式
+// Content-Type 只给"带请求体"的方法设（POST / PUT / PATCH），
+// 不给 GET 设：App 内页面源是 capacitor://localhost（跨域），GET 带 Content-Type
+// 会被判定为非简单请求，多一次 OPTIONS 预检，还可能被 CORS 直接拦掉。
+// 注意：PATCH/PUT 必须设，否则 axios 会退回 application/x-www-form-urlencoded，
+// 而请求体是 JSON，后端会直接返回 415。
+const JSON_CONTENT_TYPE = 'application/json; charset=UTF-8'; //默认是JSON格式
+axios.defaults.headers.post['Content-Type'] = JSON_CONTENT_TYPE;
+axios.defaults.headers.put['Content-Type'] = JSON_CONTENT_TYPE;
+axios.defaults.headers.patch['Content-Type'] = JSON_CONTENT_TYPE;
 /**
  * 公共上行信息
  * @type {{}}
