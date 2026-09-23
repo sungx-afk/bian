@@ -99,7 +99,7 @@
   import Item from '@/modules/widget/space/Item'
   import Guide from '@/modules/widget/guide/Guide'  // 引导页组件
   import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录，H5 走微信授权）
-  import { isNative } from '@/native/platform'
+  import { isNative, isWechat } from '@/native/platform'
   import { USE_DEBUG_UID, DEBUG_UID } from '@/native/debug'   // 内测包自动登录（提审前关闭）
 
   import base64 from 'js-base64'
@@ -495,9 +495,11 @@
       authWechat(){
         auth.loginByWechat().catch((err)=>{
           console.log('wechat login unavailable:', err && err.message)
-          // App 内没有微信 JS-SDK 环境，静默失败会让人以为卡死，这里明确提示
+          // 静默失败会让人以为卡死，按环境给出明确提示
           if (isNative()){
             this.$toast && this.$toast('App 内暂不支持微信登录，请用 Apple 登录')
+          }else if (!isWechat()){
+            this.$toast && this.$toast('请在微信中打开，或用 ?uid=你的账号ID 本地调试登录')
           }
         })
       },

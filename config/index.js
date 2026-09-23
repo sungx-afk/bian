@@ -10,7 +10,17 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    // 本地开发把接口代理到线上后端，否则 /api/v1 全部 404（登录、列表都出不来）
+    proxyTable: {
+      '/api': {
+        target: 'https://ba.yugusoft.com',
+        changeOrigin: true,
+        secure: false,
+        logLevel: 'silent'
+      },
+      // 上传走七牛，由前端直传，这里只代理后端票据接口（同上已覆盖）；
+      // 若后端还有 /upload 之类前缀，按需补充
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
