@@ -16,6 +16,10 @@ on:
         description: '导出方式：app-store（传 TestFlight，推荐）| ad-hoc | development'
         required: true
         default: 'app-store'
+      beta_group:
+        description: 'TestFlight 测试组名；留空=内部测试组（无需 Beta 审核）'
+        required: false
+        default: ''
 
 jobs:
   build:
@@ -37,6 +41,18 @@ jobs:
 
       - name: 安装 npm 依赖
         run: cd ios-app && npm ci
+
+      # 必须在这里重新构建 Web 资源：ios-app/www 是 cap copy 的输入，
+      # 不重建就会把仓库里那份旧的 www 打进 IPA（改了 src 却看不到效果）。
+      # --ignore-scripts：跳过 phantomjs-prebuilt / chromedriver 等测试依赖的
+      #   二进制下载（下载源常年不可达，会让 npm ci 直接失败），构建不需要它们。
+      - name: 构建 Web 资源（Vue2 工程在仓库根目录）
+        run: |
+          set -e
+          npm ci --ignore-scripts --legacy-peer-deps
+          npm run build
+          cd ios-app
+          npm run copy:web
 
       - name: 同步 iOS 平台（云端 pod install）
         run: cd ios-app && npx cap sync ios
@@ -115,7 +131,10 @@ jobs:
         if: env.HAS_SIGNING == 'true'
         run: |
           set -e
+          # TestFlight 要求每次上传的 CFBundleVersion 递增，工程里写死的是 1。
+          # Info.plist 用的是 $(CURRENT_PROJECT_VERSION)，这里用构建号覆盖即可，不改文件。
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             $AUTH_FLAGS \
             -archivePath build/App.xcarchive archive
           xcodebuild -exportArchive -archivePath build/App.xcarchive \
@@ -131,6 +150,18 @@ jobs:
           IPA=$(ls build/ipa/*.ipa | head -1)
           xcrun altool --upload-app --type ios --file "$IPA" \
             --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
+
+      # 上传完还得把构建加进测试组，否则它只是躺在 TestFlight 列表里，测试员看不到
+      - name: 加入 TestFlight 测试组
+        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'
+        env:
+          # 上一步已把 p8 解码到仓库根目录的 private_keys/ 下，这里直接复用
+          ASC_KEY_PATH: private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          BETA_GROUP: ${{ github.event.inputs.beta_group || '' }}
+        run: ruby ios-app/ci/add-build-to-beta-group.rb
 
       # ---------- 没签名材料：产出未签名 IPA，供 Sideloadly / AltStore 用 Apple ID 自签安装 ----------
       - name: 编译并打包未签名 IPA

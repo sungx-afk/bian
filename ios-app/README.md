@@ -8,7 +8,7 @@
 | 路径 | 说明 |
 |---|---|
 | `capacitor.config.json` | 应用 ID、名称、WebView 配置；当前 `server.url` 指向线上站点 `https://ba.yugusoft.com`，用于最快跑起来看效果 |
-| `www/` | Web 资源目录，正式发布前改为 `npm run copy:web`（拷贝根目录 `npm run build` 产物） |
+| `www/` | Web 资源目录，**已加入 .gitignore、不入库**；由根目录 `npm run build` + 本目录 `npm run copy:web` 生成，CI 里也会自动生成 |
 | `ios/App/` | Capacitor 生成的 Xcode 工程（`App.xcworkspace`），Pods 已 gitignore |
 | 根目录 `codemagic.yaml` | 云端打包配置（TestFlight / Ad Hoc 两套 workflow） |
 
@@ -37,20 +37,30 @@
 
 1. 注册并登录 Codemagic，添加仓库（GitLab 自托管需公网可访问；不可访问就先镜像一份到 GitLab.com/GitHub 私有仓库）。
 2. Teams → Integrations → App Store Connect，填入 Issuer ID、Key ID、`.p8` 内容、证书私钥。
-3. 新建 Application 时选择「Use codemagic.yaml」，分支选 `feature/ios-capacitor`。
+3. 新建 Application 时选择「Use codemagic.yaml」。
 4. 触发构建 → 产出 IPA → 自动上传 TestFlight（workflow `ios-testflight`）。
+   **当前 Codemagic 只在打 tag 时触发**（`git tag v1.0.1 && git push origin v1.0.1`）；
+   分支推送由 GitHub Actions（`.github/workflows/ios-build.yml`）负责，两者不会同时跑。
 
 ## 四、把 App 装到 iPhone
 
-- **TestFlight（推荐）**：App Store Connect → TestFlight → 添加测试员（内部测试无需审核）→ 对方在 iPhone 装「TestFlight」App 接受邀请即可安装，有效期 90 天。
+- **TestFlight（推荐）**：CI 上传成功后会自动把构建加入**内部测试组**（`ios-app/ci/add-build-to-beta-group.rb`），
+  你只需要在 App Store Connect → TestFlight 里**加一次测试员**，对方在 iPhone 装「TestFlight」App 接受邀请即可安装，有效期 90 天。
+  之后每次 push，测试员打开 TestFlight 就能看到新版本，不用再手工添加构建。
+- 想发到**外部测试组**：手动 Run workflow 时填 `beta_group` 参数。**但外部组要过一次 Beta 审核**（约 1 天），
+  且 App 必须先在后台填好测试信息（反馈邮箱、演示账号等），否则接口会拒绝。
 - **Ad Hoc**：UDID 已注册的设备可直接安装 IPA（通过 Codemagic 下载页或蒲公英分发），1 年有效期。
 - 若走 TestFlight 外部测试组，需要过一次轻量 Beta 审核（约 1 天）。
 
 ## 五、本地开发时如何调试
 
 - 本机没有 Xcode，**不能本地编译**，只能改配置与 Web 资源后推分支触发云端构建。
-- `capacitor.config.json` 里的 `server.url` 指向线上站点，改 Web 代码后刷新 App 即可看到改动（前提是线上已发布）。
-- 切回本地打包：删除 `server` 节点，根目录执行 `npm run build`，再在本目录执行 `npm run copy:web`，然后 `npx cap sync ios`。
+- **`www/` 不再入库**，本地跑 `npx cap sync ios` 之前必须先生成它，否则会把空目录打进 App：
+  ```bash
+  cd .. && npm run build      # 根目录产出 dist/
+  cd ios-app && npm run copy:web && npx cap sync ios
+  ```
+  云端（GitHub Actions / Codemagic）已内置这两步，不需要手工提交 `www/`。
 
 ## 六、常见坑
 
@@ -60,6 +70,7 @@
 | 图标字体不显示 | 外链 `//at.alicdn.com` 在 App 内加载失败 | 改为 `https:` 或把字体文件放进 `static/` |
 | 微信登录/分享失效 | App 内无微信 JS-SDK 环境 | 后续接微信 OpenSDK（改造清单 P0-9） |
 | 构建报签名失败 | API 密钥权限或证书不匹配 | 确认密钥为 App Manager 权限、Bundle ID 一致 |
+| 上传报 "bundle version 已使用" | TestFlight 要求 `CFBundleVersion` 每次递增 | CI 已自动递增（GitHub 用 `GITHUB_RUN_NUMBER`，Codemagic 用 `BUILD_NUMBER`）；本地打包前先跑 `xcrun agvtool new-version -all <更大的号>` |
 | 企业自签包掉签 | 使用第三方签名服务 | 仅用于体验，正式上架必须走自己的开发者账号 |
 
 ## 七、已完成的桥接改造（src/native）
