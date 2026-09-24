@@ -6,6 +6,13 @@ name: iOS Build
 on:
   push:
     branches: [feature/ios-capacitor, main]
+    # 打标签 = 发版并上传 TestFlight；分支 push 只做编译校验，不上传，
+    # 免得每次提交都往 TestFlight 刷一个构建号。
+    # GitHub 官方文档明确写了「Path filters are not evaluated for pushes of tags」，
+    # 所以下面的 paths 不会把标签推送过滤掉，两者可以共存。
+    tags:
+      - 'v*'        # v1.0.0、v1.2.3-beta
+      - 'ios-v*'    # 只想打 iOS 包时用，如 ios-v1.0.0
     # Web 构建的输入远不止 src：漏了这些就会出现「改了却不重新打包」
     paths:
       - 'ios-app/**'
@@ -42,6 +49,10 @@ jobs:
       # secrets 不能用在 if 里，先转成 env 布尔串
       HAS_SIGNING: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' || secrets.SIGNING_PRIVATE_KEY != '' }}
       HAS_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' }}
+      # 只有「打标签」和「手动 Run workflow」才上传 TestFlight；
+      # 普通分支 push 一律只编译校验，不上传。
+      IS_TAG: ${{ startsWith(github.ref, 'refs/tags/') }}
+      UPLOAD_ENABLED: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -101,7 +112,10 @@ jobs:
           report APP_STORE_CONNECT_API_KEY_P8 "$API_P8"
           report APP_STORE_CONNECT_KEY_ID "$API_KEY_ID"
           report APP_STORE_CONNECT_ISSUER_ID "$API_ISSUER"
-          echo "本次判定：HAS_SIGNING=$HAS_SIGNING  HAS_API_KEY=$HAS_API_KEY  EXPORT_METHOD=$EXPORT_METHOD"
+          echo "本次判定：HAS_SIGNING=$HAS_SIGNING  HAS_API_KEY=$HAS_API_KEY  EXPORT_METHOD=$EXPORT_METHOD  IS_TAG=$IS_TAG  上传=$UPLOAD_ENABLED"
+          if [ "$UPLOAD_ENABLED" != 'true' ]; then
+            echo "分支 push：只做编译校验，不上传 TestFlight。要发版请打标签（git tag v1.0.0 && git push origin v1.0.0）。"
+          fi
           # 下面用 error 注解（不会让 job 失败），让问题直接顶到运行页的 Annotations 里
           if [ "$HAS_SIGNING" != "true" ]; then
             echo "::error::没有签名材料（SIGNING_PRIVATE_KEY 与 SIGNING_CERTIFICATE_P12 都为空）——签名、归档、上传步骤会被全部跳过，本次不会产出可安装包。请到 Settings → Secrets and variables → Actions 的【Repository secrets】补齐（注意不是 Environment secrets）。"
@@ -284,6 +298,22 @@ jobs:
           </dict></plist>
           EOF
 
+      # 打标签时把标签当成对外版本号：v1.2.3 → CFBundleShortVersionString = 1.2.3
+      # 构建号（CFBundleVersion）仍然用 run number，保证每次上传都递增。
+      - name: 解析版本号
+        if: env.HAS_SIGNING == 'true' && env.IS_TAG == 'true'
+        run: |
+          set -e
+          TAG=${GITHUB_REF#refs/tags/}
+          VER=${TAG#v}
+          VER=${VER#ios-v}
+          if ! echo "$VER" | grep -Eq '^[0-9]+(\.[0-9]+)*$'; then
+            echo "::error::标签「$TAG」解析出的版本号「$VER」不合法，请用 v1.2.3 这样的格式"
+            exit 1
+          fi
+          echo "MARKETING_VERSION=$VER" >> "$GITHUB_ENV"
+          echo "标签 $TAG → 版本号 $VER（构建号 $GITHUB_RUN_NUMBER）"
+
       - name: 归档并导出 IPA
         if: env.HAS_SIGNING == 'true'
         env:
@@ -300,6 +330,11 @@ jobs:
           fi
           # TestFlight 要求每次上传的 CFBundleVersion 递增，工程里写死的是 1。
           # Info.plist 用的是 $(CURRENT_PROJECT_VERSION)，这里用构建号覆盖即可，不改文件。
+          # 打标签时额外覆盖对外版本号（默认用工程里的 1.0）。
+          VERSION_FLAGS=()
+          if [ -n "$MARKETING_VERSION" ]; then
+            VERSION_FLAGS=( MARKETING_VERSION="$MARKETING_VERSION" )
+          fi
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
             -sdk iphoneos -destination 'generic/platform=iOS' \
             CODE_SIGN_STYLE=Manual \
@@ -307,6 +342,7 @@ jobs:
             PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+            "${VERSION_FLAGS[@]}" \
             $AUTH_FLAGS \
             -archivePath build/App.xcarchive archive
           xcodebuild -exportArchive -archivePath build/App.xcarchive \
@@ -317,7 +353,7 @@ jobs:
             DEVELOPMENT_TEAM="$TEAM_ID" $AUTH_FLAGS
 
       - name: 上传到 TestFlight
-        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'
+        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store' && env.UPLOAD_ENABLED == 'true'
         env:
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
@@ -332,7 +368,7 @@ jobs:
       # 这里的 continue-on-error 是兜底——IPA 已经上传成功，不该因为「挂测试组」失败而让整条流水线变红。
       - name: 加入 TestFlight 测试组
         continue-on-error: true
-        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'
+        if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store' && env.UPLOAD_ENABLED == 'true'
         env:
           # 上一步已把 p8 解码到仓库根目录的 private_keys/ 下，这里直接复用
           ASC_KEY_PATH: private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
