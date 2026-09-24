@@ -92,10 +92,18 @@ jobs:
           echo "=== keychain 中可用的签名身份 ==="
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
           echo "=== p12 内证书信息（subject 里的 OU 就是 Team ID）==="
-          openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys 2>/dev/null \
+          openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null \
             | openssl x509 -noout -subject -dates 2>/dev/null || echo "(p12 解析失败，请检查密码与格式)"
-          if ! security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -q "$TEAM_ID"; then
-            echo "::error::p12 里没有属于 Team $TEAM_ID 且带私钥的签名身份。常见原因：团队不一致 / 证书已过期 / 导出时没勾选私钥 / 导出的是 Distribution 而非 Development"
+          KEY_COUNT=$(openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nocerts 2>/dev/null | grep -c "PRIVATE KEY" || true)
+          echo "p12 内私钥数量：$KEY_COUNT"
+          if [ "$KEY_COUNT" -eq 0 ]; then
+            echo "::error::p12 里没有私钥，必须在钥匙串中选中证书本体导出才行（Portal 下载的 cer 只有证书没有钥匙）"
+            exit 1
+          fi
+          P12_TEAM=$(openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null | openssl x509 -noout -subject 2>/dev/null | grep -oE 'OU=[A-Z0-9]{10}' | head -1 | cut -d= -f2 || true)
+          echo "p12 Team ID = ${P12_TEAM:-未解析} / APPLE_TEAM_ID = $TEAM_ID"
+          if [ -n "$P12_TEAM" ] && [ "$P12_TEAM" != "$TEAM_ID" ]; then
+            echo "::error::p12 的 Team ID 与 APPLE_TEAM_ID 不一致，该证书不属于此团队"
             exit 1
           fi
 
@@ -122,20 +130,15 @@ jobs:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
         run: |
-          if [ "$EXPORT_METHOD" = "app-store" ]; then
-            # 上架/TestFlight：自动签名，只需 teamID
-            cat > ExportOptions.plist <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0"><dict>
-            <key>method</key><string>app-store</string>
-            <key>teamID</key><string>$TEAM_ID</string>
-            <key>signingStyle</key><string>automatic</string>
-          </dict></plist>
-          EOF
-          else
-            # Ad Hoc / Development：手动签名，需要描述文件
-            cat > ExportOptions.plist <<EOF
+          # 一律手动签名。之前用 automatic 时，Xcode 在 archive 阶段坚持要用「开发证书 +
+          # 开发描述文件」，而 CI 每次都是新机器，它想先吊销账号上属于本机的那张开发证书
+          # （Revoke certificate ... Xcode can create a new one after revoking），
+          # 非交互环境下必然失败。手动签名直接用分发证书 + App Store 描述文件，绕开这一步。
+          if [ -z "$PROFILE_NAME" ]; then
+            echo "::error::缺少 PROVISIONING_PROFILE_NAME，请填 Portal 里描述文件的名称（如 Bian AppStore）"
+            exit 1
+          fi
+          cat > ExportOptions.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0"><dict>
@@ -147,43 +150,38 @@ jobs:
             </dict>
           </dict></plist>
           EOF
-          fi
 
       - name: 归档并导出 IPA
         if: env.HAS_SIGNING == 'true'
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
         run: |
           set -e
-          # 工程里 CODE_SIGN_STYLE=Automatic 但没写 DEVELOPMENT_TEAM，不传会报
-          # "Signing for App requires a development team"。
-          #
-          # 不能在这里传 CODE_SIGN_IDENTITY：
-          #   1) 传了就变成「自动签名 + 手动指定身份」互斥 → "App is automatically signed for
-          #      development, but a conflicting code signing identity ... has been manually specified"
-          #   2) 它会灌给所有 Pods target，而 CI keychain 里没有分发证书私钥 → 每个 Pod 都报
-          #      "No signing certificate \"iOS Distribution\" found"
-          # app-store 走纯自动签名：由 -allowProvisioningUpdates + App Store Connect API Key
-          # 让 Xcode 自行创建分发证书与 App Store 描述文件，不需要预先准备 profile。
-          # 只有 ExportOptions 是 manual 的 ad-hoc / development 才需要显式身份。
-          SIGN_FLAGS=()
-          case "$EXPORT_METHOD" in
-            app-store)   ;;                                                    # 自动签名，不覆盖身份
-            development) SIGN_FLAGS=( CODE_SIGN_IDENTITY="Apple Development" ) ;;
-            *)           SIGN_FLAGS=( CODE_SIGN_IDENTITY="Apple Distribution" ) ;;  # ad-hoc / enterprise
-          esac
+          # 手动签名：直接指定分发证书 + 描述文件，Xcode 不再参与证书管理。
+          # Pods 已在 Podfile 的 post_install 里关闭签名，所以这里的全局参数不会误伤它们。
+          if [ "$EXPORT_METHOD" = "development" ]; then
+            SIGN_IDENTITY="Apple Development"
+          else
+            SIGN_IDENTITY="Apple Distribution"
+          fi
           # TestFlight 要求每次上传的 CFBundleVersion 递增，工程里写死的是 1。
           # Info.plist 用的是 $(CURRENT_PROJECT_VERSION)，这里用构建号覆盖即可，不改文件。
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
             -sdk iphoneos -destination 'generic/platform=iOS' \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
-            "${SIGN_FLAGS[@]}" \
             $AUTH_FLAGS \
             -archivePath build/App.xcarchive archive
           xcodebuild -exportArchive -archivePath build/App.xcarchive \
             -exportPath build/ipa -exportOptionsPlist ExportOptions.plist \
-            DEVELOPMENT_TEAM="$TEAM_ID" "${SIGN_FLAGS[@]}" $AUTH_FLAGS
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            DEVELOPMENT_TEAM="$TEAM_ID" $AUTH_FLAGS
 
       - name: 上传到 TestFlight
         if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'

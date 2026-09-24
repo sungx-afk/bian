@@ -21,4 +21,15 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+
+  # 手动签名时 CODE_SIGN_* 只能通过命令行传给所有 target，Pods 也会被波及。
+  # 而 Pod 生成的 framework 会随主 App 一起重签，本身不需要各自的描述文件，
+  # 一旦参与签名 Xcode 就会为每个 Pod 索要 provisioning profile 而失败。
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
+      config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ''
+    end
+  end
 end
