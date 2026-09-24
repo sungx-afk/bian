@@ -6,9 +6,17 @@ name: iOS Build
 on:
   push:
     branches: [feature/ios-capacitor, main]
+    # Web 构建的输入远不止 src：漏了这些就会出现「改了却不重新打包」
     paths:
       - 'ios-app/**'
       - 'src/**'
+      - 'static/**'
+      - 'build/**'
+      - 'config/**'
+      - 'index.html'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.babelrc'
       - '.github/workflows/**'
   workflow_dispatch:
     inputs:
