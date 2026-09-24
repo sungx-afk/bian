@@ -31,6 +31,11 @@ AuthKey_*.p8
 *.certSigningRequest
 *.provisionprofile
 private_keys/
+# 例外：CI 签名用的分发证书与 App Store 描述文件需要入库。
+# 二者都是公开数据，不含私钥（私钥只存在于 SIGNING_PRIVATE_KEY Secret），
+# 放进仓库是为了免去手工 base64，纯网页操作即可完成配置。
+!ios-app/ci/apple-distribution.cer
+!ios-app/ci/bian-appstore.mobileprovision
 ios-app/ExportOptions.plist
 ios-app/*.ipa
 ios-app/build/

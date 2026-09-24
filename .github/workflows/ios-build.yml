@@ -38,7 +38,7 @@ jobs:
       BUNDLE_ID: com.yugusoft.bian
       EXPORT_METHOD: ${{ github.event.inputs.export_method || 'app-store' }}
       # secrets 不能用在 if 里，先转成 env 布尔串
-      HAS_SIGNING: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' }}
+      HAS_SIGNING: ${{ secrets.SIGNING_CERTIFICATE_P12 != '' || secrets.SIGNING_PRIVATE_KEY != '' }}
       HAS_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' }}
     steps:
       - uses: actions/checkout@v4
@@ -67,18 +67,68 @@ jobs:
         run: cd ios-app && npx cap sync ios
 
       # ---------- 有签名材料才走签名流程 ----------
-      - name: 导入签名证书与描述文件
+      # 两种来源都支持：
+      #   A) SIGNING_PRIVATE_KEY + 证书（推荐）：私钥由本仓库的一次性 workflow
+      #      「Generate Signing CSR」产生，本机钥匙串全程不参与，这里当场合成 p12
+      #   B) SIGNING_CERTIFICATE_P12：直接提供已经导好的 p12（老方式）
+      - name: 组装并导入签名证书
         if: env.HAS_SIGNING == 'true'
         env:
           P12_BASE64: ${{ secrets.SIGNING_CERTIFICATE_P12 }}
           P12_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+          KEY_PEM: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          CER_BASE64: ${{ secrets.SIGNING_CERTIFICATE_CER }}
           PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
+          PROFILE_FILE: ios-app/ci/bian-appstore.mobileprovision
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           set -e
+          # Homebrew 的 OpenSSL 3 默认用新算法加密 p12，macOS 钥匙串读不出来，
+          # 统一改用系统自带的 LibreSSL，产出的格式才是 Apple 这套工具链认的。
+          OPENSSL=/usr/bin/openssl
+          [ -x "$OPENSSL" ] || OPENSSL=$(command -v openssl)
+
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
-          echo -n "$P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/cert.p12"
+
+          if [ -n "$P12_BASE64" ]; then
+            echo "证书来源：SIGNING_CERTIFICATE_P12"
+            echo -n "$P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/cert.p12"
+          else
+            echo "证书来源：SIGNING_PRIVATE_KEY + 分发证书"
+            if [ -z "$KEY_PEM" ]; then
+              echo "::error::缺少 SIGNING_PRIVATE_KEY Secret，请先跑 Actions → Generate Signing CSR"
+              exit 1
+            fi
+            printf '%s\n' "$KEY_PEM" > "$RUNNER_TEMP/apple-distribution.key"
+            # 证书（公开数据）可以放在仓库里，直接从 GitHub 网页上传，连 base64 都省了
+            if [ -f ios-app/ci/apple-distribution.cer ]; then
+              CER_FILE=ios-app/ci/apple-distribution.cer
+            elif [ -n "$CER_BASE64" ]; then
+              echo -n "$CER_BASE64" | base64 --decode -o "$RUNNER_TEMP/cer.der"
+              CER_FILE="$RUNNER_TEMP/cer.der"
+            else
+              echo "::error::找不到分发证书：把 Portal 下载的 .cer 放进 ios-app/ci/apple-distribution.cer，或填 Secret SIGNING_CERTIFICATE_CER"
+              exit 1
+            fi
+            # Portal 下载的一般是 DER，仓库里也可能是 PEM，两种都接受
+            "$OPENSSL" x509 -inform der -in "$CER_FILE" -out "$RUNNER_TEMP/apple-distribution.pem" 2>/dev/null \
+              || "$OPENSSL" x509 -inform pem -in "$CER_FILE" -out "$RUNNER_TEMP/apple-distribution.pem"
+            # 私钥与证书必须配对，不配对的话要到 codesign 阶段才报错，很难排查
+            KEY_MD5=$("$OPENSSL" pkey -in "$RUNNER_TEMP/apple-distribution.key" -pubout | openssl md5)
+            CER_MD5=$("$OPENSSL" x509 -in "$RUNNER_TEMP/apple-distribution.pem" -noout -pubkey | openssl md5)
+            if [ "$KEY_MD5" != "$CER_MD5" ]; then
+              echo "::error::私钥与证书不配对（key=$KEY_MD5 cert=$CER_MD5），确认上传的 CSR 就是用这把私钥生成的"
+              exit 1
+            fi
+            "$OPENSSL" pkcs12 -export -out "$RUNNER_TEMP/cert.p12" \
+              -inkey "$RUNNER_TEMP/apple-distribution.key" \
+              -in "$RUNNER_TEMP/apple-distribution.pem" \
+              -name "Apple Distribution (GitHub Actions)" \
+              -passout pass:"$KEYCHAIN_PASSWORD"
+            P12_PASSWORD="$KEYCHAIN_PASSWORD"
+          fi
+
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
@@ -92,24 +142,30 @@ jobs:
           echo "=== keychain 中可用的签名身份 ==="
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
           echo "=== p12 内证书信息（subject 里的 OU 就是 Team ID）==="
-          openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null \
-            | openssl x509 -noout -subject -dates 2>/dev/null || echo "(p12 解析失败，请检查密码与格式)"
-          KEY_COUNT=$(openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nocerts 2>/dev/null | grep -c "PRIVATE KEY" || true)
+          "$OPENSSL" pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null \
+            | "$OPENSSL" x509 -noout -subject -dates 2>/dev/null || echo "(p12 解析失败，请检查密码与格式)"
+          KEY_COUNT=$("$OPENSSL" pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nocerts 2>/dev/null | grep -c "PRIVATE KEY" || true)
           echo "p12 内私钥数量：$KEY_COUNT"
           if [ "$KEY_COUNT" -eq 0 ]; then
-            echo "::error::p12 里没有私钥，必须在钥匙串中选中证书本体导出才行（Portal 下载的 cer 只有证书没有钥匙）"
+            echo "::error::p12 里没有私钥，只含证书的 p12 无法用于签名"
             exit 1
           fi
-          P12_TEAM=$(openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null | openssl x509 -noout -subject 2>/dev/null | grep -oE 'OU=[A-Z0-9]{10}' | head -1 | cut -d= -f2 || true)
+          P12_TEAM=$("$OPENSSL" pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null | "$OPENSSL" x509 -noout -subject 2>/dev/null | grep -oE 'OU=[A-Z0-9]{10}' | head -1 | cut -d= -f2 || true)
           echo "p12 Team ID = ${P12_TEAM:-未解析} / APPLE_TEAM_ID = $TEAM_ID"
           if [ -n "$P12_TEAM" ] && [ "$P12_TEAM" != "$TEAM_ID" ]; then
             echo "::error::p12 的 Team ID 与 APPLE_TEAM_ID 不一致，该证书不属于此团队"
             exit 1
           fi
 
-          if [ -n "$PROFILE_BASE64" ]; then
-            mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          # 描述文件同理，优先取仓库里的文件
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          if [ -f "$PROFILE_FILE" ]; then
+            cp "$PROFILE_FILE" ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          elif [ -n "$PROFILE_BASE64" ]; then
             echo -n "$PROFILE_BASE64" | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          else
+            echo "::error::找不到 App Store 描述文件：把 Portal 下载的 .mobileprovision 放进 ios-app/ci/bian-appstore.mobileprovision，或填 Secret PROVISIONING_PROFILE"
+            exit 1
           fi
 
       # 有 App Store Connect API Key 时用它做自动签名：不用手动管描述文件、也不用收集 UDID

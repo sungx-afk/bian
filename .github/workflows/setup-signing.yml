@@ -1,0 +1,79 @@
+name: Generate Signing CSR
+
+# 一次性流程：在 CI 里生成 Apple 分发证书所需的私钥与 CSR，
+# 全程不用本机钥匙串（本机也不需要装 Xcode）。
+#
+# 触发：GitHub → Actions → Generate Signing CSR → Run workflow
+#
+# 私钥在这个 job 里产生，之后以 Artifact 形式交给你，
+# 请妥善保存为 Secret —— Apple 后台不保存私钥，丢了只能整重新走一遍。
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Apple 开发者账号邮箱'
+        required: true
+      common_name:
+        description: '证书常用名称（建议写团队或项目名，如 Bian Distribution）'
+        required: true
+        default: 'Bian Distribution'
+
+jobs:
+  generate:
+    runs-on: macos-14
+    steps:
+      - name: 生成私钥与 CSR
+        env:
+          EMAIL: ${{ github.event.inputs.email }}
+          CN: ${{ github.event.inputs.common_name }}
+        run: |
+          set -e
+          # Homebrew 的 OpenSSL 3 用新算法加密 p12，macOS 钥匙串读不了；
+          # 系统自带的 LibreSSL 产出的格式才是 Apple 这套工具链认的。
+          OPENSSL=/usr/bin/openssl
+          [ -x "$OPENSSL" ] || OPENSSL=$(command -v openssl)
+
+          mkdir -p signing-request
+          "$OPENSSL" genrsa -out signing-request/apple-distribution.key 2048
+          "$OPENSSL" req -new -sha256 \
+            -key signing-request/apple-distribution.key \
+            -out signing-request/apple-distribution.csr \
+            -subj "/emailAddress=$EMAIL/CN=$CN/C=US"
+
+          echo "=== CSR 内容（上传 Apple Developer 的就是这个）==="
+          cat signing-request/apple-distribution.csr
+
+      - name: 上传 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apple-signing-request
+          path: signing-request
+          retention-days: 1
+
+      - name: 后续步骤
+        run: |
+          cat <<'TXT'
+          ── 接下来做三件事，全都在网页上完成 ──
+
+          1) 下载本页 Artifacts 里的 apple-signing-request（有效期 1 天）
+
+          2) Apple Developer → Certificates → ＋ → 选 Apple Distribution
+             → 上传 apple-distribution.csr → Download 得到 .cer
+             → 把 .cer 放进仓库 ios-app/ci/apple-distribution.cer
+               （GitHub 网页 Add file → Upload files 即可，不用拉代码）
+             或者转成 base64 存 Secret：SIGNING_CERTIFICATE_CER
+
+          3) Profiles → ＋ → Distribution 下的 App Store
+             → App ID 选 com.yugusoft.bian → 关联刚才那张分发证书
+             → 命名（例如 Bian AppStore）→ 下载 .mobileprovision
+             → 同样放进 ios-app/ci/ 或 base64 存 Secret PROVISIONING_PROFILE
+             并把名字填进 Secret PROVISIONING_PROFILE_NAME
+
+          4) 把 apple-distribution.key 全文（含 -----BEGIN----- 两行）
+             存成 Secret：SIGNING_PRIVATE_KEY（支持多行粘贴）
+
+          5) 收尾：删掉本次运行记录和 Artifact，别让私钥留在 GitHub 上
+
+          ⚠️ 前提是账号要有证书创建权限（Account Holder / Admin）
+          TXT
