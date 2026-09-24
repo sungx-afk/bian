@@ -117,7 +117,6 @@ jobs:
             <key>method</key><string>app-store</string>
             <key>teamID</key><string>$TEAM_ID</string>
             <key>signingStyle</key><string>automatic</string>
-            <key>destination</key><string>upload</string>
           </dict></plist>
           EOF
           else
@@ -144,26 +143,33 @@ jobs:
           set -e
           # 工程里 CODE_SIGN_STYLE=Automatic 但没写 DEVELOPMENT_TEAM，不传会报
           # "Signing for App requires a development team"。
-          # pbxproj 里 CODE_SIGN_IDENTITY 被写死成 "iPhone Developer"（Debug/Release 都是），
-          # Release 归档时会去找「iOS App Development」描述文件，进而报
-          # "Device isn't registered" / "No profiles ... App Development"。
-          # 发布必须用分发身份，这里按导出方式覆盖。
+          #
+          # 不能在这里传 CODE_SIGN_IDENTITY：
+          #   1) 传了就变成「自动签名 + 手动指定身份」互斥 → "App is automatically signed for
+          #      development, but a conflicting code signing identity ... has been manually specified"
+          #   2) 它会灌给所有 Pods target，而 CI keychain 里没有分发证书私钥 → 每个 Pod 都报
+          #      "No signing certificate \"iOS Distribution\" found"
+          # app-store 走纯自动签名：由 -allowProvisioningUpdates + App Store Connect API Key
+          # 让 Xcode 自行创建分发证书与 App Store 描述文件，不需要预先准备 profile。
+          # 只有 ExportOptions 是 manual 的 ad-hoc / development 才需要显式身份。
+          SIGN_FLAGS=()
           case "$EXPORT_METHOD" in
-            development) SIGN_IDENTITY="Apple Development" ;;
-            *)           SIGN_IDENTITY="Apple Distribution" ;;
+            app-store)   ;;                                                    # 自动签名，不覆盖身份
+            development) SIGN_FLAGS=( CODE_SIGN_IDENTITY="Apple Development" ) ;;
+            *)           SIGN_FLAGS=( CODE_SIGN_IDENTITY="Apple Distribution" ) ;;  # ad-hoc / enterprise
           esac
           # TestFlight 要求每次上传的 CFBundleVersion 递增，工程里写死的是 1。
           # Info.plist 用的是 $(CURRENT_PROJECT_VERSION)，这里用构建号覆盖即可，不改文件。
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
-            CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+            "${SIGN_FLAGS[@]}" \
             $AUTH_FLAGS \
             -archivePath build/App.xcarchive archive
           xcodebuild -exportArchive -archivePath build/App.xcarchive \
             -exportPath build/ipa -exportOptionsPlist ExportOptions.plist \
-            CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
-            DEVELOPMENT_TEAM="$TEAM_ID" $AUTH_FLAGS
+            DEVELOPMENT_TEAM="$TEAM_ID" "${SIGN_FLAGS[@]}" $AUTH_FLAGS
 
       - name: 上传到 TestFlight
         if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'
