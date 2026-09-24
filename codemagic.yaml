@@ -22,14 +22,21 @@ workflows:
       groups:
         - app_store_credentials
     triggering:
-      # 分支推送交给 GitHub Actions（.github/workflows/ios-build.yml）。
-      # Codemagic 只在打版本 tag 时跑（如 git tag v1.0.1 && git push origin v1.0.1），
-      # 避免两条流水线同时构建、同时上传 TestFlight 导致 build number 冲突。
+      # Codemagic 侧统一改为「只手动触发」： Tag/分支 都交给 GitHub Actions
+      # （.github/workflows/ios-build.yml），两条流水线同时跑会各算各的 build number，
+      # 同时上传 TestFlight 必然冲突。
+      # 需要用 Codemagic 时：在 Codemagic 后台点 Start new build 手动跑，
+      # 或者把下面的 include 改回 true。
       events:
+        - push
         - tag
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: false
       tag_patterns:
-        - pattern: 'v*'
-          include: true
+        - pattern: '*'
+          include: false
     scripts:
       - name: 安装 npm 依赖
         script: |
@@ -93,6 +100,19 @@ workflows:
         BUNDLE_ID: "com.yugusoft.bian"
       groups:
         - app_store_credentials
+    triggering:
+      # 同 ios-testflight：默认全关，只用 Codemagic 后台的 Start new build 手动触发。
+      # 以前这里没有 triggering，Codemagic 会对每次 push/tag 都拉起一次 Ad Hoc 构建。
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: false
+      tag_patterns:
+        - pattern: '*'
+          include: false
     scripts:
       - name: 安装 npm 依赖
         script: |
