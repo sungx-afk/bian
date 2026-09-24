@@ -26,13 +26,13 @@
       <van-cell class="account-cell">
         <span>账号ID：</span><span>{{user.id}}</span>
       </van-cell>
-      <van-cell class="charge-cell" v-if="supportPay">
+      <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
         <div class="charge-btn-wrapper">
           <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
         </div>
       </van-cell>
-      <van-cell class="log-cell" v-if="supportPay" :is-link="true" @click.stop="goLogs">
+      <van-cell class="log-cell" v-if="supportPay && supportPoint" :is-link="true" @click.stop="goLogs">
         <span>充值和扣费记录</span>
       </van-cell>
       <van-cell class="account-cell" v-if="showOrder" @click="goViewMyOrder" :is-link="true">
@@ -77,6 +77,10 @@ export default {
     }),
     supportPay(){
       return config_server.supportPay
+    },
+    // 是否展示「云币」概念：关闭后全站只有尊贵馆(VIP)概念
+    supportPoint(){
+      return !!config_server.supportPoint
     },
     showOrder(){
       let appid = window.app_id || config_server.wechatAppId

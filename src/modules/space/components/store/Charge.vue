@@ -1,13 +1,18 @@
 <template>
   <div class="charge-container">
     <div class="charge-wrapper">
-      <div class="info">请选择充值金额</div>
-      <div class="tag_list clearfix">
-        <div class="item" v-for="item in priceTag" :key="item.id" @click="placeOrder(item)">
-          <span class="money">{{item.price/100}}元</span>
-          <span>{{item.point + item.giftPoint}}云币</span>
+      <template v-if="supportPoint">
+        <div class="info">请选择充值金额</div>
+        <div class="tag_list clearfix">
+          <div class="item" v-for="item in priceTag" :key="item.id" @click="placeOrder(item)">
+            <span class="money">{{item.price/100}}元</span>
+            <span>{{item.point + item.giftPoint}}云币</span>
+          </div>
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <div class="info">本平台已取消虚拟币充值：开通尊贵馆后，馆内祭奠物品免费使用。</div>
+      </template>
     </div>
   </div>
 </template>
@@ -27,6 +32,10 @@
         ...mapGetters({
           user: 'userStore/user',
         }),
+        // 全局开关：关闭后本页不再提供云币充值
+        supportPoint(){
+          return !!config_server.supportPoint
+        },
       },
       methods:{
         initTest(){
@@ -66,6 +75,10 @@
         }
       },
       created() {
+        // 无云币模式：不发充值档位请求
+        if (!this.supportPoint){
+          return
+        }
         this.initTest()
         this.getPriceTag()
       }

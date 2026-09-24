@@ -10,13 +10,15 @@
           <van-cell class="account-cell">
             <span>账号ID：</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
           </van-cell>
-          <van-cell class="charge-cell" v-if="supportPay">
+          <van-cell class="charge-cell" v-if="supportPay && supportPoint">
             <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;云币</div>
             <div class="charge-btn-wrapper">
               <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
             </div>
-            <!-- App 内必须提供「恢复购买」（审核 3.1.2） -->
-            <div class="charge-btn-wrapper" v-if="nativeApp">
+          </van-cell>
+          <!-- App 内必须提供「恢复购买」（审核 3.1.2）：与云币无关，独立成行 -->
+          <van-cell class="restore-cell" v-if="nativeApp">
+            <div class="charge-btn-wrapper">
               <van-button size="small" class="charge-btn" @click="restorePurchases">恢复购买</van-button>
             </div>
           </van-cell>
@@ -47,7 +49,13 @@
         <p>长明灯次数：<span class="num">{{space.dengTimes || 0}}</span></p>
         <p class="create-info">本馆由 {{ space.creator.name }} 于 {{ space.createDate | timesToDate('yyyy-MM-dd HH:mm') }} 创建</p>
       </div>
-      <div class="view-history"><span @click="goLogs" v-if="supportPay">充值和扣费记录</span></div>
+      <!-- 审核 3.1.2：付费/订阅页面必须能直接打开服务条款与隐私政策 -->
+      <div class="view-history doc-links">
+        <span @click="goTerms">服务条款（自动续期订阅）</span>
+        <span class="split">|</span>
+        <span @click="goPrivacy">隐私政策</span>
+      </div>
+      <div class="view-history"><span @click="goLogs" v-if="supportPay && supportPoint">充值和扣费记录</span></div>
     </div>
 
     <van-popup class="visited-tip-popup-area" v-model="showVisitedTip" closeable :round="false" close-on-popstate @closed="tipPopupClosed">
@@ -98,6 +106,10 @@
         nativeApp(){
           return isNative()
         },
+        // 是否展示「云币」概念（全局开关，关闭后只保留尊贵馆/VIP 概念）
+        supportPoint(){
+          return !!config_server.supportPoint
+        },
         chargeTitle(){
           let result = ''
           if (this.space){
@@ -105,6 +117,11 @@
               result = '本纪念馆为样例馆'
             }else if (!this.supportPay){
               result = ''
+            }else if (!this.supportPoint){
+              // 无云币模式：只讲尊贵馆权益
+              result = this.isVipSpace
+                ? '本馆已开通尊贵馆，祭奠物品免费使用'
+                : '开通尊贵馆后，本馆祭奠物品免费使用'
             }else {
               result = '以下是为支付运营成本的收费服务，感谢您的支持'
             }
@@ -325,9 +342,13 @@
           }
         },
         buyProductBtnText(product){
+          if (product.id == 'item-space-vip'){
+            return '开通'
+          }
           let result = '祭奠'
           if (!this.isVipSpace && product.point > 0){
-            result = product.point
+            // 无云币模式：收费祭品只对尊贵馆开放，不再显示点数
+            result = this.supportPoint ? product.point : '尊贵馆免费'
           }
           return result
         },
@@ -339,7 +360,12 @@
             return
           }
           if (this.space){
-            if (!this.isVipSpace && this.space.currentUser.point < product.point){
+            // 无云币模式：非尊贵馆不使用收费祭品，引导开通尊贵馆
+            if (!this.supportPoint && !this.isVipSpace && this.space.type != 2 && product.point > 0){
+              this.$toast(product.id == 'item-space-vip' ? '请点击「开通」' : '开通尊贵馆后，本馆祭奠物品免费使用')
+              return
+            }
+            if (this.supportPoint && !this.isVipSpace && this.space.currentUser.point < product.point){
               this.$toast("余额不足，请先充值")
               return
             }
@@ -347,7 +373,7 @@
             let spaceId = this.spaceId
             $API.space.buy({productId,spaceId},rsp=>{
               if (this.supportPay){
-                if (this.isVipSpace){
+                if (this.isVipSpace || !this.supportPoint){
                   this.$toast(`已祭奠${product.name}`)
                 }else{
                   this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
@@ -375,6 +401,12 @@
         },
         goLogs(){
           Link(`/store/logs`)
+        },
+        goTerms(){
+          Link(`/terms`)
+        },
+        goPrivacy(){
+          Link(`/privacy`)
         },
         goViewVisitedLog(){
           Link(`/space/manage/${this.spaceId}`)
@@ -546,6 +578,14 @@
         cursor: pointer;
         padding: 10px 0 30px;
         flex-shrink: 0;
+      }
+      .doc-links{
+        margin-top: 12px;
+        color: @MAIN_THEME_COLOR;
+        .split{
+          margin: 0 8px;
+          color: #ddd;
+        }
       }
     }
 

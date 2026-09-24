@@ -19,7 +19,7 @@ export function pay(order) {
 async function iapPay(order) {
   const iap = plugin(IAP_PLUGIN)
   if (!iap) {
-    throw new Error('内购（IAP）尚未接入，App 内暂不能购买云币/祭品')
+    throw new Error('内购（IAP）尚未接入，App 内暂不能开通尊贵馆')
   }
   // TODO: 接入内购插件后：拉起商品 -> 购买 -> 拿 receipt -> 调 /pay/apple/service/verify 校验发货
   const result = await iap.order(order && order.productId ? order.productId : order)

@@ -259,6 +259,14 @@
 
   const seqIndex = [10, 14, 9, 15, 8, 16, 3, 4, 2, 5, 1, 6, 0, 7];
 
+  // Apple 平台来源用户免费的祭品：上香（含上香祭拜套餐、单支香）、点烛。
+  // 必须与后端 SpaceController#APPLE_FREE_PRODUCT_IDS 保持一致，否则前端放过后端仍会扣云币。
+  const APPLE_FREE_PRODUCT_IDS = [
+    'package-shang-xiang-ji-bai',//上香祭拜（祭拜页「上香」按钮）
+    'item-xiang',//香
+    'item-la-zu'//点烛（祭拜页「点烛」按钮）
+  ];
+
   export default {
     data() {
       return {
@@ -329,9 +337,7 @@
         return result
       },
       theme(){
-        // 祭拜页暂时去掉主题背景大图（原: 'theme_' + backgroundId），需要时恢复下一行即可
-        return 'no-theme'
-        // return 'theme_'+(this.space&&this.space.backgroundId||1);
+        return 'theme_'+(this.space&&this.space.backgroundId||1);
       },
       //合影横版相框：用旋转90°的横版图铺满显示，相框完整不被截
       combineFrameStyle(){
@@ -411,8 +417,21 @@
       supportPay(){
         return config_server.supportPay
       },
+      // 全局开关：关闭后祭拜页不再出现云币，只有尊贵馆(VIP)概念
+      supportPoint(){
+        return !!config_server.supportPoint
+      },
       isVipSpace(){
         return this.space && this.space.vip == 1
+      },
+      //是否来自 Apple 平台的用户：source 是新的注册来源字段，历史账号用 appleId 兜底
+      isAppleUser(){
+        const u = this.user
+        return !!(u && (u.source === 'apple' || u.appleId))
+      },
+      //本次购买对 Apple 来源用户是否免费（见 APPLE_FREE_PRODUCT_IDS）
+      isAppleFree(productId){
+        return this.isAppleUser && APPLE_FREE_PRODUCT_IDS.indexOf(productId) > -1
       },
     },
     methods: {
@@ -422,6 +441,15 @@
       //购买，通用
       buy(productId, callback) {
         let that = this;
+        // 无云币模式：非尊贵馆不使用收费祭品，引导开通尊贵馆（iOS 走内购）
+        // Apple 来源用户的上香、点烛不判断花费，直接放过
+        if (!this.isAppleFree(productId) && !this.supportPoint && !this.isVipSpace && this.space && this.space.type !== 2){
+          this.$toast('开通尊贵馆后，本馆祭奠物品免费使用')
+          setTimeout(() => {
+            Link(`/store/info?space_id=${this.spaceId}`)
+          }, 800)
+          return
+        }
         $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
           if (resp && !resp.error) {
             // if(resp.content){
@@ -468,7 +496,8 @@
           this.currentProduct = {
             name:'点烛',
             duration:'1天',
-            point:this.space.type == 2?0:3
+            // Apple 来源用户免费
+            point:this.isAppleFree('item-la-zu') ? 0 : (this.space.type == 2?0:3)
           }
           this.action = this.doDianlazu
         }else {
@@ -479,7 +508,7 @@
       doDianlazu(){
         let that = this;
         this.buy('item-la-zu', () => {
-          if (this.space.type !== 2 && this.supportPay && !this.isVipSpace) {
+          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isVipSpace && !this.isAppleFree('item-la-zu')) {
             this.$notify({
               type: 'info',
               message: '-3 云币',
@@ -524,7 +553,7 @@
       doFlower(){
         let that = this;
         this.buy('item-xuan-hua', () => {
-          if (this.space.type !== 2 && this.supportPay && !this.isVipSpace){
+          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isVipSpace){
             this.$notify({
               type:'info',
               message: '-9 云币',
@@ -560,7 +589,7 @@
       doShaozhi(){
         let that = this;
         this.buy('item-zhi-qian', () => {
-          if (this.space.type !== 2 && this.supportPay && !this.isVipSpace) {
+          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isVipSpace) {
             this.$notify({
               type: 'info',
               message: '-8 云币',
@@ -1876,19 +1905,10 @@
     }
   }
 
-  /*去掉主题背景大图后统一纯色墨底（与纪念馆详情页顶区同色系）*/
+  /*无权限进入时，不展示纪念馆主题背景图*/
   .sacrifice.no-theme{
     background-image: none !important;
-    background-color: #14171f;
-    background: linear-gradient(180deg, #14171f 0%, #2b2118 100%);
-    .tip-wrapper{
-      .iconfont{
-        color: @SECOND_THEME_COLOR;
-      }
-      .content{
-        color: rgba(255,255,255,0.8);
-      }
-    }
+    background-color: #fff;
   }
 
   .sacrifice.theme_1 {

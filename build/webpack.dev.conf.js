@@ -32,6 +32,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
+    },
+    // 后端网关(openresty)有一个 CORS 源白名单：只认 https://ba.yugusoft.com，
+    // 其它 Origin 一律返回 403 Invalid CORS request。
+    // 浏览器对同源页面发给 localhost:8080/api 的 XHR 也会带上 Origin/Referer:
+    // http://localhost:8080，代理把这些头原样透传到后端，于是 PATCH/POST/DELETE
+    // 全被拦（GET 因为浏览器不带 Origin 头，所以一直是好的）。
+    // before 注册的中间件排在 proxy 之前，这里先把这两个头改成后端信任的源。
+    before(app) {
+      const allowOrigin = 'https://ba.yugusoft.com'
+      app.use('/api', (req, res, next) => {
+        req.headers.origin = allowOrigin
+        req.headers.referer = allowOrigin + '/'
+        next()
+      })
     }
   },
   plugins: [

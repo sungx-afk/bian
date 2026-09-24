@@ -80,7 +80,8 @@
           return this.space && this.space.vip == 1
         },
         showPoint(){
-          return this.supportPay && !this.isVipSpace
+          // 全局关闭云币概念后，弹窗里不再出现点数
+          return !!config_server.supportPoint && this.supportPay && !this.isVipSpace
         }
       },
       methods:{
