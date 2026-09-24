@@ -140,7 +140,10 @@ jobs:
         run: |
           set -e
           npm ci --ignore-scripts --legacy-peer-deps
-          npm run build
+          # ASSET_PUBLIC_PATH=/ 必须显式给：不设的话 webpack.prod.conf.js 会把
+          # publicPath 落到七牛 CDN 域名上，index.html 里的 manifest/vendor/app
+          # 会去请求线上 CDN（CDN 上没有这次的 hash → 404 → 白屏）
+          ASSET_PUBLIC_PATH=/ npm run build
           # 必须用 copy-web.sh，不能用 npm run copy:web：
           # 后者只拷 dist，会漏掉 static/（jquery/pixi/jweixin 等老库）和 CDN 外链本地化，打出的是残包
           bash ios-app/copy-web.sh

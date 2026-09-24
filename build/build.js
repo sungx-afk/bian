@@ -15,7 +15,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const spinner = ora('building for production...')
 spinner.start()
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
+// 整个 dist 都重建：以前只清 dist/bian-mobile/dist，根目录会积下历次构建的
+// 旧 chunk（0.js、1.js…），copy-web.sh 又会把它们一起拷进 App 资源包。
+rm(config.build.assetsRoot, err => {
   if (err) throw err
   webpack(webpackConfig, function (err, stats) {
     spinner.stop()
