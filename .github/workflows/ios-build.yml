@@ -31,7 +31,9 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    # macos-14（Sonoma）默认 Xcode 15.4，且该镜像 2026-11-02 起彻底下线。
+    # Xcode 26 需要 macOS 15+，而 macos-15 镜像自带 Xcode 26.0.1 / 26.1.1 / 26.2 / 26.3。
+    runs-on: macos-15
     env:
       WORKSPACE: ios-app/ios/App/App.xcworkspace
       SCHEME: App
@@ -42,6 +44,30 @@ jobs:
       HAS_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 != '' }}
     steps:
       - uses: actions/checkout@v4
+
+      # Apple 自 2026 年起硬性要求：所有 iOS/iPadOS App 必须用 iOS 26 SDK（Xcode 26+）构建，
+      # 否则上传时直接被拒：Validation failed (409) SDK version issue。
+      # macos-15 镜像默认是 Xcode 16.4，必须显式切到 26.x。
+      - name: 选择 Xcode 26+
+        run: |
+          set -e
+          XC=$(ls -d /Applications/Xcode_2*.app 2>/dev/null | sort | tail -1)
+          if [ -z "$XC" ]; then
+            echo "::error::镜像里没有 Xcode 26，无法上传 App Store Connect"
+            ls -d /Applications/Xcode*.app || true
+            exit 1
+          fi
+          sudo xcode-select -s "$XC"
+          echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
+          sudo xcodebuild -runFirstLaunch >/dev/null 2>&1 || true
+          VER=$(xcodebuild -version | awk 'NR==1{print $2}')
+          SDK=$(xcrun --sdk iphoneos --show-sdk-version)
+          echo "已选择 Xcode $VER（iOS SDK $SDK），路径 $XC"
+          MAJOR=${VER%%.*}
+          if [ "${MAJOR:-0}" -lt 26 ]; then
+            echo "::error::Xcode $VER 过低，Apple 要求 iOS 26 SDK 及以上"
+            exit 1
+          fi
 
       # 前置自检：只报「有没有、多长」，不打印内容。
       # 否则缺 Secret 时的表现是「签名/上传全部 skipped 然后构建成功」，极易误判为上传成功。
