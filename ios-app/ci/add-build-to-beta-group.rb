@@ -62,7 +62,7 @@ def jwt
   end
 end
 
-def api(verb, path, body = nil)
+def api(verb, path, body = nil, allow: [])
   uri = URI.join("#{BASE}/", path)
   req = Net::HTTP.const_get(verb.capitalize).new(uri)
   req['Authorization'] = "Bearer #{jwt}"
@@ -71,10 +71,10 @@ def api(verb, path, body = nil)
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: 30, read_timeout: 60) do |http|
     http.request(req)
   end
-  # 204（如加入测试组成功）没有 body，不能当成失败
-  abort "App Store Connect API #{verb.upcase} #{path} 失败（HTTP #{res.code}）：#{res.body}" if res.code.to_i >= 300
-
-  return {} if res.body.nil? || res.body.empty?
+  # 204（如加入测试组成功）没有 body，不能当成失败；allow 里的状态码视为成功
+  code = res.code.to_i
+  abort "App Store Connect API #{verb.upcase} #{path} 失败（HTTP #{code}）：#{res.body}" if code >= 300 && !allow.include?(code)
+  return {} if allow.include?(code) || res.body.nil? || res.body.empty?
 
   JSON.parse(res.body)
 end
@@ -125,7 +125,10 @@ name = group.dig('attributes', 'name')
 puts "测试组：#{name}#{group.dig('attributes', 'isInternalGroup') ? '（内部组，无需审核）' : '（外部组，可能需要 Beta 审核）'}"
 
 # 4. 把构建加进测试组
-api(:patch, "betaGroups/#{group.fetch('id')}/relationships/builds",
-    data: [{ type: 'builds', id: build.fetch('id') }])
+# 必须是 POST（CREATE）。用 PATCH 会被当成 REPLACE，接口只开放
+# CREATE / DELETE / GET_RELATED / GET_RELATIONSHIP，会回 403
+# "The relationship 'builds' does not allow 'REPLACE'"。
+api(:post, "betaGroups/#{group.fetch('id')}/relationships/builds",
+    { data: [{ type: 'builds', id: build.fetch('id') }] }, allow: [409])
 
 puts "完成：构建 #{build_number} 已加入「#{name}」，组内测试员可在 TestFlight 里更新"
