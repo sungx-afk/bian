@@ -327,8 +327,11 @@ jobs:
           xcrun altool --upload-app --type ios --file "$IPA" \
             --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
 
-      # 上传完还得把构建加进测试组，否则它只是躺在 TestFlight 列表里，测试员看不到
+      # 上传完还得把构建加进测试组，否则它只是躺在 TestFlight 列表里，测试员看不到。
+      # 注意：内部测试组无法通过 API 关联（Apple 会回 422），脚本会降级成提示并正常退出；
+      # 这里的 continue-on-error 是兜底——IPA 已经上传成功，不该因为「挂测试组」失败而让整条流水线变红。
       - name: 加入 TestFlight 测试组
+        continue-on-error: true
         if: env.HAS_SIGNING == 'true' && env.HAS_API_KEY == 'true' && env.EXPORT_METHOD == 'app-store'
         env:
           # 上一步已把 p8 解码到仓库根目录的 private_keys/ 下，这里直接复用

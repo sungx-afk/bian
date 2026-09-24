@@ -134,14 +134,28 @@ puts "测试组：#{name}#{group.dig('attributes', 'isInternalGroup') ? '（内�
 # CREATE / DELETE / GET_RELATED / GET_RELATIONSHIP，会回 403。
 build_id = build.fetch('id')
 group_id = group.fetch('id')
+internal = group.dig('attributes', 'isInternalGroup') ? true : false
 begin
   api(:post, "builds/#{build_id}/relationships/betaGroups",
       { data: [{ type: 'betaGroups', id: group_id }] }, allow: [409])
 rescue SystemExit
   # 构建侧不通用（例如某些外部组的场景）时，退回组侧再试一次
   puts '构建侧关联失败，改用测试组侧接口重试…'
-  api(:post, "betaGroups/#{group_id}/relationships/builds",
-      { data: [{ type: 'builds', id: build_id }] }, allow: [409])
+  begin
+    api(:post, "betaGroups/#{group_id}/relationships/builds",
+        { data: [{ type: 'builds', id: build_id }] }, allow: [409])
+  rescue SystemExit
+    # 内部测试组：Apple 不接受通过 API 关联，两个方向的端点都会回
+    #   422 "Builds cannot be assigned to this internal group."
+    # 这是接口限制，不是配置错误。已经在 App Store Connect 网页上手动添加构建即可，
+    # 不该因此让整个流水线变红（IPA 此时早已上传并处理完成）。
+    raise unless internal
+
+    puts '提示：Apple 不允许通过 API 把构建加入【内部测试组】（422），这不是配置问题。'
+    puts "     构建 #{build_number} 已上传并处理完成，请在网页上手动添加："
+    puts '     App Store Connect → TestFlight → 内部测试 → 构建版本 → 添加构建'
+    exit 0
+  end
 end
 
 puts "完成：构建 #{build_number} 已加入「#{name}」，组内测试员可在 TestFlight 里更新"
