@@ -91,15 +91,8 @@ jobs:
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
 
-          if [ -n "$P12_BASE64" ]; then
-            echo "证书来源：SIGNING_CERTIFICATE_P12"
-            echo -n "$P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/cert.p12"
-          else
-            echo "证书来源：SIGNING_PRIVATE_KEY + 分发证书"
-            if [ -z "$KEY_PEM" ]; then
-              echo "::error::缺少 SIGNING_PRIVATE_KEY Secret，请先跑 Actions → Generate Signing CSR"
-              exit 1
-            fi
+          if [ -n "$KEY_PEM" ]; then
+            echo "证书来源：SIGNING_PRIVATE_KEY + 分发证书（私钥由本仓库生成，本机不参与）"
             printf '%s\n' "$KEY_PEM" > "$RUNNER_TEMP/apple-distribution.key"
             # 证书（公开数据）可以放在仓库里，直接从 GitHub 网页上传，连 base64 都省了
             if [ -f ios-app/ci/apple-distribution.cer ]; then
@@ -127,6 +120,12 @@ jobs:
               -name "Apple Distribution (GitHub Actions)" \
               -passout pass:"$KEYCHAIN_PASSWORD"
             P12_PASSWORD="$KEYCHAIN_PASSWORD"
+          elif [ -n "$P12_BASE64" ]; then
+            echo "证书来源：SIGNING_CERTIFICATE_P12（旧方式）"
+            echo -n "$P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/cert.p12"
+          else
+            echo "::error::缺少签名材料：先跑 Actions → Generate Signing CSR，再把私钥存成 SIGNING_PRIVATE_KEY"
+            exit 1
           fi
 
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
@@ -144,11 +143,21 @@ jobs:
           echo "=== p12 内证书信息（subject 里的 OU 就是 Team ID）==="
           "$OPENSSL" pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null \
             | "$OPENSSL" x509 -noout -subject -dates 2>/dev/null || echo "(p12 解析失败，请检查密码与格式)"
-          KEY_COUNT=$("$OPENSSL" pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nocerts 2>/dev/null | grep -c "PRIVATE KEY" || true)
-          echo "p12 内私钥数量：$KEY_COUNT"
-          if [ "$KEY_COUNT" -eq 0 ]; then
-            echo "::error::p12 里没有私钥，只含证书的 p12 无法用于签名"
+          # 以 keychain 能否真正形成「签名身份」为准：
+          # openssl 统计私钥数量在某些新算法 p12 上不可靠，容易误报
+          IDENT_COUNT=$(security find-identity -p codesigning "$KEYCHAIN_PATH" 2>/dev/null | grep -c ")" || true)
+          echo "keychain 中可用签名身份数量：$IDENT_COUNT"
+          if [ "$IDENT_COUNT" -eq 0 ]; then
+            echo "::error::证书已导入但 keychain 里没有可用的签名身份（通常是 p12 缺少私钥）"
             exit 1
+          fi
+          # Apple 的证书类型极易混淆，把最常见的错类型直接挡住
+          if security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -qi "Developer ID"; then
+            echo "::error::这是 macOS 的 Developer ID 证书，只能签 Mac 软件；iOS 上架需要 Apple Distribution 证书"
+            exit 1
+          fi
+          if ! security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -qi "Apple Distribution"; then
+            echo "::warning::keychain 里看起来不是 Apple Distribution 证书，请确认证书类型是否正确"
           fi
           P12_TEAM=$("$OPENSSL" pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys -clcerts 2>/dev/null | "$OPENSSL" x509 -noout -subject 2>/dev/null | grep -oE 'OU=[A-Z0-9]{10}' | head -1 | cut -d= -f2 || true)
           echo "p12 Team ID = ${P12_TEAM:-未解析} / APPLE_TEAM_ID = $TEAM_ID"
