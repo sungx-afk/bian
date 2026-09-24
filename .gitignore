@@ -9,6 +9,10 @@ selenium-debug.log
 
 /dist/
 
+# ===== Capacitor Web 资源：由 CI 从 /dist 生成，不入库 =====
+# 同步方式：根目录 npm run build → ios-app 下 npm run copy:web
+/ios-app/www/
+
 # Editor directories and files
 .idea
 .vscode
