@@ -4,6 +4,9 @@ node_modules/
 *.p12
 *.mobileprovision
 *.cer
+# 例外：分发证书与 App Store 描述文件供 CI 签名用，二者均为公开数据不含私钥
+!ci/apple-distribution.cer
+!ci/bian-appstore.mobileprovision
 private_keys/
 ExportOptions.plist
 build/
