@@ -85,6 +85,20 @@ jobs:
           security import "$RUNNER_TEMP/cert.p12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+          # 自检：CI 上没有 Xcode GUI，签名失败时 xcodebuild 的报错很含糊、
+          # 而且会伪装成「描述文件」问题。这里先把证据打出来并检查 team 是否对得上，
+          # 不匹配就直接失败，省一轮构建。
+          echo "=== keychain 中可用的签名身份 ==="
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+          echo "=== p12 内证书信息（subject 里的 OU 就是 Team ID）==="
+          openssl pkcs12 -in "$RUNNER_TEMP/cert.p12" -passin pass:"$P12_PASSWORD" -nokeys 2>/dev/null \
+            | openssl x509 -noout -subject -dates 2>/dev/null || echo "(p12 解析失败，请检查密码与格式)"
+          if ! security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -q "$TEAM_ID"; then
+            echo "::error::p12 里没有属于 Team $TEAM_ID 且带私钥的签名身份。常见原因：团队不一致 / 证书已过期 / 导出时没勾选私钥 / 导出的是 Distribution 而非 Development"
+            exit 1
+          fi
+
           if [ -n "$PROFILE_BASE64" ]; then
             mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
             echo -n "$PROFILE_BASE64" | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
