@@ -28,6 +28,19 @@ def b64(str)
   Base64.urlsafe_encode64(str, padding: false)
 end
 
+# 把 BN 转成固定 32 字节的大端补码（ES256 的 r / s 各 32 字节）
+def raw32(bn)
+  bn.to_s(2).rjust(33, "\x00")[-32, 32]
+end
+
+# OpenSSL::PKey::EC#sign 返回的是 DER 编码的 ECDSA-Sig-Value（约 70~72 字节），
+# 但 JWS 的 ES256 要求的是裸签名 r||s（固定 64 字节）。
+# 直接把 DER 塞进去验签必失败，Apple 只会回 401 NOT_AUTHORIZED，看不出是这里的问题。
+def der_to_raw(der)
+  seq = OpenSSL::ASN1.decode(der)
+  raw32(seq.value[0].value) + raw32(seq.value[1].value)
+end
+
 def jwt
   @jwt ||= begin
     key = OpenSSL::PKey::EC.new(File.read(ENV.fetch('ASC_KEY_PATH')))
@@ -38,10 +51,14 @@ def jwt
                         aud: 'appstoreconnect-v1'))
     ]
     signing_input = segments.join('.')
-    # EC#sign 返回 DER 编码的 ECDSA 签名，正是 ES256 需要的；
-    # 老写法 dsign 在新版 openssl 绑定里已移除
-    segments << b64(key.sign(OpenSSL::Digest::SHA256.new, signing_input))
-    segments.join('.')
+    signature = der_to_raw(key.sign(OpenSSL::Digest::SHA256.new, signing_input))
+    # 自检：ES256 的裸签名必须是 64 字节，不是的话说明转换有问题，别等到被 401
+    abort "JWT 签名长度异常（#{signature.bytesize} 字节，应为 64）" unless signature.bytesize == 64
+
+    segments << b64(signature)
+    token = segments.join('.')
+    puts "JWT 已生成：kid=#{ENV.fetch('ASC_KEY_ID')} iss=#{ENV.fetch('ASC_ISSUER_ID')} 签名长度=64 字节"
+    token
   end
 end
 
