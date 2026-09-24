@@ -43,6 +43,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 前置自检：只报「有没有、多长」，不打印内容。
+      # 否则缺 Secret 时的表现是「签名/上传全部 skipped 然后构建成功」，极易误判为上传成功。
+      - name: 签名材料自检
+        env:
+          KEY_PEM: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          P12_BASE64: ${{ secrets.SIGNING_CERTIFICATE_P12 }}
+          CERT_CER: ${{ secrets.SIGNING_CERTIFICATE_CER }}
+          PROFILE_B64: ${{ secrets.PROVISIONING_PROFILE }}
+          PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          API_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -e
+          report() {
+            if [ -n "$2" ]; then
+              printf '  [有] %-34s %s 字符\n' "$1" "${#2}"
+            else
+              printf '  [无] %-34s 未配置\n' "$1"
+            fi
+          }
+          echo "=== 签名材料自检（只显示长度，不显示内容）==="
+          report SIGNING_PRIVATE_KEY "$KEY_PEM"
+          report SIGNING_CERTIFICATE_P12 "$P12_BASE64"
+          report SIGNING_CERTIFICATE_CER "$CERT_CER"
+          report PROVISIONING_PROFILE "$PROFILE_B64"
+          report PROVISIONING_PROFILE_NAME "$PROFILE_NAME"
+          report APPLE_TEAM_ID "$TEAM_ID"
+          report APP_STORE_CONNECT_API_KEY_P8 "$API_P8"
+          report APP_STORE_CONNECT_KEY_ID "$API_KEY_ID"
+          report APP_STORE_CONNECT_ISSUER_ID "$API_ISSUER"
+          echo "本次判定：HAS_SIGNING=$HAS_SIGNING  HAS_API_KEY=$HAS_API_KEY  EXPORT_METHOD=$EXPORT_METHOD"
+          # 下面用 error 注解（不会让 job 失败），让问题直接顶到运行页的 Annotations 里
+          if [ "$HAS_SIGNING" != "true" ]; then
+            echo "::error::没有签名材料（SIGNING_PRIVATE_KEY 与 SIGNING_CERTIFICATE_P12 都为空）——签名、归档、上传步骤会被全部跳过，本次不会产出可安装包。请到 Settings → Secrets and variables → Actions 的【Repository secrets】补齐（注意不是 Environment secrets）。"
+          elif [ "$HAS_API_KEY" != "true" ]; then
+            echo "::error::APP_STORE_CONNECT_API_KEY_P8 为空——无法自动签发证书，也无法上传 TestFlight。"
+          else
+            echo "签名材料齐备，将走签名 + 上传流程。"
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -286,6 +328,7 @@ jobs:
           cp -R "$APP" build/ipa/Payload/
           cd build/ipa && zip -qr Bian-unsigned.ipa Payload
           echo "产出：$(pwd)/Bian-unsigned.ipa"
+          echo "::warning::本次是【未签名】构建：没有归档、没有上传 TestFlight。若你的目的是传 TestFlight，请先补齐签名 Secrets。"
 
       - name: 上传产物
         uses: actions/upload-artifact@v4
