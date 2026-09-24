@@ -125,10 +125,23 @@ name = group.dig('attributes', 'name')
 puts "测试组：#{name}#{group.dig('attributes', 'isInternalGroup') ? '（内部组，无需审核）' : '（外部组，可能需要 Beta 审核）'}"
 
 # 4. 把构建加进测试组
-# 必须是 POST（CREATE）。用 PATCH 会被当成 REPLACE，接口只开放
-# CREATE / DELETE / GET_RELATED / GET_RELATIONSHIP，会回 403
-# "The relationship 'builds' does not allow 'REPLACE'"。
-api(:post, "betaGroups/#{group.fetch('id')}/relationships/builds",
-    { data: [{ type: 'builds', id: build.fetch('id') }] }, allow: [409])
+#
+# 两个方向都可以建立关联，但对【内部测试组】只有构建侧可用：
+#   POST /v1/builds/{id}/relationships/betaGroups          ← 内部组走这个
+#   POST /v1/betaGroups/{id}/relationships/builds          ← 组侧，内部组会 422
+#     "Builds cannot be assigned to this internal group."
+# 动词必须是 POST（CREATE）。用 PATCH 会被当成 REPLACE，接口只开放
+# CREATE / DELETE / GET_RELATED / GET_RELATIONSHIP，会回 403。
+build_id = build.fetch('id')
+group_id = group.fetch('id')
+begin
+  api(:post, "builds/#{build_id}/relationships/betaGroups",
+      { data: [{ type: 'betaGroups', id: group_id }] }, allow: [409])
+rescue SystemExit
+  # 构建侧不通用（例如某些外部组的场景）时，退回组侧再试一次
+  puts '构建侧关联失败，改用测试组侧接口重试…'
+  api(:post, "betaGroups/#{group_id}/relationships/builds",
+      { data: [{ type: 'builds', id: build_id }] }, allow: [409])
+end
 
 puts "完成：构建 #{build_number} 已加入「#{name}」，组内测试员可在 TestFlight 里更新"
