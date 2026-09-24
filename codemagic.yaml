@@ -40,8 +40,8 @@ workflows:
           set -e
           npm ci --ignore-scripts --legacy-peer-deps
           npm run build
-          cd ios-app
-          npm run copy:web
+          # 必须用 copy-web.sh，不能用 npm run copy:web：后者只拷 dist，会漏掉 static/ 与 CDN 本地化
+          bash ios-app/copy-web.sh
       - name: 递增 build number
         script: |
           cd ios-app/ios/App
@@ -100,8 +100,8 @@ workflows:
           set -e
           npm ci --ignore-scripts --legacy-peer-deps
           npm run build
-          cd ios-app
-          npm run copy:web
+          # 必须用 copy-web.sh，不能用 npm run copy:web：后者只拷 dist，会漏掉 static/ 与 CDN 本地化
+          bash ios-app/copy-web.sh
       - name: 递增 build number
         script: |
           cd ios-app/ios/App

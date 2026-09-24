@@ -51,8 +51,9 @@ jobs:
           set -e
           npm ci --ignore-scripts --legacy-peer-deps
           npm run build
-          cd ios-app
-          npm run copy:web
+          # 必须用 copy-web.sh，不能用 npm run copy:web：
+          # 后者只拷 dist，会漏掉 static/（jquery/pixi/jweixin 等老库）和 CDN 外链本地化，打出的是残包
+          bash ios-app/copy-web.sh
 
       - name: 同步 iOS 平台（云端 pod install）
         run: cd ios-app && npx cap sync ios
