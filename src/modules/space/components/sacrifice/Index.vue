@@ -37,7 +37,7 @@
     </div>
 
     <div id="dui_lian_box" v-if="space && space.showCouplet">
-      <div class="inner" style="padding: 30px 15px 0px;" v-if="space && space.id>0">
+      <div class="inner" style="padding: 9vh 15px 0px;" v-if="space && space.id>0">
         <div class="dui_lian" style="float: left;">{{space &&space.couplets && space.couplets.left}}</div>
         <div class="dui_lian" style="float: right;">{{space &&space.couplets && space.couplets.right}}</div>
       </div>

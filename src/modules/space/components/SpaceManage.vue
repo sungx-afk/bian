@@ -1,5 +1,6 @@
 <template>
   <div class="space-manage-container">
+    <page-header :title="detail && detail.name ? detail.name : '纪念馆管理'"></page-header>
     <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
       <van-tab title="记录" name="event" v-if="false">
         <template v-if="tabActive === 'event' && detail">
@@ -24,13 +25,15 @@
   import Event from './manage/Event'
   import Visitor from './manage/Visitor'
   import Setting from './manage/Setting'
+  import PageHeader from '@/modules/widget/PageHeader'
 
     export default {
       name: "SpaceManage",
       components:{
         Event,
         Visitor,
-        Setting
+        Setting,
+        PageHeader
       },
       data(){
         return{

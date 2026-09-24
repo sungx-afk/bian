@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  const LIMIT = 20
+  const LIMIT = 30
   import {mapGetters} from 'vuex';
 
   import NoData from '@/modules/widget/space/NoData'
@@ -76,7 +76,8 @@
       },
       methods:{
         initContainerHeight(){
-          this.containerHeight = document.body.clientHeight - 44
+          // 扣掉统一页头(48) + van-tabs 头(44)，剩下的高度给列表滚动
+          this.containerHeight = document.body.clientHeight - 48 - 44
         },
         showMoreMenu(item){
           return item.id !== this.user.id
@@ -87,7 +88,7 @@
           $API.space.getSpaceAllVisitorList({
               sid:that.space.id,
               start,
-              limit:1000,//暂时没有分页
+              limit
             }, rsp=>{
             that.loading = false
             let list = rsp
@@ -103,6 +104,10 @@
             if (start === 0){
               this.list = list
             }else{
+              // 按 id 去重：后端若忽略 start（旧接口一次返回全部）也不会出现重复条目
+              let existIds = {}
+              this.list.forEach(item=>{ existIds[item.id] = true })
+              list = list.filter(item=>!existIds[item.id])
               this.list = this.list.concat(list)
             }
             that.noData = false
@@ -119,10 +124,12 @@
           })
         },
         onLoadMoreData(){
-          if (this.space && !this.finished){
-            let start = this.list.length
-            this.getVisitorList(start)
+          // 上一页还没回来 / 已到底都不再请求
+          if (this.loading || this.finished || !this.space){
+            return
           }
+          this.loading = true
+          this.getVisitorList(this.list.length)
         },
         goMoreMenu(user){
           if (user.black){
