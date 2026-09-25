@@ -7,6 +7,9 @@
     <div class="sacrifice-header" v-if="space">
       {{space.name}}
     </div>
+    <div class="memorial-plaque" v-if="space" role="heading" aria-level="1">
+      <span class="memorial-plaque-title">{{space.name}}</span>
+    </div>
     <template v-if="space && space.combineImage == 1">
       <div class="yi-xiang-box combine">
         <div class="xiang_kuang" :style="combineFrameStyle" @click="goSurvey">
@@ -56,6 +59,8 @@
             </div>
           </div>
         </div>
+
+        <div class="memorial-altar-table" aria-hidden="true"></div>
 
         <div id="item_zuo_zi_box">
           <div id="item_zuo_zi_box_inner">
@@ -337,7 +342,9 @@
         return result
       },
       theme(){
-        return 'theme_'+(this.space&&this.space.backgroundId||1);
+        // backgroundId 同时作为整套场景的主题 ID：背景、匾额、挽联和祭桌可按同一 ID 成套切换。
+        const themeId = this.space && this.space.backgroundId || 1
+        return 'theme_' + themeId;
       },
       //合影横版相框：用旋转90°的横版图铺满显示，相框完整不被截
       combineFrameStyle(){
@@ -1890,6 +1897,11 @@
       0 1px 4px rgba(0,0,0,0.75),
       0 0 2px rgba(0,0,0,0.6);
   }
+
+  // 主题匾额默认不参与布局；由需要完整场景素材的主题单独开启。
+  .memorial-plaque {
+    display: none;
+  }
   .sacrifice .tip-wrapper{
     display: flex;
     flex-direction: column;
@@ -1912,12 +1924,56 @@
   }
 
   .sacrifice.theme_1 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_1.jpeg?v=11) !important;
+    background-image: url("./images/generated/memorial-hall-background.png") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_1 #item_hua_bg {
-    //
+    background: url("./images/generated/memorial-flower-wall.png") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
+  }
+  .sacrifice.theme_1 .sacrifice-header {
+    display: none;
+  }
+  .sacrifice.theme_1 .memorial-plaque {
+    position: absolute;
+    top: 56px;
+    left: 12vw;
+    width: 76vw;
+    height: 21vw;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 13vw;
+    background-image: url("./images/generated/memorial-plaque-blank.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    pointer-events: none;
+  }
+  .sacrifice.theme_1 .memorial-plaque-title {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    color: #d7a854;
+    font-family: STKaiti, KaiTi, "Kaiti SC", serif;
+    font-size: 5vw;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 0 #6b3e11, 0 2px 5px rgba(0, 0, 0, 0.75);
+    white-space: nowrap;
+  }
+  .sacrifice.theme_1 .yi-xiang-box.single,
+  .sacrifice.theme_1 .yi-xiang-box.double,
+  .sacrifice.theme_1 .yi-xiang-box.combine {
+    margin-top: 18vh;
   }
   .sacrifice.theme_2 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_2.jpeg?v=1) !important;
@@ -2207,6 +2263,37 @@
     box-sizing: border-box;
   }
 
+  // theme_1 使用无字卷轴作底图，内容仍由 space.couplets.left/right 动态渲染。
+  .sacrifice.theme_1 #dui_lian_box > .inner {
+    padding: 18vh 12px 0 !important;
+  }
+
+  .sacrifice.theme_1 .dui_lian {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 42vh;
+    padding: 7vh 19px 8vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: transparent;
+    background-image: url("./images/generated/memorial-couplet-scroll-blank.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 100%;
+    box-shadow: none;
+    color: #17100a;
+    font-family: STKaiti, KaiTi, "Kaiti SC", serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 4px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.35);
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+
   .big-fire-box {
     background-image: url(./images/item_huo_lu.png);
     background-size: 100% 100%;
@@ -2263,6 +2350,39 @@
     /*bottom: 30px;*/
     /*width: 100vw;*/
     /*}*/
+  }
+
+  .memorial-altar-table {
+    display: none;
+  }
+
+  .sacrifice.theme_1 .memorial-altar-table {
+    display: block;
+    position: absolute;
+    top: 32vw;
+    left: 2vw;
+    width: 96vw;
+    height: 48vw;
+    z-index: 1;
+    background-image: url("./images/generated/altar-table.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    pointer-events: none;
+  }
+
+  .sacrifice.theme_1 #item_zuo_zi_box,
+  .sacrifice.theme_1 #item_zuo_zi_box_2 {
+    z-index: 2;
+  }
+
+  .sacrifice.theme_1 #item_zuo_zi,
+  .sacrifice.theme_1 #item_zuo_zi_2 {
+    background: transparent;
+  }
+
+  .sacrifice.theme_1 .big-fire-box {
+    z-index: 3;
   }
 
   #item_hua_bg {
