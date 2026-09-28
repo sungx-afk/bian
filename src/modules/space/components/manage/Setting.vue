@@ -116,6 +116,12 @@
   import PageHeader from '@/modules/widget/PageHeader'
 
   import {getFrames, DEFAULT_FRAME_ID} from '@/config/frame'
+  import themeBackground1 from '../sacrifice/images/generated/memorial-hall-background.webp'
+  import themeBackground2 from '../sacrifice/images/generated/memorial-lakeside-background.webp'
+  import themeBackground3 from '../sacrifice/images/generated/memorial-celestial-background.webp'
+  import themeBackground4 from '../sacrifice/images/generated/memorial-moonlit-mountains-background.webp'
+  import themeBackground5 from '../sacrifice/images/generated/memorial-spring-valley-background.webp'
+  import themeBackground6 from '../sacrifice/images/generated/memorial-cloud-palace-background.webp'
 
   import Vue from 'vue';
   import { Dialog,PasswordInput, NumberKeyboard  } from 'vant';
@@ -164,15 +170,14 @@
           return result
         },
         backgrounds() {
-          let arr = new Array(23);
-          for (let i = 1; i <= arr.length; i++) {
-            let item = {
-              id: i,
-              url: `https://static-app01.yugusoft.com/bian/bg_${i}.jpeg?v=2`
-            }
-            arr[i - 1] = item;
-          }
-          return arr;
+          return [
+            {id: 1, url: themeBackground1},
+            {id: 2, url: themeBackground2},
+            {id: 3, url: themeBackground3},
+            {id: 4, url: themeBackground4},
+            {id: 5, url: themeBackground5},
+            {id: 6, url: themeBackground6},
+          ];
         },
       },
       methods:{

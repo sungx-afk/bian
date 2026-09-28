@@ -1,5 +1,5 @@
 import config_server from '@/config/config'
-import { isNative, isNativeIOS, plugin } from './platform'
+import { isNative, isNativeIOS, isWechat, plugin } from './platform'
 // Capacitor 插件必须在 Web 代码里 import 才会注册（运行时不会自动注册），
 // 否则 App 里 window.SignInWithApple 不存在，Apple 登录按钮不会出现。
 import { SignInWithApple as AppleSignIn } from '@capacitor-community/apple-sign-in'
@@ -25,6 +25,11 @@ export function wechatAuthorizeUrl() {
 export function loginByWechat() {
   if (isNative()) {
     return Promise.reject(new Error('App 内暂未开放微信登录，请先用 Apple 登录'))
+  }
+  // 普通浏览器（Chrome 模拟 iPhone 也算）没有微信 JS-SDK 环境，跳过去只会
+  // 得到微信的「请在微信客户端打开链接」白页，直接在这里拦住并提示。
+  if (!isWechat()) {
+    return Promise.reject(new Error('请在微信中打开，或用 ?uid=你的账号ID 登录'))
   }
   window.location.replace(wechatAuthorizeUrl())
   return Promise.resolve()

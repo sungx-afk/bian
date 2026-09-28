@@ -443,7 +443,9 @@
     },
     methods: {
       ...mapActions({
-        setUserSetting: 'userStore/setUserSetting'
+        setUserSetting: 'userStore/setUserSetting',
+        // 离开祭拜页时清空 spaceStore 的详情数据（beforeDestroy 里调用）
+        clearSpaceDetail: 'spaceStore/clearSpaceDetail'
       }),
       //购买，通用
       buy(productId, callback) {
@@ -1924,20 +1926,21 @@
   }
 
   .sacrifice.theme_1 {
-    background-image: url("./images/generated/memorial-hall-background.png") !important;
+    background-image: url("./images/generated/memorial-hall-background.webp") !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
     background-position: center center !important;
   }
   .sacrifice.theme_1 #item_hua_bg {
-    background: url("./images/generated/memorial-flower-wall.png") center top / 100% auto no-repeat !important;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
     filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
     z-index: 0;
   }
   .sacrifice.theme_1 .sacrifice-header {
     display: none;
   }
-  .sacrifice.theme_1 .memorial-plaque {
+  .sacrifice.theme_1 .memorial-plaque,
+  .sacrifice.theme_3 .memorial-plaque {
     position: absolute;
     top: 56px;
     left: 12vw;
@@ -1949,13 +1952,17 @@
     justify-content: center;
     box-sizing: border-box;
     padding: 0 13vw;
-    background-image: url("./images/generated/memorial-plaque-blank.png");
+    background-image: url("./images/generated/memorial-plaque-blank.webp");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
     pointer-events: none;
   }
-  .sacrifice.theme_1 .memorial-plaque-title {
+  .sacrifice.theme_3 .memorial-plaque {
+    background-image: url("./images/generated/memorial-celestial-plaque-blank.webp");
+  }
+  .sacrifice.theme_1 .memorial-plaque-title,
+  .sacrifice.theme_3 .memorial-plaque-title {
     display: block;
     max-width: 100%;
     overflow: hidden;
@@ -1972,48 +1979,93 @@
   }
   .sacrifice.theme_1 .yi-xiang-box.single,
   .sacrifice.theme_1 .yi-xiang-box.double,
-  .sacrifice.theme_1 .yi-xiang-box.combine {
+  .sacrifice.theme_1 .yi-xiang-box.combine,
+  .sacrifice.theme_2 .yi-xiang-box.single,
+  .sacrifice.theme_2 .yi-xiang-box.double,
+  .sacrifice.theme_2 .yi-xiang-box.combine,
+  .sacrifice.theme_3 .yi-xiang-box.single,
+  .sacrifice.theme_3 .yi-xiang-box.double,
+  .sacrifice.theme_3 .yi-xiang-box.combine,
+  .sacrifice.theme_4 .yi-xiang-box.single,
+  .sacrifice.theme_4 .yi-xiang-box.double,
+  .sacrifice.theme_4 .yi-xiang-box.combine,
+  .sacrifice.theme_5 .yi-xiang-box.single,
+  .sacrifice.theme_5 .yi-xiang-box.double,
+  .sacrifice.theme_5 .yi-xiang-box.combine,
+  .sacrifice.theme_6 .yi-xiang-box.single,
+  .sacrifice.theme_6 .yi-xiang-box.double,
+  .sacrifice.theme_6 .yi-xiang-box.combine {
     margin-top: 18vh;
   }
   .sacrifice.theme_2 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_2.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-lakeside-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_2 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
+  }
+  .sacrifice.theme_2 .sacrifice-header {
+    display: none;
   }
   .sacrifice.theme_3 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_3.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-celestial-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_3 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
+  }
+  .sacrifice.theme_3 .sacrifice-header {
+    display: none;
   }
   .sacrifice.theme_4 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_4.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-moonlit-mountains-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_4 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
+  }
+  .sacrifice.theme_4 .sacrifice-header {
+    display: none;
   }
   .sacrifice.theme_5 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_5.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-spring-valley-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_5 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
+  }
+  .sacrifice.theme_5 .sacrifice-header {
+    display: none;
   }
   .sacrifice.theme_6 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_6.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-cloud-palace-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_6 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
+  }
+  .sacrifice.theme_6 .sacrifice-header {
+    display: none;
   }
   .sacrifice.theme_7 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_7.jpeg?v=1) !important;
@@ -2021,7 +2073,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_7 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_8 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_8.jpeg?v=1) !important;
@@ -2029,7 +2083,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_8 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_9 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_9.jpeg?v=1) !important;
@@ -2037,7 +2093,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_9 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_10 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_10.jpeg?v=1) !important;
@@ -2045,7 +2103,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_10 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_11 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_11.jpeg?v=1) !important;
@@ -2053,7 +2113,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_11 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_12 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_12.jpeg?v=1) !important;
@@ -2061,7 +2123,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_12 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_13 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_13.jpeg?v=1) !important;
@@ -2069,7 +2133,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_13 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_14 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_14.jpeg?v=1) !important;
@@ -2077,7 +2143,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_14 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_15 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_15.jpeg?v=1) !important;
@@ -2085,7 +2153,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_15 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
   .sacrifice.theme_16 {
     background-image: url(https://static-app01.yugusoft.com/bian/bg_16.jpeg?v=1) !important;
@@ -2093,7 +2163,9 @@
     background-size: 100% 100% !important;
   }
   .sacrifice.theme_16 #item_hua_bg {
-    background: transparent;
+    background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
+    filter: drop-shadow(0 10px 12px rgba(24, 10, 3, 0.28));
+    z-index: 0;
   }
 
 
@@ -2263,12 +2335,22 @@
     box-sizing: border-box;
   }
 
-  // theme_1 使用无字卷轴作底图，内容仍由 space.couplets.left/right 动态渲染。
-  .sacrifice.theme_1 #dui_lian_box > .inner {
+  // 主题 1/2/3/4/5/6 使用无字卷轴作底图，内容仍由 space.couplets.left/right 动态渲染。
+  .sacrifice.theme_1 #dui_lian_box > .inner,
+  .sacrifice.theme_2 #dui_lian_box > .inner,
+  .sacrifice.theme_3 #dui_lian_box > .inner,
+  .sacrifice.theme_4 #dui_lian_box > .inner,
+  .sacrifice.theme_5 #dui_lian_box > .inner,
+  .sacrifice.theme_6 #dui_lian_box > .inner {
     padding: 18vh 12px 0 !important;
   }
 
-  .sacrifice.theme_1 .dui_lian {
+  .sacrifice.theme_1 .dui_lian,
+  .sacrifice.theme_2 .dui_lian,
+  .sacrifice.theme_3 .dui_lian,
+  .sacrifice.theme_4 .dui_lian,
+  .sacrifice.theme_5 .dui_lian,
+  .sacrifice.theme_6 .dui_lian {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2278,7 +2360,7 @@
     overflow: hidden;
     box-sizing: border-box;
     background-color: transparent;
-    background-image: url("./images/generated/memorial-couplet-scroll-blank.png");
+    background-image: url("./images/generated/memorial-couplet-scroll-blank.webp");
     background-repeat: no-repeat;
     background-position: center;
     background-size: auto 100%;
@@ -2356,7 +2438,12 @@
     display: none;
   }
 
-  .sacrifice.theme_1 .memorial-altar-table {
+  .sacrifice.theme_1 .memorial-altar-table,
+  .sacrifice.theme_2 .memorial-altar-table,
+  .sacrifice.theme_3 .memorial-altar-table,
+  .sacrifice.theme_4 .memorial-altar-table,
+  .sacrifice.theme_5 .memorial-altar-table,
+  .sacrifice.theme_6 .memorial-altar-table {
     display: block;
     position: absolute;
     top: 32vw;
@@ -2364,24 +2451,52 @@
     width: 96vw;
     height: 48vw;
     z-index: 1;
-    background-image: url("./images/generated/altar-table.png");
+    background-image: url("./images/generated/altar-table.webp");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
     pointer-events: none;
   }
+  .sacrifice.theme_6 .memorial-altar-table {
+    background-image: url("./images/generated/altar-table-cloud-palace.webp");
+  }
 
   .sacrifice.theme_1 #item_zuo_zi_box,
-  .sacrifice.theme_1 #item_zuo_zi_box_2 {
+  .sacrifice.theme_1 #item_zuo_zi_box_2,
+  .sacrifice.theme_2 #item_zuo_zi_box,
+  .sacrifice.theme_2 #item_zuo_zi_box_2,
+  .sacrifice.theme_3 #item_zuo_zi_box,
+  .sacrifice.theme_3 #item_zuo_zi_box_2,
+  .sacrifice.theme_4 #item_zuo_zi_box,
+  .sacrifice.theme_4 #item_zuo_zi_box_2,
+  .sacrifice.theme_5 #item_zuo_zi_box,
+  .sacrifice.theme_5 #item_zuo_zi_box_2,
+  .sacrifice.theme_6 #item_zuo_zi_box,
+  .sacrifice.theme_6 #item_zuo_zi_box_2 {
     z-index: 2;
   }
 
   .sacrifice.theme_1 #item_zuo_zi,
-  .sacrifice.theme_1 #item_zuo_zi_2 {
+  .sacrifice.theme_1 #item_zuo_zi_2,
+  .sacrifice.theme_2 #item_zuo_zi,
+  .sacrifice.theme_2 #item_zuo_zi_2,
+  .sacrifice.theme_3 #item_zuo_zi,
+  .sacrifice.theme_3 #item_zuo_zi_2,
+  .sacrifice.theme_4 #item_zuo_zi,
+  .sacrifice.theme_4 #item_zuo_zi_2,
+  .sacrifice.theme_5 #item_zuo_zi,
+  .sacrifice.theme_5 #item_zuo_zi_2,
+  .sacrifice.theme_6 #item_zuo_zi,
+  .sacrifice.theme_6 #item_zuo_zi_2 {
     background: transparent;
   }
 
-  .sacrifice.theme_1 .big-fire-box {
+  .sacrifice.theme_1 .big-fire-box,
+  .sacrifice.theme_2 .big-fire-box,
+  .sacrifice.theme_3 .big-fire-box,
+  .sacrifice.theme_4 .big-fire-box,
+  .sacrifice.theme_5 .big-fire-box,
+  .sacrifice.theme_6 .big-fire-box {
     z-index: 3;
   }
 
@@ -2530,7 +2645,9 @@
   }
 
   .item-la-zu {
-    background-image: url("./images/item_la_zhu.png") !important;
+    background-image: url("./images/generated/memorial-candle-unlit.webp") !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     background-size: 100% 100% !important;
   }
 
@@ -2576,7 +2693,10 @@
   }
 
   .item-xiang-lu {
-    background-image: url("./images/item_xiang_lu.png") !important;
+    background-image: url("./images/generated/memorial-incense-burner.webp") !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
     position: relative;
     .item-xiang-lu-box {
       position: absolute;
@@ -2599,11 +2719,11 @@
   // 火苗锚点：只负责给 flameLayer 提供位置/尺寸（视觉由统一画布渲染）
   .zu-huo-anchor {
     position: absolute;
-    left: 0px;
-    right: 0;
-    top: -31px;
-    width: 10vw;
-    height: 10vw;
+    left: 50%;
+    top: -3.5vw;
+    width: 4vw;
+    height: 4vw;
+    transform: translateX(-50%);
     pointer-events: none;
   }
 
@@ -2764,7 +2884,7 @@
     .message {
       font-size: 12px;
       color: white;
-      background: rgba(50, 50, 51, .38);
+      background: #5b2a16a8;/* 深棕半透明（rgba(91,42,22,.66)），与祭拜页主色同色系 */
       border-radius: 0px 5px 5px 0px;
       padding: 3px 8px 3px 10px;
       margin-bottom: 3px;

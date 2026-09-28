@@ -547,7 +547,8 @@
         this.getSpaceList()
         this.getSpacesVisited()
         this.updateNotice()
-        this.tryEnterLastSpace()
+        // 自动进入"最后访问的纪念馆"暂时关闭：登录后停留在列表页，由用户自己点进馆
+        // this.tryEnterLastSpace()
 
 
 

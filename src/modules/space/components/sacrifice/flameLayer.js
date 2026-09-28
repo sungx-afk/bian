@@ -8,7 +8,7 @@
 //   2) N 个 fullscreen  shader filter 每帧各算一遍多层 noise 采样，
 //      开销随蜡烛数量线性上涨，手机上直接掉帧。
 // 改为：全页只有一个 Application / 一个上下文 / 一个 ticker，
-//      每支烛火只是 stage 上一个带同一套 FlameFilter 的小 sprite（10vw 左右），
+//      每支烛火只是 stage 上一个带同一套 FlameFilter 的小 sprite，
 //      位置每帧用锚点元素 getBoundingClientRect 同步即可。
 
 const NOISE_URL = '/static/bian-mobile/images/noise-texture-11.png?v=9';
