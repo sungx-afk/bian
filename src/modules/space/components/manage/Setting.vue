@@ -122,6 +122,10 @@
   import themeBackground4 from '../sacrifice/images/generated/memorial-moonlit-mountains-background.webp'
   import themeBackground5 from '../sacrifice/images/generated/memorial-spring-valley-background.webp'
   import themeBackground6 from '../sacrifice/images/generated/memorial-cloud-palace-background.webp'
+  import themeBackground7 from '../sacrifice/images/generated/memorial-pure-land-background.webp'
+  import themeBackground8 from '../sacrifice/images/generated/memorial-moon-palace-background.webp'
+  import themeBackground9 from '../sacrifice/images/generated/memorial-heavenly-garden-background.webp'
+  import themeBackground10 from '../sacrifice/images/generated/memorial-angel-heaven-background.webp'
 
   import Vue from 'vue';
   import { Dialog,PasswordInput, NumberKeyboard  } from 'vant';
@@ -177,6 +181,10 @@
             {id: 4, url: themeBackground4},
             {id: 5, url: themeBackground5},
             {id: 6, url: themeBackground6},
+            {id: 7, url: themeBackground7},
+            {id: 8, url: themeBackground8},
+            {id: 9, url: themeBackground9},
+            {id: 10, url: themeBackground10},
           ];
         },
       },

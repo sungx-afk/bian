@@ -2068,9 +2068,10 @@
     display: none;
   }
   .sacrifice.theme_7 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_7.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-pure-land-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_7 #item_hua_bg {
     background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
@@ -2078,9 +2079,10 @@
     z-index: 0;
   }
   .sacrifice.theme_8 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_8.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-moon-palace-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_8 #item_hua_bg {
     background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
@@ -2088,9 +2090,10 @@
     z-index: 0;
   }
   .sacrifice.theme_9 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_9.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-heavenly-garden-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_9 #item_hua_bg {
     background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
@@ -2098,9 +2101,10 @@
     z-index: 0;
   }
   .sacrifice.theme_10 {
-    background-image: url(https://static-app01.yugusoft.com/bian/bg_10.jpeg?v=1) !important;
+    background-image: url("./images/generated/memorial-angel-heaven-background.webp") !important;
     background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
   .sacrifice.theme_10 #item_hua_bg {
     background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
