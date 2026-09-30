@@ -3,6 +3,7 @@ module.exports = {
   EVENT_TOKEN_UPDATE: 'token_update',
   EVENT_TOKEN_EXPIRE: 'token_expire',
   EVENT_CREATE_SPACE_SUCCESS:'create_space_success',
+  EVENT_MODIFY_SPACE_SUCCESS:'modify_space_success',
   EVENT_DELETE_SPACE_SUCCESS:'delete_space_success',
   EVENT_EXIT_SPACE_SUCCESS:'exit_space_success',
   EVENT_TRANSFER_SPACE_SUCCESS:'transfer_space_success',

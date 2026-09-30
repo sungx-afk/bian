@@ -39,7 +39,9 @@
       <template v-if="list.length > 0 || visitedList.length > 0 || (publicList.length > 0 && showPublic)">
         <div class="list" v-if="list.length > 0">
           <item v-for="item in list" :key="item.id" :item="item"
-                v-on:item-press="goSpaceDetail">
+                :moreMenu="isSpaceCreator(item)"
+                v-on:item-press="goSpaceDetail"
+                v-on:menu-press="showMoreMenu">
           </item>
         </div>
         <div class="list" v-if="visitedList.length > 0">
@@ -89,6 +91,34 @@
       @select="onActionSelect"
       @click-overlay="onActionClose">
     </van-action-sheet>
+    <van-dialog
+      v-model="showDeleteDialog"
+      closeOnClickOverlay
+      show-cancel-button
+      className='custom-delete-dialog'
+      confirmButtonText='取消'
+      cancelButtonText='删除'
+      :beforeClose="beforeCloseHandler"
+      @confirm="cancelDelete">
+      <div class="delete-box">
+        <div class="tip">删除纪念馆会导致纪念馆所有数据丢失，请谨慎操作。请输入下面的四位数字后进行删除。</div>
+        <div class="random">{{ randomStr }}</div>
+        <div class="confirm-input">
+          <van-password-input
+            :value="confirmValue"
+            :length="4"
+            :mask="false"
+            :error-info="errorInfo"
+            :focused="showKeyboard"
+            @focus="showKeyboard = true"
+          />
+        </div>
+      </div>
+    </van-dialog>
+    <van-number-keyboard class="custom-number-keyboard"
+      v-model="confirmValue"
+      :show="showKeyboard"
+      @blur="showKeyboard = false"/>
   </div>
 </template>
 <script>
@@ -101,6 +131,14 @@
   import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录，H5 走微信授权）
   import { isNative, isWechat } from '@/native/platform'
   import { USE_DEBUG_UID, DEBUG_UID } from '@/native/debug'   // 内测包自动登录（提审前关闭）
+
+  import Vue from 'vue';
+  import { Dialog, PasswordInput, NumberKeyboard } from 'vant';
+
+  // 全局注册（与设置页 Setting.vue 一致）
+  Vue.use(Dialog);
+  Vue.use(PasswordInput);
+  Vue.use(NumberKeyboard);
 
   import base64 from 'js-base64'
 
@@ -126,6 +164,12 @@
         showPublic:false,
         listLoaded:false,
         merchant:null,
+        showDeleteDialog:false,
+        confirmValue:'',
+        showKeyboard:false,
+        errorInfo:'',
+        randomStr:'',
+        deleteTarget:null,
         showGuideFlag:false,   // 控制引导页显示（方案B：用 data 变量，不依赖 $refs）
         enteredLastSpace:false,// 本次是否已自动进入"最后访问的纪念馆"
         hasJumpIntent:false,   // 本次是否带有分享/移交/通知等指定跳转意图
@@ -341,8 +385,21 @@
             name:'删除访问记录',
             data:item
           }]
+        }else if (this.isSpaceCreator(item)){
+          this.menuList = [ {
+            id:'modify_space',
+            name:'修改纪念馆',
+            data:item
+          },{
+            id:'delete_space',
+            name:'删除纪念馆',
+            data:item
+          }]
         }
         this.isShowMoreMenu = true
+      },
+      isSpaceCreator(item){
+        return !!(this.user && item && item.creatorId === this.user.id)
       },
       moreMenuPressed(menu){
         this.isShowMoreMenu = false
@@ -360,6 +417,12 @@
             break
           case 'delete_visited':
             this.deleteSpaceVisited(menu.data)
+            break
+          case 'modify_space':
+            Link(`/space/create?space_id=${menu.data.id}`)
+            break
+          case 'delete_space':
+            this.deleteSpace(menu.data)
             break
           case 'clear_visited':
             this.clearSpaceVisited()
@@ -401,6 +464,52 @@
       goReportHandle(){
         Link(`/report_handle/list`)
       },
+      deleteSpace(space){
+        if (!space){
+          return
+        }
+        //与设置页 Setting.vue 一致的交互：弹出四位随机数字校验后再删除
+        let random = Math.floor(Math.random() * 9000) + 1000
+        this.randomStr = random.toString()
+        this.deleteTarget = space
+        this.showDeleteDialog = true
+        this.showKeyboard = true
+      },
+      resetDeleteInfo(){
+        this.confirmValue = ''
+        this.showKeyboard = false
+        this.randomStr = ''
+        this.errorInfo = ''
+        this.deleteTarget = null
+      },
+      cancelDelete(){
+        this.resetDeleteInfo()
+      },
+      beforeCloseHandler(action, done){
+        if (action == 'confirm' || action == 'overlay'){
+          this.resetDeleteInfo()
+          done()
+        }else{
+          //判断是否匹配上了
+          if (this.confirmValue != this.randomStr){
+            this.errorInfo = '输入数字未匹配'
+            done(false)
+            return
+          }
+          let space = this.deleteTarget
+          $API.space.deleteSpace({
+            sid: space.id
+          }, rsp=>{
+            this.resetDeleteInfo()
+            done()
+            //复用现有事件：List 自身监听了该事件并会刷新列表，其他缓存页面（如祭拜页）也能同步感知
+            eventHub.$emit(constant.EVENT_DELETE_SPACE_SUCCESS, space.id)
+          }, error=>{
+            this.$toast('删除失败，请稍后重试')
+            done(false)
+          })
+        }
+      },
       deleteSpaceVisited(space){
         let that = this
         $API.home.deleteSpaceVisited({
@@ -436,6 +545,7 @@
       },
       registerEvent(){
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
+        eventHub.$on(constant.EVENT_MODIFY_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_EXIT_SPACE_SUCCESS,this.getSpaceList)
         eventHub.$on(constant.EVENT_UPDATE_BGM_SUCCESS,this.updateSpaceBgm)
@@ -807,6 +917,7 @@
     },
     beforeDestroy() {
       eventHub.$off(constant.EVENT_CREATE_SPACE_SUCCESS,this.getSpaceList)
+      eventHub.$off(constant.EVENT_MODIFY_SPACE_SUCCESS,this.getSpaceList)
       eventHub.$off(constant.EVENT_DELETE_SPACE_SUCCESS,this.getSpaceList)
       eventHub.$off(constant.EVENT_EXIT_SPACE_SUCCESS,this.getSpaceList)
       eventHub.$off(constant.EVENT_UPDATE_BGM_SUCCESS,this.updateSpaceBgm)
@@ -976,6 +1087,47 @@
         bottom:55px;
       }
     }
+  }
+
+</style>
+
+<style rel="stylesheet/less" lang="less">
+  /* 与设置页 Setting.vue 的删除弹窗样式保持一致 */
+  .custom-delete-dialog .van-dialog__footer .van-dialog__cancel{
+    color: #ee0a24 !important;
+  }
+  .custom-delete-dialog .van-dialog__footer .van-dialog__confirm{
+    color: #666666 !important;
+  }
+  .custom-delete-dialog{
+    .delete-box{
+      padding: 20px;
+      .tip{
+        font-size: 14px;
+        color: #333333;
+      }
+      .random{
+        margin-top: 12px;
+        font-size: 20px;
+        text-align: center;
+      }
+      .confirm-input{
+        margin-top: 12px;
+        .van-password-input__security{
+          &::after{
+            border-color: #aaaaaa;
+          }
+        }
+        .van-password-input__item{
+          &::after{
+            border-color: #aaaaaa;
+          }
+        }
+      }
+    }
+  }
+  .custom-number-keyboard{
+    z-index: 999999 !important;
   }
 
 </style>
