@@ -298,13 +298,44 @@
             })
           }
         },
-        // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅
-        restorePurchases(){
-          iap.restore().then(()=>{
-            this.$toast && this.$toast('已向 App Store 发起恢复，完成后刷新本页')
-          }).catch((e)=>{
-            this.$toast && this.$toast((e && e.message) || '暂不支持恢复购买')
+        // 把 StoreKit 票据交给后端校验，成功才发货、才结束交易
+        verifyAndDeliver(result, okMsg){
+          $API.space.verifyAppleReceipt({
+            receipt_data: result.receipt,
+            product_id: result.productId || iap.IAP_PRODUCTS.VIP_YEARLY,
+            transaction_id: result.transactionId,
+            space_id: this.spaceId
+          }, rsp => {
+            if (rsp && (rsp.result === 0 || rsp.result === '0')){
+              // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
+              iap.finish()
+              this.$toast && this.$toast(okMsg)
+              eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
+              this.updateInfo()
+            }else{
+              this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+            }
+          }, error => {
+            this.$toast && this.$toast('校验失败，请联系客服')
           })
+        },
+        // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
+        async restorePurchases(){
+          try {
+            this.$toast && this.$toast('正在向 App Store 恢复购买…')
+            const result = await iap.restore()
+            if (!result || !result.receipt){
+              this.$toast && this.$toast('未取到支付票据，请稍后重试')
+              return
+            }
+            this.verifyAndDeliver(result, '尊贵馆已恢复')
+          } catch (e) {
+            console.log('iap restore error:', e)
+            const msg = e && e.message ? e.message : '恢复购买失败'
+            if (msg.indexOf('取消') < 0){
+              this.$toast && this.$toast(msg)
+            }
+          }
         },
         // iOS App：尊贵馆按年订阅走 App Store 内购，票据交后端校验后发货
         async buyVipByIap(){
@@ -315,23 +346,7 @@
               this.$toast && this.$toast('未取到支付票据，请稍后重试')
               return
             }
-            $API.space.verifyAppleReceipt({
-              receipt_data: result.receipt,
-              product_id: iap.IAP_PRODUCTS.VIP_YEARLY,
-              transaction_id: result.transactionId,
-              space_id: this.spaceId
-            }, rsp => {
-              if (rsp && (rsp.result === 0 || rsp.result === '0')){
-                iap.finish()
-                this.$toast && this.$toast('尊贵馆已开通')
-                eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
-                this.updateInfo()
-              }else{
-                this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
-              }
-            }, error => {
-              this.$toast && this.$toast('校验失败，请联系客服')
-            })
+            this.verifyAndDeliver(result, '尊贵馆已开通')
           } catch (e) {
             console.log('iap error:', e)
             const msg = e && e.message ? e.message : '购买失败'
@@ -444,9 +459,14 @@
           }
         }
         this.registerEvent()
+        // 上次付款后没 finish 的交易，进本页时自动补一次校验发货
+        iap.setApprovedHandler(payload => {
+          this.verifyAndDeliver(payload, '尊贵馆已开通')
+        })
       },
       beforeDestroy() {
         eventHub.$off(constant.EVENT_PAY_SUCCESS,this.updateInfo)
+        iap.setApprovedHandler(null)
       }
     }
 </script>
