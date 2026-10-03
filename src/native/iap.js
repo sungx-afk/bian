@@ -70,7 +70,39 @@ function toError(err) {
  * 注意：只有 SK1 模式下才有值。插件一旦发现 CdvPurchaseCapacitor 或 StoreKit2 扩展就会
  * 切到 SK2，那时只有 jwsRepresentation，老接口校验不了 —— 取不到就明确报错，别静默放行。
  */
+/**
+ * 票据特征描述（排查用，不打印完整票据）
+ * App receipt 是 base64（通常 MII 开头，长度几百到几千）；
+ * SK2 的 JWS 是 eyJ 开头的三段式，后端 /pay/apple/service/verify 老接口校验不了。
+ */
+export function describeReceipt(receipt) {
+  const r = receipt || ''
+  const len = r.length
+  const head = r.slice(0, 24)
+  let kind = '空'
+  if (len > 0) {
+    if (/^eyJ/.test(r)) kind = 'JWS（SK2 票据，后端老接口校验不了）'
+    else if (/^[A-Za-z0-9+/=]+$/.test(r) && /^M/i.test(r)) kind = 'App receipt（base64）'
+    else kind = '未知格式'
+  }
+  return { len, head, kind }
+}
+
 async function appReceipt() {
+  const r = await loadReceipt()
+  const info = describeReceipt(r)
+  console && console.log && console.log('[iap] 取到票据: ' + JSON.stringify(info))
+  if (r && typeof window !== 'undefined') {
+    // 排障用：控制台里直接取出来跟 Apple 对账，不落任何日志
+    window.__iapLastReceipt = r
+  }
+  if (!r) {
+    console && console.warn && console.warn('[iap] 没取到票据：检查插件是否走了 SK2（装了 CdvPurchaseCapacitor / StoreKit2 扩展就会）')
+  }
+  return r
+}
+
+async function loadReceipt() {
   const C = cdv()
   if (!C) return ''
   const store = C.store
@@ -195,6 +227,10 @@ function ensureInit(products) {
       const fatal = errors.filter(e => !e || e.code !== ErrorCode.PAYMENT_NOT_ALLOWED)
       if (fatal.length) throw new Error((fatal[0] && fatal[0].message) || '内购初始化失败')
     }
+
+    // 排查关键：SK2 模式下没有整包票据，后端老接口必然校验失败
+    const adapter = typeof store.getAdapter === 'function' ? store.getAdapter(Platform.APPLE_APPSTORE) : null
+    console && console.log && console.log('[iap] 插件已初始化: useSK2=' + !!(adapter && adapter.useSK2))
 
     // 商品信息没加载完时 store.get() 拿不到 offer，order 会失败；但别无限等
     try {
