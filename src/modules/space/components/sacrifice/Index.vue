@@ -2447,7 +2447,11 @@
   .sacrifice.theme_3 .memorial-altar-table,
   .sacrifice.theme_4 .memorial-altar-table,
   .sacrifice.theme_5 .memorial-altar-table,
-  .sacrifice.theme_6 .memorial-altar-table {
+  .sacrifice.theme_6 .memorial-altar-table,
+  .sacrifice.theme_7 .memorial-altar-table,
+  .sacrifice.theme_8 .memorial-altar-table,
+  .sacrifice.theme_9 .memorial-altar-table,
+  .sacrifice.theme_10 .memorial-altar-table {
     display: block;
     position: absolute;
     top: 32vw;
@@ -2476,7 +2480,15 @@
   .sacrifice.theme_5 #item_zuo_zi_box,
   .sacrifice.theme_5 #item_zuo_zi_box_2,
   .sacrifice.theme_6 #item_zuo_zi_box,
-  .sacrifice.theme_6 #item_zuo_zi_box_2 {
+  .sacrifice.theme_6 #item_zuo_zi_box_2,
+  .sacrifice.theme_7 #item_zuo_zi_box,
+  .sacrifice.theme_7 #item_zuo_zi_box_2,
+  .sacrifice.theme_8 #item_zuo_zi_box,
+  .sacrifice.theme_8 #item_zuo_zi_box_2,
+  .sacrifice.theme_9 #item_zuo_zi_box,
+  .sacrifice.theme_9 #item_zuo_zi_box_2,
+  .sacrifice.theme_10 #item_zuo_zi_box,
+  .sacrifice.theme_10 #item_zuo_zi_box_2 {
     z-index: 2;
   }
 
@@ -2491,7 +2503,15 @@
   .sacrifice.theme_5 #item_zuo_zi,
   .sacrifice.theme_5 #item_zuo_zi_2,
   .sacrifice.theme_6 #item_zuo_zi,
-  .sacrifice.theme_6 #item_zuo_zi_2 {
+  .sacrifice.theme_6 #item_zuo_zi_2,
+  .sacrifice.theme_7 #item_zuo_zi,
+  .sacrifice.theme_7 #item_zuo_zi_2,
+  .sacrifice.theme_8 #item_zuo_zi,
+  .sacrifice.theme_8 #item_zuo_zi_2,
+  .sacrifice.theme_9 #item_zuo_zi,
+  .sacrifice.theme_9 #item_zuo_zi_2,
+  .sacrifice.theme_10 #item_zuo_zi,
+  .sacrifice.theme_10 #item_zuo_zi_2 {
     background: transparent;
   }
 
