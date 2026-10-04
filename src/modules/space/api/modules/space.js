@@ -405,7 +405,21 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  // Apple 内购校验：把 StoreKit 票据交给后端校验并发货（App 内购买必须走这条）
+  // Apple 内购校验（App Store Server API V2）：回传 Apple 的交易 ID，
+  // 服务端自己去问 Apple 核实并发货，前端不需要再上传 base64 票据
+  verifyIosTransaction({transaction_id, space_id}, successCb, errorCb) {
+    let param = {
+      transaction_id,
+      space_id
+    }
+    $axios.post(`/pay/ios/verify`, JSON.stringify(param)).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
+  },
+  // 【已废弃】老方案：走 Apple verifyReceipt，需要上传整包 base64 票据 + App 专用共享密钥
+  // 现已改用上面的 /pay/ios/verify（App Store Server API V2），保留是为了必要时临时回退
   verifyAppleReceipt({receipt_data, product_id, transaction_id, space_id}, successCb, errorCb) {
     let param = {
       receipt_data,

@@ -100,8 +100,9 @@
           }
           return result
         },
+        // 尊贵馆 = 馆级 VIP（旧的商品 item-space-vip）或用户级 VIP（iOS 订阅，全站通用）
         isVipSpace(){
-          return this.space && this.space.vip == 1
+          return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
         },
         nativeApp(){
           return isNative()
@@ -298,29 +299,28 @@
             })
           }
         },
-        // 把 StoreKit 票据交给后端校验，成功才发货、才结束交易
+        // 把 Apple 交易 ID 交给后端核实（App Store Server API），成功才发货、才结束交易
         verifyAndDeliver(result, okMsg){
           const payload = {
-            receipt_data: result.receipt,
-            product_id: result.productId || iap.IAP_PRODUCTS.VIP_YEARLY,
             transaction_id: result.transactionId,
             space_id: this.spaceId
           }
-          // 排查日志：只打票据特征（长度/开头/类型），完整票据不落日志
-          console.log('[iap] 提交后端校验 ' + JSON.stringify(iap.describeReceipt(result.receipt))
-            + ' product_id=' + payload.product_id + ' tid=' + payload.transaction_id)
-          $API.space.verifyAppleReceipt(payload, rsp => {
-            console.log('[iap] 后端返回 ' + JSON.stringify({result: rsp && rsp.result, msg: rsp && rsp.msg, repeat: rsp && rsp.repeat}))
+          console.log('[iap] 提交后端核实 ' + JSON.stringify(iap.describeTransaction(result)) + ' space_id=' + this.spaceId)
+          $API.space.verifyIosTransaction(payload, rsp => {
+            console.log('[iap] 后端返回 ' + JSON.stringify({
+              result: rsp && rsp.result, msg: rsp && rsp.msg,
+              vip: rsp && rsp.vip, endDate: rsp && rsp.endDate
+            }))
             if (rsp && (rsp.result === 0 || rsp.result === '0')){
               // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
               iap.finish()
               this.$toast && this.$toast(okMsg)
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
+              // 用户级 VIP 记在 user 上，必须刷新它，页面上的尊贵馆状态才会跟着变
+              this.refreshUser()
               this.updateInfo()
             }else{
-              // 「票据校验失败」= 后端问 Apple 没拿到 status=0；
-              // 完整票据在 window.__iapLastReceipt，可直接拿去跟 Apple 对账
-              console.warn('[iap] 校验未通过，完整票据见 window.__iapLastReceipt')
+              console.warn('[iap] 后端未通过：' + (rsp && rsp.msg))
               this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
             }
           }, error => {
@@ -328,13 +328,18 @@
             this.$toast && this.$toast('校验失败，请联系客服')
           })
         },
+        // 刷新当前用户，拿到最新的 user.vip 会员状态
+        refreshUser(){
+          const token = this.$store.getters['userStore/token']
+          this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
+        },
         // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
         async restorePurchases(){
           try {
             this.$toast && this.$toast('正在向 App Store 恢复购买…')
             const result = await iap.restore()
-            if (!result || !result.receipt){
-              this.$toast && this.$toast('未取到支付票据，请稍后重试')
+            if (!result || !result.transactionId){
+              this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
               return
             }
             this.verifyAndDeliver(result, '尊贵馆已恢复')
@@ -346,13 +351,13 @@
             }
           }
         },
-        // iOS App：尊贵馆按年订阅走 App Store 内购，票据交后端校验后发货
+        // iOS App：尊贵馆按年订阅走 App Store 内购，交易 ID 交后端核实后发货
         async buyVipByIap(){
           try {
             this.$toast && this.$toast('正在唤起 App Store…')
             const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
-            if (!result || !result.receipt){
-              this.$toast && this.$toast('未取到支付票据，请稍后重试')
+            if (!result || !result.transactionId){
+              this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
               return
             }
             this.verifyAndDeliver(result, '尊贵馆已开通')

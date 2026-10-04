@@ -11,10 +11,11 @@ const ALL_PRODUCTS = Object.keys(IAP_PRODUCTS).map(k => IAP_PRODUCTS[k])
  * 内购封装（cordova-plugin-purchase v13 / CdvPurchase）
  * ------------------------------------------------------------------
  * 设计原则：
- *  1. 前端只负责拉起 StoreKit 支付、拿到 receipt；
- *  2. 发货必须由后端校验票据（/pay/apple/service/verify）后完成，前端不信任任何本地结果；
+ *  1. 前端只负责拉起 StoreKit 支付、拿到 Apple 的交易 ID（transactionId）；
+ *  2. 发货必须由后端调 Apple App Store Server API 核实（/pay/ios/verify）后完成，
+ *     前端不信任任何本地结果，也不需要上传整包票据；
  *  3. 后端确认发货后才 finish 交易，防止「扣了钱没开通」；
- *  4. 插件缺失/票据取不到时给出明确报错，绝不静默失败。
+ *  4. 插件缺失 / 拿不到交易 ID 时给出明确报错，绝不静默失败。
  */
 
 let initPromise = null
@@ -65,98 +66,65 @@ function toError(err) {
 }
 
 /**
- * 取 App Store 票据（base64）。
- * 后端 /pay/apple/service/verify 走的是 Apple verifyReceipt 老接口，必须要这串 base64。
- * 注意：只有 SK1 模式下才有值。插件一旦发现 CdvPurchaseCapacitor 或 StoreKit2 扩展就会
- * 切到 SK2，那时只有 jwsRepresentation，老接口校验不了 —— 取不到就明确报错，别静默放行。
+ * App Store 交易描述（排查用）
+ * 后端 /pay/ios/verify 走 App Store Server API，只需要拿 transactionId 去问 Apple，
+ * 不再依赖整包票据 —— 所以 SK1 / SK2 都能用，取不到票据也不会再卡住。
  */
-/**
- * 票据特征描述（排查用，不打印完整票据）
- * App receipt 是 base64（通常 MII 开头，长度几百到几千）；
- * SK2 的 JWS 是 eyJ 开头的三段式，后端 /pay/apple/service/verify 老接口校验不了。
- */
-export function describeReceipt(receipt) {
-  const r = receipt || ''
-  const len = r.length
-  const head = r.slice(0, 24)
-  let kind = '空'
-  if (len > 0) {
-    if (/^eyJ/.test(r)) kind = 'JWS（SK2 票据，后端老接口校验不了）'
-    else if (/^[A-Za-z0-9+/=]+$/.test(r) && /^M/i.test(r)) kind = 'App receipt（base64）'
-    else kind = '未知格式'
+export function describeTransaction(payload) {
+  const tid = (payload && payload.transactionId) || ''
+  const oid = (payload && payload.originalTransactionId) || ''
+  return {
+    productId: (payload && payload.productId) || '',
+    transactionId: tid,
+    transactionIdLen: tid.length,
+    originalTransactionId: oid,
+    originalIdLen: oid.length
   }
-  return { len, head, kind }
-}
-
-async function appReceipt() {
-  const r = await loadReceipt()
-  const info = describeReceipt(r)
-  console && console.log && console.log('[iap] 取到票据: ' + JSON.stringify(info))
-  if (r && typeof window !== 'undefined') {
-    // 排障用：控制台里直接取出来跟 Apple 对账，不落任何日志
-    window.__iapLastReceipt = r
-  }
-  if (!r) {
-    console && console.warn && console.warn('[iap] 没取到票据：检查插件是否走了 SK2（装了 CdvPurchaseCapacitor / StoreKit2 扩展就会）')
-  }
-  return r
-}
-
-async function loadReceipt() {
-  const C = cdv()
-  if (!C) return ''
-  const store = C.store
-  const { Platform } = constants()
-  const adapter = typeof store.getAdapter === 'function' ? store.getAdapter(Platform.APPLE_APPSTORE) : null
-
-  if (adapter) {
-    if (typeof adapter.refreshReceipt === 'function') {
-      try {
-        const r = await adapter.refreshReceipt()
-        if (r && typeof r.appStoreReceipt === 'string' && r.appStoreReceipt) return r.appStoreReceipt
-      } catch (e) {
-        // 落到下面的缓存兜底
-      }
-    }
-    const cached = adapter._receipt || adapter.receipt
-    const native = cached && cached.nativeData
-    if (native && typeof native.appStoreReceipt === 'string' && native.appStoreReceipt) return native.appStoreReceipt
-  }
-
-  // 老版本 API 兜底
-  if (typeof store.getApplicationReceipt === 'function') {
-    const r = store.getApplicationReceipt()
-    if (typeof r === 'string' && r) return r
-  }
-  return ''
 }
 
 /** 一次支付/恢复成功：把结果交给等待方 */
 function deliver(transaction) {
-  const productId = productIdOf(transaction)
+  const payload = {
+    productId: productIdOf(transaction),
+    transactionId: (transaction && transaction.transactionId) || '',
+    originalTransactionId: (transaction && transaction.originalTransactionId) || ''
+  }
   lastTransaction = transaction
-  appReceipt().then(receipt => {
-    const payload = {
-      productId,
-      transactionId: (transaction && transaction.transactionId) || '',
-      receipt
+  console && console.log && console.log('[iap] StoreKit 交易: ' + JSON.stringify(describeTransaction(payload)))
+
+  const rejectIt = (err) => {
+    if (restoreWaiting) {
+      const w = restoreWaiting
+      restoreWaiting = null
+      w.reject(err)
+      return
     }
+    const w = waiting.get(payload.productId)
+    if (w) {
+      waiting.delete(payload.productId)
+      w.reject(err)
+    }
+  }
+  const resolveIt = () => {
     if (restoreWaiting) {
       const w = restoreWaiting
       restoreWaiting = null
       w.resolve(payload)
       return
     }
-    const w = waiting.get(productId)
+    const w = waiting.get(payload.productId)
     if (w) {
-      waiting.delete(productId)
+      waiting.delete(payload.productId)
       w.resolve(payload)
       return
     }
     // 没有人等着（例如上次付了钱但后端校验失败、交易没 finish，
     // 这次启动 StoreKit 又回调了）：交给兜底处理器补发货
-    if (approvedHandler && payload.receipt) approvedHandler(payload)
-  })
+    if (approvedHandler) approvedHandler(payload)
+  }
+
+  if (payload.transactionId) resolveIt()
+  else rejectIt(new Error('未能取到 Apple 交易 ID，无法完成发货'))
 }
 
 function failAll(err) {
@@ -220,7 +188,8 @@ function ensureInit(products) {
     // autoFinish=false：交易要等后端校验通过再结束，避免扣款后没发货
     const errors = await store.initialize([{
       platform: Platform.APPLE_APPSTORE,
-      options: { autoFinish: false, needAppReceipt: true }
+      // 后端 /pay/ios/verify 只需要 transactionId，不用再拉整包票据
+      options: { autoFinish: false }
     }])
     if (errors && errors.length) {
       const { ErrorCode } = constants()
@@ -228,7 +197,7 @@ function ensureInit(products) {
       if (fatal.length) throw new Error((fatal[0] && fatal[0].message) || '内购初始化失败')
     }
 
-    // 排查关键：SK2 模式下没有整包票据，后端老接口必然校验失败
+    // 信息性日志：新方案只需要 transactionId，SK1 / SK2 都能提供
     const adapter = typeof store.getAdapter === 'function' ? store.getAdapter(Platform.APPLE_APPSTORE) : null
     console && console.log && console.log('[iap] 插件已初始化: useSK2=' + !!(adapter && adapter.useSK2))
 
@@ -250,7 +219,7 @@ function ensureInit(products) {
 /**
  * 拉起购买
  * @param {string} productId App Store 商品 ID
- * @returns {Promise<{productId:string, transactionId:string, receipt:string}>}
+ * @returns {Promise<{productId:string, transactionId:string, originalTransactionId:string}>}
  */
 export function order(productId) {
   return new Promise((resolve, reject) => {
@@ -283,7 +252,7 @@ export function order(productId) {
 /**
  * 注册兜底回调：收到「没有对应购买请求的 approved」时触发。
  * 典型场景：上次付款后后端校验失败/断网，交易没 finish，App 下次启动会再回调一次。
- * @param {(payload:{productId,transactionId,receipt}) => void} fn
+ * @param {(payload:{productId,transactionId,originalTransactionId}) => void} fn
  */
 export function setApprovedHandler(fn) {
   approvedHandler = typeof fn === 'function' ? fn : null
@@ -303,8 +272,8 @@ export function finish(transaction) {
 
 /**
  * 恢复购买（同一 Apple ID 换设备/重装后必须能恢复）
- * @returns {Promise<{productId:string, transactionId:string, receipt:string}>}
- *          恢复成功时票据交给业务层，由后端校验后发货并 finish。
+ * @returns {Promise<{productId:string, transactionId:string, originalTransactionId:string}>}
+ *          恢复成功时把交易 ID 交给业务层，由后端核实后发货并 finish。
  */
 export function restore() {
   return new Promise((resolve, reject) => {

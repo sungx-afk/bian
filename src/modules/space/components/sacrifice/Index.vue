@@ -428,8 +428,9 @@
       supportPoint(){
         return !!config_server.supportPoint
       },
+      // 尊贵馆 = 馆级 VIP（旧的商品 item-space-vip）或用户级 VIP（iOS 订阅，全站通用）
       isVipSpace(){
-        return this.space && this.space.vip == 1
+        return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
       },
       //是否来自 Apple 平台的用户：source 是新的注册来源字段，历史账号用 appleId 兜底
       isAppleUser(){
