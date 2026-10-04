@@ -1776,6 +1776,12 @@
       buySuccess(){
         this.getSpaceDetail();
       },
+      //修改纪念馆成功（名称/遗像/人数等）：重新拉取详情刷新本页
+      modifySpaceSuccess(spaceId){
+        if (spaceId && this.spaceId && spaceId == this.spaceId){
+          this.getSpaceDetail()
+        }
+      },
       messageConfirm(data){
         this.showMessage = false
         this.action && this.action()
@@ -1807,6 +1813,7 @@
         eventHub.$on(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.updateBackground)
         eventHub.$on(constant.EVENT_CHANGE_FRAME_SUCCESS, this.updateFrame)
         eventHub.$on(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
+        eventHub.$on(constant.EVENT_MODIFY_SPACE_SUCCESS, this.modifySpaceSuccess)
       }
     },
     created() {
@@ -1850,6 +1857,7 @@
       eventHub.$off(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, this.updateBackground)
       eventHub.$off(constant.EVENT_CHANGE_FRAME_SUCCESS, this.updateFrame)
       eventHub.$off(constant.EVENT_AUDIO_PLAY, this.updatePlayState)
+      eventHub.$off(constant.EVENT_MODIFY_SPACE_SUCCESS, this.modifySpaceSuccess)
     }
   }
 </script>

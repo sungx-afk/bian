@@ -101,7 +101,6 @@
     computed:{
       ...mapGetters({
         user: 'userStore/user',
-        space:'spaceStore/spaceDetail'
       }),
       isIPhoneX(){
         return false
@@ -123,9 +122,28 @@
       },
     },
     methods:{
+      //编辑模式下不直接用 store 里缓存的详情，重新请求一次最新的
+      fetchSpaceDetail(){
+        let that = this
+        $API.space.getSpaceDetail({
+          sid:this.id
+        }, rsp=>{
+          //与 spaceStore 的 mutation 保持一致：customThemeId 是 JSON 字符串，需要解析后使用
+          if (rsp && rsp.customThemeId){
+            rsp.customThemeId = JSON.parse(rsp.customThemeId)
+          }
+          that.detail = rsp
+          that.initSpaceData()
+        }, error=>{
+          that.$toast('获取纪念馆信息失败，请稍后重试')
+        })
+      },
       initSpaceData(){
         if (this.id){
-          this.detail = JSON.parse(JSON.stringify(this.space))
+          this.detail = this.detail ? JSON.parse(JSON.stringify(this.detail)) : null
+          if (!this.detail){
+            return
+          }
           this.name = this.detail.name
           this.epitaph = this.detail.epitaph
           this.users = this.detail.spaceUsers
@@ -394,6 +412,10 @@
           Promise.all(promises)
             .then(() => {
               eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
+              //携带 spaceId 单独发一个修改成功事件：
+              //祭拜页/管理页都被 vue-navigation 缓存，返回时 created 不会重新执行，
+              //需要靠事件通知它们重新拉取详情（List 页两个事件都会刷新）
+              eventHub.$emit(constant.EVENT_MODIFY_SPACE_SUCCESS, this.id)
               this.$toast.clear()
               this.$toast({
                 message:'修改成功',
@@ -488,6 +510,11 @@
         if (query.space_id){
           this.id = query.space_id
         }
+      }
+      if (this.id){
+        //编辑模式：重新获取一次馆详情，避免使用 store 中的缓存数据
+        this.fetchSpaceDetail()
+      }else{
         this.initSpaceData()
       }
       eventHub.$on(constant.EVENT_SELECT_THEME,this.updateTheme)

@@ -17,6 +17,7 @@
         </van-switch-cell>
       </template>
 
+      <van-cell v-if="space && isSpaceCreator" title="修改纪念馆" :is-link="true" @click.stop="goModifySpace"></van-cell>
       <van-switch-cell
         title="关闭访客留言/评论"
         active-color="#825621"
@@ -291,6 +292,12 @@
           },error=>{
 
           })
+        },
+        goModifySpace(){
+          if (!this.isSpaceCreator){
+            return
+          }
+          Link(`/space/create?space_id=${this.space.id}`)
         },
         goBlackList(){
           Link(`/space/blacklist/${this.space.id}`)

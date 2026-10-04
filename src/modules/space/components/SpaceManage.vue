@@ -26,6 +26,7 @@
   import Visitor from './manage/Visitor'
   import Setting from './manage/Setting'
   import PageHeader from '@/modules/widget/PageHeader'
+  import constant from '@/config/constant'
 
     export default {
       name: "SpaceManage",
@@ -54,7 +55,13 @@
           })
         },
         registerEvent(){
-
+          //修改纪念馆成功后刷新详情（本页被 vue-navigation 缓存，created 不会重新执行）
+          eventHub.$on(constant.EVENT_MODIFY_SPACE_SUCCESS, this.modifySpaceSuccess)
+        },
+        modifySpaceSuccess(spaceId){
+          if (spaceId && spaceId == this.spaceId){
+            this.getSpaceDetail()
+          }
         }
       },
       created() {
@@ -66,6 +73,9 @@
           this.getSpaceDetail()
           this.registerEvent()
         }
+      },
+      beforeDestroy() {
+        eventHub.$off(constant.EVENT_MODIFY_SPACE_SUCCESS, this.modifySpaceSuccess)
       }
     }
 </script>
