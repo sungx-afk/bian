@@ -313,7 +313,8 @@
             }))
             if (rsp && (rsp.result === 0 || rsp.result === '0')){
               // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
-              iap.finish()
+              // 按 ID 结束「这一笔」，不能用全局的「最近一笔」——多笔并发时会互相覆盖
+              iap.finish(result.transactionId)
               this.$toast && this.$toast(okMsg)
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
               // 用户级 VIP 记在 user 上，必须刷新它，页面上的尊贵馆状态才会跟着变

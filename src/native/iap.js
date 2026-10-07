@@ -28,6 +28,13 @@ let restoreWaiting = null
 let approvedHandler = null
 /** 最近一次 approved 的交易，后端校验通过后由 finish() 结束它 */
 let lastTransaction = null
+/**
+ * transactionId -> StoreKit 交易对象。
+ * 一次恢复购买可能同时回调多笔交易，后端校验是异步的，
+ * 必须按 ID 各自 finish 自己的那一笔，不能用「最近一次」这种全局变量 ——
+ * 否则后到的交易会覆盖前面的，导致前面的永远结束不了、下次继续重放。
+ */
+const transactions = new Map()
 
 function cdv() {
   if (typeof window === 'undefined') return null
@@ -90,6 +97,7 @@ function deliver(transaction) {
     originalTransactionId: (transaction && transaction.originalTransactionId) || ''
   }
   lastTransaction = transaction
+  if (payload.transactionId) transactions.set(payload.transactionId, transaction)
   console && console.log && console.log('[iap] StoreKit 交易: ' + JSON.stringify(describeTransaction(payload)))
 
   const rejectIt = (err) => {
@@ -258,11 +266,24 @@ export function setApprovedHandler(fn) {
   approvedHandler = typeof fn === 'function' ? fn : null
 }
 
-/** 后端校验完成、发货成功后调用，告诉 StoreKit 交易结束 */
-export function finish(transaction) {
-  const tx = transaction || lastTransaction
+/**
+ * 后端校验完成、发货成功后调用，告诉 StoreKit 交易结束。
+ * @param {string|object} transactionOrId 传 transactionId 最稳妥 —— 多笔交易并发时
+ *        各自结束自己那一笔；不传则退回「最近一次交易」。
+ */
+export function finish(transactionOrId) {
+  let tx = null
+  if (transactionOrId && typeof transactionOrId.finish === 'function') {
+    tx = transactionOrId
+  } else if (typeof transactionOrId === 'string' && transactions.has(transactionOrId)) {
+    tx = transactions.get(transactionOrId)
+  }
+  if (!tx) tx = lastTransaction
   lastTransaction = null
+
   if (!tx || typeof tx.finish !== 'function') return Promise.resolve()
+  // 从缓存移除，避免重复 finish 和无谓的内存占用
+  if (tx.transactionId) transactions.delete(tx.transactionId)
   try {
     return Promise.resolve(tx.finish())
   } catch (e) {
