@@ -66,6 +66,17 @@
   import constant from '@/config/constant'
   import {gUuid} from '@/config/utils'
   import PageHeader from '@/modules/widget/PageHeader'
+  // 与 manage/Setting.vue 共用同一套新主题图（在 sacrifice/images/generated 下生成）
+  import themeBackground1 from '../sacrifice/images/generated/memorial-hall-background.webp'
+  import themeBackground2 from '../sacrifice/images/generated/memorial-lakeside-background.webp'
+  import themeBackground3 from '../sacrifice/images/generated/memorial-celestial-background.webp'
+  import themeBackground4 from '../sacrifice/images/generated/memorial-moonlit-mountains-background.webp'
+  import themeBackground5 from '../sacrifice/images/generated/memorial-spring-valley-background.webp'
+  import themeBackground6 from '../sacrifice/images/generated/memorial-cloud-palace-background.webp'
+  import themeBackground7 from '../sacrifice/images/generated/memorial-pure-land-background.webp'
+  import themeBackground8 from '../sacrifice/images/generated/memorial-moon-palace-background.webp'
+  import themeBackground9 from '../sacrifice/images/generated/memorial-heavenly-garden-background.webp'
+  import themeBackground10 from '../sacrifice/images/generated/memorial-angel-heaven-background.webp'
   export default {
     name: "Style",
     components: {
@@ -86,8 +97,23 @@
         user: 'userStore/user',
         space:'spaceStore/spaceDetail'
       }),
+      // 与 manage/Setting.vue 一致的新主题列表（backgroundId 1~10 对应 sacrifice 渲染）
+      presetBackgrounds(){
+        return [
+          {id: 1, uuid: 1, name: '纪念堂', url: themeBackground1},
+          {id: 2, uuid: 2, name: '湖畔', url: themeBackground2},
+          {id: 3, uuid: 3, name: '天界', url: themeBackground3},
+          {id: 4, uuid: 4, name: '月夜山', url: themeBackground4},
+          {id: 5, uuid: 5, name: '春谷', url: themeBackground5},
+          {id: 6, uuid: 6, name: '云宫', url: themeBackground6},
+          {id: 7, uuid: 7, name: '净土', url: themeBackground7},
+          {id: 8, uuid: 8, name: '月宫', url: themeBackground8},
+          {id: 9, uuid: 9, name: '天园', url: themeBackground9},
+          {id: 10, uuid: 10, name: '天使天国', url: themeBackground10},
+        ]
+      },
       themes(){
-        let list = this.getThemes()
+        let list = this.presetBackgrounds
         let groupSize = 3
         //向上取整：最后不足一行的也要成组，避免依赖循环条件的隐式取整
         let groupCount = Math.ceil(list.length / groupSize)
@@ -116,8 +142,28 @@
           message: '确认应用该预置样式吗？'
         }).then(() => {
           this.selected = theme.uuid
-          eventHub.$emit(constant.EVENT_SELECT_THEME,theme)
-          this.$router.back()
+          if (this.spaceId){
+            // 已有纪念馆：按 backgroundId 写入，并通知祭拜页（sacrifice）刷新
+            $API.space.modifySpace({
+              sid: this.spaceId,
+              backgroundId: theme.id
+            }, rsp => {
+              eventHub.$emit(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, {backgroundId: theme.id})
+              this.$router.back()
+            }, error => {
+              this.$toast && this.$toast('设置失败，请稍后重试')
+            })
+          } else {
+            // 新建纪念馆：回传 backgroundId，由创建流程写入
+            eventHub.$emit(constant.EVENT_SELECT_THEME, {
+              uuid: theme.id,
+              id: theme.id,
+              backgroundId: theme.id,
+              url: theme.url,
+              name: theme.name
+            })
+            this.$router.back()
+          }
         }).catch(()=>{
           
         })

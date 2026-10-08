@@ -22,34 +22,32 @@ const getters = {
 
 // actions
 const actions = {
-  loginWithCode ({commit, state ,dispatch}, {code,app_id}){
-    $API.user.loginWithCode({code,app_id},rsp=>{
-      commit(types.UPDATE_USER,rsp)
-      dispatch('getUserSetting');
-      if(rsp.merchant_id){
-        dispatch('getMerchantInfo',{id:rsp.merchant_id});
-      }
-    })
-  },
   // Apple 登录：identityToken 由后端校验后返回本站 token
   loginWithApple ({commit, state ,dispatch}, payload){
-    $API.user.loginWithApple(payload,rsp=>{
-      commit(types.UPDATE_USER,rsp)
-      dispatch('getUserSetting');
-      if(rsp.merchant_id){
-        dispatch('getMerchantInfo',{id:rsp.merchant_id});
-      }
-    },error=>{
-      console.log('apple login error',error)
+    return new Promise((resolve, reject) => {
+      $API.user.loginWithApple(payload,rsp=>{
+        commit(types.UPDATE_USER,rsp)
+        dispatch('getUserSetting');
+        if(rsp.merchant_id){
+          dispatch('getMerchantInfo',{id:rsp.merchant_id});
+        }
+        resolve();
+      },error=>{
+        console.log('apple login error',error)
+        reject(error)
+      })
     })
   },
   loginWithUid ({commit, state ,dispatch}, {uid}){
-    $API.user.loginWithUid({uid},rsp=>{
-      commit(types.UPDATE_USER,rsp)
-      dispatch('getUserSetting');
-      if(rsp.merchant_id){
-        dispatch('getMerchantInfo',{id:rsp.merchant_id});
-      }
+    return new Promise((resolve, reject) => {
+      $API.user.loginWithUid({uid},rsp=>{
+        commit(types.UPDATE_USER,rsp)
+        dispatch('getUserSetting');
+        if(rsp.merchant_id){
+          dispatch('getMerchantInfo',{id:rsp.merchant_id});
+        }
+        resolve();
+      }, error => reject(error))
     })
   },
   fetchMyInfo({commit, state ,dispatch}, {token}){
@@ -115,9 +113,6 @@ const mutations = {
     state.token = data.token
     state.expire = false
     let page_title = data.user.merchant_name || '彼岸思念'
-    if(data.user.appId && data.user.appId == 'wx502b2e237549374c'){
-      page_title = '殡仪馆微信公众号服务系统'
-    }
     setPageTitle(page_title);
     //更新token到bian-requestParam
     let key = getLocalTokenKey();
@@ -156,7 +151,7 @@ const mutations = {
       param = JSON.parse(param)
     }else {
       param = {
-        plat:'wechat',
+        plat:'h5',
         build:'999999',
         token:'',
         platVersion:'1.0.1',

@@ -1,5 +1,7 @@
 <template>
   <div class="issue-create-container">
+    <page-header :title="pageTitle"></page-header>
+    <div class="issue-create-body">
     <div class="content-area">
       <div class="input-area">
         <van-field
@@ -24,13 +26,19 @@
     <div class="bottom-button">
       <van-button type="default" @click="clickConfirm" size="large">确定</van-button>
     </div>
+    </div>
   </div>
 </template>
 
 <script>
   import constant from '@/config/constant'
+  import PageHeader from '@/modules/widget/PageHeader'
+
     export default {
       name: "IssueCreate",
+      components: {
+        PageHeader
+      },
       data(){
         return{
           spaceId:'',
@@ -38,6 +46,11 @@
           selectPhotos:[],
           content:'',
           uploadedFiles: [],
+        }
+      },
+      computed: {
+        pageTitle() {
+          return this.type === 'PRIVATE' ? '发表私语' : '发表留言'
         }
       },
       methods:{
@@ -185,7 +198,16 @@
     width: 100%;
     height: 100%;
     background-color: white;
-    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    //PageHeader 固定在顶部，内容区域独立滚动
+    overflow: hidden;
+    .issue-create-body {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
     .content-area{
       border-bottom:1px solid @BORDER_COLOR_2;
       .input-area{

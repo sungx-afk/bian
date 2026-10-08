@@ -93,7 +93,9 @@
               data.extra = this.extra
               data.timestamp = new Date().getTime()
             }
-            this.wechatShare(data)
+            this.wechatShare(data).catch((e) => {
+              this.$toast && this.$toast((e && e.message) || '分享失败')
+            })
           }
 
           let content = qs.stringify(this.extra,{indices:false})

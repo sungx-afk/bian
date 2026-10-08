@@ -1,6 +1,7 @@
 <template>
   <div class="space-content-container">
     <div class="space-content-body" :class="{'iphonex-height':isIPhoneX}">
+      <page-header :title="pageTitle"></page-header>
       <template v-if="detail">
         <template v-if="0 === checkCanIn(detail)">
           <van-tabs v-model="activeTab" sticky color="#825621">
@@ -37,6 +38,7 @@
   import Friends from './Friends'
   import Private from './Private'
   import UserSummary from '../userinfo/UserSummary'
+  import PageHeader from '@/modules/widget/PageHeader'
 
   export default {
     name: 'MessageContainer',
@@ -66,13 +68,19 @@
       },
       showFriendsTab() {
         return this.detail && this.detail.type === 0
+      },
+      pageTitle() {
+        if (this.activeTab === 'private') return '私语'
+        if (this.activeTab === 'friends') return '亲属空间'
+        return '留言'
       }
     },
     components: {
       Message,
       Friends,
       Private,
-      UserSummary
+      UserSummary,
+      PageHeader
     },
     methods: {
       ...mapActions({
@@ -166,7 +174,8 @@
     }
 
     /deep/ .van-tabs {
-      height: 100%;
+      //顶部 PageHeader 占 48px，tabs 撑满剩余高度
+      height: ~'calc(100% - 48px)';
       .van-tabs__content {
         height: ~'calc(100% - 44px)';
         .van-tab__pane {

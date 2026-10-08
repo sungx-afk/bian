@@ -79,7 +79,7 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  createSpace({type,name, users,themeId,customTheme,epitaph,combineImage,showEpitaph,showCouplet}, successCb, errorCb) {
+  createSpace({type,name, users,themeId,customTheme,epitaph,combineImage,showEpitaph,showCouplet,backgroundId}, successCb, errorCb) {
     let param = {
       type,
       name,
@@ -89,6 +89,10 @@ export default {
 
     if (themeId){
       param.themeId = themeId
+    }
+
+    if (backgroundId){
+      param.backgroundId = backgroundId
     }
 
     if (customTheme){

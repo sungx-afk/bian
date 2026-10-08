@@ -2,19 +2,6 @@ import qs from 'qs'
 
 export default {
 
-  loginWithCode({code,app_id},successCb, errorCb){
-    let param = {
-      code
-    }
-    if(app_id){
-      param.app_id = app_id;
-    }
-    $axios.get(`/users/oauth2/wechat/service/login_by_code?`+qs.stringify(param, { indices: false })).then(function (response) {
-      successCb && successCb(response.data)
-    }).catch(function (error) {
-      errorCb &&  errorCb(error)
-    });
-  },
   // Apple 登录：App 内拿到 identityToken 后交给后端校验并换取本站 token
   // 后端需实现 /users/oauth2/apple/service/login_by_token（校验 JWT、建号/绑号、下发 token）
   loginWithApple({identityToken,authorizationCode,email,fullName,appleUserId},successCb, errorCb){
@@ -72,17 +59,6 @@ export default {
       key
     }
     $axios.get(`/users/setting?`+qs.stringify(param, { indices: false })).then(function (response) {
-      successCb && successCb(response.data)
-    }).catch(function (error) {
-      errorCb &&  errorCb(error)
-    });
-  },
-  getJsAuthSignature({url},successCb, errorCb){
-    // url = encodeURIComponent(url)
-    let param = {
-      url
-    }
-    $axios.get(`/users/oauth2/wechat/service/js_auth_signature?`+qs.stringify(param, { indices: false })).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb &&  errorCb(error)

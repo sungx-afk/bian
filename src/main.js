@@ -43,11 +43,18 @@ if (USE_DEBUG_UID || (typeof location !== 'undefined' && location.search.indexOf
   window.__BIAN_DEBUG__ = true
 
   window.addEventListener('error', e => {
+    window.__LAST_ERR__ = e.message + ' @ ' + e.filename + ':' + e.lineno
     console.error('[onerror]', e.message, e.filename + ':' + e.lineno)
   })
   window.addEventListener('unhandledrejection', e => {
+    if (!window.__LAST_REJ__) window.__LAST_REJ__ = String(e.reason && (e.reason.stack || e.reason.message || e.reason))
     console.error('[unhandledrejection]', e.reason && (e.reason.message || e.reason))
   })
+  // Vue 组件渲染/生命周期错误：window.onerror 捕获不到，必须用 errorHandler
+  Vue.config.errorHandler = (err, vm, info) => {
+    window.__LAST_ERR__ = (err && (err.stack || err.message)) + ' | info=' + info
+    console.error('[vue-error]', err && (err.stack || err.message), 'info=' + info)
+  }
   document.addEventListener('click', e => {
     const t = e.target
     console.log('[click]', t.tagName, 'class=' + (t.className || ''), 'id=' + (t.id || ''))

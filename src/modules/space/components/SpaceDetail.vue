@@ -335,7 +335,9 @@
 
             }
           }
-          this.wechatShare(param)
+          this.wechatShare(param).catch((e) => {
+            this.$toast && this.$toast((e && e.message) || '分享失败')
+          })
         }
       },
       bgmAction(){

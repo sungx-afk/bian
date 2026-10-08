@@ -357,6 +357,9 @@
               if (this.theme.uuid === 'custom'){
                 params.customTheme = JSON.stringify(this.theme)
               }
+              if (this.theme.backgroundId){
+                params.backgroundId = this.theme.backgroundId
+              }
             }
             $API.space.modifySpace(params, rsp=>{
               resolve && resolve(rsp)

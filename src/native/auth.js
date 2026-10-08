@@ -1,39 +1,10 @@
-import config_server from '@/config/config'
-import { isNative, isNativeIOS, isWechat, plugin } from './platform'
+import { isNative, isNativeIOS, plugin } from './platform'
 // Capacitor 插件必须在 Web 代码里 import 才会注册（运行时不会自动注册），
 // 否则 App 里 window.SignInWithApple 不存在，Apple 登录按钮不会出现。
 import { SignInWithApple as AppleSignIn } from '@capacitor-community/apple-sign-in'
 
 // @capacitor-community/apple-sign-in 挂载的全局对象
 const APPLE_PLUGIN = 'SignInWithApple'
-
-/** 微信网页授权地址（H5 用） */
-export function wechatAuthorizeUrl() {
-  const appid = window.app_id || config_server.wechatAppId
-  const redirect = encodeURIComponent(`${config_server.domain}/login.html`)
-  return `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}` +
-    `&redirect_uri=${redirect}&response_type=code&scope=snsapi_userinfo` +
-    `&state=wechat_state#wechat_redirect`
-}
-
-/**
- * 微信登录
- * H5：跳微信 OAuth 授权页（回调带 code，由 List.vue 用 code 换 token）
- * App：JS-SDK 不可用，需接微信 OpenSDK（见 ios-app/README.md），当前直接返回错误，
- *      由调用方降级到 Apple 登录，避免用户卡在白屏。
- */
-export function loginByWechat() {
-  if (isNative()) {
-    return Promise.reject(new Error('App 内暂未开放微信登录，请先用 Apple 登录'))
-  }
-  // 普通浏览器（Chrome 模拟 iPhone 也算）没有微信 JS-SDK 环境，跳过去只会
-  // 得到微信的「请在微信客户端打开链接」白页，直接在这里拦住并提示。
-  if (!isWechat()) {
-    return Promise.reject(new Error('请在微信中打开，或用 ?uid=你的账号ID 登录'))
-  }
-  window.location.replace(wechatAuthorizeUrl())
-  return Promise.resolve()
-}
 
 export function appleLoginAvailable() {
   return isNativeIOS() && !!plugin(APPLE_PLUGIN)
@@ -61,8 +32,10 @@ export async function loginByApple() {
   }
 }
 
-/** 统一登录入口：App 走 Apple 登录，H5 走微信授权 */
+/**
+ * 统一登录入口：App 走 Apple 登录；H5 不再有微信授权，统一到登录页用 ?uid= 调试。
+ */
 export function login() {
   if (isNative()) return loginByApple()
-  return loginByWechat()
+  return Promise.reject(new Error('当前环境不支持该登录方式，请在 iOS App 内使用 Apple 登录，或用 ?uid= 调试'))
 }

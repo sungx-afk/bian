@@ -1,7 +1,7 @@
 <template>
   <div class="sacrifice" :class="checkResult === 0 ? theme : 'no-theme'">
     <template v-if="checkResult === 0">
-    <div class="sacrifice-back-btn" v-if="isAutoEntered" @click="backToList" aria-label="返回列表">
+    <div class="sacrifice-back-btn" @click="backToList" aria-label="返回">
       <img src="~@/modules/images/back.svg" alt="返回" />
     </div>
     <div class="sacrifice-header" v-if="space">
@@ -823,11 +823,21 @@
       goBack() {
         this.$router.go(-1)
       },
-      //左上角"返回列表"：清掉当前馆的"最后访问"记录，避免被 /list 自动带回来；
-      //用 replace 回到 /list，按返回即退出 WebView（与自动进馆行为保持一致）
+      //左上角"返回"按钮：
+      // - 从 /list 自动跳进来（?auto=1）：清掉当前馆的"最后访问"记录，避免被 /list 自动带回来；
+      //   用 replace 回到 /list，按返回即退出 WebView（与自动进馆行为保持一致）
+      // - 其他入口（详情页等）：优先返回上一页；无历史（如分享链接直开）时兜底回 /list
       backToList() {
-        this.clearLastSpaceOfCurrent();
-        this.$router.replace('/list');
+        if (this.isAutoEntered) {
+          this.clearLastSpaceOfCurrent();
+          this.$router.replace('/list');
+          return
+        }
+        if (window.history.length > 1) {
+          this.$router.go(-1);
+        } else {
+          this.$router.replace('/list');
+        }
       },
       getSpaceDetail() {
         let that = this;

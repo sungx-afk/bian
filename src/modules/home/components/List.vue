@@ -128,8 +128,8 @@
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
   import Guide from '@/modules/widget/guide/Guide'  // 引导页组件
-  import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录，H5 走微信授权）
-  import { isNative, isWechat } from '@/native/platform'
+  import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录）
+  import { isNative } from '@/native/platform'
   import { USE_DEBUG_UID, DEBUG_UID } from '@/native/debug'   // 内测包自动登录（提审前关闭）
 
   import Vue from 'vue';
@@ -237,8 +237,7 @@
       onGuideEnter(){
         sessionStorage.setItem('GUIDE_SHOWN', '1')
         this.showGuideFlag = false
-        this.loginState = LoginState.UNDO  // 复位，让 tryLogin 能重新进入授权分支
-        this.tryLogin()
+        this.$router.push('/login')
       },
       getSpaceList(){
         this.getSpacesPersonal()
@@ -587,30 +586,13 @@
           })
           return
         }else {
-          // 未登录：先展示引导页，用户主动点"进入"后再走授权（避免 created 阶段 $refs 尚未挂载的问题）
-          // App 内不自动跳微信授权（无 JS-SDK 环境会卡死），只展示引导页让用户选 Apple 登录
-          const shown = sessionStorage.getItem('GUIDE_SHOWN')
-          if (!shown || isNative()) {
-            this.showGuideFlag = true   // 弹出引导页
-          } else {
-            this.authWechat()           // 本轮已展示过，直接走授权，避免卡死
-          }
+          // 未登录：交给路由守卫统一跳转到登录/注册页
+          this.$router.push('/login')
         }
       },
       fetchMyInfo(token){
         this.$store.dispatch('userStore/fetchMyInfo',{token}).then(() => {
           this.checkSwitchPage();
-        })
-      },
-      authWechat(){
-        auth.loginByWechat().catch((err)=>{
-          console.log('wechat login unavailable:', err && err.message)
-          // 静默失败会让人以为卡死，按环境给出明确提示
-          if (isNative()){
-            this.$toast && this.$toast('App 内暂不支持微信登录，请用 Apple 登录')
-          }else if (!isWechat()){
-            this.$toast && this.$toast('请在微信中打开，或用 ?uid=你的账号ID 本地调试登录')
-          }
         })
       },
       // 临时登录：输入用户 ID 直接登录（后端 /user/sessions/uid）。
@@ -641,9 +623,6 @@
           }
         }
       },
-      loginWithCode(code,app_id){
-        this.$store.dispatch('userStore/loginWithCode', {code,app_id})
-      },
       loginWithToken(token){
         this.fetchMyInfo(token)
       },
@@ -664,63 +643,28 @@
 
       },
       tokenExpire(){
-        //token过期了，重新尝试授权登录：App 内走 Apple 登录，H5 走微信授权
+        //token 过期：App 内走 Apple 重新登录，其余跳登录页
         if (this.appleLoginAvailable){
           this.authApple()
         }else {
-          this.authWechat()
+          this.$router.push('/login')
         }
       },
       initLogin(){
         let query = this.$route.query
-        let code = ''
-        let uid = ''
-        let token = ''
-        let app_id = ''
 
         this.query = query
         this.checkJumpIntent(query)
         if(query){
           if(query.app_id){
-            app_id = query.app_id;
-            window.app_id = app_id;
+            window.app_id = query.app_id;
           }
-
-          if (query.code && query.state === 'wechat_state'){
-            code = query.code
-
-            let value = localStorage.getItem("bian-query")
-            if (value){
-              this.query = JSON.parse(value)
-              this.checkJumpIntent(this.query)
-              this.updateRequestParams({mchId:this.query.mchId})
-              this.checkSwitchPage();//检测是否要跳转
-            }
-
-            localStorage.removeItem("bian-query")
-          }else {
-            localStorage.setItem("bian-query",JSON.stringify(query))
-          }
-          if (query.uid){
-            uid = query.uid
-          }
-          if (query.token){
-            token = query.token
+          if (query.mchId){
+            this.updateRequestParams({mchId: query.mchId})
           }
         }
-        if (token){
-          this.loginWithToken(token)
-          return
-        }
-        if (uid){
-          this.loginWithUid(uid)
-          return
-        }
-        if (code){
-          this.loginWithCode(code,app_id)
-        }else{
-          this.tryLogin()
-        }
+        // 登录态由路由守卫统一处理（?token / ?uid 在守卫里完成登录）
+        this.tryLogin()
       },
       dispatchWithQuery(){
         if (this.query){
