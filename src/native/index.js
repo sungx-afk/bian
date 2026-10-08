@@ -13,6 +13,7 @@ export const native = {
   appPlat: platform.appPlat,
   login: auth.login,
   loginByApple: auth.loginByApple,
+  loginByWechat: auth.loginByWechat,
   appleLoginAvailable: auth.appleLoginAvailable,
   pay,
   share,

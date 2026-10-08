@@ -38,6 +38,22 @@ const actions = {
       })
     })
   },
+  // 微信登录：authorization code 由后端校验后返回本站 token
+  loginWithWechat ({commit, state ,dispatch}, payload){
+    return new Promise((resolve, reject) => {
+      $API.user.loginWithWechat(payload,rsp=>{
+        commit(types.UPDATE_USER,rsp)
+        dispatch('getUserSetting');
+        if(rsp.merchant_id){
+          dispatch('getMerchantInfo',{id:rsp.merchant_id});
+        }
+        resolve();
+      },error=>{
+        console.log('wechat login error',error)
+        reject(error)
+      })
+    })
+  },
   loginWithUid ({commit, state ,dispatch}, {uid}){
     return new Promise((resolve, reject) => {
       $API.user.loginWithUid({uid},rsp=>{

@@ -18,6 +18,19 @@ export default {
       errorCb &&  errorCb(error)
     });
   },
+  // 微信登录：App 内拿到 authorization code 后交给后端，由后端用 AppSecret 换取 openid/unionid 与本站 token
+  // 后端需实现 /users/oauth2/wechat/service/login_by_code（校验 code、建号/绑号、下发 token）
+  loginWithWechat({code,state},successCb, errorCb){
+    let param = {
+      code,
+      state
+    }
+    $axios.post(`/users/oauth2/wechat/service/login_by_code`,JSON.stringify(param)).then(function (response) {
+      successCb && successCb(response.data)
+    }).catch(function (error) {
+      errorCb &&  errorCb(error)
+    });
+  },
   // 注销账号：审核 5.1.1(v) 要求在 App 内能删除账号（后端需实现清除/脱敏逻辑）
   deleteAccount({},successCb, errorCb){
     $axios.post(`/users/my/delete`,JSON.stringify({})).then(function (response) {
