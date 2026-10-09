@@ -1,5 +1,6 @@
 <template>
   <div class="meeting-intro-container">
+    <page-header title="云追悼会"></page-header>
     <div class="create-wrapper">
       <div class="label">
         1. 请创建纪念馆后再发起云追悼会（讣告）
@@ -44,9 +45,13 @@
 <script>
   import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
+  import PageHeader from '@/modules/widget/PageHeader'
 
     export default {
       name: "MeetingIntro",
+      components:{
+        PageHeader
+      },
       data(){
         return{
           list:[],
