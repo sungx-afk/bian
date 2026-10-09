@@ -92,7 +92,7 @@
     <div class="detail-opt btn" v-if=" order && (order.status == 'CREATED' && user && order.creatorId == user.id || showFinishBtn)">
       <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" plain @click.stop="goCancel(order)">取消订单</van-button>
       <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" plain @click.stop="goEdit(order)">修改订单</van-button>
-      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" :plain="showFinishBtn" @click.stop="goPay(order)">支付订单</van-button>
+      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" :plain="showFinishBtn" :loading="paying" @click.stop="goPay(order)">支付订单</van-button>
       <van-button v-if="showFinishBtn" type="primary" size="small" @click.stop="goFinishOrder(order)">完成订单</van-button>
     </div>
   </div>
@@ -108,7 +108,8 @@
     },
     data(){
       return {
-        order:null
+        order:null,
+        paying:false   // 支付 loading 态
       }
     },
     computed:{
@@ -183,8 +184,13 @@
         }
       },
       goPay(item){
+        if (this.paying) return
+        this.paying = true
         let orderId = item.id;
+        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
+          this.$toast.clear()
+          this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
               this.$toast("支付成功")
@@ -194,6 +200,7 @@
             this.$toast(error.errMsg)
           })
         },error=>{
+          this.paying = false
           this.$toast("获取订单失败，请稍后重试")
           this.getDetail();
         })
