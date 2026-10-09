@@ -10,6 +10,8 @@
         <i class="iconfont icon-guanbi close" @click="closePoster"></i>
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
+        <!-- App 分享：系统分享面板（替代小程序转发）；海报本身仍可长按保存 -->
+        <van-button round size="small" class="poster-share-btn" @click="shareNotice">分享给亲友</van-button>
       </div>
 
     </template>
@@ -67,6 +69,7 @@
 
   import base64 from 'js-base64'
   import PageHeader from '@/modules/widget/PageHeader'
+  import { share } from '@/native/share'
 
   const MAIN_COLOR = '#FFFFFF' //#000000
   const TIP_COLOR = '#FFFFFF' //#666666
@@ -490,9 +493,7 @@ xxx`
           let param = getRequestParam()
           //let scene = `meeting_${this.spaceId}_${this.user.id}`
           //let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
-          let shareContent = `origin_from=meeting&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
-          shareContent = base64.Base64.encode(shareContent)
-          let shareUrl = `${config_server.domain}/home?copylink=${shareContent}`
+          let shareUrl = this.buildShareUrl()
           let url = `${config_server.domain}/api/v1/qrcode?content=${shareUrl}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
 
           url = url + "&v=" + new Date().getTime()
@@ -517,6 +518,22 @@ xxx`
             let canvas = document.getElementById('myCanvas')
             let image = document.getElementById('poster');
             image.src = canvas.toDataURL("image/png");
+          })
+        },
+        // 讣告分享链接：H5 页（与海报二维码同源，扫码/点链接都可打开祭奠）
+        buildShareUrl(){
+          let shareContent = `origin_from=meeting&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
+          shareContent = base64.Base64.encode(shareContent)
+          return `${config_server.domain}/home?copylink=${shareContent}`
+        },
+        // App 内分享：iOS 唤起系统分享面板（可发微信/短信/邮件/拷贝），无需微信 SDK
+        shareNotice(){
+          share({
+            title: '讣告',
+            desc: '点击链接可在线祭奠',
+            link: this.buildShareUrl()
+          }).catch(e => {
+            this.$toast((e && e.message) || '分享失败，请长按海报保存后发送')
           })
         },
         getRatio(context) {
@@ -676,6 +693,12 @@ xxx`
       text-align: center;
       overflow: hidden;
       box-sizing: border-box;
+      .poster-share-btn{
+        margin-top: 14px;
+        color: @FONT_WHITE_COLOR;
+        background: @MAIN_THEME_COLOR;
+        border: none;
+      }
       .canvas{
         margin: 0 auto;
       }
