@@ -14,7 +14,7 @@
           :key="item.id">
           <div class="list-item">
             <div class="left-content">
-              <img class="avatar" :src="item.avatarUrl" />
+              <user-avatar :url="item.avatarUrl" :name="item.name" :uid="item.id" :size="30"></user-avatar>
               <div class="title">{{item.name}}</div>
               <van-tag v-if="item.black" class="black-tag">黑名单用户</van-tag>
             </div>
@@ -36,6 +36,7 @@
   import {mapGetters} from 'vuex';
 
   import NoData from '@/modules/widget/space/NoData'
+  import UserAvatar from '@/modules/widget/UserAvatar'
     export default {
       name: "Visitor",
       props:{
@@ -45,7 +46,8 @@
         }
       },
       components:{
-        NoData
+        NoData,
+        UserAvatar
       },
       data(){
         return{
