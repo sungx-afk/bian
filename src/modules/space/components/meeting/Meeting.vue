@@ -556,6 +556,11 @@ xxx`
     overflow-y: auto;
     padding-bottom: 32px;
     box-sizing: border-box;
+    // 容器 align-items:center 会让 header 收缩成内容宽，这里强制铺满一行
+    .page-header{
+      width: 100%;
+      flex: none;
+    }
     .tip{
       font-size:14px;
       padding:10px;

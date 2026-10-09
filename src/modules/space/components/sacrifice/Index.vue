@@ -437,10 +437,6 @@
         const u = this.user
         return !!(u && (u.source === 'apple' || u.appleId))
       },
-      //本次购买对 Apple 来源用户是否免费（见 APPLE_FREE_PRODUCT_IDS）
-      isAppleFree(productId){
-        return this.isAppleUser && APPLE_FREE_PRODUCT_IDS.indexOf(productId) > -1
-      },
     },
     methods: {
       ...mapActions({
@@ -448,6 +444,10 @@
         // 离开祭拜页时清空 spaceStore 的详情数据（beforeDestroy 里调用）
         clearSpaceDetail: 'spaceStore/clearSpaceDetail'
       }),
+      //本次购买对 Apple 来源用户是否免费（见 APPLE_FREE_PRODUCT_IDS）
+      isAppleFree(productId){
+        return this.isAppleUser && APPLE_FREE_PRODUCT_IDS.indexOf(productId) > -1
+      },
       //购买，通用
       buy(productId, callback) {
         let that = this;

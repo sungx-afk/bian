@@ -1,5 +1,6 @@
 <template>
   <div class="share-container">
+    <page-header title="分享"></page-header>
     <div class="share-top" v-if="!isIphone">
       <div class="share-title">方式一</div> 
       <div class="share-body">
@@ -30,6 +31,7 @@
 <script>
   import constant from '@/config/constant'
   import {isIphone} from '@/config/utils'
+  import PageHeader from '@/modules/widget/PageHeader'
 
   import qs from 'qs'
   import base64 from 'js-base64'
@@ -37,6 +39,9 @@
 
     export default {
       name: "Share",
+      components:{
+        PageHeader
+      },
       data(){
         return{
           extra:null,

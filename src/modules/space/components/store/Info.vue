@@ -1,5 +1,6 @@
 <template>
   <div class="info-container">
+    <page-header title="祭奠物品"></page-header>
     <div class="header">
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
       <div class="header-text">{{filterName}}意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思</div>
@@ -72,11 +73,12 @@
   import {Link} from '@/config/utils'
   import { isNative } from '@/native/platform'
   import * as iap from '@/native/iap'
+  import PageHeader from '@/modules/widget/PageHeader'
 
     export default {
       name: "Info",
       components:{
-
+        PageHeader
       },
       data(){
         return{

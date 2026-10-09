@@ -1,5 +1,6 @@
 <template>
   <div class="user-center-container" v-if="user">
+    <page-header title="账号设置"></page-header>
     <div class="user-center-wrapper">
       <van-cell class="user-cell">
         <van-uploader :after-read="afterSelectPhoto">
@@ -25,6 +26,15 @@
       </van-cell>
       <van-cell class="account-cell">
         <span>账号ID：</span><span>{{user.id}}</span>
+      </van-cell>
+      <!-- 尊贵会员状态：user.vip=1 为已开通，vipEndDate 为到期时间（毫秒时间戳，iOS 订阅续期后后端更新） -->
+      <van-cell class="vip-cell">
+        <span>尊贵会员：</span>
+        <template v-if="user.vip == 1">
+          <span class="vip-active">已开通</span>
+          <span class="vip-end" v-if="user.vipEndDate">（有效期至 {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}）</span>
+        </template>
+        <span v-else>未开通</span>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
@@ -57,10 +67,12 @@
 import constant from '@/config/constant'
 import {mapGetters, mapActions} from 'vuex';
 import {Link,gUuid} from '@/config/utils'
+import PageHeader from '@/modules/widget/PageHeader'
 
 export default {
   name: 'UserCenter',
   components: {
+    PageHeader
   },
   props: {},
   data () {
@@ -281,6 +293,17 @@ export default {
         }
         .charge-remain{
           font-weight: bold;
+        }
+      }
+      .vip-cell{
+        /deep/.van-cell__value{
+          .vip-active{
+            color: #b8860b;
+            font-weight: bold;
+          }
+          .vip-end{
+            color: @FONT_FOUR_COLOR;
+          }
         }
       }
       .charge-cell{

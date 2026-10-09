@@ -39,7 +39,9 @@ import { USE_DEBUG_UID } from './native/debug'
 if (USE_DEBUG_UID || (typeof location !== 'undefined' && location.search.indexOf('debug=1') > -1)) {
   const VConsole = require('vconsole')
   /* eslint-disable no-new */
-  new VConsole()
+  const vConsole = new VConsole()
+  // 隐藏左上角悬浮按钮（避免遮挡界面）；需要看日志时用 vConsole.show() 或临时改回 true
+  vConsole.showSwitch = false
   window.__BIAN_DEBUG__ = true
 
   window.addEventListener('error', e => {
