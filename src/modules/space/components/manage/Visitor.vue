@@ -124,11 +124,12 @@
           })
         },
         onLoadMoreData(){
-          // 上一页还没回来 / 已到底都不再请求
-          if (this.loading || this.finished || !this.space){
+          // 注意：van-list 触发 load 前已把 v-model 的 loading 置为 true，
+          // 这里若再判断/设置 loading，首次加载会被自身拦截，导致"一直加载中"。
+          // 只需判断已到底 / 数据未就绪；请求完成后在回调里把 loading 置回 false 即可。
+          if (this.finished || !this.space){
             return
           }
-          this.loading = true
           this.getVisitorList(this.list.length)
         },
         goMoreMenu(user){
