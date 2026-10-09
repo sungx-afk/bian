@@ -163,7 +163,7 @@ export default {
       }
       localStorage.removeItem('bian-query')
     },
-    // 退出登录：清本地 token 后跳回首页（首页会据 token 判断未登录），与注销账号的清登录态逻辑一致
+    // 退出登录：清本地 token 后跳到登录页，与注销账号的清登录态逻辑一致
     logout(){
       this.$dialog.confirm({
         title: '退出登录',
@@ -171,7 +171,7 @@ export default {
       }).then(() => {
         this.clearLocalLogin()
         this.$toast && this.$toast('已退出登录')
-        Link('/home')
+        Link('/login')
       }).catch(() => {})
     },
     charge(){
