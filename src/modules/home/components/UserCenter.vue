@@ -28,23 +28,26 @@
       <van-cell class="account-cell">
         <span>账号ID：</span><span>{{user.id}}</span>
       </van-cell>
-      <!-- 尊贵会员状态：user.vip=1 为已开通，vipEndDate 为到期时间（毫秒时间戳，iOS 订阅续期后后端更新） -->
-      <van-cell class="vip-cell">
-        <span>尊贵会员：</span>
-        <template v-if="user.vip == 1">
-          <span class="vip-active">已开通</span>
-          <span class="vip-end" v-if="user.vipEndDate">（有效期至 {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}）</span>
-        </template>
-        <template v-else>
-          <span>未开通</span>
-          <van-button v-if="nativeApp" size="small" class="vip-btn" @click="buyVip">开通</van-button>
-        </template>
-      </van-cell>
-      <!-- App 内必须提供「恢复购买」（审核 3.1.2）：账号级订阅，与具体纪念馆无关，独立成行 -->
-      <van-cell class="vip-restore-cell" v-if="nativeApp && user.vip != 1">
-        <div class="vip-restore-wrapper">
-          <van-button size="small" class="vip-btn" @click="restorePurchases">恢复购买</van-button>
+      <!-- 尊贵会员：账号级订阅卡片。
+           user.vip=1 为已开通，vipEndDate 为到期时间（毫秒时间戳，iOS 订阅续期后后端更新） -->
+      <van-cell class="vip-card" :border="false">
+        <div class="vip-head">
+          <div class="vip-logo">VIP</div>
+          <div class="vip-info">
+            <div class="vip-title">
+              <span>尊贵会员</span>
+              <span class="vip-state" :class="{'is-active': user.vip == 1}">{{ user.vip == 1 ? '已开通' : '未开通' }}</span>
+            </div>
+            <div class="vip-desc">
+              <template v-if="user.vip == 1 && user.vipEndDate">有效期至 {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}</template>
+              <template v-else-if="user.vip == 1">尊贵特权已生效，感谢支持</template>
+              <template v-else>开通后可享专属纪念特权</template>
+            </div>
+          </div>
+          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" @click="buyVip">立即开通</van-button>
         </div>
+        <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
+        <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">恢复购买</div>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
@@ -394,31 +397,88 @@ export default {
           font-weight: bold;
         }
       }
-      .vip-cell{
+      /* 尊贵会员卡片：淡金底 + VIP 徽标 + 状态标签 + 主按钮，恢复购买降级为底部文字链 */
+      .vip-card{
+        margin: 12px;
+        padding: 16px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fdf7ec 0%, #f8ecd7 100%);
+        box-shadow: 0 2px 10px rgba(196, 130, 44, 0.12);
         /deep/.van-cell__value{
+          display: block;
+        }
+        .vip-head{
           display: flex;
           align-items: center;
-          .vip-active{
-            color: #b8860b;
-            font-weight: bold;
-          }
-          .vip-end{
-            color: @FONT_FOUR_COLOR;
-          }
-          .vip-btn{
-            margin-left: auto;
-            color: @SECOND_THEME_COLOR;
-            border: 1px solid @SECOND_THEME_COLOR;
+        }
+        .vip-logo{
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          color: @FONT_WHITE_COLOR;
+          background: linear-gradient(135deg, #e9c483 0%, @SECOND_THEME_COLOR 100%);
+          box-shadow: 0 2px 6px rgba(196, 130, 44, 0.35);
+        }
+        .vip-info{
+          flex: 1;
+          min-width: 0;
+          margin-left: 12px;
+        }
+        .vip-title{
+          display: flex;
+          align-items: center;
+          font-size: 15px;
+          font-weight: 600;
+          color: @FONT_SECOND_COLOR;
+        }
+        .vip-state{
+          margin-left: 8px;
+          padding: 1px 6px;
+          border-radius: 4px;
+          font-size: 11px;
+          font-weight: 400;
+          color: @FONT_THIRD_COLOR;
+          background: rgba(0, 0, 0, 0.06);
+          &.is-active{
+            color: @FONT_WHITE_COLOR;
+            background: @SECOND_THEME_COLOR;
           }
         }
-      }
-      .vip-restore-cell{
-        /deep/.van-cell__value{
-          display: flex;
-          justify-content: flex-end;
-          .vip-btn{
-            color: @SECOND_THEME_COLOR;
-            border: 1px solid @SECOND_THEME_COLOR;
+        .vip-desc{
+          margin-top: 5px;
+          font-size: 12px;
+          color: #9a8663;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .vip-btn{
+          flex-shrink: 0;
+          margin-left: 12px;
+          height: 30px;
+          padding: 0 16px;
+          font-size: 13px;
+          color: @FONT_WHITE_COLOR;
+          border: none;
+          background: linear-gradient(135deg, #dda94f 0%, @SECOND_THEME_COLOR 100%);
+          box-shadow: 0 2px 8px rgba(196, 130, 44, 0.3);
+        }
+        .vip-restore{
+          margin-top: 14px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(196, 130, 44, 0.18);
+          text-align: center;
+          font-size: 13px;
+          color: @SECOND_THEME_COLOR;
+          &:active{
+            opacity: 0.6;
           }
         }
       }
