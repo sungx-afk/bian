@@ -432,10 +432,9 @@
       isVipSpace(){
         return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
       },
-      //是否来自 Apple 平台的用户：source 是新的注册来源字段，历史账号用 appleId 兜底
+      // 本版本为 iOS 专用版：恒为 Apple 平台用户，上香/点烛等免费逻辑直接生效
       isAppleUser(){
-        const u = this.user
-        return !!(u && (u.source === 'apple' || u.appleId))
+        return true
       },
     },
     methods: {
@@ -444,7 +443,9 @@
         // 离开祭拜页时清空 spaceStore 的详情数据（beforeDestroy 里调用）
         clearSpaceDetail: 'spaceStore/clearSpaceDetail'
       }),
-      //本次购买对 Apple 来源用户是否免费（见 APPLE_FREE_PRODUCT_IDS）
+      //本次购买对 Apple 用户是否免费（见 APPLE_FREE_PRODUCT_IDS）：
+      // 上香（含祭拜套餐、单支香）、点烛。本版本 isAppleUser 恒为 true，故这些祭品一律免费。
+      // 必须对等后端 SpaceController#APPLE_FREE_PRODUCT_IDS，否则前端放过后端仍会扣云币。
       isAppleFree(productId){
         return this.isAppleUser && APPLE_FREE_PRODUCT_IDS.indexOf(productId) > -1
       },

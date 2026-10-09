@@ -31,17 +31,18 @@ import { installNativeBridge } from './native'
 installNativeBridge(Vue)
 
 /*======================== 内测调试面板 ========================*/
-// 内测包（USE_DEBUG_UID=true）或 URL 带 ?debug=1 时启用：
-// 1) vConsole：在真机上直接看 console / 报错 / 资源
-// 2) 全局错误捕获：JS 异常与未处理的 Promise 拒绝不再静默
-// 3) 点击追踪：真机"点了没反应"时能立刻看到点到的是哪个元素
+// 错误捕获：内测包（USE_DEBUG_UID=true）或 URL 带 ?debug=1 时启用：
+// 1) 全局错误捕获：JS 异常与未处理的 Promise 拒绝不再静默
+// 2) 点击追踪：真机"点了没反应"时能立刻看到点到的是哪个元素
+// vConsole 面板：仅在 URL 显式带 ?debug=1 时加载（不随内测包自动出现）
 import { USE_DEBUG_UID } from './native/debug'
-if (USE_DEBUG_UID || (typeof location !== 'undefined' && location.search.indexOf('debug=1') > -1)) {
+const debugOn = typeof location !== 'undefined' && location.search.indexOf('debug=1') > -1
+if (debugOn) {
   const VConsole = require('vconsole')
   /* eslint-disable no-new */
-  const vConsole = new VConsole()
-  // 隐藏左上角悬浮按钮（避免遮挡界面）；需要看日志时用 vConsole.show() 或临时改回 true
-  vConsole.showSwitch = false
+  new VConsole()
+}
+if (USE_DEBUG_UID || debugOn) {
   window.__BIAN_DEBUG__ = true
 
   window.addEventListener('error', e => {
