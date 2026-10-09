@@ -9,7 +9,10 @@ const config_server = {
   // iOS 上架必须 false：App 内不得出现第三方支付购买虚拟货币（审核 3.1.1）
   supportPoint:false,
   supportFeedback:true,
-  supportNotice:true
+  supportNotice:true,
+  // App Store 下载页（Universal Link 回链兜底用）：未装 App 的用户点分享链接后，
+  // H5 页展示"打开App/下载"提示；点"下载"跳此处，安装后再次点原链接即可由系统拉起 App
+  appStoreUrl:''
 }
 
 global.config_server = config_server;
