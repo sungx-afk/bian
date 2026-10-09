@@ -191,7 +191,15 @@
       },
     },
     watch:{
-      user(){
+      user(newVal){
+        // 退出登录/注销：user 被清空，重置为未登录态并清列表，
+        // 否则 loginState 会残留 DONE，菜单判断误走已登录逻辑
+        if (!newVal){
+          this.loginState = LoginState.UNDO
+          this.list = []
+          this.visitedList = []
+          return
+        }
         this.userChanged()
       },
       expire(newVal,oldVal){
@@ -400,9 +408,10 @@
       },
       moreMenuPressed(menu){
         this.isShowMoreMenu = false
-        //这里判断是否登录了，如果没有登录，应该走授权
+        // 未登录：统一跳登录页（原来调的 this.authWechat 在本组件并未定义，
+        // 一点菜单就抛 "authWechat is not a function"，表现为页面卡在列表页）
         if (this.loginState !== LoginState.DONE){
-          this.authWechat()
+          this.$router.push('/login')
           return
         }
         switch (menu.id) {

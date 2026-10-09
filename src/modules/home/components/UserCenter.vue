@@ -151,19 +151,12 @@ export default {
         })
       }).catch(()=>{})
     },
+    // 清登录态：必须同时清 Vuex（user/token）与本地 token。
+    // 只清 localStorage 的话，Vuex 里 user 还在，跳登录页会被 Login.vue 的 created 立刻弹回首页。
     clearLocalLogin(){
-      let key = getLocalTokenKey()
-      let param = localStorage.getItem(key)
-      if (param){
-        try{
-          param = JSON.parse(param)
-          param.token = ''
-          localStorage.setItem(key, JSON.stringify(param))
-        }catch(e){}
-      }
-      localStorage.removeItem('bian-query')
+      this.$store.dispatch('userStore/clearLogin')
     },
-    // 退出登录：清本地 token 后跳到登录页，与注销账号的清登录态逻辑一致
+    // 退出登录：清登录态后跳到登录页
     logout(){
       this.$dialog.confirm({
         title: '退出登录',

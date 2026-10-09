@@ -119,6 +119,11 @@ const actions = {
   updateMerchantName({commit, state},{name}){
     commit(types.UPDATE_MERCHANT_NAME, {name})
   },
+  // 退出登录 / 注销：清空登录态（Vuex 内存 + 本地 token）
+  // 必须连 Vuex 一起清：否则跳登录页后 Login.vue 的 created 检测到 user 还在，会立刻弹回首页
+  clearLogin({commit}){
+    commit(types.CLEAR_USER)
+  },
 
 }
 
@@ -159,6 +164,25 @@ const mutations = {
       $axios.defaults.params = param;//重新修改全局联网配置
     }
     state.expire = true
+  },
+  // 退出登录 / 注销：清空用户、token、设置与馆方信息，并清掉本地 token
+  [types.CLEAR_USER] (state) {
+    state.user = null
+    state.token = ''
+    state.user_setting = null
+    state.merchant = null
+    state.expire = false
+    let key = getLocalTokenKey()
+    let param = localStorage.getItem(key)
+    if (param){
+      try {
+        param = JSON.parse(param)
+        param.token = ''
+        localStorage.setItem(key, JSON.stringify(param))
+        $axios.defaults.params = param;//重新修改全局联网配置，避免退出后请求还带旧 token
+      }catch(e){}
+    }
+    localStorage.removeItem('bian-query')
   },
   [types.UPDATE_REQUEST_PARAMS](state,data){
     let key = getLocalTokenKey();
