@@ -408,9 +408,10 @@
       },
       moreMenuPressed(menu){
         this.isShowMoreMenu = false
-        // 未登录：统一跳登录页（原来调的 this.authWechat 在本组件并未定义，
-        // 一点菜单就抛 "authWechat is not a function"，表现为页面卡在列表页）
-        if (this.loginState !== LoginState.DONE){
+        // 未登录：统一跳登录页。
+        // 以 store 里的 user 为准，而不是 loginState —— 登录后若状态机没及时同步，
+        // 已登录用户点菜单会被误踢到登录页，再由登录页弹回首页，看起来"点不动"。
+        if (!this.user){
           this.$router.push('/login')
           return
         }
@@ -658,7 +659,14 @@
             this.updateRequestParams({mchId: query.mchId})
           }
         }
-        // 登录态由路由守卫统一处理（?token / ?uid 在守卫里完成登录）
+        // 已登录（例如刚从登录页登录后跳回 /list）：直接进入已登录流程并加载列表。
+        // 不能只依赖 user watcher：组件创建时 store 里 user 就已存在，watcher 不会触发，
+        // 会导致「登录后首页列表为空、菜单被误判为未登录而点不动」。
+        if (this.user){
+          this.userChanged()
+          return
+        }
+        // 未登录：交由路由守卫 / 本地 token 处理
         this.tryLogin()
       },
       dispatchWithQuery(){
