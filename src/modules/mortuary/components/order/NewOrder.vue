@@ -76,6 +76,7 @@
           senderPhone:"",
           summary:"",
         },
+        paying:false,   // 支付下单 loading 态
       }
     },
     components: {
@@ -190,8 +191,14 @@
         })
       },
       goPay(item){
+        if (this.paying) return
+        this.paying = true
         let orderId = item.id;
+        // 取支付信息（下单网络请求）期间显示 loading，拿到订单后关闭再唤起系统支付弹窗
+        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
+          this.$toast.clear()
+          this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
               this.$toast("支付成功")
@@ -210,6 +217,7 @@
             }
           })
         },error=>{
+          this.paying = false
           this.$toast("获取订单失败，请稍后重试")
         })
       },

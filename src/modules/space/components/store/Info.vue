@@ -20,7 +20,7 @@
           <!-- App 内必须提供「恢复购买」（审核 3.1.2）：与云币无关，独立成行 -->
           <van-cell class="restore-cell" v-if="nativeApp">
             <div class="charge-btn-wrapper">
-              <van-button size="small" class="charge-btn" @click="restorePurchases">恢复购买</van-button>
+              <van-button size="small" class="charge-btn" :loading="vipBusy" @click="restorePurchases">恢复购买</van-button>
             </div>
           </van-cell>
           <van-cell class="vip-cell" v-if="supportPay && isVipSpace">
@@ -29,7 +29,7 @@
           <van-cell class="product-cell" :class="{'vip-cell':product.id == 'item-space-vip'}" v-for="product in products" :key="product.id">
             <div class="product-top">
               <span :class="{'vip-product':product.id == 'item-space-vip'}">{{product.name}}</span>
-              <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
+              <van-button size="small" class="purchase-btn" :loading="product.id == 'item-space-vip' ? vipBusy : buyBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
             </div>
             <div class="product-bottom" v-if="product.tip">
               <span class="product-tip">{{ product.tip }}</span>
@@ -88,6 +88,8 @@
           products:[],
           iconMoney:'https://static-app01.yugusoft.com/bian/money.png',
           products_list:[],//服务器存储的礼物列表
+          vipBusy:false,    // 会员（尊贵馆）开通/恢复购买 loading 态
+          buyBusy:false,    // 祭品（云币）购买 loading 态
         }
       },
       computed: {
@@ -303,6 +305,10 @@
         },
         // 把 Apple 交易 ID 交给后端核实（App Store Server API），成功才发货、才结束交易
         verifyAndDeliver(result, okMsg){
+          const tip = (okMsg && okMsg.indexOf('恢复') >= 0) ? '正在恢复会员…' : '正在开通会员…'
+          this.vipBusy = true
+          // forbidClick + duration:0：持续遮罩覆盖「支付完成→后端校验发货」这段，直到下方用普通 toast 覆盖/关闭
+          this.$toast.loading({ message: tip, forbidClick: true, duration: 0 })
           const payload = {
             transaction_id: result.transactionId,
             space_id: this.spaceId
@@ -317,18 +323,20 @@
               // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
               // 按 ID 结束「这一笔」，不能用全局的「最近一笔」——多笔并发时会互相覆盖
               iap.finish(result.transactionId)
-              this.$toast && this.$toast(okMsg)
+              this.$toast(okMsg) // 覆盖 loading，给出成功提示
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
               // 用户级 VIP 记在 user 上，必须刷新它，页面上的尊贵馆状态才会跟着变
               this.refreshUser()
               this.updateInfo()
             }else{
               console.warn('[iap] 后端未通过：' + (rsp && rsp.msg))
-              this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+              this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
             }
+            this.vipBusy = false
           }, error => {
             console.warn('[iap] 请求异常 ' + JSON.stringify({status: error && error.status, msg: error && (error.msg || error.message)}))
-            this.$toast && this.$toast('校验失败，请联系客服')
+            this.$toast('校验失败，请联系客服')
+            this.vipBusy = false
           })
         },
         // 刷新当前用户，拿到最新的 user.vip 会员状态
@@ -338,15 +346,19 @@
         },
         // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
         async restorePurchases(){
+          if (this.vipBusy) return
           try {
+            this.vipBusy = true
             this.$toast && this.$toast('正在向 App Store 恢复购买…')
             const result = await iap.restore()
             if (!result || !result.transactionId){
+              this.vipBusy = false
               this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
               return
             }
             this.verifyAndDeliver(result, '尊贵馆已恢复')
           } catch (e) {
+            this.vipBusy = false
             console.log('iap restore error:', e)
             const msg = e && e.message ? e.message : '恢复购买失败'
             if (msg.indexOf('取消') < 0){
@@ -356,15 +368,19 @@
         },
         // iOS App：尊贵馆按年订阅走 App Store 内购，交易 ID 交后端核实后发货
         async buyVipByIap(){
+          if (this.vipBusy) return
           try {
+            this.vipBusy = true
             this.$toast && this.$toast('正在唤起 App Store…')
             const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
             if (!result || !result.transactionId){
+              this.vipBusy = false
               this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
               return
             }
             this.verifyAndDeliver(result, '尊贵馆已开通')
           } catch (e) {
+            this.vipBusy = false
             console.log('iap error:', e)
             const msg = e && e.message ? e.message : '购买失败'
             // 用户主动取消不提示
@@ -386,6 +402,8 @@
         },
         buyProduct(product){
           let that = this;
+          // 防重入：会员开通/祭品购买进行中时忽略再次点击
+          if (this.vipBusy || this.buyBusy) return
           // iOS App：尊贵馆按年订阅必须走 App Store 内购（审核 3.1.1），不能扣云币
           if (isNative() && product.id == 'item-space-vip'){
             this.buyVipByIap()
@@ -403,6 +421,9 @@
             }
             let productId = product.id
             let spaceId = this.spaceId
+            // 祭品（云币）购买：纯网络请求，整段加页面级 loading 反馈
+            this.buyBusy = true
+            this.$toast.loading({ message: '正在购买…', forbidClick: true, duration: 0 })
             $API.space.buy({productId,spaceId},rsp=>{
               if (this.supportPay){
                 if (this.isVipSpace || !this.supportPoint){
@@ -414,6 +435,7 @@
               }else {
                 this.$toast(`已祭奠${product.name}`)
               }
+              this.buyBusy = false
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
               if (productId == 'item-space-vip'){
                 //这里获取一次详情？
@@ -426,6 +448,7 @@
               }
             },error=>{
               this.$toast("购买失败，请稍后重试")
+              this.buyBusy = false
             })
           }else{
             this.$toast("获取信息失败，请稍后重试")

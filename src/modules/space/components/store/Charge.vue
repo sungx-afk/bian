@@ -25,7 +25,8 @@
       data(){
         return{
           priceTag:[],
-          isTest:false
+          isTest:false,
+          buying:false   // 充值下单 loading 态
         }
       },
       computed: {
@@ -55,12 +56,18 @@
           })
         },
         placeOrder(item){
+          if (this.buying) return
+          this.buying = true
           let param = {}
           if (this.isTest){
             param.test = 1
           }
           param.price_tag_id = item.id
+          // 下单网络请求期间显示 loading（此时尚未唤起 App Store，不遮住系统支付弹窗）
+          this.$toast.loading({ message: '正在下单…', forbidClick: true, duration: 0 })
           $API.space.placeOrder(param,rsp=>{
+            this.$toast.clear() // 关闭 loading，交还控制权给系统支付弹窗
+            this.buying = false
             this.wechatPay(rsp).then((res)=>{
               if (res === 0){
                 this.$toast("充值成功")
@@ -70,6 +77,7 @@
               this.$toast(error.errMsg)
             })
           },error=>{
+            this.buying = false
             this.$toast("获取订单失败，请稍后重试")
           })
         }

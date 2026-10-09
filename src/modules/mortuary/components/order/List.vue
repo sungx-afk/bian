@@ -54,7 +54,8 @@
         },{
           text:"已取消订单",
           value:"CANCELED"
-        }]
+        }],
+        paying:false,   // 支付 loading 态
       }
     },
     computed:{
@@ -101,8 +102,13 @@
         }
       },
       goPay(item){
+        if (this.paying) return
+        this.paying = true
         let orderId = item.id;
+        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
+          this.$toast.clear()
+          this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
               this.$toast("支付成功")
@@ -112,6 +118,7 @@
             this.$toast(error.errMsg)
           })
         },error=>{
+          this.paying = false
           this.$toast("获取订单失败，请稍后重试")
           this.getList();
         })

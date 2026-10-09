@@ -304,7 +304,8 @@
         //是否从 /list 自动跳进来的：仅此场景显示"返回列表"按钮（详情页、分享链接直跳不显示）
         isAutoEntered:false,
         //离开祭拜页时是否因跳转暂停了音乐（回来时续播；用户手动停的不续播）
-        bgmPausedOnLeave:false
+        bgmPausedOnLeave:false,
+        buyBusy:false   // 祭品（云币）购买 loading 态
       }
     },
     components: {
@@ -451,6 +452,8 @@
       },
       //购买，通用
       buy(productId, callback) {
+        // 防重入：祭品购买（云币即时扣费）进行中时忽略再次点击
+        if (this.buyBusy) return
         let that = this;
         // 无云币模式：非尊贵馆不使用收费祭品，引导开通尊贵馆（iOS 走内购）
         // Apple 来源用户的上香、点烛不判断花费，直接放过
@@ -461,15 +464,17 @@
           }, 800)
           return
         }
+        // 祭品（云币）购买：纯网络请求，整段加页面级 loading 反馈
+        this.buyBusy = true
+        this.$toast.loading({ message: '正在购买…', forbidClick: true, duration: 0 })
         $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
           if (resp && !resp.error) {
-            // if(resp.content){
-            //   that.space.logs.unshift(resp.content);
-            // }
+            this.buyBusy = false
             if (callback && typeof callback == 'function') {
               callback();
             }
           } else {
+            this.buyBusy = false
             if (resp.errorCode == -9999) {
               this.$toast(resp.error);
               setTimeout(() => {
@@ -480,6 +485,7 @@
             }
           }
         }, (error) => {
+          this.buyBusy = false
           this.$toast(error.message || error.error);
         });
       },
