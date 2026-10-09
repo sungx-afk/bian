@@ -168,7 +168,8 @@
           </div>
         </div>
 
-        <div class="share-button" @click="goShare">
+        <!-- 右上角转发入口：暂时隐藏（保留功能与相关代码，去掉 v-if="false" 即可恢复） -->
+        <div class="share-button" v-if="false" @click="goShare">
           <img class="share-icon" src="~@/modules/images/share.svg" alt="转发" />
         </div>
       </div>
@@ -474,26 +475,39 @@
         // 祭品（云币）购买：纯网络请求，整段加页面级 loading 反馈
         this.buyBusy = true
         this.$toast.loading({ message: '正在购买…', forbidClick: true, duration: 0 })
+        // 统一收尾：成功/失败/异常/超时都要关闭 loading 遮罩并解除防重入。
+        // 之前成功分支只置 buyBusy=false 没有关遮罩，duration:0 的 loading 会一直挂在页面上
+        // （表现为点完「上香/点烛/纸钱」后一直显示"正在购买…"）
+        let finished = false
+        const finish = () => {
+          if (finished) return
+          finished = true
+          this.buyBusy = false
+          this.$toast.clear()
+        }
+        // 兜底：请求异常挂起（回调迟迟不来）时自动解除，避免遮罩永久卡死
+        const guardTimer = setTimeout(finish, 10000)
         $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
+          clearTimeout(guardTimer)
+          finish()
           if (resp && !resp.error) {
-            this.buyBusy = false
             if (callback && typeof callback == 'function') {
               callback();
             }
           } else {
-            this.buyBusy = false
-            if (resp.errorCode == -9999) {
+            if (resp && resp.errorCode == -9999) {
               this.$toast(resp.error);
               setTimeout(() => {
                 Link(`/store/info?space_id=${this.spaceId}`);
               }, 2000)
             } else {
-              this.$toast(error.message || error.error);
+              this.$toast((resp && (resp.error || resp.message)) || '购买失败，请稍后重试');
             }
           }
         }, (error) => {
-          this.buyBusy = false
-          this.$toast(error.message || error.error);
+          clearTimeout(guardTimer)
+          finish()
+          this.$toast((error && (error.message || error.error)) || '网络异常，请稍后重试');
         });
       },
 
