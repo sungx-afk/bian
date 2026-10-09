@@ -168,7 +168,8 @@
           </div>
         </div>
 
-        <div class="share-button" @click="goShare">
+        <!-- 右上角转发入口：暂时隐藏（保留功能与相关代码，去掉 v-if="false" 即可恢复） -->
+        <div class="share-button" v-if="false" @click="goShare">
           <img class="share-icon" src="~@/modules/images/share.svg" alt="转发" />
         </div>
       </div>
