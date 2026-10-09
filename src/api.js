@@ -1,6 +1,6 @@
 import axios from 'axios'
 import config_server from './config/config'
-import { appPlat, isNative } from './native/platform'
+import { appPlat, isNative, isNativeIOS } from './native/platform'
 import { installHttpAdapter } from './native/http'
 import Home from './modules/home/api/index'
 import Space from './modules/space/api/index'
@@ -31,10 +31,12 @@ axios.defaults.headers.patch['Content-Type'] = JSON_CONTENT_TYPE;
 global.getRequestParam = function() {
   let key = getLocalTokenKey();
   let param = localStorage.getItem(key);
+  // 平台标识每次重新计算：iOS 专用版必须稳定带上 plat=IOS，让后端据此豁免上香/点烛扣费；
+  // 其余环境保持原渠道值（android/wechat/h5），不影响微信/安卓既有逻辑。
+  const plat = isNativeIOS() ? 'IOS' : appPlat()
   if (!param){
     param = {
-      // 以前写死 wechat，App 内会导致后端按微信渠道处理登录/订单；改为按实际环境取值
-      plat: appPlat(),
+      plat: plat,
       build:'999999',
       token:'',
       platVersion:'1.0.1',
@@ -43,7 +45,10 @@ global.getRequestParam = function() {
     param = JSON.stringify(param)
     localStorage.setItem(key,param)
   }
-  return JSON.parse(param);
+  param = JSON.parse(param)
+  // 覆盖旧缓存里的 plat，防止历史值（如 wechat）残留导致 iOS 漏带
+  param.plat = plat
+  return param;
 }
 
 /*获取平台参数*/

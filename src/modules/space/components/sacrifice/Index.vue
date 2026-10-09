@@ -241,6 +241,7 @@
 
   import Message from '../Message';
   import ChangeMingDeng from './ChangeMingDeng.vue';
+  import { isNativeIOS } from '@/native/platform';
   // 全页烛火共用一个 PIXI 应用（见 flameLayer.js），避免每个烛火各占一个 WebGL 上下文
   import flameLayer from './flameLayer';
 
@@ -433,9 +434,15 @@
       isVipSpace(){
         return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
       },
-      // 本版本为 iOS 专用版：恒为 Apple 平台用户，上香/点烛等免费逻辑直接生效
+      // 免费馆：后端在馆信息里给出的标识（创建人 Apple VIP 生效时置 true）。
+      // 兜底兼容旧逻辑：馆级 VIP（space.vip==1）或当前用户级 VIP（user.vip==1）也视为免费馆。
+      // 前端与后端都以此决定是否拦截祭品付费（见需求：plat=IOS + 创建人 VIP → 免费馆）。
+      isFreeHall(){
+        return !!(this.space && this.space.isFreeHall) || this.isVipSpace
+      },
+      // 来自 iOS 平台（request 带 plat=IOS）的用户：上香/点烛等免费逻辑生效
       isAppleUser(){
-        return true
+        return isNativeIOS()
       },
     },
     methods: {
@@ -455,9 +462,9 @@
         // 防重入：祭品购买（云币即时扣费）进行中时忽略再次点击
         if (this.buyBusy) return
         let that = this;
-        // 无云币模式：非尊贵馆不使用收费祭品，引导开通尊贵馆（iOS 走内购）
+        // 无云币模式：非免费馆不使用收费祭品，引导开通尊贵馆（iOS 走内购）
         // Apple 来源用户的上香、点烛不判断花费，直接放过
-        if (!this.isAppleFree(productId) && !this.supportPoint && !this.isVipSpace && this.space && this.space.type !== 2){
+        if (!this.isAppleFree(productId) && !this.supportPoint && !this.isFreeHall && this.space && this.space.type !== 2){
           this.$toast('开通尊贵馆后，本馆祭奠物品免费使用')
           setTimeout(() => {
             Link(`/store/info?space_id=${this.spaceId}`)
@@ -513,8 +520,8 @@
           this.currentProduct = {
             name:'点烛',
             duration:'1天',
-            // Apple 来源用户免费
-            point:this.isAppleFree('item-la-zu') ? 0 : (this.space.type == 2?0:3)
+            // Apple 来源用户免费 / 免费馆免费
+            point:(this.isAppleFree('item-la-zu') || this.isFreeHall) ? 0 : (this.space.type == 2?0:3)
           }
           this.action = this.doDianlazu
         }else {
@@ -525,7 +532,7 @@
       doDianlazu(){
         let that = this;
         this.buy('item-la-zu', () => {
-          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isVipSpace && !this.isAppleFree('item-la-zu')) {
+          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall && !this.isAppleFree('item-la-zu')) {
             this.$notify({
               type: 'info',
               message: '-3 云币',
@@ -570,7 +577,7 @@
       doFlower(){
         let that = this;
         this.buy('item-xuan-hua', () => {
-          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isVipSpace){
+          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall){
             this.$notify({
               type:'info',
               message: '-9 云币',
@@ -606,7 +613,7 @@
       doShaozhi(){
         let that = this;
         this.buy('item-zhi-qian', () => {
-          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isVipSpace) {
+          if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall) {
             this.$notify({
               type: 'info',
               message: '-8 云币',
