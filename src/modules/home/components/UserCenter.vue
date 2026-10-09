@@ -44,7 +44,7 @@
               <template v-else>开通后可享专属纪念特权</template>
             </div>
           </div>
-          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" @click="buyVip">立即开通</van-button>
+          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">立即开通</van-button>
         </div>
         <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
         <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">恢复购买</div>
@@ -95,7 +95,10 @@ export default {
       name:'',
       avatarUrl:'',
       oldName:'',
-      isModifyName:false
+      isModifyName:false,
+      // 会员开通/恢复购买过程中的 loading 态：点击按钮到后端校验发货结束期间为 true，
+      // 既驱动按钮 loading 防重复点击，也由 verifyAndDeliver 用来显示页面级 Toast.loading 遮罩
+      vipBusy:false
     }
   },
   computed: {
@@ -282,15 +285,19 @@ export default {
     },
     // iOS App：尊贵会员按年订阅走 App Store 内购，交易 ID 交后端核实后发货
     async buyVipByIap(){
+      if (this.vipBusy) return
       try {
+        this.vipBusy = true
         this.$toast && this.$toast('正在唤起 App Store…')
         const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
         if (!result || !result.transactionId){
+          this.vipBusy = false
           this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
           return
         }
         this.verifyAndDeliver(result, '尊贵会员已开通')
       } catch (e) {
+        this.vipBusy = false
         console.log('iap error:', e)
         const msg = e && e.message ? e.message : '购买失败'
         // 用户主动取消不提示
@@ -301,15 +308,19 @@ export default {
     },
     // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
     async restorePurchases(){
+      if (this.vipBusy) return
       try {
+        this.vipBusy = true
         this.$toast && this.$toast('正在向 App Store 恢复购买…')
         const result = await iap.restore()
         if (!result || !result.transactionId){
+          this.vipBusy = false
           this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
           return
         }
         this.verifyAndDeliver(result, '尊贵会员已恢复')
       } catch (e) {
+        this.vipBusy = false
         console.log('iap restore error:', e)
         const msg = e && e.message ? e.message : '恢复购买失败'
         if (msg.indexOf('取消') < 0){
@@ -318,7 +329,12 @@ export default {
       }
     },
     // 把 Apple 交易 ID 交给后端核实（App Store Server API），成功才发货、才结束交易
+    // 全程（含后端校验网络请求）显示页面级 Toast.loading，避免支付完成后到发货之间无反馈
     verifyAndDeliver(result, okMsg){
+      const tip = (okMsg && okMsg.indexOf('恢复') >= 0) ? '正在恢复会员…' : '正在开通会员…'
+      this.vipBusy = true
+      // forbidClick + duration:0：持续遮罩，禁止用户操作，直到下方用普通 toast 覆盖/关闭
+      this.$toast.loading({ message: tip, forbidClick: true, duration: 0 })
       const payload = {
         transaction_id: result.transactionId
       }
@@ -332,16 +348,18 @@ export default {
           // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
           // 按 ID 结束「这一笔」，多笔并发时互相不覆盖
           iap.finish(result.transactionId)
-          this.$toast && this.$toast(okMsg)
+          this.$toast(okMsg) // 覆盖 loading，给出成功提示
           // 用户级 VIP 记在 user 上，必须刷新它，页面上的会员状态才跟着变
           this.refreshUser()
         }else{
           console.warn('[iap] 后端未通过：' + (rsp && rsp.msg))
-          this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+          this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
         }
+        this.vipBusy = false
       }, error => {
         console.warn('[iap] 请求异常 ' + JSON.stringify({status: error && error.status, msg: error && (error.msg || error.message)}))
-        this.$toast && this.$toast('校验失败，请联系客服')
+        this.$toast('校验失败，请联系客服')
+        this.vipBusy = false
       })
     },
     // 刷新当前用户，拿到最新的 user.vip 会员状态
