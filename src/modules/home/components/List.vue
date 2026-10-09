@@ -129,8 +129,6 @@
   import Item from '@/modules/widget/space/Item'
   import Guide from '@/modules/widget/guide/Guide'  // 引导页组件
   import * as auth from '@/native/auth'             // 登录桥接（App 走 Apple 登录）
-  import { isNative } from '@/native/platform'
-  import { USE_DEBUG_UID, DEBUG_UID } from '@/native/debug'   // 内测包自动登录（提审前关闭）
 
   import Vue from 'vue';
   import { Dialog, PasswordInput, NumberKeyboard } from 'vant';
@@ -571,22 +569,10 @@
         //token存在，则直接获取信息
         if (token){
           this.fetchMyInfo(token)
-        }else if (isNative() && USE_DEBUG_UID){
-          // 内测包：自签环境下 Apple 登录/微信都不可用，用固定 UID 直接登录，便于真机验证。
-          // 这里直接调接口并显式处理失败，避免 UID 无效时静默卡在空白页。
-          $API.user.loginWithUid({uid: DEBUG_UID}, rsp => {
-            if (rsp && rsp.token){
-              this.fetchMyInfo(rsp.token)
-            }else{
-              this.$toast && this.$toast('测试登录失败：' + ((rsp && rsp.error) || '未返回 token'))
-            }
-          }, error => {
-            console.log('debug login error', error)
-            this.$toast && this.$toast('测试登录失败，请检查网络')
-          })
-          return
         }else {
           // 未登录：交给路由守卫统一跳转到登录/注册页
+          // 内测调试自动登录已移除：调试时可用 /login?uid=700364 打开，
+          // 或在登录页点「使用 UID 调试登录」手动输入，避免干扰「退出后回到登录页」
           this.$router.push('/login')
         }
       },
