@@ -23,6 +23,7 @@
             <i class="iconfont icon-bianji" @click="goModifyName"></i>
           </template>
         </div>
+        <van-button size="small" class="logout-btn" @click="logout">退出登录</van-button>
       </van-cell>
       <van-cell class="account-cell">
         <span>账号ID：</span><span>{{user.id}}</span>
@@ -161,6 +162,17 @@ export default {
         }catch(e){}
       }
       localStorage.removeItem('bian-query')
+    },
+    // 退出登录：清本地 token 后跳回首页（首页会据 token 判断未登录），与注销账号的清登录态逻辑一致
+    logout(){
+      this.$dialog.confirm({
+        title: '退出登录',
+        message: '确定要退出当前账号吗？'
+      }).then(() => {
+        this.clearLocalLogin()
+        this.$toast && this.$toast('已退出登录')
+        Link('/home')
+      }).catch(() => {})
     },
     charge(){
       Link(`/store/charge`)
@@ -416,6 +428,11 @@ export default {
             border: 1px solid @SECOND_THEME_COLOR;
           }
         }
+      }
+      .logout-btn{
+        margin-left: auto;
+        color: #d43c33;
+        border: 1px solid #d43c33;
       }
       .charge-cell{
         /deep/.van-cell__value{
