@@ -5,7 +5,9 @@
       <van-cell class="user-cell">
         <van-uploader :after-read="afterSelectPhoto">
           <div class="avatar-box">
-            <img class="avatar" :src="avatarUrl">
+            <img class="avatar" v-if="avatarUrl" :src="avatarUrl">
+            <!-- 无头像占位：用户名最后一个字 + 稳定背景色（同一用户颜色固定） -->
+            <div class="avatar avatar-fallback" v-else :style="{ background: fallbackColor }">{{ fallbackChar }}</div>
           </div>
         </van-uploader>
         <div class="name-wrapper">
@@ -20,6 +22,7 @@
           </template>
           <template v-else>
             <span class="name">{{ user.name }}</span>
+            <span class="user-id">({{ user.id }})</span>
             <i class="iconfont icon-bianji" @click="goModifyName"></i>
           </template>
         </div>
@@ -45,9 +48,6 @@
         </div>
         <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
         <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">恢复购买</div>
-      </van-cell>
-      <van-cell class="account-cell">
-        <span>账号ID：</span><span>{{user.id}}</span>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
@@ -119,6 +119,21 @@ export default {
     // 是否 iOS 原生 App：会员（尊贵会员）开通走 App Store 内购，仅原生 App 展示入口
     nativeApp(){
       return isNative()
+    },
+    // 无头像占位：取用户名最后一个字（昵称为空时兜底"客"）
+    fallbackChar(){
+      const n = (this.user && this.user.name) || ''
+      return n ? n.slice(-1) : '客'
+    },
+    // 占位头像背景色：按 用户id+昵称 哈希取色，同一用户颜色稳定不变
+    fallbackColor(){
+      const colors = ['#E8A87C', '#83B5D1', '#A5C882', '#D6A2C8', '#F2C57C', '#8FCACA', '#C98BB9', '#7FB685']
+      const key = String((this.user && this.user.id) || '') + ((this.user && this.user.name) || '')
+      let h = 0
+      for (let i = 0; i < key.length; i++) {
+        h = (h * 31 + key.charCodeAt(i)) % 997
+      }
+      return colors[h % colors.length]
     }
   },
   watch: {},
@@ -376,6 +391,15 @@ export default {
             border-radius:50%;
             flex-shrink:0;
           }
+          // 无头像占位：用户名最后一个字 + 彩色底
+          .avatar-fallback{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: @FONT_WHITE_COLOR;
+            font-size: 22px;
+            user-select: none;
+          }
         }
 
         .name-wrapper{
@@ -383,6 +407,12 @@ export default {
           .name{
             font-size: 14px;
             color: @FONT_THIRD_COLOR;
+          }
+          // 用户名后的 ID（替代原独立"账号ID"行）
+          .user-id{
+            margin-left: 4px;
+            font-size: 12px;
+            color: @FONT_FOUR_COLOR;
           }
           .iconfont{
             margin-left: 8px;
