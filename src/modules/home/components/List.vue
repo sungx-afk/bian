@@ -18,11 +18,6 @@
            @enter="onGuideEnter"
            @apple-login="authApple"
            @debug-login="debugLogin" />
-    <div class="notice-container" v-if="showNotice">
-      <van-cell is-link @click.stop="goNotice">
-        您还未关注公众号，关注后可以及时收到通知
-      </van-cell>
-    </div>
     <div class="mortuary-container" v-if="user && user.merchant_manager && user.merchant_id">
       <div class="name">{{user.merchant_name}} 殡仪馆</div>
       <div class="setting" @click="goMerchantSetting">
@@ -155,7 +150,6 @@
         isShowMoreMenu:false,
         menuList:[],
         loginState:LoginState.UNDO,
-        showNotice:false,
         showAction:false,
         actions:[],
         needRefreshList:false,
@@ -225,16 +219,6 @@
           result = false
         }
         this.showPublic = result
-      },
-      updateNotice(){
-        if (this.user && 0 == this.user.serviceSubscribe && config_server.supportNotice){
-          this.showNotice = true
-        }
-      },
-      goNotice(){
-        this.showNotice = false
-        // Link(`/notice`)
-        window.location.href = '/notice'
       },
       /**
        * 引导页"进入纪念馆"回调：用户主动触发 -> 走微信授权
@@ -631,7 +615,6 @@
         this.dispatchWithQuery()
         this.getSpaceList()
         this.getSpacesVisited()
-        this.updateNotice()
         // 自动进入"最后访问的纪念馆"暂时关闭：登录后停留在列表页，由用户自己点进馆
         // this.tryEnterLastSpace()
 
@@ -962,17 +945,6 @@
           font-size: 22px;
           padding: 2px 20px;
           background: rgba(0,0,0,0.5);
-        }
-      }
-    }
-    .notice-container{
-      .van-cell{
-        background: @MAIN_THEME_COLOR;
-        .van-cell__value--alone{
-          color: white;
-        }
-        .van-cell__right-icon{
-          color: white;
         }
       }
     }

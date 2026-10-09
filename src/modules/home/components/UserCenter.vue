@@ -25,9 +25,6 @@
         </div>
         <van-button size="small" class="logout-btn" @click="logout">退出登录</van-button>
       </van-cell>
-      <van-cell class="account-cell">
-        <span>账号ID：</span><span>{{user.id}}</span>
-      </van-cell>
       <!-- 尊贵会员：账号级订阅卡片。
            user.vip=1 为已开通，vipEndDate 为到期时间（毫秒时间戳，iOS 订阅续期后后端更新） -->
       <van-cell class="vip-card" :border="false">
@@ -48,6 +45,9 @@
         </div>
         <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
         <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">恢复购买</div>
+      </van-cell>
+      <van-cell class="account-cell">
+        <span>账号ID：</span><span>{{user.id}}</span>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
