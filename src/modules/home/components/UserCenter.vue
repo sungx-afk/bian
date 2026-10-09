@@ -34,7 +34,16 @@
           <span class="vip-active">已开通</span>
           <span class="vip-end" v-if="user.vipEndDate">（有效期至 {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}）</span>
         </template>
-        <span v-else>未开通</span>
+        <template v-else>
+          <span>未开通</span>
+          <van-button v-if="nativeApp" size="small" class="vip-btn" @click="buyVip">开通</van-button>
+        </template>
+      </van-cell>
+      <!-- App 内必须提供「恢复购买」（审核 3.1.2）：账号级订阅，与具体纪念馆无关，独立成行 -->
+      <van-cell class="vip-restore-cell" v-if="nativeApp && user.vip != 1">
+        <div class="vip-restore-wrapper">
+          <van-button size="small" class="vip-btn" @click="restorePurchases">恢复购买</van-button>
+        </div>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
@@ -68,6 +77,8 @@ import constant from '@/config/constant'
 import {mapGetters, mapActions} from 'vuex';
 import {Link,gUuid} from '@/config/utils'
 import PageHeader from '@/modules/widget/PageHeader'
+import { isNative } from '@/native/platform'
+import * as iap from '@/native/iap'
 
 export default {
   name: 'UserCenter',
@@ -100,6 +111,10 @@ export default {
         return true
       }
       return false
+    },
+    // 是否 iOS 原生 App：会员（尊贵会员）开通走 App Store 内购，仅原生 App 展示入口
+    nativeApp(){
+      return isNative()
     }
   },
   watch: {},
@@ -236,6 +251,80 @@ export default {
     },
     goViewMyOrder(){
       Link('/mortuary/order_list?scope=my')
+    },
+    // ============ 账号级会员（尊贵会员）开通：参照 store/Info.vue 的 iOS 内购流程 ============
+    // 会员是用户级的（user.vip），不绑定具体纪念馆，所以不传 space_id（后端 /pay/ios/verify 该参数可选）
+    buyVip(){
+      this.buyVipByIap()
+    },
+    // iOS App：尊贵会员按年订阅走 App Store 内购，交易 ID 交后端核实后发货
+    async buyVipByIap(){
+      try {
+        this.$toast && this.$toast('正在唤起 App Store…')
+        const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
+        if (!result || !result.transactionId){
+          this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
+          return
+        }
+        this.verifyAndDeliver(result, '尊贵会员已开通')
+      } catch (e) {
+        console.log('iap error:', e)
+        const msg = e && e.message ? e.message : '购买失败'
+        // 用户主动取消不提示
+        if (msg.indexOf('取消') < 0){
+          this.$toast && this.$toast(msg)
+        }
+      }
+    },
+    // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
+    async restorePurchases(){
+      try {
+        this.$toast && this.$toast('正在向 App Store 恢复购买…')
+        const result = await iap.restore()
+        if (!result || !result.transactionId){
+          this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
+          return
+        }
+        this.verifyAndDeliver(result, '尊贵会员已恢复')
+      } catch (e) {
+        console.log('iap restore error:', e)
+        const msg = e && e.message ? e.message : '恢复购买失败'
+        if (msg.indexOf('取消') < 0){
+          this.$toast && this.$toast(msg)
+        }
+      }
+    },
+    // 把 Apple 交易 ID 交给后端核实（App Store Server API），成功才发货、才结束交易
+    verifyAndDeliver(result, okMsg){
+      const payload = {
+        transaction_id: result.transactionId
+      }
+      console.log('[iap] 提交后端核实 ' + JSON.stringify(iap.describeTransaction(result)))
+      $API.space.verifyIosTransaction(payload, rsp => {
+        console.log('[iap] 后端返回 ' + JSON.stringify({
+          result: rsp && rsp.result, msg: rsp && rsp.msg,
+          vip: rsp && rsp.vip, endDate: rsp && rsp.endDate
+        }))
+        if (rsp && (rsp.result === 0 || rsp.result === '0')){
+          // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
+          // 按 ID 结束「这一笔」，多笔并发时互相不覆盖
+          iap.finish(result.transactionId)
+          this.$toast && this.$toast(okMsg)
+          // 用户级 VIP 记在 user 上，必须刷新它，页面上的会员状态才跟着变
+          this.refreshUser()
+        }else{
+          console.warn('[iap] 后端未通过：' + (rsp && rsp.msg))
+          this.$toast && this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+        }
+      }, error => {
+        console.warn('[iap] 请求异常 ' + JSON.stringify({status: error && error.status, msg: error && (error.msg || error.message)}))
+        this.$toast && this.$toast('校验失败，请联系客服')
+      })
+    },
+    // 刷新当前用户，拿到最新的 user.vip 会员状态
+    refreshUser(){
+      const token = this.$store.getters['userStore/token']
+      this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
     }
   },
   created () {
@@ -244,12 +333,17 @@ export default {
       this.avatarUrl = this.user.avatarUrl
     }
     this.registerEvent()
+    // 上次付款后没 finish 的交易，进本页时自动补一次校验发货
+    iap.setApprovedHandler(payload => {
+      this.verifyAndDeliver(payload, '尊贵会员已开通')
+    })
   },
   mounted () {
   },
   beforeDestroy(){
     eventHub.$off(constant.EVENT_PAY_SUCCESS,this.updateInfo)
     eventHub.$off(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
+    iap.setApprovedHandler(null)
   }
 }
 </script>
@@ -297,12 +391,29 @@ export default {
       }
       .vip-cell{
         /deep/.van-cell__value{
+          display: flex;
+          align-items: center;
           .vip-active{
             color: #b8860b;
             font-weight: bold;
           }
           .vip-end{
             color: @FONT_FOUR_COLOR;
+          }
+          .vip-btn{
+            margin-left: auto;
+            color: @SECOND_THEME_COLOR;
+            border: 1px solid @SECOND_THEME_COLOR;
+          }
+        }
+      }
+      .vip-restore-cell{
+        /deep/.van-cell__value{
+          display: flex;
+          justify-content: flex-end;
+          .vip-btn{
+            color: @SECOND_THEME_COLOR;
+            border: 1px solid @SECOND_THEME_COLOR;
           }
         }
       }
