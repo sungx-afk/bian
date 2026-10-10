@@ -47,6 +47,7 @@
         spaceId: '',
         detail: null,
         activeTab: 'message',
+        pendingTab: '',
         tipContent: ''
       }
     },
@@ -90,6 +91,7 @@
         if (!this.spaceId) return
         this.getSpaceDetail({sid: this.spaceId, quiet: quiet ? 1 : 0}).then((rsp) => {
           this.detail = rsp
+          this.applyPendingTab()
         }).catch((error) => {
           if (error.message && error.message.indexOf('status code 404') !== -1) {
             this.tipContent = '资源不存在'
@@ -127,12 +129,31 @@
       },
       goBack() {
         this.$router.go(-1)
+      },
+      // 发表留言返回时，切换到对应 Tab（公共→留言 / 亲属→亲属空间 / 私语→私语）。
+      // 亲属空间 Tab 仅纪念馆（detail.type===0）才展示，否则回退到留言。
+      applyPendingTab() {
+        let tab = this.pendingTab
+        if (!tab) return
+        if (tab === 'friends' && !this.showFriendsTab) {
+          tab = 'message'
+        }
+        this.activeTab = tab
+        this.pendingTab = ''
       }
     },
     created() {
       if (this.$route.params.id) {
         this.spaceId = this.$route.params.id
         this.getDetail(false)
+      }
+      // 从发表页返回携带 ?tab=，先记下，等详情加载完（用于判断亲属空间是否可显示）再切换
+      let tab = this.$route.query.tab
+      if (tab === 'message' || tab === 'friends' || tab === 'private') {
+        this.pendingTab = tab
+        if (tab !== 'friends') {
+          this.activeTab = tab
+        }
       }
     }
   }
