@@ -35,9 +35,10 @@ public class BianProductPrice: CAPPlugin {
                     // displayPrice 是 App Store 本地化价格字符串（含货币符号，随区域/调价变化）
                     prices[product.id] = product.displayPrice
                 }
-                call.resolve(["prices": prices])
+                // count 用于排查：查不到商品时 App Store Connect 那边多半还没配置好/网络不通
+                call.resolve(["prices": prices, "count": products.count])
             } catch {
-                call.reject("查询商品信息失败", nil, error)
+                call.reject("查询商品信息失败: \(error.localizedDescription)", nil, error)
             }
         }
     }

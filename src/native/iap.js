@@ -1,4 +1,10 @@
-import { isNative, plugin } from './platform'
+import { registerPlugin } from '@capacitor/core'
+import { isNative } from './platform'
+
+// 原生只读商品查询插件（BianProductPrice）。
+// 必须 registerPlugin：Capacitor 只有在 JS 侧注册后才会生成插件代理并写入 Capacitor.Plugins，
+// 直接取 window.Capacitor.Plugins.BianProductPrice 是 undefined（那时会静默回退到兜底价）。
+const BianProductPrice = registerPlugin('BianProductPrice')
 
 // App Store 商品 ID（与 Apple Developer / App Store Connect 里配置的一致）
 export const IAP_PRODUCTS = {
@@ -266,12 +272,13 @@ export function order(productId) {
  * @returns {Promise<string>} 本地化价格文案（如 "¥199.00"）；取不到时返回 ''
  */
 export function getPriceOnly(productId) {
-  if (!isNative()) return Promise.resolve('')
-  const p = plugin('BianProductPrice')
-  if (!p || typeof p.getPrice !== 'function') return Promise.resolve('')
-  return Promise.resolve(p.getPrice({ ids: [productId] })).then(r => {
+  if (!isNative() || !BianProductPrice) return Promise.resolve('')
+  return Promise.resolve(BianProductPrice.getPrice({ ids: [productId] })).then(r => {
     const prices = (r && r.prices) || {}
-    return prices[productId] || ''
+    const text = prices[productId] || ''
+    // 用 ?debug=1 打开 vConsole 可以看到真价到底有没有取到
+    console && console.log && console.log('[iap] 只读商品查询 ' + productId + ' => ' + (text || '(空)'))
+    return text
   }).catch(e => {
     console && console.log && console.log('[iap] 只读商品查询失败: ' + (e && (e.message || JSON.stringify(e))))
     return ''
