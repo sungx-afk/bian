@@ -1,7 +1,7 @@
 <template>
-  <!-- 主题背景图暂时去掉（原:background-image:url(theme.url)），需要时恢复这一行即可
-  <div class="info-theme-container" :style="{'background-image':`url(${theme.url})`}"> -->
-  <div class="info-theme-container">
+  <!-- 主题背景图：按 customThemeId 显示（参照 fishbone/bian 的实现 theme.url）。
+       自定义主题且有背景图时整页铺底、顶部墨色区透明；其他情况保持原「墨色顶区 + 暖纸底」样式 -->
+  <div class="info-theme-container" :class="{'has-custom-theme': hasCustomThemeBg}" :style="themeBgStyle">
     <!-- 返回按钮 -->
     <div class="back-btn" @click.stop="goBack" aria-label="返回">
       <i class="chevron"></i>
@@ -150,10 +150,26 @@
         }),
         theme(){
           if (this.space.themeId === 'custom'){
-            return this.space.customThemeId
+            let t = this.space.customThemeId
+            // customThemeId 在 store 中已是解析后的对象；接口直取时可能是 JSON 字符串，这里做兼容
+            if (typeof t === 'string' && t){
+              try {
+                t = JSON.parse(t)
+              } catch (e) {
+                t = null
+              }
+            }
+            return t || {}
           }else{
             return this.getPresetTheme(this.space.themeId)
           }
+        },
+        // 是否按自定义主题（customThemeId）显示主题背景图：仅自定义主题且有背景图时为 true
+        hasCustomThemeBg(){
+          return !!(this.space && this.space.themeId === 'custom' && this.theme && this.theme.url)
+        },
+        themeBgStyle(){
+          return this.hasCustomThemeBg ? {'background-image': `url(${this.theme.url})`} : {}
         },
         isSpaceCreator(){
           let result = false
@@ -219,11 +235,10 @@
         }),
         configHide(type){
           let result = false
-          if (this.space && this.space.themeId === 'custom' && this.space.customThemeId){
-            let theme = this.space.customThemeId
-            if (theme){
-              result = theme.config.findIndex(item=>item===type) === -1
-            }
+          // 统一走 theme 计算属性（已兼容 customThemeId 为 JSON 字符串的情况），并保护 config 缺失
+          let theme = this.theme
+          if (this.space && this.space.themeId === 'custom' && theme && theme.config){
+            result = theme.config.findIndex(item=>item===type) === -1
           }
 
           return result
@@ -576,6 +591,16 @@
         position: relative;
         max-width: 560px;
         margin: 0 auto;
+      }
+    }
+
+    // 自定义主题（customThemeId）背景：顶部墨色区改为透明，让主题背景图整页露出
+    &.has-custom-theme{
+      .hero{
+        background: transparent;
+        &::before{
+          display: none;
+        }
       }
     }
 
