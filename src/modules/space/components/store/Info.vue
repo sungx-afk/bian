@@ -425,7 +425,7 @@
           let result = '祭奠'
           if (product.point > 0){
             // 无云币模式：收费祭品只对会员开放，不再显示点数
-            result = this.supportPoint ? product.point : '会员免费'
+            result = this.supportPoint ? product.point : '会员使用'
           }
           return result
         },
