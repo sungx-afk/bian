@@ -21,6 +21,16 @@
         <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制链接</button>
       </div>
     </div>
+    <div class="share-qr">
+      <div class="share-title">分享二维码图片</div>
+      <div class="qr-text">
+        <span>长按下方二维码保存到相册，发送给亲友；对方扫码即可打开对应纪念馆 / 云追悼会。</span>
+      </div>
+      <div class="qr-img-box">
+        <img class="qr-img" :src="qrImageUrl" v-if="qrImageUrl" @error="onQrError" />
+        <span class="qr-loading" v-else>二维码生成中…</span>
+      </div>
+    </div>
     <div class="share-bottom">
       <img src="~@/modules/images/logo_gray.png" class="header">
       <span class="text">爱，永存!</span>
@@ -45,7 +55,8 @@
       data(){
         return{
           extra:null,
-          copyContent:''
+          copyContent:'',
+          qrImageUrl:''  // 分享二维码图片：编码 copyContent 链接，扫码经 Universal Link 打开对应内容
         }
       },
       computed:{
@@ -112,6 +123,11 @@
             .replace(/\//g, '_')
 
           this.copyContent = `${config_server.domain}/home?copylink=${content}`
+
+          // 二维码图片：编码同一份分享链接；后端按 content 生成二维码图
+          let param = getRequestParam()
+          this.qrImageUrl = `${config_server.domain}/api/v1/qrcode?content=${encodeURIComponent(this.copyContent)}`
+            + `&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
         },
         copyLink(){
           let clipboard = new ClipboardJS('.copy-link');
@@ -128,6 +144,9 @@
           clipboard.on('error', function (e) {
             console.log(e);
           });
+        },
+        onQrError(){
+          this.$toast && this.$toast('二维码生成失败，请稍后重试')
         }
       },
       created() {
@@ -195,6 +214,37 @@
         &:active{
           background:@MAIN_THEME_COLOR;
           opacity: 0.8;
+        }
+      }
+    }
+    .share-qr{
+      display: flex;
+      flex-direction: column;
+      padding: 20px 20px;
+      .share-title{
+        font-weight: bold;
+        margin-bottom: 14px;
+      }
+      .qr-text{
+        font-size: 14px;
+        line-height: 24px;
+        color: #666;
+        margin-bottom: 16px;
+      }
+      .qr-img-box{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 180px;
+        .qr-img{
+          width: 180px;
+          height: 180px;
+          border: 1px solid #eee;
+          border-radius: 8px;
+        }
+        .qr-loading{
+          font-size: 14px;
+          color: #999;
         }
       }
     }
