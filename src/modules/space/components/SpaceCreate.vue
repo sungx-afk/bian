@@ -458,39 +458,11 @@
             eventHub.$emit(constant.EVENT_CREATE_SPACE_SUCCESS)
             this.$toast.clear()
             //判断日期
+            // 创建成功后直接进入新馆的祭拜页
             let space = rsp
-            let nearBy = false
-            let dieDays = space.spaceUsers.map(item=>{
-              let time = item.dieDay
-              return time
-            })
-            let now = new Date().getTime()
-            let delta = 3 * 24 * 3600 * 1000
-            for (let i = 0; i < dieDays.length; i++){
-              if (Math.abs(dieDays[i] - now) < delta){
-                nearBy = true
-                break
-              }
-            }
-            if (nearBy){
-              //判断是否马上发起云追悼会？
-              this.$dialog.confirm({
-                message: '您需要发起云追悼会吗？',
-                confirmButtonText:"发起",
-                cancelButtonText:"忽略",
-              }).then((data) => {
-                Link(`/space/meeting/${space.id}`,{},true)
-              }).catch((error)=>{
-                // 忽略发起云追悼会：同样直接进入新馆的祭拜详情页
-                setPendingBackgroundId(space)
-                Link(`/space/sacrifice/${space.id}`, {}, true)
-              })
-            }else{
-              // 创建成功后直接进入新馆的祭拜详情页
-              this.$toast({message:'创建成功', type:'success', duration:1200})
-                              setPendingBackgroundId(space)
-                Link(`/space/sacrifice/${space.id}`, {}, true)
-            }
+            setPendingBackgroundId(space)
+            this.$toast({message:'创建成功', type:'success', duration:1200})
+            Link(`/space/sacrifice/${space.id}`, {}, true)
           }, error => {
             this.$toast('创建失败，请稍后重试')
           })
