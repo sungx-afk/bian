@@ -29,7 +29,7 @@
           <van-cell class="product-cell" :class="{'vip-cell':product.id == 'item-space-vip'}" v-for="product in products" :key="product.id">
             <div class="product-top">
               <span :class="{'vip-product':product.id == 'item-space-vip'}">{{product.name}}</span>
-              <van-button size="small" class="purchase-btn" :loading="product.id == 'item-space-vip' ? vipBusy : buyBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
+              <van-button size="small" class="purchase-btn" :loading="product.id == 'item-space-vip' && vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
             </div>
             <div class="product-bottom" v-if="product.tip">
               <span class="product-tip">{{ product.tip }}</span>
@@ -89,7 +89,7 @@
           iconMoney:'https://static-app01.yugusoft.com/bian/money.png',
           products_list:[],//服务器存储的礼物列表
           vipBusy:false,    // 会员（尊贵馆）开通/恢复购买 loading 态
-          buyBusy:false,    // 祭品（云币）购买 loading 态
+          buyBusy:false,    // 祭品（云币）购买进行中标记，仅用于防重复点击
         }
       },
       computed: {
@@ -421,9 +421,8 @@
             }
             let productId = product.id
             let spaceId = this.spaceId
-            // 祭品（云币）购买：纯网络请求，整段加页面级 loading 反馈
+            // 祭品（云币）购买：纯网络请求，不加 loading 遮罩（buyBusy 仅用于防重复点击）
             this.buyBusy = true
-            this.$toast.loading({ message: '正在购买…', forbidClick: true, duration: 0 })
             $API.space.buy({productId,spaceId},rsp=>{
               if (this.supportPay){
                 if (this.isVipSpace || !this.supportPoint){
