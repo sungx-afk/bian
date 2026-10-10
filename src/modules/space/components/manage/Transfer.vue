@@ -11,7 +11,7 @@
           :key="item.id">
           <div class="list-item" @click.stop="transferToMember(item)">
             <div class="left-content">
-              <img class="avatar" :src="item.avatarUrl" />
+              <user-avatar class="avatar" :url="item.avatarUrl" :name="item.name" :uid="item.id" :size="30"></user-avatar>
               <div class="title">{{item.name}}</div>
             </div>
           </div>
@@ -39,11 +39,13 @@
   import base64 from 'js-base64'
   import ClipboardJS from 'clipboard'
   import PageHeader from '@/modules/widget/PageHeader'
+  import UserAvatar from '@/modules/widget/UserAvatar'
 
     export default {
       name: "Transfer",
       components:{
-        PageHeader
+        PageHeader,
+        UserAvatar
       },
       data(){
         return{

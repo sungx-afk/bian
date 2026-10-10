@@ -9,7 +9,7 @@
           <template v-else>还未添加亲属成员</template>
         </div>
         <div class="members-body">
-          <img class="member-avatar" v-for="item in space.config.friends" :key="item.id" :src="item.avatarUrl" />
+          <user-avatar class="member-avatar" v-for="item in space.config.friends" :key="item.id" :url="item.avatarUrl" :name="item.name" :uid="item.id" :size="20"></user-avatar>
         </div>
       </div>
     </van-cell>
@@ -20,6 +20,7 @@
 <script>
   import IssueList from '../issue/IssueList'
   import {Link} from '@/config/utils'
+  import UserAvatar from '@/modules/widget/UserAvatar'
 
   import constant from '@/config/constant'
 
@@ -36,7 +37,8 @@
         }
       },
       components:{
-        IssueList
+        IssueList,
+        UserAvatar
       },
       methods:{
         goMemberManage(){

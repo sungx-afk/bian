@@ -20,7 +20,7 @@
             :key="friend.id">
             <div class="list-item">
               <div class="left-content">
-                <img class="avatar" :src="friend.avatarUrl" />
+                <user-avatar class="avatar" :url="friend.avatarUrl" :name="friend.name" :uid="friend.id" :size="30"></user-avatar>
                 <div class="title">{{friend.name}}</div>
               </div>
               <template v-if="canOperate">
@@ -42,6 +42,7 @@
 <script>
   import {mapGetters} from 'vuex';
   import NoData from '@/modules/widget/space/NoData'
+  import UserAvatar from '@/modules/widget/UserAvatar'
   import {Link} from '@/config/utils'
 
   import constant from '@/config/constant'
@@ -49,7 +50,8 @@
     export default {
       name: "FriendsManage",
       components:{
-        NoData
+        NoData,
+        UserAvatar
       },
       data(){
         return{

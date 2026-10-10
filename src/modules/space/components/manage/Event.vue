@@ -15,7 +15,7 @@
           <div class="event">
             <div class="event-top" v-if="item.hasHeader">{{item.date}}</div>
             <div class="event-bottom">
-              <img class="avatar" :src="item.creator && item.creator.avatarUrl || '~@/modules/images/default_header.png'" />
+              <user-avatar class="avatar" :url="(item.creator && item.creator.avatarUrl) || ''" :name="(item.creator && item.creator.name) || ''" :uid="item.creator && item.creator.id" :size="40"></user-avatar>
               <div class="middle-content">
                 <div class="name">{{item.creator && item.creator.name}}</div>
                 <div class="content">{{item.time}}  {{item.content}}</div>
@@ -33,6 +33,7 @@
   import {timesToDate} from '@/config/utils'
 
   import NoData from '@/modules/widget/space/NoData'
+  import UserAvatar from '@/modules/widget/UserAvatar'
 
     export default {
       name: "Event",
@@ -43,7 +44,8 @@
         }
       },
       components:{
-        NoData
+        NoData,
+        UserAvatar
       },
       watch:{
         'space.id'(){

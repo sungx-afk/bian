@@ -15,7 +15,7 @@
             :key="item.id">
             <div class="list-item">
               <div class="left-content">
-                <img class="avatar" :src="item.avatarUrl" />
+                <user-avatar class="avatar" :url="item.avatarUrl" :name="item.name" :uid="item.id" :size="30"></user-avatar>
                 <div class="title">{{item.name}}</div>
               </div>
               <div class="right-content" @click.stop="showMoreMenu(item)">
@@ -35,12 +35,14 @@
 
 <script>
   import NoData from '@/modules/widget/space/NoData'
+  import UserAvatar from '@/modules/widget/UserAvatar'
   import PageHeader from '@/modules/widget/PageHeader'
     export default {
       name: "Blacklist",
       components:{
       PageHeader,
-        NoData
+        NoData,
+        UserAvatar
       },
       data(){
         return{

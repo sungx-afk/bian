@@ -2,7 +2,7 @@
   <div class='item-area' v-if="item" @click.stop="itemPressed">
     <!-- header区 -->
     <div class='issue-header' v-if="item.creator && (type !== 'PRIVATE')">
-      <img class='header-avatar' :src='item.creator.avatarUrl' />
+      <user-avatar class='header-avatar' :url='item.creator.avatarUrl' :name='item.creator.name' :uid='item.creator.id' :size='35'></user-avatar>
       <div class='right-content'>
         <div class='top'>
           <div class='header-info'>
@@ -168,8 +168,13 @@
 </template>
 
 <script>
+  import UserAvatar from '@/modules/widget/UserAvatar'
+
     export default {
       name: "IssueItem",
+      components:{
+        UserAvatar
+      },
       props:{
         item:{
           type:Object,
