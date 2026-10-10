@@ -362,10 +362,11 @@
           const token = this.$store.getters['userStore/token']
           this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
         },
-        // 会员年费：价格必须取 App Store 的本地化价格（App Store Connect 调价 / 不同区域货币自动跟随）
+        // 会员年费：价格取自 App Store 的本地化价格（App Store Connect 调价 / 不同区域货币自动跟随）。
+        // 只在用户点击「开通」时调用：页面加载阶段不初始化 StoreKit，避免自动发起购买。
         loadVipPrice(){
-          if (!isNative()) return
-          iap.getPrice(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
+          if (!isNative()) return Promise.resolve()
+          return iap.getPrice(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
             if (text) this.vipPriceText = text
           }).catch(() => {})
         },
@@ -396,6 +397,8 @@
           if (this.vipBusy) return
           try {
             this.vipBusy = true
+            // 点击「开通」时才初始化 StoreKit，顺带刷新 App Store 真实价格
+            await this.loadVipPrice()
             this.$toast && this.$toast('正在唤起 App Store…')
             const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
             if (!result || !result.transactionId){
@@ -527,15 +530,13 @@
           }
         }
         this.registerEvent()
-        this.loadVipPrice()
-        // 上次付款后没 finish 的交易，进本页时自动补一次校验发货
-        iap.setApprovedHandler(payload => {
-          this.verifyAndDeliver(payload, '会员已开通')
-        })
+        // 刻意不在页面加载时碰 StoreKit（不取价格、不注册补单回调）：
+        // 初始化会把上次未结束的交易重新投递给 StoreKit，真机上表现为
+        // 「刚进页面就自动发起开通会员」，且交易未 finish 时会反复出现。
+        // 现在只有用户点击「开通」/「恢复购买」时才初始化（loadVipPrice / order / restore）。
       },
       beforeDestroy() {
         eventHub.$off(constant.EVENT_PAY_SUCCESS,this.updateInfo)
-        iap.setApprovedHandler(null)
       }
     }
 </script>
