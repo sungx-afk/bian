@@ -19,12 +19,12 @@
       <div class="label">
         2. 选择已创建的纪念馆，发起云追悼会（讣告）
       </div>
-      <van-cell v-for="space in list" :key="space.id" is-link>
+      <van-cell v-for="space in list" :key="space.id" is-link @click="goMemorialMeeting(space)">
         <div class="space">
           <div class="name">
             {{space.name}}
           </div>
-          <div class="meeting" @click.stop="goMemorialMeeting(space)">
+          <div class="meeting">
             发起
           </div>
         </div>
