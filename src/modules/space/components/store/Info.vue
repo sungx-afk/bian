@@ -366,6 +366,17 @@
           const token = this.$store.getters['userStore/token']
           this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
         },
+        // 页面加载阶段取 App Store 真价：走原生只读商品查询插件，
+        // 不初始化内购插件、不注册交易观察者，因此不会发起购买
+        loadVipPriceOnly(){
+          if (!isNative()) return
+          iap.getPriceOnly(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
+            if (text){
+              this.vipPriceText = text
+              this.writeCachedVipPrice(text)
+            }
+          })
+        },
         // 读缓存的 App Store 价格：页面加载阶段用它展示，不触碰 StoreKit
         readCachedVipPrice(){
           try {
@@ -551,9 +562,11 @@
           }
         }
         this.registerEvent()
-        // 页面加载时用上次缓存的 App Store 真实价格展示，不触碰 StoreKit
+        // 先用缓存的真价兜底，再用原生「只读商品查询」插件刷新真价：
+        // 该插件只做商品信息请求，不涉及交易，不会自动发起开通会员
         this.vipPriceText = this.readCachedVipPrice()
-        // 刻意不在页面加载时碰 StoreKit（不取价格、不注册补单回调）：
+        this.loadVipPriceOnly()
+        // 刻意不在页面加载时初始化内购插件（store.initialize）：
         // 初始化会把上次未结束的交易重新投递给 StoreKit，真机上表现为
         // 「刚进页面就自动发起开通会员」，且交易未 finish 时会反复出现。
         // 现在只有用户点击「开通」/「恢复购买」时才初始化（loadVipPrice / order / restore）。

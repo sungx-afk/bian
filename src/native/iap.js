@@ -1,4 +1,4 @@
-import { isNative } from './platform'
+import { isNative, plugin } from './platform'
 
 // App Store 商品 ID（与 Apple Developer / App Store Connect 里配置的一致）
 export const IAP_PRODUCTS = {
@@ -254,6 +254,27 @@ export function order(productId) {
         reject(toError(e))
       })
     }).catch(reject)
+  })
+}
+
+/**
+ * 只读商品信息：只查询 App Store 上的价格，完全不参与交易。
+ * 走原生 BianProductPrice 插件（StoreKit 2 的 Product.products(for:)），
+ * 不初始化内购插件、不注册交易观察者，因此不可能发起购买或触发补单 ——
+ * 页面一打开就能安全地展示真实价格。
+ * @param {string} productId App Store 商品 ID
+ * @returns {Promise<string>} 本地化价格文案（如 "¥199.00"）；取不到时返回 ''
+ */
+export function getPriceOnly(productId) {
+  if (!isNative()) return Promise.resolve('')
+  const p = plugin('BianProductPrice')
+  if (!p || typeof p.getPrice !== 'function') return Promise.resolve('')
+  return Promise.resolve(p.getPrice({ ids: [productId] })).then(r => {
+    const prices = (r && r.prices) || {}
+    return prices[productId] || ''
+  }).catch(e => {
+    console && console.log && console.log('[iap] 只读商品查询失败: ' + (e && (e.message || JSON.stringify(e))))
+    return ''
   })
 }
 
