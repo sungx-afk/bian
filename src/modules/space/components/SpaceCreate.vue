@@ -53,6 +53,7 @@
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   import constant from '@/config/constant'
+  import {setPendingBackgroundId} from '@/modules/space/components/sacrifice/pendingSpace'
 
   import UserInfo from './userinfo/UserInfo'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -481,12 +482,14 @@
                 Link(`/space/meeting/${space.id}`,{},true)
               }).catch((error)=>{
                 // 忽略发起云追悼会：同样直接进入新馆的祭拜详情页
-                Link(`/space/detail/${space.id}`, {}, true)
+                setPendingBackgroundId(space)
+                Link(`/space/sacrifice/${space.id}`, {}, true)
               })
             }else{
               // 创建成功后直接进入新馆的祭拜详情页
               this.$toast({message:'创建成功', type:'success', duration:1200})
-              Link(`/space/detail/${space.id}`, {}, true)
+                              setPendingBackgroundId(space)
+                Link(`/space/sacrifice/${space.id}`, {}, true)
             }
           }, error => {
             this.$toast('创建失败，请稍后重试')
