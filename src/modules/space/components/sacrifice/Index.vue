@@ -234,6 +234,7 @@
 
   import {Link,setLastSpaceId,getLastSpaceId,clearLastSpaceId} from '@/config/utils';
   import constant from '@/config/constant';
+  import {consumePendingBackgroundId} from './pendingSpace';
   import {getFrameImage, getFrame, getFrameCombineImage} from '@/config/frame';
 
   //合影横版图（竖版旋转90°后 993x850）铺满 244x130 的显示缩放
@@ -281,6 +282,8 @@
         item_02: new Array(9).fill({}),
         spaceId: 0,
         space: null,
+        // 列表点击进馆时由列表项透传的 backgroundId，首帧即可应用正确主题，避免闪默认主题
+        pendingBackgroundId: 1,
         checkResult: 0,
         tipContent: '',
         showMessage:false,
@@ -346,7 +349,9 @@
       },
       theme(){
         // backgroundId 同时作为整套场景的主题 ID：背景、匾额、挽联和祭桌可按同一 ID 成套切换。
-        const themeId = this.space && this.space.backgroundId || 1
+        // 优先用详情接口返回的 space.backgroundId；进馆首帧 space 尚未加载时，
+        // 回退到列表项透传的 pendingBackgroundId，避免先闪默认主题(theme_1)再切到设置的主题。
+        const themeId = (this.space && this.space.backgroundId) || this.pendingBackgroundId || 1
         return 'theme_' + themeId;
       },
       //合影横版相框：用旋转90°的横版图铺满显示，相框完整不被截
@@ -1844,6 +1849,11 @@
       this.spaceId = this.$route.params.id;
       this.isAutoEntered = this.$route.query && this.$route.query.auto === '1';
       console.log(this.spaceId);
+      // 优先用列表项已带的主题信息，首帧即应用正确主题，避免默认主题闪一下
+      const pendingBg = consumePendingBackgroundId()
+      if (pendingBg) {
+        this.pendingBackgroundId = pendingBg
+      }
       this.getSpaceDetail();
       this.registerEvent()
     },

@@ -14,6 +14,7 @@
 
 <script>
   import {Link} from '@/config/utils'
+  import {setPendingBackgroundId} from '@/modules/space/components/sacrifice/pendingSpace'
 
   import Item from '@/modules/widget/space/Item'
     export default {
@@ -40,6 +41,8 @@
         },
         goSpaceDetail(item){
           this.tryHandleBgm(item)
+          // 进馆前把列表项已带的主题信息(backgroundId)透传，供祭拜页首帧直接用，避免闪默认主题
+          setPendingBackgroundId(item)
           this.linkToSpaceDetail(item.id)
         },
         linkToSpaceDetail(spaceId){

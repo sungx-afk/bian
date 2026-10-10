@@ -125,6 +125,7 @@
 <script>
   import {mapGetters,mapActions} from 'vuex';
   import {Link, getLastSpaceId, clearLastSpaceId} from '@/config/utils'
+  import {setPendingBackgroundId} from '@/modules/space/components/sacrifice/pendingSpace'
   import constant from '@/config/constant'
   import config_server from '@/config/config'
   import Item from '@/modules/widget/space/Item'
@@ -284,6 +285,8 @@
       },
       goSpaceDetail(item){
         //this.tryHandleBgm(item)
+        // 进馆前把列表项已带的主题信息(backgroundId)透传，供祭拜页首帧直接用，避免闪默认主题
+        setPendingBackgroundId(item)
         Link(`/space/sacrifice/${item.id}`)
       },
       linkToSpaceDetail(spaceId,scene){
