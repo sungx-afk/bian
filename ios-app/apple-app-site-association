@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["JGBX7E5U56.com.yugusoft.bian"],
+        "paths": ["/home*"]
+      }
+    ]
+  }
+}

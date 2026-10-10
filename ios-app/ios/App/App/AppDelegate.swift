@@ -8,6 +8,8 @@ import WXApi
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    // Universal Link 冷启动兜底：continueUserActivity 时根 VC 可能尚未就绪，先暂存，待 didBecomeActive 再载入
+    var pendingUniversalLink: URL?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -29,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        loadPendingUniversalLink()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -45,14 +48,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
-    // 微信 SDK 回调：Universal Link 方式（微信开放平台要求 iOS 新应用使用 Universal Link）
+    // Universal Link 方式拉起 App（分享/邀请链接：https://ba.yugusoft.com/home?copylink=...）
+    // 转成本地入口 + 原 query 载入 WebView，保持 capacitor://localhost origin（登录态/localStorage 不丢），
+    // 由前端路由（List.vue）按 copylink 跳转；微信 SDK 仍先处理自己的回调
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         #if canImport(WXApi)
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
             WXApi.handleOpenUniversalLink(userActivity)
         }
         #endif
+
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+           let url = userActivity.webpageURL,
+           url.host?.contains("ba.yugusoft.com") == true {
+            let query = url.query ?? ""
+            let localURLString = "capacitor://localhost/" + (query.isEmpty ? "" : "?" + query)
+            if let localURL = URL(string: localURLString) {
+                pendingUniversalLink = localURL
+                loadPendingUniversalLink()
+            }
+        }
+
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    }
+
+    // 把暂存的 Universal Link 载入 Capacitor WebView（根 VC 就绪后才会成功）
+    private func loadPendingUniversalLink() {
+        guard let url = pendingUniversalLink else { return }
+        DispatchQueue.main.async {
+            if let vc = self.window?.rootViewController as? CAPBridgeViewController,
+               let webView = vc.bridge?.webView {
+                webView.load(URLRequest(url: url))
+                self.pendingUniversalLink = nil
+            }
+        }
     }
 
 }

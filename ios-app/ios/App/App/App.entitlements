@@ -7,7 +7,7 @@
 	<array>
 		<string>Default</string>
 	</array>
-	<!-- 微信 OpenSDK 用 Universal Link 回调，接入后把域名改成实际域名 -->
+	<!-- Universal Link：微信 OpenSDK 回调 + 分享/邀请链接（https://ba.yugusoft.com/home?copylink=...）拉起 App -->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:ba.yugusoft.com</string>
