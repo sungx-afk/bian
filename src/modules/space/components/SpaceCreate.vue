@@ -475,25 +475,13 @@
               }).then((data) => {
                 Link(`/space/meeting/${space.id}`,{},true)
               }).catch((error)=>{
-                // this.$toast({
-                //   message:'创建成功',
-                //   type:'success',
-                //   duration:1500,
-                //   onClose:()=>{
-                //     this.$router.go(-1)
-                //   }
-                // })
-                this.$router.go(-1)
+                // 忽略发起云追悼会：同样直接进入新馆的祭拜详情页
+                Link(`/space/detail/${space.id}`, {}, true)
               })
             }else{
-              this.$toast({
-                message:'创建成功',
-                type:'success',
-                duration:1500,
-                onClose:()=>{
-                  this.$router.go(-1)
-                }
-              })
+              // 创建成功后直接进入新馆的祭拜详情页
+              this.$toast({message:'创建成功', type:'success', duration:1200})
+              Link(`/space/detail/${space.id}`, {}, true)
             }
           }, error => {
             this.$toast('创建失败，请稍后重试')
