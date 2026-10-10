@@ -11,7 +11,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="info">本平台已取消虚拟币充值：开通尊贵馆后，馆内祭奠物品免费使用。</div>
+        <div class="info">本平台已取消虚拟币充值：开通会员后，馆内祭奠物品免费使用。</div>
       </template>
     </div>
   </div>

@@ -432,11 +432,11 @@
       supportPay(){
         return config_server.supportPay
       },
-      // 全局开关：关闭后祭拜页不再出现云币，只有尊贵馆(VIP)概念
+      // 全局开关：关闭后祭拜页不再出现云币，只有会员(VIP)概念
       supportPoint(){
         return !!config_server.supportPoint
       },
-      // 尊贵馆 = 馆级 VIP（旧的商品 item-space-vip）或用户级 VIP（iOS 订阅，全站通用）
+      // 会员 = 馆级 VIP（旧的商品 item-space-vip）或用户级 VIP（iOS 订阅，全站通用）
       isVipSpace(){
         return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
       },
@@ -468,10 +468,10 @@
         // 防重入：祭品购买（云币即时扣费）进行中时忽略再次点击
         if (this.buyBusy) return
         let that = this;
-        // 无云币模式：非免费馆不使用收费祭品，引导开通尊贵馆（iOS 走内购）
+        // 无云币模式：非免费馆不使用收费祭品，引导开通会员（iOS 走内购）
         // Apple 来源用户的上香、点烛不判断花费，直接放过
         if (!this.isAppleFree(productId) && !this.supportPoint && !this.isFreeHall && this.space && this.space.type !== 2){
-          this.$toast('开通尊贵馆后，本馆祭奠物品免费使用')
+          this.$toast('开通会员后，本馆祭奠物品免费使用')
           setTimeout(() => {
             Link(`/store/info?space_id=${this.spaceId}`)
           }, 800)

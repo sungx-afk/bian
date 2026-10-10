@@ -2,7 +2,7 @@ import { isNative } from './platform'
 
 // App Store 商品 ID（与 Apple Developer / App Store Connect 里配置的一致）
 export const IAP_PRODUCTS = {
-  VIP_YEARLY: 'com.yugusoft.bian.yearly'   // 尊贵馆 按年（自动续期订阅）
+  VIP_YEARLY: 'com.yugusoft.bian.yearly'   // 会员 按年（自动续期订阅）
 }
 
 const ALL_PRODUCTS = Object.keys(IAP_PRODUCTS).map(k => IAP_PRODUCTS[k])
@@ -180,7 +180,7 @@ function ensureInit(products) {
   if (initPromise) return initPromise
   initPromise = (async () => {
     const C = cdv()
-    if (!C || !C.store) throw new Error('内购插件未加载，App 内暂不能开通尊贵馆')
+    if (!C || !C.store) throw new Error('内购插件未加载，App 内暂不能开通会员')
     const store = C.store
     const { Platform, ProductType, LogLevel } = constants()
 
@@ -254,6 +254,38 @@ export function order(productId) {
         reject(toError(e))
       })
     }).catch(reject)
+  })
+}
+
+/**
+ * 读取商品在 App Store 的本地化价格（订阅页展示「按年支付，¥199.00/年」）。
+ * 价格必须来自 StoreKit：App Store Connect 调价、不同国家/地区的货币与税费
+ * 都会自动跟随，前端写死会与审核看到的实际价格不一致。
+ * @param {string} productId App Store 商品 ID
+ * @returns {Promise<string>} 本地化价格文案（如 "¥199.00"）；取不到时返回 ''
+ */
+export function getPrice(productId) {
+  if (!isNative()) return Promise.resolve('')
+  return ensureInit([productId]).then(store => {
+    const product = store.get(productId)
+    if (!product) return ''
+    const offer = typeof product.getOffer === 'function' ? product.getOffer() : null
+    const pricing = (offer && offer.pricing) || product.pricing || null
+    if (!pricing) return ''
+    // 优先用 StoreKit 已本地化的价格字符串（自带货币符号，随区域变化）
+    if (pricing.price) return String(pricing.price)
+    // 回退：priceMicros（微单位，199 元 = 199000000）
+    if (pricing.priceMicros !== undefined && pricing.priceMicros !== null) {
+      const value = Number(pricing.priceMicros) / 1000000
+      if (!isNaN(value)) {
+        const prefix = pricing.currency === 'CNY' ? '¥' : ''
+        return prefix + (Number.isInteger(value) ? value : value.toFixed(2))
+      }
+    }
+    return ''
+  }).catch(e => {
+    console && console.log && console.log('[iap] 获取价格失败: ' + (e && e.message))
+    return ''
   })
 }
 

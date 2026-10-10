@@ -76,7 +76,7 @@
         supportPay(){
           return config_server.supportPay
         },
-        // 尊贵馆 = 馆级 VIP（旧的商品 item-space-vip）或用户级 VIP（iOS 订阅，全站通用）
+        // 会员 = 馆级 VIP（旧的商品 item-space-vip）或用户级 VIP（iOS 订阅，全站通用）
         isVipSpace(){
           return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
         },
