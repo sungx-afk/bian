@@ -108,7 +108,7 @@ export default {
     supportPay(){
       return config_server.supportPay
     },
-    // 是否展示「云币」概念：关闭后全站只有尊贵馆(VIP)概念
+    // 是否展示「云币」概念：关闭后全站只有会员(VIP)概念
     supportPoint(){
       return !!config_server.supportPoint
     },

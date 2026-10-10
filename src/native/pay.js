@@ -16,7 +16,7 @@ export function pay(order) {
 async function iapPay(order) {
   const iap = plugin(IAP_PLUGIN)
   if (!iap) {
-    throw new Error('内购（IAP）尚未接入，App 内暂不能开通尊贵馆')
+    throw new Error('内购（IAP）尚未接入，App 内暂不能开通会员')
   }
   // TODO: 接入内购插件后：拉起商品 -> 购买 -> 拿 transactionId -> 调 /pay/ios/verify 校验发货
   const result = await iap.order(order && order.productId ? order.productId : order)

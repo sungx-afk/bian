@@ -2,7 +2,7 @@ import { isNative } from './platform'
 
 // App Store 商品 ID（与 Apple Developer / App Store Connect 里配置的一致）
 export const IAP_PRODUCTS = {
-  VIP_YEARLY: 'com.yugusoft.bian.yearly'   // 尊贵馆 按年（自动续期订阅）
+  VIP_YEARLY: 'com.yugusoft.bian.yearly'   // 会员 按年（自动续期订阅）
 }
 
 const ALL_PRODUCTS = Object.keys(IAP_PRODUCTS).map(k => IAP_PRODUCTS[k])
@@ -180,7 +180,7 @@ function ensureInit(products) {
   if (initPromise) return initPromise
   initPromise = (async () => {
     const C = cdv()
-    if (!C || !C.store) throw new Error('内购插件未加载，App 内暂不能开通尊贵馆')
+    if (!C || !C.store) throw new Error('内购插件未加载，App 内暂不能开通会员')
     const store = C.store
     const { Platform, ProductType, LogLevel } = constants()
 
