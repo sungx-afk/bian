@@ -15,6 +15,8 @@
           </van-cell>
           <!-- 开通会员：整行紧贴账号ID 下方 -->
           <van-cell class="product-cell vip-cell" v-for="product in vipProducts" :key="product.id">
+            <!-- 会员权益说明：放在「会员」标题上方 -->
+            <div class="product-head">开通会员后，创建的纪念馆所有人员均可使用全部祭品</div>
             <div class="product-top">
               <span class="vip-product">{{product.name}}</span>
               <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
@@ -139,10 +141,10 @@
             }else if (!this.supportPay){
               result = ''
             }else if (!this.supportPoint){
-              // 无云币模式：只讲会员权益
+              // 无云币模式：非会员的权益说明已放进「会员」行内（见模板 .product-head），顶部不再重复
               result = this.isVipSpace
                 ? '本馆已开通会员，祭奠物品免费使用'
-                : '开通会员后，创建的纪念馆所有人员均可使用全部祭品'
+                : ''
             }else {
               result = '以下是为支付运营成本的收费服务，感谢您的支持'
             }
@@ -615,6 +617,14 @@
           .van-cell__value{
             flex-direction: column;
             align-items: flex-start;
+          }
+          /* 会员行的权益说明：独占一行，位于「会员」标题上方 */
+          .product-head{
+            width: 100%;
+            margin-bottom: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: @FONT_SECOND_COLOR;
           }
           .product-top{
             width: 100%;
