@@ -34,8 +34,13 @@ installNativeBridge(Vue)
 // 错误捕获：仅在 URL 显式带 ?debug=1 时启用（默认隐藏）：
 // 1) 全局错误捕获：JS 异常与未处理的 Promise 拒绝不再静默
 // 2) 点击追踪：真机"点了没反应"时能立刻看到点到的是哪个元素
-// vConsole 面板：默认隐藏，仅在 URL 显式带 ?debug=1 时才加载
-const debugOn = typeof location !== 'undefined' && location.search.indexOf('debug=1') > -1
+// vConsole 面板：默认隐藏。App 内没有地址栏，开启方式有两种：
+//   1) URL 带 ?debug=1
+//   2) localStorage 里 bian_debug=1（祭奠物品页连点标题 5 次可切换，重启 App 仍生效）
+const debugOn = (typeof location !== 'undefined' && location.search.indexOf('debug=1') > -1) ||
+  (function () {
+    try { return localStorage.getItem('bian_debug') === '1' } catch (e) { return false }
+  })()
 if (debugOn) {
   const VConsole = require('vconsole')
   /* eslint-disable no-new */

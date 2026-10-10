@@ -1,6 +1,7 @@
 <template>
   <div class="info-container">
-    <page-header title="祭奠物品"></page-header>
+    <!-- 隐藏调试入口：连点标题 5 次可开关 vConsole（见 onTitleTap） -->
+    <page-header title="祭奠物品" @click.native="onTitleTap"></page-header>
     <div class="header">
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
       <div class="header-text">{{filterName}}意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思</div>
@@ -531,6 +532,29 @@
         },
         goShowVisitedTip(){
           this.showVisitedTip = true
+        },
+        // 隐藏调试入口：连点标题 5 次 → 开关 vConsole。
+        // App 内没有地址栏，改不了 URL，所以写入 localStorage 后整页重载，重启 App 也仍生效。
+        onTitleTap(){
+          this.debugTaps = (this.debugTaps || 0) + 1
+          clearTimeout(this._debugTimer)
+          this._debugTimer = setTimeout(() => { this.debugTaps = 0 }, 1500)
+          if (this.debugTaps < 5) return
+          this.debugTaps = 0
+          clearTimeout(this._debugTimer)
+          let on = false
+          try {
+            on = localStorage.getItem('bian_debug') === '1'
+            if (on) localStorage.removeItem('bian_debug')
+            else localStorage.setItem('bian_debug', '1')
+          } catch (e) {}
+          this.$toast && this.$toast(on ? '已关闭调试面板' : '已开启调试面板，正在重载…')
+          // 保留当前路由（hash 模式），切换 debug 参数后重载
+          const base = (location.href.split('?')[0] || '').split('#')[0] || location.href
+          const hash = location.hash || ''
+          setTimeout(() => {
+            location.href = on ? (base + hash) : (base + '?debug=1' + hash)
+          }, 600)
         },
         tipPopupClosed(){
           this.showVisitedTip = false
