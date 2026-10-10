@@ -62,6 +62,8 @@ workflows:
         script: |
           cd ios-app
           npx cap sync ios
+          # cap sync 重写的 packageClassList 只含 npm 插件，自写插件需补进去
+          node ci/register-custom-plugins.js
       - name: 构建并自动签名 IPA
         script: |
           cd ios-app
@@ -136,6 +138,8 @@ workflows:
         script: |
           cd ios-app
           npx cap sync ios
+          # cap sync 重写的 packageClassList 只含 npm 插件，自写插件需补进去
+          node ci/register-custom-plugins.js
       - name: 构建 Ad Hoc 包（设备需已注册 UDID）
         script: |
           cd ios-app

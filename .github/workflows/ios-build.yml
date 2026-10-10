@@ -151,6 +151,12 @@ jobs:
       - name: 同步 iOS 平台（云端 pod install）
         run: cd ios-app && npx cap sync ios
 
+      # cap sync 会重写 ios/App/App/capacitor.config.json，其 packageClassList 只包含
+      # npm 依赖里的插件；App 内自写的 BianProductPrice 必须补进去，
+      # 否则 JS 调用会报 `"BianProductPrice" plugin is not implemented on ios`
+      - name: 注册 App 内自定义 Capacitor 插件
+        run: cd ios-app && node ci/register-custom-plugins.js
+
       # ---------- 有签名材料才走签名流程 ----------
       # 两种来源都支持：
       #   A) SIGNING_PRIVATE_KEY + 证书（推荐）：私钥由本仓库的一次性 workflow
