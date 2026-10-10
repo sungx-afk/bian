@@ -18,9 +18,9 @@ export function saveImageToAlbum(dataUrl, fileName) {
   if (isNative()) {
     const Media = NativeMedia || plugin('Media')
     if (!Media) return Promise.reject(new Error('保存插件未安装'))
+    // savePhoto 只接受 path 字段（支持 web URL / base64 dataURI / 本地文件路径）
     return Media.savePhoto({
-      dataUrl,
-      fileName: name
+      path: dataUrl
     })
   }
 

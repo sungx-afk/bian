@@ -5,8 +5,6 @@
         <div class="tip">
           <i class="iconfont icon-tishi1"></i>请长按下方图片保存二维码图片到手机相册后，发送给微信亲友。
         </div>
-        <!-- 关闭/返回：固定在遮罩左上角，白底深字，不被海报挡住 -->
-        <i class="iconfont icon-guanbi poster-close" @click.stop="closePoster"></i>
       </div>
       <div class="poster-area">
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
@@ -15,6 +13,7 @@
         <div class="poster-actions">
           <van-button round size="small" class="poster-save-btn" @click="savePoster">保存图片</van-button>
           <van-button round size="small" class="poster-share-btn" @click="shareNotice">分享给亲友</van-button>
+          <van-button round size="small" class="poster-close-btn" @click.stop="closePoster">关闭</van-button>
         </div>
       </div>
 
@@ -700,20 +699,6 @@ xxx`
           margin-right: 4px;
         }
       }
-      .poster-close{
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        z-index: 1002;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-        text-align: center;
-        font-size: 18px;
-        color: #333333;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-      }
     }
     .poster-area{
       position: fixed;
@@ -729,7 +714,7 @@ xxx`
         display: flex;
         justify-content: center;
         margin-top: 14px;
-        .poster-save-btn,.poster-share-btn{
+        .poster-save-btn,.poster-share-btn,.poster-close-btn{
           margin: 0px 6px;
           color: @FONT_WHITE_COLOR;
           background: @MAIN_THEME_COLOR;
