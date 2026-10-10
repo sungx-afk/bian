@@ -84,6 +84,10 @@
   import * as iap from '@/native/iap'
   import PageHeader from '@/modules/widget/PageHeader'
 
+  // App Store 真实价格的本地缓存 key：页面加载时直接用缓存展示真价，
+  // 既不初始化 StoreKit，也不会把上次未结束的交易重新投递（不会自动发起购买）
+  const VIP_PRICE_CACHE_KEY = 'bian.vip.yearly.price'
+
     export default {
       name: "Info",
       components:{
@@ -362,12 +366,29 @@
           const token = this.$store.getters['userStore/token']
           this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
         },
+        // 读缓存的 App Store 价格：页面加载阶段用它展示，不触碰 StoreKit
+        readCachedVipPrice(){
+          try {
+            return localStorage.getItem(VIP_PRICE_CACHE_KEY) || ''
+          } catch (e) {
+            return ''
+          }
+        },
+        writeCachedVipPrice(text){
+          try {
+            if (text) localStorage.setItem(VIP_PRICE_CACHE_KEY, text)
+          } catch (e) {}
+        },
         // 会员年费：价格取自 App Store 的本地化价格（App Store Connect 调价 / 不同区域货币自动跟随）。
-        // 只在用户点击「开通」时调用：页面加载阶段不初始化 StoreKit，避免自动发起购买。
+        // 只在用户点击「开通」时调用：页面加载阶段不初始化 StoreKit，避免自动发起购买；
+        // 取到的真价写进缓存，之后进页面就能直接展示真价，且仍不碰 StoreKit。
         loadVipPrice(){
           if (!isNative()) return Promise.resolve()
           return iap.getPrice(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
-            if (text) this.vipPriceText = text
+            if (text){
+              this.vipPriceText = text
+              this.writeCachedVipPrice(text)
+            }
           }).catch(() => {})
         },
         // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
@@ -530,6 +551,8 @@
           }
         }
         this.registerEvent()
+        // 页面加载时用上次缓存的 App Store 真实价格展示，不触碰 StoreKit
+        this.vipPriceText = this.readCachedVipPrice()
         // 刻意不在页面加载时碰 StoreKit（不取价格、不注册补单回调）：
         // 初始化会把上次未结束的交易重新投递给 StoreKit，真机上表现为
         // 「刚进页面就自动发起开通会员」，且交易未 finish 时会反复出现。
