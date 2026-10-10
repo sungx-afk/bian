@@ -258,6 +258,38 @@ export function order(productId) {
 }
 
 /**
+ * 读取商品在 App Store 的本地化价格（订阅页展示「按年支付，¥199.00/年」）。
+ * 价格必须来自 StoreKit：App Store Connect 调价、不同国家/地区的货币与税费
+ * 都会自动跟随，前端写死会与审核看到的实际价格不一致。
+ * @param {string} productId App Store 商品 ID
+ * @returns {Promise<string>} 本地化价格文案（如 "¥199.00"）；取不到时返回 ''
+ */
+export function getPrice(productId) {
+  if (!isNative()) return Promise.resolve('')
+  return ensureInit([productId]).then(store => {
+    const product = store.get(productId)
+    if (!product) return ''
+    const offer = typeof product.getOffer === 'function' ? product.getOffer() : null
+    const pricing = (offer && offer.pricing) || product.pricing || null
+    if (!pricing) return ''
+    // 优先用 StoreKit 已本地化的价格字符串（自带货币符号，随区域变化）
+    if (pricing.price) return String(pricing.price)
+    // 回退：priceMicros（微单位，199 元 = 199000000）
+    if (pricing.priceMicros !== undefined && pricing.priceMicros !== null) {
+      const value = Number(pricing.priceMicros) / 1000000
+      if (!isNaN(value)) {
+        const prefix = pricing.currency === 'CNY' ? '¥' : ''
+        return prefix + (Number.isInteger(value) ? value : value.toFixed(2))
+      }
+    }
+    return ''
+  }).catch(e => {
+    console && console.log && console.log('[iap] 获取价格失败: ' + (e && e.message))
+    return ''
+  })
+}
+
+/**
  * 注册兜底回调：收到「没有对应购买请求的 approved」时触发。
  * 典型场景：上次付款后后端校验失败/断网，交易没 finish，App 下次启动会再回调一次。
  * @param {(payload:{productId,transactionId,originalTransactionId}) => void} fn

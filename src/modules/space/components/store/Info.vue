@@ -19,8 +19,9 @@
               <span class="vip-product">{{product.name}}</span>
               <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
             </div>
-            <div class="product-bottom" v-if="product.tip">
-              <span class="product-tip">{{ product.tip }}</span>
+            <!-- 价格来自 App Store（StoreKit 本地化价格），取不到时回退兜底价 -->
+            <div class="product-bottom">
+              <span class="product-tip">按年支付，{{vipPriceText || '199'}}/年</span>
             </div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
@@ -96,6 +97,7 @@
           products_list:[],//服务器存储的礼物列表
           vipBusy:false,    // 会员开通/恢复购买 loading 态
           buyBusy:false,    // 祭品（云币）购买进行中标记，仅用于防重复点击
+          vipPriceText:'',  // 会员年费：App Store 本地化价格（如 ¥199.00），取自 StoreKit
         }
       },
       computed: {
@@ -140,7 +142,7 @@
               // 无云币模式：只讲会员权益
               result = this.isVipSpace
                 ? '本馆已开通会员，祭奠物品免费使用'
-                : '开通会员后，本馆祭奠物品免费使用'
+                : '开通会员后，创建的纪念馆所有人员均可使用全部祭品'
             }else {
               result = '以下是为支付运营成本的收费服务，感谢您的支持'
             }
@@ -261,7 +263,7 @@
               products.push({
                 id:'item-space-vip',
                 name:'会员',
-                tip:'对来访所有人员，各种祭奠物品免费。按年支付，方便祭奠',
+                // 说明文案与年费价格统一在页面上展示（价格取自 App Store），此处不再挂 tip
                 point:this.showGift('item-space-vip').price
               })
             }
@@ -357,6 +359,13 @@
         refreshUser(){
           const token = this.$store.getters['userStore/token']
           this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
+        },
+        // 会员年费：价格必须取 App Store 的本地化价格（App Store Connect 调价 / 不同区域货币自动跟随）
+        loadVipPrice(){
+          if (!isNative()) return
+          iap.getPrice(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
+            if (text) this.vipPriceText = text
+          }).catch(() => {})
         },
         // 恢复购买：换设备/重装后用同一 Apple ID 取回已购订阅（审核 3.1.2 要求）
         async restorePurchases(){
@@ -516,6 +525,7 @@
           }
         }
         this.registerEvent()
+        this.loadVipPrice()
         // 上次付款后没 finish 的交易，进本页时自动补一次校验发货
         iap.setApprovedHandler(payload => {
           this.verifyAndDeliver(payload, '会员已开通')
