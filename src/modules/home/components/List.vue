@@ -30,12 +30,6 @@
         <div class="text">爱，永存</div>
       </div>
     </div>
-    <!-- Universal Link 回链兜底：iOS 浏览器(未装App)通过分享链接进入时，引导打开/下载 App -->
-    <div class="open-app-tip" v-if="showOpenAppTip">
-      <span class="tip-text">安装 App 体验完整祭奠功能</span>
-      <span class="tip-btn open" @click="openInApp">打开App</span>
-      <span class="tip-btn store" v-if="appStoreUrl" @click="goAppStore">下载</span>
-    </div>
     <div class="container-bottom">
       <template v-if="list.length > 0 || visitedList.length > 0 || (publicList.length > 0 && showPublic)">
         <div class="list" v-if="list.length > 0">
@@ -165,8 +159,6 @@
         merchant:null,
         showDeleteDialog:false,
         confirmValue:'',
-        // Universal Link 回链兜底提示：iOS 浏览器(未装App)经分享链接进入时为 true
-        showOpenAppTip:false,
         showKeyboard:false,
         errorInfo:'',
         randomStr:'',
@@ -645,8 +637,6 @@
 
         this.query = query
         this.checkJumpIntent(query)
-        // 分享链接经 iOS 浏览器(未装 App)进入：展示"打开App/下载"兜底提示
-        this.showOpenAppTip = !!(query && query.copylink && this.isIOSWeb)
         if(query){
           if(query.app_id){
             window.app_id = query.app_id;
@@ -796,24 +786,6 @@
       checkJumpIntent(query){
         if (query && (query.copylink || query.origin_from || query.space_id || query.redirect_opt || query.mortuary_id)){
           this.hasJumpIntent = true
-        }
-      },
-      // iOS Safari（非原生 App，未装 App 的情况）经分享链接进入时为真
-      isIOSWeb(){
-        let ua = navigator.userAgent || ''
-        return /iphone|ipad|ipod/i.test(ua) && !/android/i.test(ua) && !window.Capacitor
-      },
-      // App Store 下载地址（config 配置），为空则隐藏"下载"按钮
-      appStoreUrl(){
-        return (global.config_server && global.config_server.appStoreUrl) || ''
-      },
-      // 重新触发 Universal Link：已装 App 则系统直接拉起 App 并跳转到链接对应内容
-      openInApp(){
-        window.location.href = window.location.href
-      },
-      goAppStore(){
-        if (this.appStoreUrl){
-          window.location.href = this.appStoreUrl
         }
       },
       //自动进入"最后访问的纪念馆"
@@ -976,32 +948,6 @@
           font-size: 22px;
           padding: 2px 20px;
           background: rgba(0,0,0,0.5);
-        }
-      }
-    }
-    // Universal Link 回链兜底提示条（iOS 浏览器经分享链接进入、未装 App 时显示）
-    .open-app-tip{
-      display: flex;
-      align-items: center;
-      padding: 10px 16px;
-      background: #fbf3e7;
-      .tip-text{
-        font-size: 13px;
-        color: #825621;
-        flex: 1;
-      }
-      .tip-btn{
-        font-size: 13px;
-        padding: 5px 14px;
-        border-radius: 14px;
-        margin-left: 8px;
-        &.open{
-          color: #fff;
-          background: @MAIN_THEME_COLOR;
-        }
-        &.store{
-          color: @MAIN_THEME_COLOR;
-          border: 1px solid @MAIN_THEME_COLOR;
         }
       }
     }
