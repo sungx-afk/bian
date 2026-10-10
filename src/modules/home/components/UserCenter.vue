@@ -423,9 +423,10 @@ export default {
       }
       /* 尊贵会员卡片：淡金底 + VIP 徽标 + 状态标签 + 主按钮，恢复购买降级为底部文字链 */
       .vip-card{
-        margin: 12px;
+        /* 通栏整条：去掉左右外边距与圆角，横向铺满、与上下行左右对齐 */
+        margin: 12px 0;
         padding: 16px;
-        border-radius: 12px;
+        border-radius: 0;
         background: linear-gradient(135deg, #fdf7ec 0%, #f8ecd7 100%);
         box-shadow: 0 2px 10px rgba(196, 130, 44, 0.12);
         /deep/.van-cell__value{

@@ -307,7 +307,7 @@
         isAutoEntered:false,
         //离开祭拜页时是否因跳转暂停了音乐（回来时续播；用户手动停的不续播）
         bgmPausedOnLeave:false,
-        buyBusy:false   // 祭品（云币）购买 loading 态
+        buyBusy:false   // 祭品（云币）购买进行中标记，仅用于防重复点击
       }
     },
     components: {
@@ -472,24 +472,10 @@
           }, 800)
           return
         }
-        // 祭品（云币）购买：纯网络请求，整段加页面级 loading 反馈
+        // 祭品（云币）购买：纯网络请求，不加 loading 遮罩（buyBusy 仅用于防重复点击）
         this.buyBusy = true
-        this.$toast.loading({ message: '正在购买…', forbidClick: true, duration: 0 })
-        // 统一收尾：成功/失败/异常/超时都要关闭 loading 遮罩并解除防重入。
-        // 之前成功分支只置 buyBusy=false 没有关遮罩，duration:0 的 loading 会一直挂在页面上
-        // （表现为点完「上香/点烛/纸钱」后一直显示"正在购买…"）
-        let finished = false
-        const finish = () => {
-          if (finished) return
-          finished = true
-          this.buyBusy = false
-          this.$toast.clear()
-        }
-        // 兜底：请求异常挂起（回调迟迟不来）时自动解除，避免遮罩永久卡死
-        const guardTimer = setTimeout(finish, 10000)
         $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
-          clearTimeout(guardTimer)
-          finish()
+          this.buyBusy = false
           if (resp && !resp.error) {
             if (callback && typeof callback == 'function') {
               callback();
@@ -505,8 +491,7 @@
             }
           }
         }, (error) => {
-          clearTimeout(guardTimer)
-          finish()
+          this.buyBusy = false
           this.$toast((error && (error.message || error.error)) || '网络异常，请稍后重试');
         });
       },
