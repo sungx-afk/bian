@@ -443,9 +443,14 @@
             combineImage:this.avatarType
           }
           if (this.theme){
-            params.themeId = this.theme.uuid
+            // 预置背景走新体系（backgroundId，由祭拜页消费），不写 legacy 的 themeId，
+            // 否则数字 1~10 会被当成 themeId 丢进老体系，详情页 getPresetTheme 匹配不上→默认主题
             if (this.theme.uuid === 'custom'){
+              params.themeId = 'custom'
               params.customTheme = JSON.stringify(this.theme)
+            }
+            if (this.theme.backgroundId){
+              params.backgroundId = this.theme.backgroundId
             }
           }
           $API.space.createSpace(params, rsp => {
