@@ -1,13 +1,24 @@
 <template>
   <div class="issue-create-container">
     <page-header :title="pageTitle"></page-header>
+    <!-- 公共 | 亲属 | 私语 切换：header 标题随当前类型联动 -->
+    <div class="type-tabs">
+      <div
+        v-for="t in typeList"
+        :key="t.value"
+        class="type-tab"
+        :class="{active: type === t.value}"
+        @click="type = t.value">
+        {{ t.label }}
+      </div>
+    </div>
     <div class="issue-create-body">
     <div class="content-area">
       <div class="input-area">
         <van-field
           v-model="content"
           type="textarea"
-          placeholder="请输入您想说的"
+          :placeholder="contentPlaceholder"
           rows="5"
           :autosize="{ maxHeight: 200, minHeight: 100 }">
         </van-field>
@@ -42,7 +53,12 @@
       data(){
         return{
           spaceId:'',
-          type:'',//PRIVATE、SPACE、MESSAGE
+          type:'PUBLIC',//PUBLIC 公共、SPACE 亲属空间、PRIVATE 私语
+          typeList: [
+            {label: '公共', value: 'PUBLIC'},
+            {label: '亲属', value: 'SPACE'},
+            {label: '私语', value: 'PRIVATE'}
+          ],
           selectPhotos:[],
           content:'',
           uploadedFiles: [],
@@ -50,7 +66,20 @@
       },
       computed: {
         pageTitle() {
-          return this.type === 'PRIVATE' ? '发表私语' : '发表留言'
+          switch (this.type) {
+            case 'PUBLIC': return '发表留言'
+            case 'SPACE': return '发表亲属空间'
+            case 'PRIVATE': return '发表私语'
+            default: return '发表留言'
+          }
+        },
+        contentPlaceholder() {
+          switch (this.type) {
+            case 'PUBLIC': return '请输入您想说的'
+            case 'SPACE': return '请输入想对亲属说的'
+            case 'PRIVATE': return '写下只对自己说的话…'
+            default: return '请输入您想说的'
+          }
         }
       },
       methods:{
@@ -184,7 +213,7 @@
           if (query.space_id){
             this.spaceId = query.space_id
           }
-          if (query.type){
+          if (query.type && ['PUBLIC','SPACE','PRIVATE'].indexOf(query.type) >= 0){
             this.type = query.type
           }
         }
@@ -203,6 +232,27 @@
     box-sizing: border-box;
     //PageHeader 固定在顶部，内容区域独立滚动
     overflow: hidden;
+    .type-tabs {
+      flex: none;
+      display: flex;
+      margin: 10px 15px 0 15px;
+      background: #f2ede6;
+      border-radius: 8px;
+      overflow: hidden;
+      .type-tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 14px;
+        color: @FONT_SECOND_COLOR;
+        cursor: pointer;
+        &.active {
+          background: @MAIN_THEME_COLOR;
+          color: #fff;
+          font-weight: 500;
+        }
+      }
+    }
     .issue-create-body {
       flex: 1;
       overflow-y: auto;
