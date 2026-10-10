@@ -1,17 +1,21 @@
 <template>
   <div class="meeting-container">
     <template v-if="showPoster">
-      <div class="poster-mask">
+      <div class="poster-mask" @click="closePoster">
         <div class="tip">
           <i class="iconfont icon-tishi1"></i>请长按下方图片保存二维码图片到手机相册后，发送给微信亲友。
         </div>
+        <!-- 关闭/返回：固定在遮罩左上角，白底深字，不被海报挡住 -->
+        <i class="iconfont icon-guanbi poster-close" @click.stop="closePoster"></i>
       </div>
       <div class="poster-area">
-        <i class="iconfont icon-guanbi close" @click="closePoster"></i>
         <canvas class="canvas" id="myCanvas" v-if="!posterDone"></canvas>
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
         <!-- App 分享：系统分享面板（替代小程序转发）；海报本身仍可长按保存 -->
-        <van-button round size="small" class="poster-share-btn" @click="shareNotice">分享给亲友</van-button>
+        <div class="poster-actions">
+          <van-button round size="small" class="poster-save-btn" @click="savePoster">保存图片</van-button>
+          <van-button round size="small" class="poster-share-btn" @click="shareNotice">分享给亲友</van-button>
+        </div>
       </div>
 
     </template>
@@ -70,6 +74,7 @@
   import base64 from 'js-base64'
   import PageHeader from '@/modules/widget/PageHeader'
   import { share } from '@/native/share'
+  import { saveImageToAlbum } from '@/native/media'
 
   const MAIN_COLOR = '#FFFFFF' //#000000
   const TIP_COLOR = '#FFFFFF' //#666666
@@ -536,6 +541,19 @@ xxx`
             this.$toast((e && e.message) || '分享失败，请长按海报保存后发送')
           })
         },
+        // 保存海报到手机：App 直接入相册（@capacitor-community/media），H5 走 a[download]
+        savePoster(){
+          if (!this.posterDone){
+            this.$toast('海报尚未生成，请稍后再试')
+            return
+          }
+          let image = document.getElementById('poster')
+          saveImageToAlbum(image && image.src).then(()=>{
+            this.$toast('已保存到手机相册')
+          }).catch(e => {
+            this.$toast((e && e.message) || '保存失败，请长按海报图片保存')
+          })
+        },
         getRatio(context) {
           let devicePixelRatio = window.devicePixelRatio || 1;
           let backingStorePixelRatio = context.webkitBackingStorePixelRatio ||
@@ -682,6 +700,20 @@ xxx`
           margin-right: 4px;
         }
       }
+      .poster-close{
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 1002;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        font-size: 18px;
+        color: #333333;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+      }
     }
     .poster-area{
       position: fixed;
@@ -693,21 +725,19 @@ xxx`
       text-align: center;
       overflow: hidden;
       box-sizing: border-box;
-      .poster-share-btn{
+      .poster-actions{
+        display: flex;
+        justify-content: center;
         margin-top: 14px;
-        color: @FONT_WHITE_COLOR;
-        background: @MAIN_THEME_COLOR;
-        border: none;
+        .poster-save-btn,.poster-share-btn{
+          margin: 0px 6px;
+          color: @FONT_WHITE_COLOR;
+          background: @MAIN_THEME_COLOR;
+          border: none;
+        }
       }
       .canvas{
         margin: 0 auto;
-      }
-      .close{
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        color: @MAIN_THEME_COLOR;
       }
       .poster-hidden{
         display: none;
