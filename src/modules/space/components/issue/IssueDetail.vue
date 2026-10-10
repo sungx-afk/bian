@@ -1,14 +1,17 @@
 <template>
   <div class="issue-detail-container">
-    <template v-if="issue && space">
-      <item :item.sync="issue" :type.sync="issue.type"
-            :canComment="canComment"
-            v-on:click-menu="clickOperateMenu"
-            v-on:click-image="clickIssueImage"
-            v-on:comment="comment"
-            v-on:comment-reply="commentReply">
-      </item>
-    </template>
+    <page-header :title="pageTitle"></page-header>
+    <div class="issue-detail-body">
+      <template v-if="issue && space">
+        <item :item.sync="issue" :type.sync="issue.type"
+              :canComment="canComment"
+              v-on:click-menu="clickOperateMenu"
+              v-on:click-image="clickIssueImage"
+              v-on:comment="comment"
+              v-on:comment-reply="commentReply">
+        </item>
+      </template>
+    </div>
     <div class='send-comment-area' v-if="postComment">
       <div class='comment-input-container'>
         <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent" :placeholder="commentPlaceholder" maxlength="1000"></van-field>
@@ -29,6 +32,7 @@
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
   import Item from './IssueItem';
+  import PageHeader from '@/modules/widget/PageHeader';
 
   import Vue from 'vue';
   import { ImagePreview } from 'vant';
@@ -37,7 +41,8 @@
     export default {
       name: "IssueDetail",
       components:{
-        Item
+        Item,
+        PageHeader
       },
       data(){
         return{
@@ -75,6 +80,12 @@
             result = true
           }
           return result
+        },
+        pageTitle(){
+          if (this.issue){
+            return this.messageTypeText() + '详情'
+          }
+          return '详情'
         },
         canComment(){
           let result = true
@@ -384,7 +395,9 @@
 <style rel="stylesheet/less" lang="less" scoped>
   @import "~@/config/config.less";
   .issue-detail-container{
-    padding: 0px 15px;
+    .issue-detail-body{
+      padding: 0px 15px;
+    }
     .send-comment-area{
       position:fixed;
       width:100%;
