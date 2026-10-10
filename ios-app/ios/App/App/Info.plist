@@ -3,7 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>zh_CN</string>
+	<!-- 声明支持简体中文：否则 WKWebView 的 input[type=file] 原生菜单
+	     （照片图库 / 拍照 / 选取文件）会因 App 只支持 en 而显示英文 -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>zh-Hans</string>
+		<string>en</string>
+	</array>
 	<key>CFBundleDisplayName</key>
         <string>纪念馆</string>
 	<key>CFBundleExecutable</key>
