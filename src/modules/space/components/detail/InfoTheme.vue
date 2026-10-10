@@ -70,8 +70,8 @@
       <!-- 生平文章：创建者可直接新增/编辑，不再走底部菜单 -->
       <div class="story-head" v-if="isSpaceCreator">
         <span class="story-head-title">生平文章</span>
-        <!-- 生平文章可以有多篇，这里是「添加」 -->
-        <span class="story-head-add" @click.stop="goNewStory" aria-label="添加生平文章"><i></i></span>
+        <!-- 生平文章可以有多篇，这里是「添加」：暂时隐藏（保留代码，去掉 v-if="false" 即可恢复） -->
+        <span class="story-head-add" v-if="false" @click.stop="goNewStory" aria-label="添加生平文章"><i></i></span>
       </div>
       <template v-if="storyNoData">
         <div class="story-empty">暂无生平文章</div>
