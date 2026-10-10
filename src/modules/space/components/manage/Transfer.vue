@@ -98,7 +98,7 @@
           content = content.replace(/\+/g, '-').replace(/\//g, '_')  // Convert '+' to '-' and '/' to '_'
 
 
-          this.copyContent = `${config_server.domain}/home?copylink=${content}`
+          this.copyContent = `${config_server.domain}/ios-app-share?copylink=${content}`
 
           let clipboard = new ClipboardJS('.copy-link');
           clipboard.on('success', (e)=> {

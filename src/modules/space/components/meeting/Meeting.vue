@@ -524,7 +524,7 @@ xxx`
         buildShareUrl(){
           let shareContent = `origin_from=meeting&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
           shareContent = base64.Base64.encode(shareContent)
-          return `${config_server.domain}/home?copylink=${shareContent}`
+          return `${config_server.domain}/ios-app-share?copylink=${shareContent}`
         },
         // App 内分享：iOS 唤起系统分享面板（可发微信/短信/邮件/拷贝），无需微信 SDK
         shareNotice(){

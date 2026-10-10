@@ -122,7 +122,7 @@
           content = content.replace(/\+/g, '-') // Convert '+' to '-'
             .replace(/\//g, '_')
 
-          this.copyContent = `${config_server.domain}/home?copylink=${content}`
+          this.copyContent = `${config_server.domain}/ios-app-share?copylink=${content}`
 
           // 二维码图片：编码同一份分享链接；后端按 content 生成二维码图
           let param = getRequestParam()
