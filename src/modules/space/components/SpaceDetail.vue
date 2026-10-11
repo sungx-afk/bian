@@ -303,27 +303,6 @@
         eventHub.$on(constant.EVENT_TRANSFER_SPACE_SUCCESS,this.updateSpaceDetail)
         eventHub.$on(constant.EVENT_CREATE_SPACE_SUCCESS,this.updateSpaceDetail)
       },
-      initShare(){
-        //try 20241103 sungx:打开限制，不再限制iPhone
-        if (true){
-          let extra = {}
-          extra.origin_from = 'space_detail'
-          extra.invite_user_id = this.user.id
-          extra.space_id = this.spaceId
-
-          let param = {
-            title: '彼岸思念',
-            desc:`逝者已矣，生者如斯。来自 ${this.detail.name}`,
-            extra:extra,
-            success: () => { //你重置分享成功后的回调
-
-            }
-          }
-          this.wechatShare(param).catch((e) => {
-            this.$toast && this.$toast((e && e.message) || '分享失败')
-          })
-        }
-      },
       bgmAction(){
         if (this.isSpaceCreator){
           if (this.playState === 'play'){
@@ -373,7 +352,6 @@
         this.getDetail(false,()=>{
           this.initTab()
           // this.tryHandleBgm(this.detail)
-          this.initShare()
         })
         this.registerEvent()
       }
