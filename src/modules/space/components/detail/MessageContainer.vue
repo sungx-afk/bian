@@ -33,6 +33,7 @@
 <script>
   import {mapGetters, mapActions} from 'vuex';
   import {isIphone} from '@/config/utils';
+  import constant from '@/config/constant'
 
   import Message from './Message'
   import Friends from './Friends'
@@ -130,6 +131,15 @@
       goBack() {
         this.$router.go(-1)
       },
+      // 发表留言/私语/亲属空间成功后，自动切换到对应 Tab，方便看到刚发布的内容
+      onIssuePosted(data) {
+        let tabMap = {PUBLIC: 'message', SPACE: 'friends', PRIVATE: 'private'}
+        let tab = (data && tabMap[data.type]) || 'message'
+        if (tab === 'friends' && !this.showFriendsTab) {
+          tab = 'message'
+        }
+        this.activeTab = tab
+      },
       // 发表留言返回时，切换到对应 Tab（公共→留言 / 亲属→亲属空间 / 私语→私语）。
       // 亲属空间 Tab 仅纪念馆（detail.type===0）才展示，否则回退到留言。
       applyPendingTab() {
@@ -155,7 +165,12 @@
           this.activeTab = tab
         }
       }
-    }
+      // 发表返回后切换对应 Tab（create 页改用 go(-1)，不会重新进入 created，需此处监听）
+      eventHub.$on(constant.EVENT_POST_ISSUE_SUCCESS, this.onIssuePosted)
+      },
+      beforeDestroy() {
+      eventHub.$off(constant.EVENT_POST_ISSUE_SUCCESS, this.onIssuePosted)
+      }
   }
 </script>
 

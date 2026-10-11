@@ -201,13 +201,8 @@
             //告诉上个页面刷新
             eventHub.$emit(constant.EVENT_POST_ISSUE_SUCCESS, {type: that.type})
             that.$toast.clear()
-            // 返回列表并切换到对应 Tab（公共→留言 / 亲属→亲属空间 / 私语→私语）
-            let tabMap = {PUBLIC: 'message', SPACE: 'friends', PRIVATE: 'private'}
-            let targetTab = tabMap[that.type] || 'message'
-            that.$router.replace({
-              path: '/space/message_container/' + that.spaceId,
-              query: {tab: targetTab}
-            })
+            // 直接返回上层的留言列表（沿用已有历史，不再重复压栈），列表会刷新并切换对应 Tab
+            that.$router.go(-1)
           }, error => {
             this.$toast('发布失败，请稍后重试');
           });
