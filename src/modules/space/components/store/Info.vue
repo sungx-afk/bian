@@ -1,83 +1,85 @@
 <template>
   <div class="info-container">
     <!-- 隐藏调试入口：连点标题 5 次可开关 vConsole（见 onTitleTap） -->
-    <page-header title="祭奠物品" @click.native="onTitleTap"></page-header>
+    <page-header :title="$t('祭奠物品')" @click.native="onTitleTap"></page-header>
     <div class="header">
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
-      <div class="header-text">{{filterName}}意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思</div>
+      <div class="header-text">{{filterName}}{{ $t('意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思') }}</div>
     </div>
     <div class="content">
       <div class="charge-area">
-        <van-cell-group :title="chargeTitle">
+        <van-cell-group :title="$t(chargeTitle)">
           <!-- 账号ID：右侧放「恢复购买」（App 内必须提供，审核 3.1.2） -->
           <van-cell class="account-cell">
-            <span>账号ID：</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
-            <van-button size="small" class="restore-btn" v-if="nativeApp" :loading="vipBusy" @click="restorePurchases">恢复购买</van-button>
+            <span>{{ $t('账号ID：') }}</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
+            <van-button size="small" class="restore-btn" v-if="nativeApp" :loading="vipBusy" @click="restorePurchases">{{ $t('恢复购买') }}</van-button>
           </van-cell>
           <!-- 开通会员：整行紧贴账号ID 下方 -->
           <van-cell class="product-cell vip-cell" v-for="product in vipProducts" :key="product.id">
             <!-- 会员权益说明：放在「会员」标题上方 -->
-            <div class="product-head">开通会员后，创建的纪念馆所有人员均可使用全部祭品</div>
+            <div class="product-head">{{ $t('开通会员后，创建的纪念馆所有人员均可使用全部祭品') }}</div>
             <div class="product-top">
-              <span class="vip-product">{{product.name}}</span>
-              <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
+              <span class="vip-product">{{ $t(product.name) }}</span>
+              <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{ $t(buyProductBtnText(product)) }}</van-button>
             </div>
             <!-- 价格来自 App Store（StoreKit 本地化价格），取不到时回退兜底价 -->
             <div class="product-bottom">
-              <span class="product-tip">按年支付，{{vipPriceText || '99'}}/年</span>
+              <span class="product-tip">{{ $t('按年支付，') }}{{vipPriceText || '99'}}{{ $t('/年') }}</span>
             </div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
-            <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;云币</div>
+            <div class="charge-remain-wrapper">{{ $t('账号余额：') }}<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;{{ $t('云币') }}</div>
             <div class="charge-btn-wrapper">
-              <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
+              <van-button size="small" class="charge-btn" @click="charge">{{ $t('充值（1 元 = 10 云币）') }}</van-button>
             </div>
           </van-cell>
           <van-cell class="vip-cell" v-if="supportPay && isVipSpace">
-            <span style="color: #825621;">当前已开通会员，各种祭奠物品免费</span>
+            <span style="color: #825621;">{{ $t('当前已开通会员，各种祭奠物品免费') }}</span>
           </van-cell>
           <van-cell class="product-cell" v-for="product in itemProducts" :key="product.id">
             <div class="product-top">
-              <span>{{product.name}}</span>
-              <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{buyProductBtnText(product)}}</van-button>
+              <span>{{ $t(product.name) }}</span>
+              <van-button size="small" class="purchase-btn" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{ $t(buyProductBtnText(product)) }}</van-button>
             </div>
             <div class="product-bottom" v-if="product.tip">
-              <span class="product-tip">{{ product.tip }}</span>
+              <span class="product-tip">{{ $t(product.tip) }}</span>
             </div>
           </van-cell>
         </van-cell-group>
       </div>
       <div class="analyze" v-if="space">
-        <p class="label">逝者已矣，生者如斯</p>
-        <p>到访人次：<span class="num">{{space.visitedTimes}}</span>
+        <p class="label">{{ $t('逝者已矣，生者如斯') }}</p>
+        <p>{{ $t('到访人次：') }}<span class="num">{{space.visitedTimes}}</span>
           <i class="iconfont icon-wenhao" @click="goShowVisitedTip"></i>
-          <span v-if="isSpaceCreator" @click="goViewVisitedLog" class="view-log">查看到访人员 ></span>
+          <span v-if="isSpaceCreator" @click="goViewVisitedLog" class="view-log">{{ $t('查看到访人员 >') }}</span>
         </p>
-        <p>上香次数：<span class="num">{{space.worshipTimes || 0}}</span></p>
-        <p>点烛次数：<span class="num">{{space.lazuTimes || 0}}</span></p>
-        <p>纸钱次数：<span class="num">{{space.zhiQianTimes || 0}}</span></p>
-        <p>送花次数：<span class="num">{{space.huaTimes || 0}}</span></p>
-        <p>长明灯次数：<span class="num">{{space.dengTimes || 0}}</span></p>
-        <p class="create-info">本馆由 {{ space.creator.name }} 于 {{ space.createDate | timesToDate('yyyy-MM-dd HH:mm') }} 创建</p>
+        <p>{{ $t('上香次数：') }}<span class="num">{{space.worshipTimes || 0}}</span></p>
+        <p>{{ $t('点烛次数：') }}<span class="num">{{space.lazuTimes || 0}}</span></p>
+        <p>{{ $t('纸钱次数：') }}<span class="num">{{space.zhiQianTimes || 0}}</span></p>
+        <p>{{ $t('送花次数：') }}<span class="num">{{space.huaTimes || 0}}</span></p>
+        <p>{{ $t('长明灯次数：') }}<span class="num">{{space.dengTimes || 0}}</span></p>
+        <p class="create-info">{{ $t('纪念馆创建者', { creator: space.creator.name, date: $options.filters.timesToDate(space.createDate, 'yyyy-MM-dd HH:mm') }) }}</p>
       </div>
       <!-- 审核 3.1.2：付费/订阅页面必须能直接打开服务条款与隐私政策 -->
       <div class="view-history doc-links">
-        <span @click="goTerms">服务条款（自动续期订阅）</span>
+        <span @click="goTerms">{{ $t('服务条款（自动续期订阅）') }}</span>
         <span class="split">|</span>
-        <span @click="goPrivacy">隐私政策</span>
+        <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
       </div>
-      <div class="view-history"><span @click="goLogs" v-if="supportPay && supportPoint">充值和扣费记录</span></div>
+      <div class="view-history"><span @click="goLogs" v-if="supportPay && supportPoint">{{ $t('充值和扣费记录') }}</span></div>
     </div>
 
     <van-popup class="visited-tip-popup-area" v-model="showVisitedTip" closeable :round="false" close-on-popstate @closed="tipPopupClosed">
       <div class="text">
-        到访人次以每次进入纪念馆详情页为准，包括创建者本人进入记录
+        {{ $t('到访人次以每次进入纪念馆详情页为准，包括创建者本人进入记录') }}
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {mapGetters, mapActions} from 'vuex';
   import {Link} from '@/config/utils'
@@ -331,7 +333,7 @@
           const tip = (okMsg && okMsg.indexOf('恢复') >= 0) ? '正在恢复会员…' : '正在开通会员…'
           this.vipBusy = true
           // forbidClick + duration:0：持续遮罩覆盖「支付完成→后端校验发货」这段，直到下方用普通 toast 覆盖/关闭
-          this.$toast.loading({ message: tip, forbidClick: true, duration: 0 })
+          this.$toast.loading({ message: t(tip), forbidClick: true, duration: 0 })
           const payload = {
             transaction_id: result.transactionId,
             space_id: this.spaceId
@@ -346,19 +348,19 @@
               // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
               // 按 ID 结束「这一笔」，不能用全局的「最近一笔」——多笔并发时会互相覆盖
               iap.finish(result.transactionId)
-              this.$toast(okMsg) // 覆盖 loading，给出成功提示
+              this.$toast(t(okMsg)) // 覆盖 loading，给出成功提示
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:'item-space-vip'})
               // 用户级 VIP 记在 user 上，必须刷新它，页面上的会员状态才会跟着变
               this.refreshUser()
               this.updateInfo()
             }else{
               console.warn('[iap] 后端未通过：' + (rsp && rsp.msg))
-              this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+              this.$toast(t((rsp && rsp.msg) || t('开通失败，请联系客服')))
             }
             this.vipBusy = false
           }, error => {
             console.warn('[iap] 请求异常 ' + JSON.stringify({status: error && error.status, msg: error && (error.msg || error.message)}))
-            this.$toast('校验失败，请联系客服')
+            this.$toast(t('校验失败，请联系客服'))
             this.vipBusy = false
           })
         },
@@ -408,11 +410,11 @@
           if (this.vipBusy) return
           try {
             this.vipBusy = true
-            this.$toast && this.$toast('正在向 App Store 恢复购买…')
+            this.$toast && this.$toast(t('正在向 App Store 恢复购买…'))
             const result = await iap.restore()
             if (!result || !result.transactionId){
               this.vipBusy = false
-              this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
+              this.$toast && this.$toast(t('未取到 Apple 交易 ID，请稍后重试'))
               return
             }
             this.verifyAndDeliver(result, '会员已恢复')
@@ -421,7 +423,7 @@
             console.log('iap restore error:', e)
             const msg = e && e.message ? e.message : '恢复购买失败'
             if (msg.indexOf('取消') < 0){
-              this.$toast && this.$toast(msg)
+              this.$toast && this.$toast(t(msg))
             }
           }
         },
@@ -432,11 +434,11 @@
             this.vipBusy = true
             // 点击「开通」时才初始化 StoreKit，顺带刷新 App Store 真实价格
             await this.loadVipPrice()
-            this.$toast && this.$toast('正在唤起 App Store…')
+            this.$toast && this.$toast(t('正在唤起 App Store…'))
             const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
             if (!result || !result.transactionId){
               this.vipBusy = false
-              this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
+              this.$toast && this.$toast(t('未取到 Apple 交易 ID，请稍后重试'))
               return
             }
             this.verifyAndDeliver(result, '会员已开通')
@@ -446,7 +448,7 @@
             const msg = e && e.message ? e.message : '购买失败'
             // 用户主动取消不提示
             if (msg.indexOf('取消') < 0){
-              this.$toast && this.$toast(msg)
+              this.$toast && this.$toast(t(msg))
             }
           }
         },
@@ -477,11 +479,11 @@
           if (this.space){
             // 无云币模式：非会员不使用收费祭品，引导开通会员
             if (!this.supportPoint && !this.isVipSpace && this.space.type != 2 && product.point > 0){
-              this.$toast(product.id == 'item-space-vip' ? '请点击「开通」' : '开通会员后，本馆祭奠物品免费使用')
+              this.$toast(t(product.id == 'item-space-vip' ? t('请点击「开通」') : t('开通会员后，本馆祭奠物品免费使用')))
               return
             }
             if (this.supportPoint && !this.isVipSpace && this.space.currentUser.point < product.point){
-              this.$toast("余额不足，请先充值")
+              this.$toast(t('余额不足，请先充值'))
               return
             }
             let productId = product.id
@@ -491,13 +493,13 @@
             $API.space.buy({productId,spaceId},rsp=>{
               if (this.supportPay){
                 if (this.isVipSpace || !this.supportPoint){
-                  this.$toast(`已祭奠${product.name}`)
+                  this.$toast(t('已祭奠{0}', { 0: t(product.name) }))
                 }else{
-                  this.$toast(`已购买${product.name}\n扣除${product.point}云币`)
+                  this.$toast(t('已购买{0} 扣除{1}云币', { 0: t(product.name), 1: product.point }))
                   this.space.currentUser.point = this.space.currentUser.point - product.point
                 }
               }else {
-                this.$toast(`已祭奠${product.name}`)
+                this.$toast(t('已祭奠{0}', { 0: t(product.name) }))
               }
               this.buyBusy = false
               eventHub.$emit(constant.EVENT_BUY_PRODUCT_SUCCESS,{id:product.id})
@@ -511,11 +513,11 @@
                 }, 1000);
               }
             },error=>{
-              this.$toast("购买失败，请稍后重试")
+              this.$toast(t('购买失败，请稍后重试'))
               this.buyBusy = false
             })
           }else{
-            this.$toast("获取信息失败，请稍后重试")
+            this.$toast(t('获取信息失败，请稍后重试'))
           }
         },
         goLogs(){
@@ -548,7 +550,7 @@
             if (on) localStorage.removeItem('bian_debug')
             else localStorage.setItem('bian_debug', '1')
           } catch (e) {}
-          this.$toast && this.$toast(on ? '已关闭调试面板' : '已开启调试面板，正在重载…')
+          this.$toast && this.$toast(t(on ? t('已关闭调试面板') : t('已开启调试面板，正在重载…')))
           // 保留当前路由（hash 模式），切换 debug 参数后重载
           const base = (location.href.split('?')[0] || '').split('#')[0] || location.href
           const hash = location.hash || ''

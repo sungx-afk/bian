@@ -3,13 +3,13 @@
     <div class="item-box">
       <div class="back-home">
         <div class="left-btn" @click="goHome">
-          <van-icon name="arrow-left" /><span>返回</span>
+          <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
         </div>
       </div>
       <div class="list-wrapper">
         <div class="list-container">
-          <van-field v-model="deliverSummary" label="交付说明:" placeholder="请填写交付说明" type="textarea" input-align="right"></van-field>
-          <van-cell title="交付图片" :border="false"></van-cell>
+          <van-field v-model="deliverSummary" :label="$t('交付说明:')" :placeholder="$t('请填写交付说明')" type="textarea" input-align="right"></van-field>
+          <van-cell :title="$t('交付图片')" :border="false"></van-cell>
           <van-cell>
             <div class="avatar-wrapper">
               <div class="avatar-preview" v-for="(avatar,index) in deliverImages" :key="index">
@@ -22,14 +22,16 @@
         </div>
       </div>
       <div class="bottom-button">
-        <van-button type="default" @click.tap="cancel">取消</van-button>
-        <van-button type="default" @click.tap="confirm">确定</van-button>
+        <van-button type="default" @click.tap="cancel">{{ $t('取消') }}</van-button>
+        <van-button type="default" @click.tap="confirm">{{ $t('确定') }}</van-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   import constant from '@/config/constant'
@@ -96,11 +98,11 @@
             that.deliverImages.splice(index,1,{url:rsp.url})
             that.loading = false
           },error=>{
-            this.$toast("上传失败，请稍后重试")
+            this.$toast(t('上传失败，请稍后重试'))
             that.loading = false
           })
         },error=>{
-          this.$toast("上传失败，请稍后重试")
+          this.$toast(t('上传失败，请稍后重试'))
           that.loading = false
         })
       },
@@ -109,12 +111,12 @@
       },
       confirm(){
         if (!this.deliverSummary) {
-          this.$toast('请填写交付说明');
+          this.$toast(t('请填写交付说明'));
           return;
         }
         let t_images = this.deliverImages.filter(a => a.url != "");
         if (t_images.length == 0) {
-          this.$toast('请上传交付图片');
+          this.$toast(t('请上传交付图片'));
           return;
         }
         let params = {
@@ -124,7 +126,7 @@
         }
         $API.mortuary.finishOrder(params, rsp => {
           this.$toast({
-            message:'提交成功',
+            message:t('提交成功'),
             type:'success',
             duration:1500,
             onClose:()=>{
@@ -132,7 +134,7 @@
             }
           })
         }, error => {
-          this.$toast('提交失败，请稍后重试')
+          this.$toast(t('提交失败，请稍后重试'))
         })
 
       },

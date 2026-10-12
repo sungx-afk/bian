@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "피안 추모";
+"NSCameraUsageDescription" = "고인 사진, 추모관 사진 및 프로필 사진을 촬영하고 업로드하기 위해 카메라를 이용합니다.";
+"NSPhotoLibraryUsageDescription" = "고인 사진, 추모관 사진 및 프로필 사진을 선택하기 위해 사진첩을 이용합니다.";
+"NSPhotoLibraryAddUsageDescription" = "공유 포스터 및 추모관 이미지를 사진첩에 저장합니다.";

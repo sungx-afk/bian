@@ -2,22 +2,24 @@
   <div class="charge-container">
     <div class="charge-wrapper">
       <template v-if="supportPoint">
-        <div class="info">请选择充值金额</div>
+        <div class="info">{{ $t('请选择充值金额') }}</div>
         <div class="tag_list clearfix">
           <div class="item" v-for="item in priceTag" :key="item.id" @click="placeOrder(item)">
-            <span class="money">{{item.price/100}}元</span>
-            <span>{{item.point + item.giftPoint}}云币</span>
+            <span class="money">{{item.price/100}}{{ $t('元') }}</span>
+            <span>{{item.point + item.giftPoint}}{{ $t('云币') }}</span>
           </div>
         </div>
       </template>
       <template v-else>
-        <div class="info">本平台已取消虚拟币充值：开通会员后，馆内祭奠物品免费使用。</div>
+        <div class="info">{{ $t('本平台已取消虚拟币充值：开通会员后，馆内祭奠物品免费使用。') }}</div>
       </template>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {mapGetters} from 'vuex'
     export default {
@@ -64,21 +66,21 @@
           }
           param.price_tag_id = item.id
           // 下单网络请求期间显示 loading（此时尚未唤起 App Store，不遮住系统支付弹窗）
-          this.$toast.loading({ message: '正在下单…', forbidClick: true, duration: 0 })
+          this.$toast.loading({ message: t('正在下单…'), forbidClick: true, duration: 0 })
           $API.space.placeOrder(param,rsp=>{
             this.$toast.clear() // 关闭 loading，交还控制权给系统支付弹窗
             this.buying = false
             this.wechatPay(rsp).then((res)=>{
               if (res === 0){
-                this.$toast("充值成功")
+                this.$toast(t('充值成功'))
                 eventHub.$emit(constant.EVENT_PAY_SUCCESS,item.point + item.giftPoint)
               }
             }).catch(error=>{
-              this.$toast(error.errMsg)
+              this.$toast(t(error.errMsg))
             })
           },error=>{
             this.buying = false
-            this.$toast("获取订单失败，请稍后重试")
+            this.$toast(t('获取订单失败，请稍后重试'))
           })
         }
       },

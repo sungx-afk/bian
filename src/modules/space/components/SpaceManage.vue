@@ -1,18 +1,18 @@
 <template>
   <div class="space-manage-container">
-    <page-header :title="detail && detail.name ? detail.name : '纪念馆管理'"></page-header>
+    <page-header :title="detail && detail.name ? detail.name : $t('纪念馆管理')"></page-header>
     <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
-      <van-tab title="记录" name="event" v-if="false">
+      <van-tab :title="$t('记录')" name="event" v-if="false">
         <template v-if="tabActive === 'event' && detail">
           <event :space.sync="detail"></event>
         </template>
       </van-tab>
-      <van-tab title="到访人员" name="visitor">
+      <van-tab :title="$t('到访人员')" name="visitor">
         <template v-if="tabActive === 'visitor' && detail">
           <visitor :space.sync="detail"></visitor>
         </template>
       </van-tab>
-      <van-tab title="设置" name="setting">
+      <van-tab :title="$t('设置')" name="setting">
         <template v-if="tabActive === 'setting' && detail">
           <setting :space.sync="detail"></setting>
         </template>

@@ -8,7 +8,7 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          :finished-text="finishedText"
+          :finished-text="$t(finishedText)"
           @load="onLoadMoreData">
           <template v-if="list && list.length > 0">
             <van-cell class="list-cell"
@@ -17,14 +17,14 @@
               <div class="item-content">
                 <div class="item-content-top">
                   <span>{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
-                  <span v-if="supportPoint">余额：{{item.after}} 云币</span>
+                  <span v-if="supportPoint">{{ $t('余额：') }}{{item.after}} {{ $t('云币') }}</span>
                 </div>
                 <div class="item-content-bottom">
-                  <span class="summary">{{item.summary}}</span>
+                  <span class="summary">{{ item.summary | systemText }}</span>
                   <span class="change-point" v-if="supportPoint" :class="{recharge:item.type == 'RECHARGE'}">
                     <span v-if="item.type == 'CONSUME'"> -</span>
                     <span v-if="item.type == 'RECHARGE'"> +</span>
-                    {{item.change}} 云币
+                    {{item.change}} {{ $t('云币') }}
                   </span>
 
 
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   const LIMIT = 20
   import NoData from '@/modules/widget/space/NoData'
 
@@ -98,7 +100,7 @@
           },error=>{
             that.loading = false
             that.finished = true
-            that.$toast("获取列表失败，请稍后重试")
+            that.$toast(t('获取列表失败，请稍后重试'))
           })
         },
         onLoadMoreData(){

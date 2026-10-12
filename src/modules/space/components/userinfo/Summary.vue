@@ -10,19 +10,19 @@
           <div class="content-wrapper">
             <div class="base-info">
               <div class="date-info">
-                <span>出生：{{birthdayText(user)}}</span>
-                <span style="margin-left: 15px;">逝世：{{dieDayText(user)}}</span>
+                <span>{{ $t('出生：') }}{{ birthdayText(user) | memorialDate }}</span>
+                <span style="margin-left: 15px;">{{ $t('逝世：') }}{{ dieDayText(user) | memorialDate }}</span>
               </div>
               <div class="address-info">
-                出生地：{{user.birthAddress || '未填写'}}
+                {{ $t('出生地：') }}{{user.birthAddress || $t('未填写')}}
               </div>
               <div class="address-info" v-if="false">
-                安葬地：{{user.dieAddress || '未填写'}}
+                {{ $t('安葬地：') }}{{user.dieAddress || $t('未填写')}}
               </div>
             </div>
             <div class="summary-area">
               <template v-if="user.summary && user.summary.length > 0">
-                <div class="title">生平介绍:</div>
+                <div class="title">{{ $t('生平介绍:') }}</div>
                 <div class="summary">
                   <van-field
                     v-model="user.summary"
@@ -33,7 +33,7 @@
                 </div>
               </template>
               <template v-else>
-                暂无生平介绍
+                {{ $t('暂无生平介绍') }}
               </template>
             </div>
           </div>
@@ -42,7 +42,7 @@
     </template>
     <van-action-sheet
       v-model="showAction"
-      :actions="actions"
+      :actions="$localizeActions(actions)"
       close-on-popstate
       close-on-click-action
       @select="onActionSelect"
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {timesToDate,Link} from '@/config/utils'
   import constant from '@/config/constant'
@@ -87,7 +89,7 @@
           updateSpaceUser:'spaceStore/updateSpaceUser'
         }),
         birthdayText(user){
-          let result = '未填写'
+          let result = t('未填写')
           if (user.birthdayStr){
             result = user.birthdayStr
           }else if (user.birthday){
@@ -96,7 +98,7 @@
           return result
         },
         dieDayText(user){
-          let result = '未填写'
+          let result = t('未填写')
           if (user.dieDayStr){
             result = user.dieDayStr
           }else if (user.dieDay){
@@ -121,7 +123,7 @@
           this.updateSpaceUser({sid:this.space.id,user}).then(()=>{
 
           }).catch(()=>{
-            this.$toast('修改失败，请稍后重试')
+            this.$toast(t('修改失败，请稍后重试'))
           })
         },
         onActionSelect(item){

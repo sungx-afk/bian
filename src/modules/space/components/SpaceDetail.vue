@@ -22,7 +22,7 @@
         </div>
         <van-action-sheet
           v-model="showAction"
-          :actions="actions"
+          :actions="$localizeActions(actions)"
           close-on-popstate
           close-on-click-action
           @select="onActionSelect"
@@ -30,26 +30,28 @@
         </van-action-sheet>
         <template v-if="showTab && false">
           <van-tabbar @change="onTabChange">
-            <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{tabBar.name}}</van-tabbar-item>
+            <van-tabbar-item v-for="tabBar in tabBarList" :key="tabBar.id" :name="tabBar.id" style="font-size: 16px;" :style="{'color':styleTabBar(tabBar)}">{{ $t(tabBar.name) }}</van-tabbar-item>
           </van-tabbar>
         </template>
       </template>
       <template v-else>
         <div class="tip-wrapper" @click="goBack">
           <i class="iconfont icon-warn"></i>
-          <div class="content">{{tipContent}}</div>
+          <div class="content">{{ $t(tipContent) }}</div>
         </div>
       </template>
     </template>
     <template v-else>
       <div class="tip-wrapper" @click="goBackHome" v-if="tipContent">
         <i class="iconfont icon-warn"></i>
-        <div class="content">{{tipContent}}</div>
+        <div class="content">{{ $t(tipContent) }}</div>
       </div>
     </template>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,isIphone} from '@/config/utils'
   import constant from '@/config/constant'
@@ -152,7 +154,7 @@
         }
         if (e === 'friends'){ //亲属空间加判断
           if (!this.isSpaceMember && !this.isSpaceCreator){
-            this.$toast("您当前还不是该馆亲属成员")
+            this.$toast(t('您当前还不是该馆亲属成员'))
             return
           }
         }

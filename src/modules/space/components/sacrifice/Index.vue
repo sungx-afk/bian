@@ -1,8 +1,8 @@
 <template>
   <div class="sacrifice" :class="checkResult === 0 ? theme : 'no-theme'">
     <template v-if="checkResult === 0">
-    <div class="sacrifice-back-btn" @click="backToList" aria-label="返回">
-      <img src="~@/modules/images/back.svg" alt="返回" />
+    <div class="sacrifice-back-btn" @click="backToList" :aria-label="$t('返回')">
+      <img src="~@/modules/images/back.svg" :alt="$t('返回')" />
     </div>
     <div class="sacrifice-header" v-if="space">
       {{space.name}}
@@ -133,7 +133,7 @@
           <div v-for="(item, index) in space.logs"
                class="message"
                v-if="index < 4"
-               :style="{animationDelay: `${(space.logs.length - index)*300}ms`}">{{item}}
+               :style="{animationDelay: `${(space.logs.length - index)*300}ms`}">{{ item | systemText }}
           </div>
         </div>
 
@@ -142,35 +142,35 @@
         <canvas id="smoke-box"></canvas>
 
         <div class="buttons">
-          <div class="button" @click="jibai()">上香</div>
-          <div class="button" @click="dianlazu()">点烛</div>
-          <div class="button" @click="shaozhi()">纸钱</div>
-          <div class="button" @click="goMoreOperate()">更多</div>
+          <div class="button" @click="jibai()">{{ $t('上香') }}</div>
+          <div class="button" @click="dianlazu()">{{ $t('点烛') }}</div>
+          <div class="button" @click="shaozhi()">{{ $t('纸钱') }}</div>
+          <div class="button" @click="goMoreOperate()">{{ $t('更多') }}</div>
           <div class="side-buttons">
             <div class="button" @click="goSacrifice" v-if="false">
-              <img src="~@/modules/images/jibai.svg" alt="祭拜" />
+              <img src="~@/modules/images/jibai.svg" :alt="$t('祭拜')" />
             </div>
             <div class="button" @click="goMessage">
-              <img src="~@/modules/images/message.svg" alt="留言" />
+              <img src="~@/modules/images/message.svg" :alt="$t('留言')" />
             </div>
             <div class="button music-button" :class="{'playing':playState === 'play'}" @click="goBgmAction">
-              <img src="~@/modules/images/music.svg" alt="音乐" />
+              <img src="~@/modules/images/music.svg" :alt="$t('音乐')" />
             </div>
             <div class="button" @click="goSurvey">
-              <img src="~@/modules/images/shengping.svg" alt="生平" />
+              <img src="~@/modules/images/shengping.svg" :alt="$t('生平')" />
             </div>
             <div class="button" @click="goSetting">
-              <img src="~@/modules/images/setting.svg" alt="设置" />
+              <img src="~@/modules/images/setting.svg" :alt="$t('设置')" />
             </div>
             <div class="button" @click="goMoreOperate" v-if="false">
-              <img src="~@/modules/images/more.svg" alt="更多" />
+              <img src="~@/modules/images/more.svg" :alt="$t('更多')" />
             </div>
           </div>
         </div>
 
         <!-- 右上角转发入口：暂时隐藏（保留功能与相关代码，去掉 v-if="false" 即可恢复） -->
         <div class="share-button" v-if="false" @click="goShare">
-          <img class="share-icon" src="~@/modules/images/share.svg" alt="转发" />
+          <img class="share-icon" src="~@/modules/images/share.svg" :alt="$t('转发')" />
         </div>
       </div>
 
@@ -186,8 +186,8 @@
 
     <van-action-sheet
       v-model="showSacrificeAction"
-      :actions="sacrificeActions"
-      cancel-text="取消"
+      :actions="$localizeActions(sacrificeActions)"
+      :cancel-text="$t('取消')"
       close-on-popstate
       close-on-click-action
       @select="onSacrificeSelect">
@@ -195,8 +195,8 @@
 
     <van-action-sheet
       v-model="showBgmAction"
-      :actions="bgmActions"
-      cancel-text="取消"
+      :actions="$localizeActions(bgmActions)"
+      :cancel-text="$t('取消')"
       close-on-popstate
       close-on-click-action
       @select="onBgmSelect">
@@ -204,8 +204,8 @@
 
     <van-action-sheet
       v-model="showShareAction"
-      :actions="shareActions"
-      cancel-text="取消"
+      :actions="$localizeActions(shareActions)"
+      :cancel-text="$t('取消')"
       close-on-popstate
       close-on-click-action
       @select="onShareSelect">
@@ -213,7 +213,7 @@
 
     <van-action-sheet
       v-model="showSettingAction"
-      :actions="settingActions"
+      :actions="$localizeActions(settingActions)"
 
       close-on-popstate
       close-on-click-action
@@ -223,12 +223,14 @@
     <template v-else>
       <div class="tip-wrapper" @click="goBack" v-if="tipContent">
         <i class="iconfont icon-warn"></i>
-        <div class="content">{{tipContent}}</div>
+        <div class="content">{{ $t(tipContent) }}</div>
       </div>
     </template>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
 
   import {mapGetters,mapActions} from 'vuex'
 
@@ -471,7 +473,7 @@
         // 无云币模式：非免费馆不使用收费祭品，引导开通会员（iOS 走内购）
         // Apple 来源用户的上香、点烛不判断花费，直接放过
         if (!this.isAppleFree(productId) && !this.supportPoint && !this.isFreeHall && this.space && this.space.type !== 2){
-          this.$toast('开通会员后，本馆祭奠物品免费使用')
+          this.$toast(t('开通会员后，本馆祭奠物品免费使用'))
           setTimeout(() => {
             Link(`/store/info?space_id=${this.spaceId}`)
           }, 800)
@@ -487,17 +489,17 @@
             }
           } else {
             if (resp && resp.errorCode == -9999) {
-              this.$toast(resp.error);
+              this.$toast(t(resp.error));
               setTimeout(() => {
                 Link(`/store/info?space_id=${this.spaceId}`);
               }, 2000)
             } else {
-              this.$toast((resp && (resp.error || resp.message)) || '购买失败，请稍后重试');
+              this.$toast(t((resp && (resp.error || resp.message)) || t('购买失败，请稍后重试')));
             }
           }
         }, (error) => {
           this.buyBusy = false
-          this.$toast((error && (error.message || error.error)) || '网络异常，请稍后重试');
+          this.$toast(t((error && (error.message || error.error)) || t('网络异常，请稍后重试')));
         });
       },
 
@@ -539,7 +541,7 @@
           if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall && !this.isAppleFree('item-la-zu')) {
             this.$notify({
               type: 'info',
-              message: '-3 云币',
+              message: t('-3 云币'),
               color: '#825621',
               background: '#ffffff'
             });
@@ -584,7 +586,7 @@
           if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall){
             this.$notify({
               type:'info',
-              message: '-9 云币',
+              message: t('-9 云币'),
               color: '#825621',
               background: '#ffffff'
             });
@@ -620,7 +622,7 @@
           if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall) {
             this.$notify({
               type: 'info',
-              message: '-8 云币',
+              message: t('-8 云币'),
               color: '#825621',
               background: '#ffffff'
             });
@@ -711,7 +713,7 @@
       },
       exitSpace() {
         this.$dialog.confirm({
-          message: `确认退出该纪念馆吗?`
+          message: t('确认退出该纪念馆吗?')
         }).then(() => {
           $API.space.exitSpace({sid: this.space.id, userId: this.user.id}, rsp => {
             eventHub.$emit(constant.EVENT_EXIT_SPACE_SUCCESS, this.space.id)

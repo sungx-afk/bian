@@ -3,7 +3,7 @@
     <template v-if="showPoster">
       <div class="poster-mask" @click="closePoster">
         <div class="tip">
-          <i class="iconfont icon-tishi1"></i>请长按下方图片保存二维码图片到手机相册后，发送给微信亲友。
+          <i class="iconfont icon-tishi1"></i>{{ $t('请长按下方图片保存二维码图片到手机相册后，发送给微信亲友。') }}
         </div>
       </div>
       <div class="poster-area">
@@ -11,51 +11,51 @@
         <img id="poster" :class="posterDone?'':'poster-hidden'" :width="posterW" :height="posterH">
         <!-- App 分享：系统分享面板（替代小程序转发）；海报本身仍可长按保存 -->
         <div class="poster-actions">
-          <van-button round size="small" class="poster-save-btn" @click="savePoster">保存图片</van-button>
-          <van-button round size="small" class="poster-share-btn" @click="shareNotice">分享给亲友</van-button>
-          <van-button round size="small" class="poster-close-btn" @click.stop="closePoster">关闭</van-button>
+          <van-button round size="small" class="poster-save-btn" @click="savePoster">{{ $t('保存图片') }}</van-button>
+          <van-button round size="small" class="poster-share-btn" @click="shareNotice">{{ $t('分享给亲友') }}</van-button>
+          <van-button round size="small" class="poster-close-btn" @click.stop="closePoster">{{ $t('关闭') }}</van-button>
         </div>
       </div>
 
     </template>
     <template v-else>
-      <page-header title="云追悼会"></page-header>
+      <page-header :title="$t('云追悼会')"></page-header>
       <div class="tip">
-        <i class="iconfont icon-tishi1"></i>为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。
+        <i class="iconfont icon-tishi1"></i>{{ $t('为刚去世的亲人创建电子讣告并发送给他人，对方点击后可进行在线祭奠。') }}
       </div>
       <div class="report-area" v-if="spaceUsers">
         <div class="report-header">
-          <div class="title">讣告</div>
+          <div class="title">{{ $t('讣告') }}</div>
         </div>
         <div class="avatar-wrapper" v-if="avatarChecked">
           <img :class="{'gray':avatarGrayChecked}" :src="avatarUrl"  v-if="avatarUrl"/>
           <div v-else class="avatar-fake"></div>
           <div class="loading">
-            <van-loading  v-if="uploadAvatarLoading" vertical color="#FFFFFF">上传中...</van-loading>
+            <van-loading  v-if="uploadAvatarLoading" vertical color="#FFFFFF">{{ $t('上传中...') }}</van-loading>
           </div>
 
         </div>
         <van-field
           v-model="deathNotice"
           type="textarea"
-          placeholder="请填写讣告内容"
+          :placeholder="$t('请填写讣告内容')"
           :rows="rows"
           :autosize="{ maxHeight: maxH, minHeight: minH }"
           @blur="noticeInputBlur">
         </van-field>
         <div class="avatar-operate">
-          <van-checkbox class="show-avatar" v-model="avatarChecked" name="avatar" shape="square" checked-color="#825621">显示遗像</van-checkbox>
+          <van-checkbox class="show-avatar" v-model="avatarChecked" name="avatar" shape="square" checked-color="#825621">{{ $t('显示遗像') }}</van-checkbox>
           <template v-if="avatarChecked">
-            <van-checkbox class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#825621">黑白照</van-checkbox>
-            <van-button class="switch-btn" size="small" v-if="showSwitchBtn" @click="switchAvatar">切换遗像</van-button>
+            <van-checkbox class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#825621">{{ $t('黑白照') }}</van-checkbox>
+            <van-button class="switch-btn" size="small" v-if="showSwitchBtn" @click="switchAvatar">{{ $t('切换遗像') }}</van-button>
             <van-uploader :after-read="afterSelectPhoto">
-              <van-button class="upload-btn" size="small">重新上传</van-button>
+              <van-button class="upload-btn" size="small">{{ $t('重新上传') }}</van-button>
             </van-uploader>
           </template>
         </div>
       </div>
       <div class="poster-btn">
-        <van-button @click.stop="makePoster" type="default">下一步</van-button>
+        <van-button @click.stop="makePoster" type="default">{{ $t('下一步') }}</van-button>
       </div>
     </template>
 
@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import { t } from '@/i18n'
+
   import {mapGetters} from 'vuex';
   import config_server from '@/config/config'
 
@@ -182,26 +184,18 @@
             if (this.spaceUsers && this.spaceUsers.length === 1){
               let spaceUser = this.spaceUsers[0]
               let content = ''
-              let dieDate = spaceUser.dieDay? timesToDate(spaceUser.dieDay,'yyyy 年 MM 月 dd 日') : 'xxxx 年 xx 月 xx 日'
+              let dieDate = spaceUser.dieDay? timesToDate(spaceUser.dieDay,t('yyyy 年 MM 月 dd 日')) : t('xxxx 年 xx 月 xx 日')
               let age = 'xx'
 
               if (spaceUser.birthday && spaceUser.dieDay){
                 age = new Date(spaceUser.dieDay).getFullYear() - new Date(spaceUser.birthday).getFullYear() + 1
               }
 
-              content += `${spaceUser.name}`
-              content += spaceUser.sex?'女士':'先生'
-              content += '因 xx 不幸于 '
-              content += dieDate
-              content += `在 xx 市逝世，享年 ${age} 岁。葬礼遵其遗愿，一切从简，特此讣告。
-
-xxx`
+              content = t('讣告模板', { name: spaceUser.name, title: t(spaceUser.sex ? '女士' : '先生'), date: dieDate, age })
 
               this.deathNotice = content
             }else{
-              this.deathNotice = `xxx 先生/女士因 xx 不幸于 xxxx 年 xx 月 xx 日在 xx 市逝世，享年 xx 岁。葬礼遵其遗愿，一切从简，特此讣告。
-
-xxx`
+              this.deathNotice = t('xxx 先生/女士因 xx 不幸于 xxxx 年 xx 月 xx 日在 xx 市逝世，享年 xx 岁。葬礼遵其遗愿，一切从简，特此讣告。 xxx')
             }
           }
         },
@@ -268,11 +262,11 @@ xxx`
               that.avatarUrl = rsp.url
               that.uploadAvatarLoading = false
             },error=>{
-              this.$toast("上传失败，请稍后重试")
+              this.$toast(t('上传失败，请稍后重试'))
               that.uploadAvatarLoading = false
             })
           },error=>{
-            this.$toast("上传失败，请稍后重试")
+            this.$toast(t('上传失败，请稍后重试'))
             that.uploadAvatarLoading = false
           })
         },
@@ -283,7 +277,7 @@ xxx`
         makePoster(){
 
           if (this.avatarChecked && !this.avatarUrl){
-            this.$toast("请上传遗像或不使用遗像")
+            this.$toast(t('请上传遗像或不使用遗像'))
             return
           }
 
@@ -323,7 +317,7 @@ xxx`
             duration: 0,       // 持续展示 toast
             forbidClick: true, // 禁用背景点击
             loadingType: 'spinner',
-            message: '生成图片中...'
+            message: t('生成图片中...')
           })
           that.drawBg().then(()=>{
             that.drawTitle()
@@ -348,7 +342,7 @@ xxx`
           
         },
         drawTitle(){
-          let title = '讣告'
+          let title = t('讣告')
           let tx = (this.posterW - 20)/2 - 10
           let ty = 30
           let fontSize = 18
@@ -459,7 +453,7 @@ xxx`
           }
         },
         drawTip(){
-          let name = '彼岸思念'
+          let name = t('彼岸思念')
           let nx =70
           let ny = this.posterH - 50
 
@@ -473,7 +467,7 @@ xxx`
 
           this.context.fillText(name, nx, ny);
 
-          let tip = '识别二维码在线祭奠'
+          let tip = t('识别二维码在线祭奠')
           let tx = 70
           let ty = this.posterH - 30
 
@@ -484,7 +478,7 @@ xxx`
 
           this.context.font = fontSize + FONT
           this.context.fillStyle = TIP_COLOR
-          this.context.fillText(tip, tx, ty);
+          this.context.fillText(tip, tx, ty, this.posterW - tx - 20);
         },
         drawQrCode(){
           let qw = 50
@@ -510,7 +504,7 @@ xxx`
           }
           img.onerror = ()=>{
             setTimeout(()=>{
-              this.$toast('获取信息失败，请稍后重试')
+              this.$toast(t('获取信息失败，请稍后重试'))
             },500)
           }
         },
@@ -533,24 +527,24 @@ xxx`
         // App 内分享：iOS 唤起系统分享面板（可发微信/短信/邮件/拷贝），无需微信 SDK
         shareNotice(){
           share({
-            title: '讣告',
-            desc: '点击链接可在线祭奠',
+            title: t('讣告'),
+            desc: t('点击链接可在线祭奠'),
             link: this.buildShareUrl()
           }).catch(e => {
-            this.$toast((e && e.message) || '分享失败，请长按海报保存后发送')
+            this.$toast(t((e && e.message) || t('分享失败，请长按海报保存后发送')))
           })
         },
         // 保存海报到手机：App 直接入相册（@capacitor-community/media），H5 走 a[download]
         savePoster(){
           if (!this.posterDone){
-            this.$toast('海报尚未生成，请稍后再试')
+            this.$toast(t('海报尚未生成，请稍后再试'))
             return
           }
           let image = document.getElementById('poster')
           saveImageToAlbum(image && image.src).then(()=>{
-            this.$toast('已保存到手机相册')
+            this.$toast(t('已保存到手机相册'))
           }).catch(e => {
-            this.$toast((e && e.message) || '保存失败，请长按海报图片保存')
+            this.$toast(t((e && e.message) || t('保存失败，请长按海报图片保存')))
           })
         },
         getRatio(context) {

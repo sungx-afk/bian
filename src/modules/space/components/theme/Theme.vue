@@ -1,15 +1,15 @@
 <template>
   <div class="theme-container">
-    <page-header title="纪念馆样式"></page-header>
+    <page-header :title="$t('纪念馆样式')"></page-header>
     <van-tabs v-model="tabActive" @change="onTabChange" color="#825621">
-      <van-tab title="预置" name="preset">
+      <van-tab :title="$t('预置')" name="preset">
         <template v-if="tabActive === 'preset'">
           <div class="preset-theme-container">
             <div class="theme-group" v-for="(group,index) in themes" :key="index">
               <div v-for="theme in group" :key="theme.uuid" class="theme-wrapper" @click="goSelectTheme(theme)">
                 <img class="image" :src="theme.url" />
                 <div class="name">
-                  {{theme.name}}
+                  {{ $t(theme.name) }}
                 </div>
                 <div class="selected-wrapper" v-if="selected === theme.uuid">
                   <div class="selected">
@@ -21,25 +21,25 @@
           </div>
         </template>
       </van-tab>
-      <van-tab title="自定义" name="custom">
+      <van-tab :title="$t('自定义')" name="custom">
         <template v-if="tabActive === 'custom'">
           <div class="custom-theme-container">
             <div class="select-custom-photo">
               <van-uploader
                 :max-count="1"
                 :after-read="afterRead">
-                <van-button icon="photo" type="default" class="btn" size="small">选择图片</van-button>
+                <van-button icon="photo" type="default" class="btn" size="small">{{ $t('选择图片') }}</van-button>
               </van-uploader>
             </div>
             <div class="config-wrapper">
               <van-checkbox-group v-model="config" @change="configChanged">
-                <van-checkbox name="avatar" shape="square" checked-color="#825621">显示遗像</van-checkbox>
+                <van-checkbox name="avatar" shape="square" checked-color="#825621">{{ $t('显示遗像') }}</van-checkbox>
                 <!-- <van-checkbox name="info" shape="square" checked-color="#825621">显示姓名和日期</van-checkbox>
                 <van-checkbox name="epitaph" shape="square" checked-color="#825621">显示墓志铭</van-checkbox> -->
               </van-checkbox-group>
             </div>
             <div class="preview-wrapper">
-              <div class="title">预览效果图</div>
+              <div class="title">{{ $t('预览效果图') }}</div>
               <div class="preview-content" :style="{'background-image':`url(${backgroundImage})`}">
                 <div class="avatar" :class="{show:configShow('avatar')}"></div>
                 <!-- <div class="info" :class="{show:configShow('info')}">
@@ -52,7 +52,7 @@
               </div>
             </div>
             <div class="footer">
-              <van-button type="default" class="btn large" :loading="loading" loading-text="提交中" @click="goHandleCustomTheme">确定</van-button>
+              <van-button type="default" class="btn large" :loading="loading" :loading-text="$t('提交中')" @click="goHandleCustomTheme">{{ $t('确定') }}</van-button>
             </div>
           </div>
         </template>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters} from 'vuex';
   import constant from '@/config/constant'
   import {gUuid} from '@/config/utils'
@@ -139,7 +141,7 @@
       },
       goSelectTheme(theme){
         this.$dialog.confirm({
-          message: '确认应用该预置样式吗？'
+          message: t('确认应用该预置样式吗？')
         }).then(() => {
           this.selected = theme.uuid
           if (this.spaceId){
@@ -151,7 +153,7 @@
               eventHub.$emit(constant.EVENT_CHANGE_BACKGROUND_SUCCESS, {backgroundId: theme.id})
               this.$router.back()
             }, error => {
-              this.$toast && this.$toast('设置失败，请稍后重试')
+              this.$toast && this.$toast(t('设置失败，请稍后重试'))
             })
           } else {
             // 新建纪念馆：回传 backgroundId，由创建流程写入
@@ -198,7 +200,7 @@
           return
         }
         if (!this.selectImage && !this.backgroundImage){
-          this.$toast("请选择图片")
+          this.$toast(t('请选择图片'))
           return
         }
         this.loading = true
@@ -218,7 +220,7 @@
             eventHub.$emit(constant.EVENT_SELECT_THEME,theme)
             this.$router.back()
           }else{
-            this.$toast("上传出错，请稍后重试")
+            this.$toast(t('上传出错，请稍后重试'))
           }
         })
       },

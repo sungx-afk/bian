@@ -7,7 +7,7 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        :finished-text="finishedText"
+        :finished-text="$t(finishedText)"
         @load="onLoadMoreData">
         <van-cell
           v-for="item in filterList"
@@ -31,22 +31,23 @@
     <div class='send-comment-area' :class="{'safe-bottom':isIPhoneX}" v-if="postComment">
       <div class='comment-input-container'>
         <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent"
-                   :placeholder="commentPlaceholder" maxlength="1000"></van-field>
+                   :placeholder="$t(commentPlaceholder)" maxlength="1000"></van-field>
       </div>
       <div class='send-btn-area'>
-        <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
+        <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>{{ $t('发送') }}</van-button>
       </div>
     </div>
     <van-popup
       v-model="isShowMoreMenu"
       close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
   </div>
-
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
 
   import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
@@ -202,7 +203,7 @@
         }, error => {
           that.loading = false
           that.finished = true
-          that.$toast("获取列表失败，请稍后重试")
+          that.$toast(t('获取列表失败，请稍后重试'))
         })
       },
       onLoadMoreData() {
@@ -303,7 +304,7 @@
       deleteIssue(item) {
         let that = this
         this.$dialog.confirm({
-          message: `确认删除该${this.messageTypeText()}吗?`
+          message: t('确认删除该{0}吗?', { 0: t(this.messageTypeText()) })
         }).then(() => {
           $API.space.deleteIssue({
             sid: that.space.id,
@@ -392,10 +393,7 @@
         this.clearCommentTimer()
         this.currentIssue = data.issue
         this.currentComment = data.comment
-        this.commentPlaceholder = '回复 '
-        if (this.currentComment.creator && this.currentComment.creator.name){
-          this.commentPlaceholder += this.currentComment.creator.name
-        }
+        this.commentPlaceholder = t('回复 {name}', { name: (this.currentComment.creator && this.currentComment.creator.name) || '' })
         this.postComment = true
         this.$nextTick(() => {
           this.$refs.comment.focus()

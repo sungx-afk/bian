@@ -77,6 +77,8 @@ window.ruiDatepicker = (function () {
         },
         bindEvent: function (type) {
             var _self = this;
+            var translate = function (text) { return _self.options && _self.options.translate ? _self.options.translate(text) : text; };
+            var formatDate = function (text) { return _self.options && _self.options.formatDate ? _self.options.formatDate(text) : text; };
             // 农历数据
             var LunarCal = [
                 new tagLunarCal(49,0,1,38,0,1,0,0,1,0,1,0,1,1,1,0,1),//1901
@@ -242,12 +244,12 @@ window.ruiDatepicker = (function () {
                         '<div class="date_info_box lcalendar_info">' +
                         '</div>' +
                         '<div class="date_class_box">' +
-                        '<div class="date_btn lcalendar_cancel">取消</div>' +
+                        '<div class="date_btn lcalendar_cancel">' + translate('取消') + '</div>' +
                         '<div>' +
-                        '<div class="date_class lcalendar_gongli">公历</div>' +
-                        '<div class="date_class lcalendar_nongli">阴历</div>' +
+                        '<div class="date_class lcalendar_gongli">' + translate('公历') + '</div>' +
+                        '<div class="date_class lcalendar_nongli">' + translate('阴历') + '</div>' +
                         '</div>' +
-                        '<div class="date_btn lcalendar_finish">确定</div>' +
+                        '<div class="date_btn lcalendar_finish">' + translate('确定') + '</div>' +
                         '</div>' +
                         '<div class="date_roll_mask">' +
                         '<div class="date_roll date_roll_minut">' +
@@ -285,12 +287,12 @@ window.ruiDatepicker = (function () {
                         '<div class="date_info_box lcalendar_info">' +
                         '</div>' +
                         '<div class="date_class_box">' +
-                        '<div class="date_btn lcalendar_cancel">取消</div>' +
+                        '<div class="date_btn lcalendar_cancel">' + translate('取消') + '</div>' +
                         '<div>'+
-                        '<div class="date_class lcalendar_gongli">公历</div>' +
-                        '<div class="date_class lcalendar_nongli">阴历</div>' +
+                        '<div class="date_class lcalendar_gongli">' + translate('公历') + '</div>' +
+                        '<div class="date_class lcalendar_nongli">' + translate('阴历') + '</div>' +
                         '</div>'+
-                        '<div class="date_btn lcalendar_finish">确定</div>' +
+                        '<div class="date_btn lcalendar_finish">' + translate('确定') + '</div>' +
                         '</div>' +
                         '<div class="date_roll_mask">' +
                         '<div class="date_roll date_roll_more">' +
@@ -321,18 +323,18 @@ window.ruiDatepicker = (function () {
                     '<div class="date_info_box lcalendar_info">' +
                     '</div>' +
                     '<div class="date_class_box">' +
-                    '<div class="date_btn lcalendar_cancel">取消</div>' 
+                    '<div class="date_btn lcalendar_cancel">' + translate('取消') + '</div>'
                     let calType = '<div>'+
-                    '<div class="date_class lcalendar_gongli">公历</div>' +
-                    '<div class="date_class lcalendar_nongli">阴历</div>' +
+                    '<div class="date_class lcalendar_gongli">' + translate('公历') + '</div>' +
+                    '<div class="date_class lcalendar_nongli">' + translate('阴历') + '</div>' +
                     '</div>'
                     if (_self.options && _self.options.calType && _self.options.calType.show === false){
                         calType = '<div style="opacity: 0;">'+
-                        '<div class="date_class lcalendar_gongli">公历</div>' +
-                        '<div class="date_class lcalendar_nongli">阴历</div>' +
+                        '<div class="date_class lcalendar_gongli">' + translate('公历') + '</div>' +
+                        '<div class="date_class lcalendar_nongli">' + translate('阴历') + '</div>' +
                         '</div>'
                     }
-                    let temp2 = '<div class="date_btn lcalendar_finish">确定</div>' +
+                    let temp2 = '<div class="date_btn lcalendar_finish">' + translate('确定') + '</div>' +
                     '</div>' +
                     '<div class="date_roll_mask">' +
                     '<div class="date_roll">' +
@@ -559,9 +561,9 @@ window.ruiDatepicker = (function () {
                                 pcx.dc = new Lunar(); // 天干地支年份计算
                             }
                             var desc = '('+pcx.dc.lunarYear((_self.minY + p))+'年)'
-                            itemStr += "<div class='tooth'>" + (_self.minY + p)+desc + "</div>";
+                            itemStr += "<div class='tooth'>" + (_self.options && _self.options.formatYear ? _self.options.formatYear(_self.minY + p, desc) : (_self.minY + p) + desc) + "</div>";
                         }else{
-                            itemStr += "<div class='tooth'>" + (_self.minY + p)+ '年' + "</div>";
+                            itemStr += "<div class='tooth'>" + (_self.minY + p)+ translate('年') + "</div>";
                         }
                         
                     }
@@ -638,9 +640,9 @@ window.ruiDatepicker = (function () {
                             }
                         }
                         if (_self.type == 0) {
-                            itemStr += "<div class='tooth'>" + strVal + "月</div>";
+                            itemStr += "<div class='tooth'>" + strVal + translate("月") + "</div>";
                         } else {
-                            itemStr += "<div class='tooth'>" + strVal + "</div>";
+                            itemStr += "<div class='tooth'>" + translate(String(strVal)) + "</div>";
                         }
 
                     }
@@ -693,9 +695,9 @@ window.ruiDatepicker = (function () {
                     for (var p = 0; p < maxD - minD + 1; p++) {
                         var strVal = _self.type ? getChinese('dd', minD + p + 1) : (minD + p + 1);
                         if (_self.type == 0) {
-                            itemStr += "<div class='tooth'>" + strVal + "日</div>";
+                            itemStr += "<div class='tooth'>" + strVal + translate("日") + "</div>";
                         } else {
-                            itemStr += "<div class='tooth'>" + strVal + "</div>";
+                            itemStr += "<div class='tooth'>" + translate(String(strVal)) + "</div>";
                         }
 
                     }
@@ -738,7 +740,7 @@ window.ruiDatepicker = (function () {
                         }); */
                         var strVal = nums + ':00 - '+nums2+':00'
                         // var strVal = _self.type ? getChinese('hh', p) : p;
-                        itemStr += "<div class='tooth'>" + strVal + "</div>";
+                        itemStr += "<div class='tooth'>" + translate(String(strVal)) + "</div>";
                     }
                     date_hh.innerHTML = itemStr;
                     date_hh.style["transform"] = 'translate(0,' + (_self.levelnum - hhVal * 2) + 'em)';
@@ -753,10 +755,10 @@ window.ruiDatepicker = (function () {
                 var date_min = _self.gearDate.querySelector(".date_min");
                 if (date_min && date_min.getAttribute("val")) {
                     var hhVal = parseInt(date_min.getAttribute("val"));
-                    itemStr = "<div class='tooth'>未知</div>";
+                    itemStr = "<div class='tooth'>" + translate("未知") + "</div>";
                     //公历农历显示一样
                     for (var p = 0; p < 60; p++) {
-                        itemStr += "<div class='tooth'>" + p + "分</div>";
+                        itemStr += "<div class='tooth'>" + p + translate("分") + "</div>";
                     }
                     date_min.innerHTML = itemStr;
                     date_min.style["transform"] = 'translate(0,' + (_self.levelnum - hhVal * 2) + 'em)';
@@ -1355,9 +1357,10 @@ window.ruiDatepicker = (function () {
                         }
                     }
                     var strs = /*"阴历:" + */d._yy + "年" + mmChina + '' + getChinese('dd', d._dd) + ' ' + (hourStr == "未知" ? "" : hourStr + (minuteStr == "未知" ? "" : minuteStr));
-                    _self.trigger.value = strs;
-                    $(_self.trigger).siblings(".pinput").text(strs)
-                    $(_self.trigger).val(strs);
+                    _self.trigger.setAttribute('data-canonical-date', strs);
+                    _self.trigger.value = formatDate(strs);
+                    $(_self.trigger).siblings(".pinput").text(formatDate(strs))
+                    $(_self.trigger).val(formatDate(strs));
                 } else {
                     if (hourId) {
                         if (d.hh < 0) {
@@ -1374,9 +1377,10 @@ window.ruiDatepicker = (function () {
                         }
                     }
                     var strs = /*"公历:" +*/ d.yy + "年" + d.mm + "月" + d.dd + '日 ' + (hourStr == "未知" ? "" : hourStr + (minuteStr == "未知" ? "" : minuteStr));
-                    _self.trigger.value = strs;
-                    $(_self.trigger).siblings(".pinput").text(strs)
-                    $(_self.trigger).val(strs);
+                    _self.trigger.setAttribute('data-canonical-date', strs);
+                    _self.trigger.value = formatDate(strs);
+                    $(_self.trigger).siblings(".pinput").text(formatDate(strs))
+                    $(_self.trigger).val(formatDate(strs));
                 }
                 closeMobileCalendar(e);
             }
@@ -1431,7 +1435,7 @@ window.ruiDatepicker = (function () {
                             minStr = date_min + '分';
                         }
                     }
-                    info.innerHTML = /*'阴历:' + */date_yy + '年' + mmChina + '' + getChinese('dd', date_dd)+ ' ' + hhStr;
+                    info.textContent = formatDate(/*'阴历:' + */date_yy + '年' + mmChina + '' + getChinese('dd', date_dd)+ ' ' + hhStr);
                     return {
                         yy: objDate.yy,
                         mm: objDate.mm,
@@ -1462,7 +1466,7 @@ window.ruiDatepicker = (function () {
                             minStr = date_min + '分';
                         }
                     }
-                    info.innerHTML = /*'公历:' + */date_yy + '年' + date_mm + '月' + date_dd + '日'+ ' ' + hhStr;
+                    info.textContent = formatDate(/*'公历:' + */date_yy + '年' + date_mm + '月' + date_dd + '日'+ ' ' + hhStr);
                     // + ' ' + hhStr + (minStr ? minStr : "");
                     return {
                         _yy: objDate.yy,

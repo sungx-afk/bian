@@ -1,6 +1,6 @@
 <template>
   <div class="blacklist-container">
-    <page-header title="黑名单"></page-header>
+    <page-header :title="$t('黑名单')"></page-header>
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -9,7 +9,7 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          :finished-text="finishedText">
+          :finished-text="$t(finishedText)">
           <van-cell
             v-for="item in blacklist"
             :key="item.id">
@@ -28,12 +28,14 @@
 
     </template>
     <van-popup v-model="isShowMoreMenu" close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import NoData from '@/modules/widget/space/NoData'
   import UserAvatar from '@/modules/widget/UserAvatar'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -83,7 +85,7 @@
           },error=>{
             this.loading = false
             this.finished = true
-            this.$toast("获取列表失败，请稍后重试")
+            this.$toast(t('获取列表失败，请稍后重试'))
           })
         },
         showMoreMenu(item){

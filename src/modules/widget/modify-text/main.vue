@@ -3,13 +3,13 @@
     <div class="box-wrapper" v-show="show">
       <div class="item-box">
         <!-- 传入 headerTitle 时显示统一页头（返回=取消，不触发保存回调） -->
-        <page-header v-if="headerTitle" :title="headerTitle" @back="cancel"></page-header>
+        <page-header v-if="headerTitle" :title="$t(headerTitle)" @back="cancel"></page-header>
         <template v-if="multiline">
           <van-field
             ref="input"
             v-model="content"
             type="textarea"
-            :placeholder="placeholder"
+            :placeholder="$t(placeholder)"
             :rows="rows"
             :autosize="{ maxHeight: maxH, minHeight: minH }">
           </van-field>
@@ -18,13 +18,13 @@
           <van-field
             ref="input"
             v-model="content"
-            :placeholder="placeholder"
+            :placeholder="$t(placeholder)"
             :border="true">
           </van-field>
         </template>
 
         <div class="bottom-button">
-          <van-button type="default" size="large" @click.tap="btnPressed">{{btnText}}</van-button>
+          <van-button type="default" size="large" @click.tap="btnPressed">{{ $t(btnText) }}</van-button>
         </div>
       </div>
     </div>

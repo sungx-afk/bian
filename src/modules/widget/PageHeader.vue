@@ -1,6 +1,6 @@
 <template>
   <div class="page-header">
-    <div class="back-btn" @click.stop="goBack" aria-label="返回">
+    <div class="back-btn" @click.stop="goBack" :aria-label="$t('返回')">
       <i class="chevron"></i>
     </div>
     <div class="title">{{ title }}</div>

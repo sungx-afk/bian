@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="create-info">
-        该馆由 {{space.creator.name}} 于 {{space.createDate | timesToDate('yyyy年MM月dd日')}}创建，有{{space.visitedTimes}}人次到访
+        {{ $t('纪念馆创建信息', { creator: space.creator.name, date: $options.filters.timesToDate(space.createDate, 'yyyy年MM月dd日'), count: space.visitedTimes }) }}
       </div>
     </div>
     <div class="avatar-area">
@@ -26,25 +26,25 @@
     <div class="lifetime-area">
       <div class="lifetime-content" v-for="user in space.spaceUsers" :key="user.id">
         <div class="lifetime-top">
-          <div class="name">生平</div>
+          <div class="name">{{ $t('生平') }}</div>
           <i class="edit iconfont icon-bianji" v-if="canOperate" @click.stop="editMenu(user)"></i>
         </div>
         <div class="lifetime-bottom">
           <div class="base-info">
             <div class="date-info">
-              <span>出生：{{user.birthdayStr || (user.birthday | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
-              <span style="margin-left: 15px;">逝世：{{user.dieDayStr || (user.dieDay | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
+              <span>{{ $t('出生：') }}{{ (user.birthdayStr || $options.filters.timesToDate(user.birthday, 'yyyy年MM月dd日') || $t('未填写')) | memorialDate }}</span>
+              <span style="margin-left: 15px;">{{ $t('逝世：') }}{{ (user.dieDayStr || $options.filters.timesToDate(user.dieDay, 'yyyy年MM月dd日') || $t('未填写')) | memorialDate }}</span>
             </div>
             <div class="address-info">
-              出生地：{{user.birthAddress || '未填写'}}
+              {{ $t('出生地：') }}{{user.birthAddress || $t('未填写')}}
             </div>
             <div class="address-info" v-if="false">
-              安葬地：{{user.dieAddress || '未填写'}}
+              {{ $t('安葬地：') }}{{user.dieAddress || $t('未填写')}}
             </div>
           </div>
           <div class="summary-area">
             <template v-if="user.summary && user.summary.length > 0">
-              <div class="title">生平介绍:</div>
+              <div class="title">{{ $t('生平介绍:') }}</div>
               <div class="summary">
                 <van-field
                   v-model="user.summary"
@@ -55,7 +55,7 @@
               </div>
             </template>
             <template v-else>
-              暂无生平介绍
+              {{ $t('暂无生平介绍') }}
             </template>
           </div>
         </div>
@@ -63,7 +63,7 @@
     </div>
     <template v-if="showMeeting">
       <div class="memorial-meeting" @click.stop="goMemorialMeeting">
-        <div class="meeting">追悼会</div>
+        <div class="meeting">{{ $t('追悼会') }}</div>
         <template v-if="canOperate">
           <div class="operate" @click.stop="closeMemorialMeeting">
             <i class="close-image iconfont icon-close"></i>
@@ -72,13 +72,15 @@
       </div>
     </template>
     <div class="share-area" @click.stop="goShareSpace">
-      <van-cell is-link>{{shareText}}</van-cell>
+      <van-cell is-link>{{ $t(shareText) }}</van-cell>
     </div>
     <div class="split-space"></div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters} from 'vuex';
   import {Link} from '@/config/utils'
 
@@ -249,7 +251,7 @@
               //找到对应编辑的人，更新简介
               this.updateSpaceUser(user)
             }, error=>{
-              this.$toast('修改失败，请稍后重试')
+              this.$toast(t('修改失败，请稍后重试'))
           })
         },
         updateSpaceUser(user){

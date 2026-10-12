@@ -1,14 +1,14 @@
 <template>
   <div class="bgm-container">
-    <page-header title="背景音乐"></page-header>
-    <van-cell-group title="预置">
-      <van-cell v-for="item in presetBgm" :key="item.key" :title="item.name" :label="item.author" size="large" @click.stop="selectPresetBgm(item)">
+    <page-header :title="$t('背景音乐')"></page-header>
+    <van-cell-group :title="$t('预置')">
+      <van-cell v-for="item in presetBgm" :key="item.key" :title="$t(item.name)" :label="$t(item.author)" size="large" @click.stop="selectPresetBgm(item)">
         <div v-if="isPresetSelected(item)">
           <i class="iconfont icon-duigou1"></i>
         </div>
       </van-cell>
     </van-cell-group>
-    <van-cell-group title="自定义(最多支持 10 首)">
+    <van-cell-group :title="$t('自定义(最多支持 10 首)')">
       <template v-if="selfUpload && selfUpload.length > 0">
         <van-cell v-for="(bgm,index) in selfUpload" :key="index" :title="bgm.name" size="large" @click.stop="selectCustomBgm(bgm,index)" value-class="custom-bgm-cell">
           <div class="operate">
@@ -25,31 +25,31 @@
 
       <template v-if="isShowUploader()">
         <div class="uploader" v-if="showBigUploader()">
-          <van-button icon="music-o" size="small" id="uploadFiles">本地上传</van-button>
+          <van-button icon="music-o" size="small" id="uploadFiles">{{ $t('本地上传') }}</van-button>
         </div>
         <template v-else>
 
         </template>
         <van-uploader accept="audio/mpeg,audio/x-m4a" :before-read="beforeSelectAudio" :after-read="afterSelectAudio">
-          <van-button icon="music-o" size="small">本地上传</van-button>
+          <van-button icon="music-o" size="small">{{ $t('本地上传') }}</van-button>
         </van-uploader>
       </template>
-      <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog" v-if="false">手动添加</van-button>
+      <van-button  class="paste-btn" icon="edit" size="small" @click="showPasteDialog" v-if="false">{{ $t('手动添加') }}</van-button>
       <div class="tip" v-if="!isShowUploader()">
-        <i class="iconfont icon-tishi1"></i>由于iOS系统限制，请您使用Android手机、网页端进行音乐文件上传
+        <i class="iconfont icon-tishi1"></i>{{ $t('由于iOS系统限制，请您使用Android手机、网页端进行音乐文件上传') }}
       </div>
     </van-cell-group>
     <van-popup class="popup-area" v-model="isShowPasteDialog"  close-on-popstate @closed="pasteDialogClosed">
-      <van-field class="popup-cell" v-model="pasteName" placeholder="请输入音乐名称" input-align="left"></van-field>
-      <van-field class="popup-cell" v-model="pasteUrl" placeholder="请输入音乐地址" input-align="left"></van-field>
+      <van-field class="popup-cell" v-model="pasteName" :placeholder="$t('请输入音乐名称')" input-align="left"></van-field>
+      <van-field class="popup-cell" v-model="pasteUrl" :placeholder="$t('请输入音乐地址')" input-align="left"></van-field>
       <div class="bottom-button">
-        <van-button @click.stop="cancelPaste">取消</van-button>
-        <van-button class="confirm" type="default" @click.stop="confirmPaste">确定</van-button>
+        <van-button @click.stop="cancelPaste">{{ $t('取消') }}</van-button>
+        <van-button class="confirm" type="default" @click.stop="confirmPaste">{{ $t('确定') }}</van-button>
       </div>
     </van-popup>
     <van-action-sheet
       v-model="showAction"
-      :actions="actions"
+      :actions="$localizeActions(actions)"
       close-on-popstate
       close-on-click-action
       @select="onActionSelect"
@@ -59,6 +59,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {checkUrlHttpOrHttps,isIphone} from '@/config/utils'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -163,14 +165,14 @@
         afterSelectAudio(audio,detail){
           console.log('afterSelectAudio')
           if (audio.file.size > MAX_BGM_SIZE){
-            this.$toast("文件过大，请选择合适长度的背景音乐")
+            this.$toast(t('文件过大，请选择合适长度的背景音乐'))
             return
           }
           this.$toast.loading({
             duration: 0,       // 持续展示 toast
             forbidClick: true, // 禁用背景点击
             loadingType: 'spinner',
-            message: '上传中...'
+            message: t('上传中...')
           })
           $API.space.filesQiniuUploadTicket({
             reqType: 'general_file',
@@ -195,11 +197,11 @@
               })
             },error=>{
               this.$toast.clear()
-              this.$toast("上传失败，请稍后重试")
+              this.$toast(t('上传失败，请稍后重试'))
             })
           },error=>{
             this.$toast.clear()
-            this.$toast("上传失败，请稍后重试")
+            this.$toast(t('上传失败，请稍后重试'))
           })
         },
         pasteDialogClosed(){
@@ -211,16 +213,16 @@
         },
         confirmPaste(){
           if (!this.pasteName.trim()){
-            this.$toast('请输入音乐名称')
+            this.$toast(t('请输入音乐名称'))
             return
           }
           let url = this.pasteUrl.trim()
           if (!url){
-            this.$toast('请输入音乐地址')
+            this.$toast(t('请输入音乐地址'))
             return
           }
           if (!checkUrlHttpOrHttps(url)){
-            this.$toast('请输入正确的音乐地址')
+            this.$toast(t('请输入正确的音乐地址'))
             return
           }
 
@@ -255,7 +257,7 @@
             this.showPasteDialog()
           }else if(menu === 'delete'){
             this.$dialog.confirm({
-              message: '确认删除该自定义音乐吗？'
+              message: t('确认删除该自定义音乐吗？')
             }).then(() => {
               this.selfUpload.splice(this.editCustomIndex,1)
               if (this.editCustomIndex > 0){

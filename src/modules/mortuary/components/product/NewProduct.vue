@@ -2,14 +2,14 @@
   <div class="new-product-container">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <van-icon name="arrow-left" /><span>返回</span>
+        <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
       </div>
     </div>
     <div class="info">
       <div class="info-container">
-        <van-field v-model="product.name" label="商品名称:" placeholder="请填写商品名称" maxlength="20" input-align="right"></van-field>
-        <van-field v-model="product.price" label="商品价格:" placeholder="请填写商品价格" type="number" input-align="right"></van-field>
-        <van-cell title="图片" :border="false"></van-cell>
+        <van-field v-model="product.name" :label="$t('商品名称:')" :placeholder="$t('请填写商品名称')" maxlength="20" input-align="right"></van-field>
+        <van-field v-model="product.price" :label="$t('商品价格:')" :placeholder="$t('请填写商品价格')" type="number" input-align="right"></van-field>
+        <van-cell :title="$t('图片')" :border="false"></van-cell>
         <van-cell>
           <div class="avatar-wrapper">
             <div class="avatar-preview" v-for="(avatar,index) in product.images" :key="index">
@@ -23,11 +23,13 @@
 
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="confirm">{{product.id?'修改':'创建'}}</van-button>
+      <van-button type="default" size="large" @click.tap="confirm">{{product.id?$t('修改'):$t('创建')}}</van-button>
     </div>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   import constant from '@/config/constant'
@@ -100,24 +102,24 @@
             that.product.images.splice(index,1,{url:rsp.url})
             that.loading = false
           },error=>{
-            this.$toast("上传失败，请稍后重试")
+            this.$toast(t('上传失败，请稍后重试'))
             that.loading = false
           })
         },error=>{
-          this.$toast("上传失败，请稍后重试")
+          this.$toast(t('上传失败，请稍后重试'))
           that.loading = false
         })
       },
       confirm(){
         if (!this.product.name) {
-          this.$toast('请填写商品名称');
+          this.$toast(t('请填写商品名称'));
           return;
         }
 
         if(this.product.id){
           $API.mortuary.modifyProduct(this.product, rsp => {
             this.$toast({
-              message:'修改成功',
+              message:t('修改成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -125,14 +127,14 @@
               }
             })
           }, error => {
-            this.$toast('修改失败，请稍后重试')
+            this.$toast(t('修改失败，请稍后重试'))
           })
         }else{
           let params = JSON.parse(JSON.stringify(this.product))
           delete params.id;
           $API.mortuary.createProduct(params, rsp => {
             this.$toast({
-              message:'创建成功',
+              message:t('创建成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -140,7 +142,7 @@
               }
             })
           }, error => {
-            this.$toast('创建失败，请稍后重试')
+            this.$toast(t('创建失败，请稍后重试'))
           })
         }
 

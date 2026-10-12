@@ -1,23 +1,23 @@
 <template>
   <div class="meeting-intro-container">
-    <page-header title="云追悼会"></page-header>
+    <page-header :title="$t('云追悼会')"></page-header>
     <div class="create-wrapper">
       <div class="label">
-        1. 请创建纪念馆后再发起云追悼会（讣告）
+        {{ $t('1. 请创建纪念馆后再发起云追悼会（讣告）') }}
       </div>
       <div class='create-btn-wrapper'>
-        <van-button class="btn" @click.stop="createSpace">马上创建</van-button>
+        <van-button class="btn" @click.stop="createSpace">{{ $t('马上创建') }}</van-button>
       </div>
 
       <div class="tip">
-        <div>创建完成后在 纪念馆 -> 首页 -> 更多菜单 发起云追悼会（讣告）</div>
+        <div>{{ $t('创建完成后在 纪念馆 -> 首页 -> 更多菜单 发起云追悼会（讣告）') }}</div>
         <img src="https://static-app01.yugusoft.com/bian/meeting_guide.png">
       </div>
     </div>
 
     <div class="list-wrapper" v-if="list.length > 0">
       <div class="label">
-        2. 选择已创建的纪念馆，发起云追悼会（讣告）
+        {{ $t('2. 选择已创建的纪念馆，发起云追悼会（讣告）') }}
       </div>
       <van-cell v-for="space in list" :key="space.id" is-link @click="goMemorialMeeting(space)">
         <div class="space">
@@ -25,7 +25,7 @@
             {{space.name}}
           </div>
           <div class="meeting">
-            发起
+            {{ $t('发起') }}
           </div>
         </div>
       </van-cell>
@@ -33,7 +33,7 @@
 
     <van-action-sheet
       v-model="showAction"
-      :actions="actions"
+      :actions="$localizeActions(actions)"
       close-on-popstate
       close-on-click-action
       @select="onActionSelect"

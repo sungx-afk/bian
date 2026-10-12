@@ -1,9 +1,8 @@
 <template>
   <div class="private-container">
-    <div class="private-tip">**私语仅自己可见</div>
+    <div class="private-tip">{{ $t('**私语仅自己可见') }}</div>
     <issue-list :space="space" :type="type"></issue-list>
   </div>
-
 </template>
 
 <script>

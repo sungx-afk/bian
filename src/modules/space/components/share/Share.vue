@@ -1,11 +1,11 @@
 <template>
   <div class="share-container">
-    <page-header title="分享"></page-header>
+    <page-header :title="$t('分享')"></page-header>
     <div class="share-top" v-if="!isIphone">
-      <div class="share-title">方式一</div> 
+      <div class="share-title">{{ $t('方式一') }}</div>
       <div class="share-body">
         <div class="share-top-text">
-          <span>请先点击右上角"..."</span>
+          <span>{{ $t('请先点击右上角"..."') }}</span>
           <span>{{shareTip1}}</span>
         </div>
         <div class="share-top-image">
@@ -15,30 +15,32 @@
 
     </div>
     <div class="share-middle">
-      <div class="share-title" v-if="!isIphone">方式二</div>
+      <div class="share-title" v-if="!isIphone">{{ $t('方式二') }}</div>
       <div class="share-middle-text">
         <span class="share-middle-tip">{{shareTip2}}</span>
-        <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制链接</button>
+        <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">{{ $t('复制链接') }}</button>
       </div>
     </div>
     <div class="share-qr">
-      <div class="share-title">分享二维码图片</div>
+      <div class="share-title">{{ $t('分享二维码图片') }}</div>
       <div class="qr-text">
-        <span>长按下方二维码保存到相册，发送给亲友；对方扫码即可打开对应纪念馆 / 云追悼会。</span>
+        <span>{{ $t('长按下方二维码保存到相册，发送给亲友；对方扫码即可打开对应纪念馆 / 云追悼会。') }}</span>
       </div>
       <div class="qr-img-box">
         <img class="qr-img" :src="qrImageUrl" v-if="qrImageUrl" @error="onQrError" />
-        <span class="qr-loading" v-else>二维码生成中…</span>
+        <span class="qr-loading" v-else>{{ $t('二维码生成中…') }}</span>
       </div>
     </div>
     <div class="share-bottom">
       <img src="~@/modules/images/logo_gray.png" class="header">
-      <span class="text">爱，永存!</span>
+      <span class="text">{{ $t('爱，永存!') }}</span>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {isIphone} from '@/config/utils'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -96,21 +98,21 @@
           //try 20251229 sungx:限制iPhone
           if (!this.isIphone){
             let data = {
-              title: '彼岸思念',
+              title: t('彼岸思念'),
               success: () => { //你重置分享成功后的回调
 
               }
             }
             if (this.extra){
               if (this.extra.space_name){
-                data.desc = `逝者已矣，生者如斯。来自 ${this.extra.space_name}`
+                data.desc = t('逝者已矣，生者如斯。来自 {0}', { 0: this.extra.space_name })
                 delete this.extra.space_name
               }
               data.extra = this.extra
               data.timestamp = new Date().getTime()
             }
             this.wechatShare(data).catch((e) => {
-              this.$toast && this.$toast((e && e.message) || '分享失败')
+              this.$toast && this.$toast(t((e && e.message) || t('分享失败')))
             })
           }
 
@@ -134,7 +136,7 @@
           clipboard.on('success', (e)=> {
             this.$notify({
               type:'info',
-              message: '已复制到剪贴板',
+              message: t('已复制到剪贴板'),
               color: '#ffffff',
               background: '#825621'
             });
@@ -146,7 +148,7 @@
           });
         },
         onQrError(){
-          this.$toast && this.$toast('二维码生成失败，请稍后重试')
+          this.$toast && this.$toast(t('二维码生成失败，请稍后重试'))
         }
       },
       created() {

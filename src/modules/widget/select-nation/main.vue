@@ -5,14 +5,14 @@
       <div class="item-box">
         <div class="common">
           <div class="item" v-for="(nation,index) in commonList" :key="index" @click.stop="selectCommonNation(nation)">
-            <van-tag plain size="large">{{nation}}</van-tag>
+            <van-tag plain size="large">{{ $t(nation) }}</van-tag>
           </div>
         </div>
         <div class="nation_list">
           <div class="item" v-for="nation in nationList">
             <div
               :class="(nation >= 'A' && nation <= 'Z') ? 'letter' : 'nation'"
-              @click.stop="clickNation(nation)" >{{nation}}
+              @click.stop="clickNation(nation)" >{{ $t(nation) }}
             </div>
           </div>
         </div>

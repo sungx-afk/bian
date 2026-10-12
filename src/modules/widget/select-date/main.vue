@@ -4,28 +4,28 @@
       <div class="item-box">
         <div class="calendar-type-wrapper">
           <van-radio-group v-model="calType" class="type-radio-group" direction="horizontal">
-              <van-radio v-for="item in calTypeList" :key="item.value" :name="item.value" checked-color="#825621" @click="calTypeClicked">{{item.name}}</van-radio>
+              <van-radio v-for="item in calTypeList" :key="item.value" :name="item.value" checked-color="#825621" @click="calTypeClicked">{{ $t(item.name) }}</van-radio>
           </van-radio-group>
         </div>
         <div class="date-select-wrapper">
           <div class="date-input-wrapper">
-            <span>出生日期：</span>
-              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" placeholder="请选择出生日期" :data-type="calType" :data-date="birthdayDate" readonly="readonly"/></input>
+            <label for="birthday_selector">{{ $t('出生日期：') }}</label>
+              <input id="birthday_selector" class="date-input" type="text" data-toid-date="birthday_input" name="input_date" :placeholder="$t('请选择出生日期')" :data-type="calType" :data-date="birthdayDate" readonly="readonly"/></input>
               <input type="hidden" id="birthday_input" name="birthday">
           </div>
           <div class="date-input-wrapper">
-            <span>逝世日期：</span>
-              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" placeholder="请选择逝世日期" :data-type="calType" :data-date="dieDayDate" readonly="readonly"/></input>
+            <label for="dieday_selector">{{ $t('逝世日期：') }}</label>
+              <input id="dieday_selector" class="date-input" type="text" data-toid-date="dieday_input" name="input_date" :placeholder="$t('请选择逝世日期')" :data-type="calType" :data-date="dieDayDate" readonly="readonly"/></input>
               <input type="hidden" id="dieday_input" name="dieday">
           </div>
         </div>
         <div class="notify-setting-wrapper">
             <van-checkbox checked-color="#825621" shape="square" v-model="notifyChecked"></van-checkbox>
-            <span class="text" style="margin-left:8px;">在忌日前 1 天发送提醒消息</span>
+            <span class="text" style="margin-left:8px;">{{ $t('在忌日前 1 天发送提醒消息') }}</span>
         </div>
         <div class="bottom-button">
-          <van-button type="default" @click.tap="cancel">取消</van-button>
-          <van-button type="default" @click.tap="confirm">确定</van-button>
+          <van-button type="default" @click.tap="cancel">{{ $t('取消') }}</van-button>
+          <van-button type="default" @click.tap="confirm">{{ $t('确定') }}</van-button>
         </div>
       </div>
     </div>
@@ -34,6 +34,7 @@
 
 <script>
   
+  import { datePickerOptions, formatMemorialDate } from '@/i18n/dates'
   import {timesToDate,dateToTimes} from '@/config/utils'
   export default {
     data(){
@@ -86,8 +87,8 @@
         if (inputValue){
           this.dieDay = dateToTimes(inputValue)
         }
-        let birthdayStr = document.getElementById('birthday_selector').value
-        let dieDayStr = document.getElementById('dieday_selector').value
+        let birthdayStr = document.getElementById('birthday_selector').getAttribute('data-canonical-date') || this.birthdayStr || document.getElementById('birthday_selector').value
+        let dieDayStr = document.getElementById('dieday_selector').getAttribute('data-canonical-date') || this.dieDayStr || document.getElementById('dieday_selector').value
         let data = {
           calType:this.calType,
           birthday:this.birthday,
@@ -100,6 +101,10 @@
         this.close()
       },
       calTypeClicked(e){
+        this.birthdayStr = ''
+        this.dieDayStr = ''
+        document.getElementById('birthday_selector').removeAttribute('data-canonical-date')
+        document.getElementById('dieday_selector').removeAttribute('data-canonical-date')
         document.getElementById('birthday_input').value = ''
         document.getElementById('dieday_input').value = ''
         document.getElementById('birthday_selector').value = ''
@@ -112,19 +117,15 @@
 
         let birthdaySelector = document.getElementById('birthday_selector')
         let dieDaySelector = document.getElementById('dieday_selector')
-        if (this.birthdayStr){
-          birthdaySelector.value = this.birthdayStr
-        }else if (this.birthday){
-          birthdaySelector.value = timesToDate(this.birthday,'yyyy年MM月dd日')
-        }
-        if (this.dieDayStr){
-          dieDaySelector.value = this.dieDayStr
-        }else if (this.birthday){
-          dieDaySelector.value = timesToDate(this.dieDay,'yyyy年MM月dd日')
-        }
+        const birthdayCanonical = this.birthdayStr || (this.birthday ? timesToDate(this.birthday, 'yyyy年MM月dd日') : '')
+        const dieDayCanonical = this.dieDayStr || (this.dieDay ? timesToDate(this.dieDay, 'yyyy年MM月dd日') : '')
+        birthdaySelector.setAttribute('data-canonical-date', birthdayCanonical)
+        dieDaySelector.setAttribute('data-canonical-date', dieDayCanonical)
+        birthdaySelector.value = formatMemorialDate(birthdayCanonical)
+        dieDaySelector.value = formatMemorialDate(dieDayCanonical)
         
-        new ruiDatepicker().init('#birthday_selector','',{calType:{show:false}});
-        new ruiDatepicker().init('#dieday_selector','',{calType:{show:false}});
+        new ruiDatepicker().init('#birthday_selector','',datePickerOptions());
+        new ruiDatepicker().init('#dieday_selector','',datePickerOptions());
 
       });
     },
@@ -156,12 +157,17 @@
       }
       .date-select-wrapper{
         .date-input-wrapper{
-          height: 66px;
-          line-height: 66px;
-          padding: 0 16px;
+          display: flex;
+          align-items: center;
+          min-height: 66px;
+          padding: 8px 16px;
+          box-sizing: border-box;
+          label { flex: 0 0 110px; padding-right: 8px; line-height: 1.4; }
           .date-input{
-            width: ~'calc(100% - 100px)';
-            height: 60px;
+            flex: 1;
+            width: 0;
+            min-width: 0;
+            height: 48px;
           }
            border-bottom: 1px solid #ebedf0;
         }

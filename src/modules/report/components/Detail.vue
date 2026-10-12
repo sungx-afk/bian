@@ -1,20 +1,20 @@
 <template>
   <div class="report-detail-container">
       <div class="report-type">
-        <div class="label">举报类型:</div>{{report.subjectType | reportType}}
+        <div class="label">{{ $t('举报类型:') }}</div>{{report.subjectType | reportType | translate}}
       </div>
       <div class="report-content">
         <div class="content-wrapper">
-          <div class="label">举报内容:</div>
+          <div class="label">{{ $t('举报内容:') }}</div>
           <div class="info comment" v-if="report.subjectType === 'comment' ">
             {{report.subjectContent}}
           </div>
           <div class="info space" v-if="report.subjectType === 'space'">
             <template v-if="space">
-              <div class="cell title">馆名: {{space.name}}</div>
-              <div class="cell creator">创建者: {{space.creator.name}} ( {{space.creator.id}} )</div>
+              <div class="cell title">{{ $t('馆名:') }} {{space.name}}</div>
+              <div class="cell creator">{{ $t('创建者:') }} {{space.creator.name}} ( {{space.creator.id}} )</div>
               <div class="cell theme" v-if="space.themeId && space.themeId === 'custom'">
-                <div>自定义背景:</div>
+                <div>{{ $t('自定义背景:') }}</div>
                 <van-image style="width: 100px; height: 120px; padding-right: 4px;"
                           :src="customThemeUrl"
                           fit="fill" @click="viewImage([customThemeUrl],0)">
@@ -26,19 +26,19 @@
                     <div class="content-wrapper">
                       <div class="base-info">
                         <div class="date-info">
-                          <span>出生：{{user.birthdayStr || (user.birthday | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
-                          <span style="margin-left: 15px;">逝世：{{user.dieDayStr || (user.dieDay | timesToDate('yyyy年MM月dd日')) || '未填写'}}</span>
+                          <span>{{ $t('出生：') }}{{ (user.birthdayStr || $options.filters.timesToDate(user.birthday, 'yyyy年MM月dd日') || $t('未填写')) | memorialDate }}</span>
+                          <span style="margin-left: 15px;">{{ $t('逝世：') }}{{ (user.dieDayStr || $options.filters.timesToDate(user.dieDay, 'yyyy年MM月dd日') || $t('未填写')) | memorialDate }}</span>
                         </div>
                         <div class="address-info">
-                          出生地：{{user.birthAddress || '未填写'}}
+                          {{ $t('出生地：') }}{{user.birthAddress || $t('未填写')}}
                         </div>
                         <div class="address-info" v-if="false">
-                          安葬地：{{user.dieAddress || '未填写'}}
+                          {{ $t('安葬地：') }}{{user.dieAddress || $t('未填写')}}
                         </div>
                       </div>
                       <div class="summary-area">
                         <template v-if="user.summary && user.summary.length > 0">
-                          <div class="title">生平介绍:</div>
+                          <div class="title">{{ $t('生平介绍:') }}</div>
                           <div class="summary">
                             <van-field
                               v-model="user.summary"
@@ -49,7 +49,7 @@
                           </div>
                         </template>
                         <template v-else>
-                          暂无生平介绍
+                          {{ $t('暂无生平介绍') }}
                         </template>
                       </div>
                     </div>
@@ -61,7 +61,7 @@
           <div class="info post" v-if="report.subjectType === 'post'">
             <template v-if="issue">
               <div class="post-creator">
-                <div class="name">帖子发布人: {{issue.creator.name}}</div>
+                <div class="name">{{ $t('帖子发布人:') }} {{issue.creator.name}}</div>
               </div>
               <div class="post-content" v-if="issue.content">
                 {{issue.content}}
@@ -77,7 +77,7 @@
               <div class='comment-list'>
                 <div class='comment-area' v-for="comment in issue.recently" :key='comment.id'>
                       <span class='comment-name'>{{comment.creator && comment.creator.name}}
-                        <span v-if="comment.reply" style="color: #808080;">回复</span>
+                        <span v-if="comment.reply" style="color: #808080;">{{ $t('回复') }}</span>
                         <span class="comment-name" v-if="comment.reply">{{comment.reply.creator && comment.reply.creator.name}}</span>
                       </span>
                   :<span class='comment-content'>{{comment.content}}</span>
@@ -87,7 +87,7 @@
           </div>
         </div>
         <div class="photos-wrapper">
-          <div class="label">截图:</div>
+          <div class="label">{{ $t('截图:') }}</div>
           <template v-if="report.urls.length > 0">
             <div class="photos">
               <van-image v-for="(url,index) in report.urls" :key="url"
@@ -99,25 +99,27 @@
             </div>
           </template>
           <template v-else>
-            <div style="font-size: 13px;color: #666">未提供</div>
+            <div style="font-size: 13px;color: #666">{{ $t('未提供') }}</div>
           </template>
 
         </div>
         <div class="desc-wrapper">
-          <div class="label">补充说明:</div>
-          <div class="desc">{{report.content || '未填写'}}</div>
+          <div class="label">{{ $t('补充说明:') }}</div>
+          <div class="desc">{{report.content || $t('未填写')}}</div>
         </div>
       </div>
       <div class="operate-wrapper">
-        <div class="label">操作</div>
+        <div class="label">{{ $t('操作') }}</div>
         <div class="operate">
-          <van-button type="default" v-for="item in operateList" :key="item.id" @click="handleReport(item)">{{item.name}}</van-button>
+          <van-button type="default" v-for="item in operateList" :key="item.id" @click="handleReport(item)">{{ $t(item.name) }}</van-button>
         </div>
       </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import Vue from 'vue';
   import { ImagePreview } from 'vant';
   Vue.use(ImagePreview);
@@ -204,7 +206,7 @@
         },
         handleReport(cmd){
           $API.report.handleReport({rid:this.report.id,status:cmd.id},rsp=>{
-            this.$toast('操作成功')
+            this.$toast(t('操作成功'))
             setTimeout(()=>{
               this.$router.back()
               eventHub.$emit('report-handled',{status:cmd.id})

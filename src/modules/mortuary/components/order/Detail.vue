@@ -2,54 +2,54 @@
   <div class="order_detail">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <van-icon name="arrow-left" /><span>返回</span>
+        <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
       </div>
     </div>
     <div class="detail-wrapper" v-if="order">
       <div class="card">
         <div class="status-header" :class="[order && order.status]">
             <div class="status-left">
-                <span v-if="order.status == 'CREATED'">订单未支付</span>
-                <span v-else-if="order.status == 'PAID'">订单已支付</span>
-                <span v-else-if="order.status == 'DELIVERED'">服务已完成</span>
-                <span v-else-if="order.status == 'CANCELED'">订单已取消</span>
+                <span v-if="order.status == 'CREATED'">{{ $t('订单未支付') }}</span>
+                <span v-else-if="order.status == 'PAID'">{{ $t('订单已支付') }}</span>
+                <span v-else-if="order.status == 'DELIVERED'">{{ $t('服务已完成') }}</span>
+                <span v-else-if="order.status == 'CANCELED'">{{ $t('订单已取消') }}</span>
             </div>
-            <div class="status-right">感谢信任</div>
+            <div class="status-right">{{ $t('感谢信任') }}</div>
         </div>
         <div class="service-body">
             <div class="deceased-info">
               <div>
-                  <span class="deceased-label">逝者</span>
+                  <span class="deceased-label">{{ $t('逝者') }}</span>
                   <span class="deceased-name">{{order.spaceUserName}}</span>
               </div>
             </div>
 
             <div class="location-row">
                 <span style="margin-right: 6px;">📍</span>
-                送至：{{order.spaceName}}
+                {{ $t('送至：') }}{{order.spaceName}}
             </div>
 
             <!-- 挽联：用引号和特殊字体强调 -->
             <div class="couplet-box">
                 {{order.summary}}<br>
-                <span style="font-size:12px; color:#999; margin-top:4px; display:block;">(左联 / 右联)</span>
+                <span style="font-size:12px; color:#999; margin-top:4px; display:block;">{{ $t('(左联 / 右联)') }}</span>
             </div>
         </div>
       </div>
 
       <div class="card"  v-if="order.status == 'DELIVERED'">
         <div class="delivery-header">
-            <span class="delivery-title">交付现场反馈</span>
-            <span class="delivery-staff">专员: {{order.deliverUser && order.deliverUser.name || '匿名'}}</span>
+            <span class="delivery-title">{{ $t('交付现场反馈') }}</span>
+            <span class="delivery-staff">{{ $t('专员:') }} {{order.deliverUser && order.deliverUser.name || $t('匿名')}}</span>
         </div>
         <div class="delivery-content">
             <div class="delivery-text">
-                {{order.deliverSummary || '暂无交付说明'}}
+                {{order.deliverSummary || $t('暂无交付说明')}}
             </div>
 
             <!-- 图片网格：这里放置了4张图，如果是2张会自动填充第一行 -->
             <div class="image-grid">
-                <img v-for="img in order.deliverImages" @click="goViewImg(img)" :src="filterImg(img)" class="delivery-img" alt="现场图片">
+                <img v-for="img in order.deliverImages" @click="goViewImg(img)" :src="filterImg(img)" class="delivery-img" :alt="$t('现场图片')">
             </div>
         </div>
       </div>
@@ -71,16 +71,16 @@
 
         <div class="meta-section">
             <div class="meta-row">
-                <span>商品总额</span>
+                <span>{{ $t('商品总额') }}</span>
                 <span style="color:#333; font-weight:bold;">¥ {{filterTotal | filterMoney}}</span>
             </div>
             <div style="height:6px;"></div>
             <div class="meta-row">
-                <span>订单编号</span>
-                <span>{{order.id}} <span class="copy-link" @click.stop="goCopy">复制</span></span>
+                <span>{{ $t('订单编号') }}</span>
+                <span>{{order.id}} <span class="copy-link" @click.stop="goCopy">{{ $t('复制') }}</span></span>
             </div>
             <div class="meta-row">
-                <span>下单时间</span>
+                <span>{{ $t('下单时间') }}</span>
                 <span>{{order.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</span>
             </div>
         </div>
@@ -90,15 +90,17 @@
 
     </div>
     <div class="detail-opt btn" v-if=" order && (order.status == 'CREATED' && user && order.creatorId == user.id || showFinishBtn)">
-      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" plain @click.stop="goCancel(order)">取消订单</van-button>
-      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" plain @click.stop="goEdit(order)">修改订单</van-button>
-      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" :plain="showFinishBtn" :loading="paying" @click.stop="goPay(order)">支付订单</van-button>
-      <van-button v-if="showFinishBtn" type="primary" size="small" @click.stop="goFinishOrder(order)">完成订单</van-button>
+      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" plain @click.stop="goCancel(order)">{{ $t('取消订单') }}</van-button>
+      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" plain @click.stop="goEdit(order)">{{ $t('修改订单') }}</van-button>
+      <van-button v-if="order.status == 'CREATED' && user && order.creatorId == user.id" type="primary" size="small" :plain="showFinishBtn" :loading="paying" @click.stop="goPay(order)">{{ $t('支付订单') }}</van-button>
+      <van-button v-if="showFinishBtn" type="primary" size="small" @click.stop="goFinishOrder(order)">{{ $t('完成订单') }}</van-button>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid,accAdd,accMul} from '@/config/utils'
   import OrderItem from './OrderItem'
@@ -187,33 +189,33 @@
         if (this.paying) return
         this.paying = true
         let orderId = item.id;
-        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
+        this.$toast.loading({ message: t('正在准备支付…'), forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
           this.$toast.clear()
           this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
-              this.$toast("支付成功")
+              this.$toast(t('支付成功'))
               this.getDetail();
             }
           }).catch(error=>{
-            this.$toast(error.errMsg)
+            this.$toast(t(error.errMsg))
           })
         },error=>{
           this.paying = false
-          this.$toast("获取订单失败，请稍后重试")
+          this.$toast(t('获取订单失败，请稍后重试'))
           this.getDetail();
         })
       },
       goDel(item){
         this.$dialog.confirm({
-          title: '提示',
-          message: '确定要删除吗？',
+          title: t('提示'),
+          message: t('确定要删除吗？'),
         })
         .then(() => {
           $API.mortuary.deleteOrder({sid:item.id}, rsp => {
             this.$toast({
-              message:'删除成功',
+              message:t('删除成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -221,7 +223,7 @@
               }
             })
           }, error => {
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         })
         .catch(() => {
@@ -236,13 +238,13 @@
       },
       goCancel(item){
         this.$dialog.confirm({
-          title: '提示',
-          message: '确定要取消该订单吗？',
+          title: t('提示'),
+          message: t('确定要取消该订单吗？'),
         })
         .then(() => {
           $API.mortuary.cancelOrder({sid:item.id}, rsp => {
             this.$toast({
-              message:'取消成功',
+              message:t('取消成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -250,7 +252,7 @@
               }
             })
           }, error => {
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         })
         .catch(() => {
@@ -266,7 +268,7 @@
         document.execCommand('copy');
         document.body.removeChild(textarea);
         this.$toast({
-          message:'复制成功',
+          message:t('复制成功'),
           type:'success',
           onClose:()=>{
           }

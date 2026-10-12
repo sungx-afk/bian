@@ -4,12 +4,14 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>zh_CN</string>
-	<!-- 声明支持简体中文：否则 WKWebView 的 input[type=file] 原生菜单
-	     （照片图库 / 拍照 / 选取文件）会因 App 只支持 en 而显示英文 -->
+	<!-- 原生系统菜单与权限说明支持五种语言，跟随 iOS 的 App 语言设置。 -->
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>zh-Hans</string>
+		<string>zh-Hant</string>
+		<string>ja</string>
 		<string>en</string>
+		<string>ko</string>
 	</array>
 	<key>CFBundleDisplayName</key>
         <string>彼岸思念</string>

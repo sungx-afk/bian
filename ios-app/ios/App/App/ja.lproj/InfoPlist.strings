@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "彼岸メモリアル";
+"NSCameraUsageDescription" = "故人の写真、追悼館の写真、プロフィール画像を撮影・アップロードするためにカメラを使用します。";
+"NSPhotoLibraryUsageDescription" = "故人の写真、追悼館の写真、プロフィール画像を選ぶために写真ライブラリを使用します。";
+"NSPhotoLibraryAddUsageDescription" = "共有用ポスターや追悼館の画像を写真ライブラリに保存します。";

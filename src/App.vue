@@ -69,6 +69,18 @@
     list-style-type: none;
   }
 
+  html[data-locale='en'], html[data-locale='ja'], html[data-locale='ko'] {
+    .van-button:not(.van-button--round) {
+      min-height: 44px;
+      height: auto;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      line-height: 1.4;
+      white-space: normal;
+    }
+    .van-field__label { overflow-wrap: anywhere; }
+  }
+
   /**公共样式**/
 
   *{

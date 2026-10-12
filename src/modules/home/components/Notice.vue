@@ -1,6 +1,6 @@
 <template>
   <div class="notice-container">
-    <div class="tip">长按二维码直接识别关注公众号</div>
+    <div class="tip">{{ $t('长按二维码直接识别关注公众号') }}</div>
     <img :src="url"/>
   </div>
 </template>

@@ -2,24 +2,24 @@
   <div class="list-wrapper">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <van-icon name="arrow-left" /><span>返回</span>
+        <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
       </div>
     </div>
     <div class="info">
       <div class="info-container">
         <div class="all_free">
-          <span>全部免费：</span><van-switch  v-model="virtual_goods_free" @change="goSaveGoodsFree" :active-value="1" :inactive-value="0" size="20"/>
+          <span>{{ $t('全部免费：') }}</span><van-switch  v-model="virtual_goods_free" @change="goSaveGoodsFree" :active-value="1" :inactive-value="0" size="20"/>
         </div>
         <div class="gift-item" v-for="item in list">
           <div class="name">{{item.name}}</div>
           <div class="content">
             <div class="price">
-              <span class="label">单价：</span>
+              <span class="label">{{ $t('单价：') }}</span>
               <span v-if="virtual_goods_free">0</span>
               <input v-else type="number" @change="goChangeGift(item)" v-model="item.price"/>
             </div>
             <div class="open">
-              <span class="label">开启：</span><van-switch @change="goChangeGift(item)" v-model="item.show" size="20"/>
+              <span class="label">{{ $t('开启：') }}</span><van-switch @change="goChangeGift(item)" v-model="item.show" size="20"/>
             </div>
           </div>
         </div>

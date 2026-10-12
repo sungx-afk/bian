@@ -1,20 +1,20 @@
 <template>
   <div class="epitaph-container">
-    <page-header title="墓志铭"></page-header>
+    <page-header :title="$t('墓志铭')"></page-header>
     <div class="epitaph-area">
       <van-field
         ref="input"
-        label="墓志铭:"
+        :label="$t('墓志铭:')"
         v-model="epitaph"
         type="textarea"
-        placeholder="请输入墓志铭"
+        :placeholder="$t('请输入墓志铭')"
         maxlength="120"
         rows="2"
         :autosize="{ maxHeight: 150, minHeight: 50 }">
       </van-field>
 
       <van-switch-cell
-          title="显示墓志铭"
+          :title="$t('显示墓志铭')"
           active-color="#825621"
           v-model="showEpitaph"
           :active-value="1" 
@@ -22,13 +22,15 @@
         </van-switch-cell>
     </div>
     <div class="bottom-button">
-      <van-button @click.stop="cancel">取消</van-button>
-      <van-button class="confirm" type="default" @click.stop="confirm">确定</van-button>
+      <van-button @click.stop="cancel">{{ $t('取消') }}</van-button>
+      <van-button class="confirm" type="default" @click.stop="confirm">{{ $t('确定') }}</van-button>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {mapGetters} from 'vuex'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -71,7 +73,7 @@
         },
         confirm(){
           if (!this.epitaph || !this.epitaph.trim()){
-            this.$toast("请输入墓志铭内容")
+            this.$toast(t('请输入墓志铭内容'))
             return
           }
           $API.space.updateSpace({
@@ -83,7 +85,7 @@
           },rsp=>{
             eventHub.$emit(constant.EVENT_UPDATE_EPITAPH_SUCCESS,{epitaph:this.epitaph,showEpitaph:this.showEpitaph})
             this.$toast({
-              message:'修改成功',
+              message:t('修改成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -92,7 +94,7 @@
               }
             })
           },error=>{
-            this.$toast("修改失败，请稍后重试")
+            this.$toast(t('修改失败，请稍后重试'))
           })
         }
       },

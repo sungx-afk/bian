@@ -3,20 +3,20 @@
     <div class="sub-item header">
       <div class="create_date">{{item.createDate | timesToDate('yyyy-MM-dd HH:mm')}}</div>
       <div class="status" :class="[item.status]">
-        <template v-if="item.status == 'CREATED'">待支付</template>
-        <template v-else-if="item.status == 'PAID'">已支付</template>
-        <template v-else-if="item.status == 'DELIVERED'">已完成</template>
-        <template v-else-if="item.status == 'CANCELED'">已取消</template>
+        <template v-if="item.status == 'CREATED'">{{ $t('待支付') }}</template>
+        <template v-else-if="item.status == 'PAID'">{{ $t('已支付') }}</template>
+        <template v-else-if="item.status == 'DELIVERED'">{{ $t('已完成') }}</template>
+        <template v-else-if="item.status == 'CANCELED'">{{ $t('已取消') }}</template>
       </div>
     </div>
     <div class="sub-item order_code">
-      <span>订单号：{{item.id}}</span>
-      <span class="copy-btn" @click.stop="goCopy(item)">复制</span>
+      <span>{{ $t('订单号：') }}{{item.id}}</span>
+      <span class="copy-btn" @click.stop="goCopy(item)">{{ $t('复制') }}</span>
     </div>
-    <div class="sub-item"><span class="label">下单：</span>{{item.senderName}}</div>
-    <div class="sub-item"><span class="label">挽联：</span>{{item.summary}}</div>
-    <div class="sub-item"><span class="label">送至：</span>{{item.spaceName}}</div>
-    <div class="sub-item"><span class="label">逝者：</span>{{item.spaceUserName}}</div>
+    <div class="sub-item"><span class="label">{{ $t('下单：') }}</span>{{item.senderName}}</div>
+    <div class="sub-item"><span class="label">{{ $t('挽联：') }}</span>{{item.summary}}</div>
+    <div class="sub-item"><span class="label">{{ $t('送至：') }}</span>{{item.spaceName}}</div>
+    <div class="sub-item"><span class="label">{{ $t('逝者：') }}</span>{{item.spaceUserName}}</div>
     <div class="products-wrapper" v-if="item.products.length > 0">
       <template v-for="product in item.products">
         <div class="sub-item product">
@@ -35,14 +35,14 @@
         </div>
       </template>
     </div>
-    <div class="sub-item total" >共{{filterTotalNumber}}件商品，总计：¥<span class="money">{{filterTotal | filterMoney}}</span></div>
+    <div class="sub-item total" >{{ $t('商品数量：{count}，总计：', { count: filterTotalNumber }) }}¥<span class="money">{{filterTotal | filterMoney}}</span></div>
 
     <div class="sub-item btn" v-if="item.status == 'CREATED' && user && item.creatorId == user.id || showFinishBtn">
       <!-- <van-button v-if="item.status == 'CREATED' && item.creatorId == user.id" type="primary" size="small" @click="goDel(item)">删除订单</van-button> -->
-      <van-button v-if="item.status == 'CREATED' && user && item.creatorId == user.id" type="primary" size="small" plain @click.stop="goCancel(item)">取消订单</van-button>
-      <van-button v-if="item.status == 'CREATED' && user && item.creatorId == user.id" type="primary" size="small" plain @click.stop="goEdit(item)">修改订单</van-button>
-      <van-button v-if="item.status == 'CREATED' && user && item.creatorId == user.id" type="primary" size="small" :plain="showFinishBtn" :loading="paying" @click.stop="goPay(item)">支付订单</van-button>
-      <van-button v-if="showFinishBtn" type="primary" size="small" @click.stop="goFinishOrder(item)">完成订单</van-button>
+      <van-button v-if="item.status == 'CREATED' && user && item.creatorId == user.id" type="primary" size="small" plain @click.stop="goCancel(item)">{{ $t('取消订单') }}</van-button>
+      <van-button v-if="item.status == 'CREATED' && user && item.creatorId == user.id" type="primary" size="small" plain @click.stop="goEdit(item)">{{ $t('修改订单') }}</van-button>
+      <van-button v-if="item.status == 'CREATED' && user && item.creatorId == user.id" type="primary" size="small" :plain="showFinishBtn" :loading="paying" @click.stop="goPay(item)">{{ $t('支付订单') }}</van-button>
+      <van-button v-if="showFinishBtn" type="primary" size="small" @click.stop="goFinishOrder(item)">{{ $t('完成订单') }}</van-button>
     </div>
 <!--    <div class="deliver" v-if="item.status == 'DELIVERED'">
       <div class="sub-item">交付人：{{item.deliverUser && item.deliverUser.name}}</div>
@@ -59,6 +59,8 @@
 
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid,accAdd,accMul} from '@/config/utils'
   import FinishOrder from '@/modules/widget/finish-order'
@@ -110,33 +112,33 @@
         if (this.paying) return
         this.paying = true
         let orderId = item.id;
-        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
+        this.$toast.loading({ message: t('正在准备支付…'), forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
           this.$toast.clear()
           this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
-              this.$toast("支付成功")
+              this.$toast(t('支付成功'))
               this.getList();
             }
           }).catch(error=>{
-            this.$toast(error.errMsg)
+            this.$toast(t(error.errMsg))
           })
         },error=>{
           this.paying = false
-          this.$toast("获取订单失败，请稍后重试")
+          this.$toast(t('获取订单失败，请稍后重试'))
           this.getList();
         })
       },
       goDel(item){
         this.$dialog.confirm({
-          title: '提示',
-          message: '确定要删除吗？',
+          title: t('提示'),
+          message: t('确定要删除吗？'),
         })
         .then(() => {
           $API.mortuary.deleteOrder({sid:item.id}, rsp => {
             this.$toast({
-              message:'删除成功',
+              message:t('删除成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -144,7 +146,7 @@
               }
             })
           }, error => {
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         })
         .catch(() => {
@@ -167,13 +169,13 @@
       },
       goCancel(item){
         this.$dialog.confirm({
-          title: '提示',
-          message: '确定要取消该订单吗？',
+          title: t('提示'),
+          message: t('确定要取消该订单吗？'),
         })
         .then(() => {
           $API.mortuary.cancelOrder({sid:item.id}, rsp => {
             this.$toast({
-              message:'取消成功',
+              message:t('取消成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -181,7 +183,7 @@
               }
             })
           }, error => {
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         })
         .catch(() => {
@@ -221,7 +223,7 @@
         document.execCommand('copy');
         document.body.removeChild(textarea);
         this.$toast({
-          message:'复制成功',
+          message:t('复制成功'),
           type:'success',
           onClose:()=>{
           }

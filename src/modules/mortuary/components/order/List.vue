@@ -2,7 +2,7 @@
   <div class="list-wrapper">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <van-icon name="arrow-left" /><span>返回</span>
+        <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
       </div>
       <van-dropdown-menu>
         <van-dropdown-item v-model="status" @change="getList" :options="statusList" />
@@ -13,7 +13,7 @@
         <order-item v-for="item in list" :key="item.id" :item="item" source="list" @refresh="getList"></order-item>
       </template>
       <div v-else>
-        <van-empty description="暂无订单数据" />
+        <van-empty :description="$t('暂无订单数据')" />
       </div>
     </div>
 
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   import FinishOrder from '@/modules/widget/finish-order'
@@ -105,33 +107,33 @@
         if (this.paying) return
         this.paying = true
         let orderId = item.id;
-        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
+        this.$toast.loading({ message: t('正在准备支付…'), forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
           this.$toast.clear()
           this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
-              this.$toast("支付成功")
+              this.$toast(t('支付成功'))
               this.getList();
             }
           }).catch(error=>{
-            this.$toast(error.errMsg)
+            this.$toast(t(error.errMsg))
           })
         },error=>{
           this.paying = false
-          this.$toast("获取订单失败，请稍后重试")
+          this.$toast(t('获取订单失败，请稍后重试'))
           this.getList();
         })
       },
       goDel(item){
         this.$dialog.confirm({
-          title: '提示',
-          message: '确定要删除吗？',
+          title: t('提示'),
+          message: t('确定要删除吗？'),
         })
         .then(() => {
           $API.mortuary.deleteOrder({sid:item.id}, rsp => {
             this.$toast({
-              message:'删除成功',
+              message:t('删除成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -139,7 +141,7 @@
               }
             })
           }, error => {
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         })
         .catch(() => {
@@ -162,13 +164,13 @@
       },
       goCancel(item){
         this.$dialog.confirm({
-          title: '提示',
-          message: '确定要取消该订单吗？',
+          title: t('提示'),
+          message: t('确定要取消该订单吗？'),
         })
         .then(() => {
           $API.mortuary.cancelOrder({sid:item.id}, rsp => {
             this.$toast({
-              message:'取消成功',
+              message:t('取消成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -176,7 +178,7 @@
               }
             })
           }, error => {
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         })
         .catch(() => {

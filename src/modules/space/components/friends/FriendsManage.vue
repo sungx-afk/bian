@@ -2,11 +2,11 @@
   <div class="friends-container" v-if="space && space.config.friends">
     <div class="header">
       <span class="count-info">
-        <template v-if="space.config.friends.length > 0">亲属成员 {{space.config.friends.length}} 个</template>
-        <template v-else>还未添加亲属成员</template>
+        <template v-if="space.config.friends.length > 0">{{ $t('亲属成员') }} {{space.config.friends.length}} {{ $t('个') }}</template>
+        <template v-else>{{ $t('还未添加亲属成员') }}</template>
       </span>
       <div class='invite' @click.stop="goInviteFriends">
-        马上去邀请 >
+        {{ $t('马上去邀请 >') }}
       </div>
     </div>
     <template v-if="space.config.friends.length === 0">
@@ -34,12 +34,14 @@
       </div>
     </template>
     <van-popup v-model="isShowMoreMenu" close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters} from 'vuex';
   import NoData from '@/modules/widget/space/NoData'
   import UserAvatar from '@/modules/widget/UserAvatar'
@@ -109,7 +111,7 @@
         deleteFriend(friend){
           let that = this
           this.$dialog.confirm({
-            message: '确认将该人员移出亲属空间吗？'
+            message: t('确认将该人员移出亲属空间吗？')
           }).then(() => {
             $API.space.deleteFriend({
                 sid:that.spaceId,
@@ -121,7 +123,7 @@
                   eventHub.$emit(constant.EVENT_DELETE_FRIENDS_SUCCESS,friend.id)
                 }
             },error=>{
-              this.$toast('删除失败，请稍后重试')
+              this.$toast(t('删除失败，请稍后重试'))
             })
           }).catch(() => {
             // on cancel
@@ -130,7 +132,7 @@
         moveToBlacklist(item){
           let that = this
           this.$dialog.confirm({
-            message: '确认将该人员移出亲属空间并加入到黑名单吗？'
+            message: t('确认将该人员移出亲属空间并加入到黑名单吗？')
           }).then(() => {
             let p1 = new Promise((resolve, reject) => {
               $API.space.deleteFriend({

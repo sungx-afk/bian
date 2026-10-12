@@ -7,7 +7,7 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        :finished-text="finishedText"
+        :finished-text="$t(finishedText)"
         @load="onLoadMoreData">
         <van-cell
           v-for="item in list"
@@ -16,7 +16,7 @@
             <div class="left-content">
               <user-avatar :url="item.avatarUrl" :name="item.name" :uid="item.id" :size="30"></user-avatar>
               <div class="title">{{item.name}}</div>
-              <van-tag v-if="item.black" class="black-tag">黑名单用户</van-tag>
+              <van-tag v-if="item.black" class="black-tag">{{ $t('黑名单用户') }}</van-tag>
             </div>
             <div class="right-content" v-if="showMoreMenu(item)" @click.stop="goMoreMenu(item)" >
               <i class="more iconfont icon-gengduo"></i>
@@ -26,12 +26,14 @@
       </van-list>
     </template>
     <van-popup v-model="isShowMoreMenu" close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   const LIMIT = 30
   import {mapGetters} from 'vuex';
 
@@ -122,7 +124,7 @@
           },error=>{
             that.loading = false
             that.finished = true
-            that.$toast("获取列表失败，请稍后重试")
+            that.$toast(t('获取列表失败，请稍后重试'))
           })
         },
         onLoadMoreData(){
@@ -161,7 +163,7 @@
         moveToBlackList(user){
           let that = this
           this.$dialog.confirm({
-            message: '确认将该到访人员加入黑名单吗？'
+            message: t('确认将该到访人员加入黑名单吗？')
           }).then(() => {
             let blackListIds = that.space.config.blackListIds
             blackListIds.push(user.id)
@@ -184,7 +186,7 @@
         moveOutBlackList(user){
           let that = this
           this.$dialog.confirm({
-            message: '确认将该到访人员移出黑名单吗？'
+            message: t('确认将该到访人员移出黑名单吗？')
           }).then(() => {
             let blackListIds = that.space.config.blackListIds
             let index = blackListIds.findIndex(id=>id === user.id)

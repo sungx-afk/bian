@@ -46,6 +46,9 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
+        // This shared UMD file is already ES5. Babel's injected typeof helper
+        // would make webpack 3 classify it as ESM and lose its CommonJS exports.
+        exclude: [resolve('src/i18n/locale.js')],
         // Capacitor 插件（@capacitor/*、@capacitor-community/*）发布的是 ES6+ 代码，
         // webpack3 自带的 UglifyJs 压不动 ES6，必须让 babel 先转译成 ES5
         include: [

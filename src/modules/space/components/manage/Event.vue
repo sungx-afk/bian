@@ -7,18 +7,18 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        :finished-text="finishedText"
+        :finished-text="$t(finishedText)"
         @load="onLoadMoreData">
         <van-cell
           v-for="item in list"
           :key="item.id">
           <div class="event">
-            <div class="event-top" v-if="item.hasHeader">{{item.date}}</div>
+            <div class="event-top" v-if="item.hasHeader">{{ item.date | memorialDate }}</div>
             <div class="event-bottom">
               <user-avatar class="avatar" :url="(item.creator && item.creator.avatarUrl) || ''" :name="(item.creator && item.creator.name) || ''" :uid="item.creator && item.creator.id" :size="40"></user-avatar>
               <div class="middle-content">
                 <div class="name">{{item.creator && item.creator.name}}</div>
-                <div class="content">{{item.time}}  {{item.content}}</div>
+                <div class="content">{{item.time}}  {{ item.content | systemText }}</div>
               </div>
             </div>
           </div>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   const LIMIT = 20
   import {timesToDate} from '@/config/utils'
 
@@ -127,7 +129,7 @@
           },error=>{
             that.loading = false
             that.finished = true
-            that.$toast("获取列表失败，请稍后重试")
+            that.$toast(t('获取列表失败，请稍后重试'))
           })
         },
         convertDateTime(timestamp){

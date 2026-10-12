@@ -2,40 +2,41 @@
   <transition name="guide-fade">
     <div class="guide-mask">
       <div class="guide-content">
+        <language-selector light />
         <!-- 连点 5 次 logo：App 内临时登录入口（iOS 自签包没有 Apple 登录/微信，用它进应用测试） -->
         <img class="guide-logo" :src="logo" @click.stop="onLogoClick" />
-        <div class="guide-title">{{ title }}</div>
-        <div class="guide-slogan">{{ slogan }}</div>
-        <div class="guide-desc" v-html="desc"></div>
+        <div class="guide-title">{{ $t(title) }}</div>
+        <div class="guide-slogan">{{ $t(slogan) }}</div>
+        <div class="guide-desc" v-html="$t(desc)"></div>
 
         <!-- 关注公众号引导区 -->
         <div class="guide-follow" v-if="showFollow && qrcodeImg">
-          <div class="follow-label">关注公众号，及时收到追悼通知</div>
+          <div class="follow-label">{{ $t('关注公众号，及时收到追悼通知') }}</div>
           <van-button class="follow-btn" type="default" @click.stop="showQrcode = true">
-            立即关注
+            {{ $t('立即关注') }}
           </van-button>
         </div>
 
         <!-- Apple 登录：App 内（iOS）显示，审核 4.8 要求必须提供 -->
         <div class="guide-apple" v-if="showAppleLogin" @click.stop="appleLogin">
           <span class="apple-mark"></span>
-          <span>通过 Apple 登录</span>
+          <span>{{ $t('通过 Apple 登录') }}</span>
         </div>
 
         <van-button class="guide-enter"
                     type="default"
                     @click.stop="enter">
-          {{ buttonText }}
+          {{ $t(buttonText) }}
         </van-button>
-        <div class="guide-tip" v-if="tip">{{ tip }}</div>
+        <div class="guide-tip" v-if="tip">{{ $t(tip) }}</div>
       </div>
 
       <!-- 公众号二维码弹层 -->
       <div class="qrcode-mask" v-if="showQrcode" @click="showQrcode = false">
         <div class="qrcode-box" @click.stop>
-          <div class="qrcode-title">长按识别，关注公众号</div>
+          <div class="qrcode-title">{{ $t('长按识别，关注公众号') }}</div>
           <img class="qrcode-img" :src="qrcodeImg" />
-          <div class="qrcode-close" @click="showQrcode = false">关闭</div>
+          <div class="qrcode-close" @click="showQrcode = false">{{ $t('关闭') }}</div>
         </div>
       </div>
     </div>
@@ -43,6 +44,7 @@
 </template>
 
 <script>
+  import LanguageSelector from '@/modules/widget/LanguageSelector'
   /**
    * Guide 引导页组件
    * ------------------------------------------------------------
@@ -56,6 +58,7 @@
    * ------------------------------------------------------------
    */
   export default {
+      components: { LanguageSelector },
     name: 'Guide',
     props: {
       logo: {

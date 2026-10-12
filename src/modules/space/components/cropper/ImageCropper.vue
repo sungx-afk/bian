@@ -1,12 +1,12 @@
 <template>
   <div class="image-cropper-container">
     <div class="operate">
-      <van-checkbox v-if="avatar_type != 'normal'" class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#000000">黑白照</van-checkbox>
-      <span @click.stop="cancel" class="btn">取消</span>
+      <van-checkbox v-if="avatar_type != 'normal'" class="avatar-gray" v-model="avatarGrayChecked" name="avatar_gray" shape="square" checked-color="#000000">{{ $t('黑白照') }}</van-checkbox>
+      <span @click.stop="cancel" class="btn">{{ $t('取消') }}</span>
       <van-uploader :after-read="select">
-        <span>重新选择</span>
+        <span>{{ $t('重新选择') }}</span>
       </van-uploader>
-      <span @click.stop="confirm" class="btn">确定</span>
+      <span @click.stop="confirm" class="btn">{{ $t('确定') }}</span>
     </div>
     <template v-if="info">
       <vue-cropper :class="{'gray':avatarGrayChecked}"

@@ -11,7 +11,8 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "build": "node build/build.js",
-    "ios:sync": "sh ./sync-ios.sh"
+    "ios:sync": "sh ./sync-ios.sh",
+    "check:i18n": "node scripts/check-i18n.js"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^6.0.0",

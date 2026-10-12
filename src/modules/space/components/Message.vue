@@ -7,26 +7,26 @@
       :style="{ height: '300px' }">
       <div class="message-wrapper">
         <div class="product" v-if="product">
-          <span>{{product.name}} （{{product.duration}}）</span><span v-if="showPoint">： {{product.point}} 云币</span>
+          <span>{{ $t(product.name) }} （{{ $t(product.duration) }}）</span><span v-if="showPoint">： {{product.point}} {{ $t('云币') }}</span>
         </div>
         <div class="message">
           <van-field
             v-model="message"
             type="textarea"
             border
-            :placeholder="placeholder"
+            :placeholder="$t(placeholder)"
             :autosize="{ maxHeight: 140, minHeight: 140 }">
           </van-field>
         </div>
         <div class="footer">
           <div class="type">
             <van-radio-group v-model="messageType" class="type-radio-group" direction="horizontal">
-              <van-radio v-for="item in messageTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+              <van-radio v-for="item in messageTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{ $t(item.name) }}</van-radio>
             </van-radio-group>
           </div>
           <div class="btn">
-            <van-button @click.stop="cancel" size="small">取消</van-button>
-            <van-button @click.stop="confirm" size="small">确定</van-button>
+            <van-button @click.stop="cancel" size="small">{{ $t('取消') }}</van-button>
+            <van-button @click.stop="confirm" size="small">{{ $t('确定') }}</van-button>
           </div>
         </div>
       </div>

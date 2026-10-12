@@ -34,7 +34,7 @@
         <div class='comment-wrapper' v-for="comment in commentList" :key='comment.id' v-if="comment.deleted === 0">
           <div class='comment' @click.stop="commentPressed(comment)">
             <span class='comment-name'>{{comment.creator && comment.creator.name}}
-              <span v-if="comment.reply" style="color: #808080;">回复</span>
+              <span v-if="comment.reply" style="color: #808080;">{{ $t('回复') }}</span>
               <span class="creator-name" v-if="comment.reply">{{comment.reply.creator && comment.reply.creator.name}}</span>
             </span>:
             <span class='comment-content'>{{comment.content}}</span>
@@ -45,21 +45,23 @@
     <div class='send-comment-area' :class="{'safe-bottom':isIPhoneX}" v-if="postComment">
       <div class='comment-input-container'>
         <van-field class='comment-input' ref="comment" @blur="commentBlur" v-model="commentContent"
-                   :placeholder="commentPlaceholder" maxlength="1000"></van-field>
+                   :placeholder="$t(commentPlaceholder)" maxlength="1000"></van-field>
       </div>
       <div class='send-btn-area'>
-        <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>发送</van-button>
+        <van-button class='send-btn' size="small" type="default" @click.stop='sendCommentDelay'>{{ $t('发送') }}</van-button>
       </div>
     </div>
     <van-popup
       v-model="isShowMoreMenu"
       close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
   </div>
 </template>
 
 <script>
+import { t } from '@/i18n'
+
 import {mapGetters, mapActions} from 'vuex';
 import constant from '@/config/constant'
 
@@ -182,7 +184,7 @@ export default {
     },
     deleteStory(){
       this.$dialog.confirm({
-        message: `确认删除该文章吗?`
+        message: t('确认删除该文章吗?')
       }).then(() => {
         $API.space.deleteSpaceStory({sid:this.space.id,cid:this.uuid},rsp=>{
           eventHub.$emit(constant.EVENT_SPACE_STORY_DELETED, this.uuid)

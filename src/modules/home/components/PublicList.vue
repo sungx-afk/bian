@@ -3,7 +3,7 @@
     <van-list
       v-model="loading"
       :finished="finished"
-      finished-text="没有更多数据了"
+      :finished-text="$t('没有更多数据了')"
       @load="onLoadMoreData">
       <item v-for="item in list" :key="item.id" :item="item"
             v-on:item-press="goSpaceDetail">

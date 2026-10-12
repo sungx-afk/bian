@@ -2,7 +2,7 @@
   <div class="report-container">
     <div class="category-wrapper">
       <div class="title">
-        请选择举报原因
+        {{ $t('请选择举报原因') }}
       </div>
       <div class="list-wrapper">
         <van-list
@@ -12,7 +12,7 @@
             v-for="item in reasonList"
             :key="item.id">
             <div class="category">
-              <div :class="{checked:item.checked}">{{item.name}}</div>
+              <div :class="{checked:item.checked}">{{ $t(item.name) }}</div>
               <van-checkbox v-model="item.checked" :name="item.id" shape="square" checked-color="#825621" @change="checkboxChanged($event,item)"></van-checkbox>
             </div>
           </van-cell>
@@ -21,7 +21,7 @@
     </div>
     <div class="report-submit-wrapper">
       <div class="title">
-        请上传举报凭证（可选）
+        {{ $t('请上传举报凭证（可选）') }}
       </div>
       <div class="report-photo">
         <van-uploader
@@ -30,7 +30,7 @@
           :after-read="afterSelectPhoto"
           multiple>
         </van-uploader>
-        <div class="photo-tip">最多可上传 3 张截图</div>
+        <div class="photo-tip">{{ $t('最多可上传 3 张截图') }}</div>
       </div>
       <div class="report-description">
         <van-field
@@ -40,17 +40,19 @@
           :border="true"
           type="textarea"
           maxlength="200"
-          placeholder="补充说明（可选）"
+          :placeholder="$t('补充说明（可选）')"
           show-word-limit/>
       </div>
       <div class="footer">
-        <van-button class="submit" size="large" @click.stop="submit" :disabled="disabledBtn">提交</van-button>
+        <van-button class="submit" size="large" @click.stop="submit" :disabled="disabledBtn">{{ $t('提交') }}</van-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+    import { t } from '@/i18n'
+
     export default {
       name: "Report",
       data(){
@@ -113,7 +115,7 @@
             duration: 0,       // 持续展示 toast
             forbidClick: true, // 禁用背景点击
             loadingType: 'spinner',
-            message: '提交中...'
+            message: t('提交中...')
           })
           if (this.selectPhotos && this.selectPhotos.length > 0){
             let files = this.selectPhotos.map(item=>{
@@ -146,7 +148,7 @@
             })
             .catch((error) => {
               this.$toast.clear()
-              this.$toast("上传出错，请稍后重试")
+              this.$toast(t('上传出错，请稍后重试'))
             });
         },
         startUpload(file, index) {
@@ -202,11 +204,11 @@
 
           $API.space.report(params,rsp=>{
             this.$toast.clear()
-            this.$toast('操作成功')
+            this.$toast(t('操作成功'))
             this.$router.back()
           },error=>{
             this.$toast.clear()
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
           })
         }
       },

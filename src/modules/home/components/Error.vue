@@ -1,9 +1,9 @@
 <template>
   <div class="error-container">
     <div class="error-icon"><i class="iconfont icon-warn"></i></div>
-    <div class="error-text">发生错误，资源不存在</div>
+    <div class="error-text">{{ $t('发生错误，资源不存在') }}</div>
 
-    <div class="home" @click="goHome">返回主页</div>
+    <div class="home" @click="goHome">{{ $t('返回主页') }}</div>
   </div>
 </template>
 

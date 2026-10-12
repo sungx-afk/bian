@@ -4,9 +4,9 @@
       <div class="members-area" v-if="space">
         <div class="members-title">
           <template v-if="space.config.friends.length > 0">
-            亲属成员 {{space.config.friends.length}} 个
+            {{ $t('亲属成员') }} {{space.config.friends.length}} {{ $t('个') }}
           </template>
-          <template v-else>还未添加亲属成员</template>
+          <template v-else>{{ $t('还未添加亲属成员') }}</template>
         </div>
         <div class="members-body">
           <user-avatar class="member-avatar" v-for="item in space.config.friends" :key="item.id" :url="item.avatarUrl" :name="item.name" :uid="item.id" :size="20"></user-avatar>

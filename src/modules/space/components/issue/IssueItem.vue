@@ -156,7 +156,7 @@
         <div class='comment-wrapper' v-for="comment in recentlyComment" :key='comment.id' v-if="comment.deleted === 0">
           <div class='comment-area' @click.stop="commentPressed(comment)">
             <span class='comment-name'>{{comment.creator && comment.creator.name}}
-              <span v-if="comment.reply" style="color: #808080;">回复</span>
+              <span v-if="comment.reply" style="color: #808080;">{{ $t('回复') }}</span>
               <span class="comment-name" v-if="comment.reply">{{comment.reply.creator && comment.reply.creator.name}}</span>
             </span>:
             <span class='comment-content'>{{comment.content}}</span>

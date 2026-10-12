@@ -1,3 +1,5 @@
+import { t } from '@/i18n'
+
 /*路由跳转*/
 export const Link = (url, query,replace) => {
   const router = {
@@ -65,7 +67,7 @@ export const setPageTitle = (title) => {
 
   setTimeout(function(){
       //利用iframe的onload事件刷新页面
-      document.title = title;
+      document.title = t(title);
       var iframe = document.createElement('iframe');
       iframe.style.visibility = 'hidden';
       iframe.style.width = '1px';

@@ -3,7 +3,7 @@
        自定义主题且有背景图时整页铺底、顶部墨色区透明；其他情况保持原「墨色顶区 + 暖纸底」样式 -->
   <div class="info-theme-container" :class="{'has-custom-theme': hasCustomThemeBg}" :style="themeBgStyle">
     <!-- 返回按钮 -->
-    <div class="back-btn" @click.stop="goBack" aria-label="返回">
+    <div class="back-btn" @click.stop="goBack" :aria-label="$t('返回')">
       <i class="chevron"></i>
     </div>
 
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="epitaph-wrapper" v-if="space.showEpitaph && space.epitaph && !configHide('epitaph')" :style="{color:theme.epitaphColor}">
-        <span class="epitaph-label">墓志铭：</span>{{space && space.epitaph}}
+        <span class="epitaph-label">{{ $t('墓志铭：') }}</span>{{space && space.epitaph}}
       </div>
       </div>
     </div>
@@ -48,19 +48,19 @@
         </div>
         <div class="summary-card-body">
           <div class="summary-row">
-            <span class="summary-label">出生地</span>
-            <span class="summary-value">{{user.birthAddress || '未填写'}}</span>
+            <span class="summary-label">{{ $t('出生地') }}</span>
+            <span class="summary-value">{{user.birthAddress || $t('未填写')}}</span>
           </div>
           <div class="summary-row" v-if="false">
-            <span class="summary-label">安葬地</span>
-            <span class="summary-value">{{user.dieAddress || '未填写'}}</span>
+            <span class="summary-label">{{ $t('安葬地') }}</span>
+            <span class="summary-value">{{user.dieAddress || $t('未填写')}}</span>
           </div>
           <div class="summary-divider"></div>
           <div class="summary-text-row">
             <div class="summary-text" v-if="user.summary && user.summary.length > 0">{{user.summary}}</div>
-            <div class="summary-empty" v-else>暂无生平介绍</div>
+            <div class="summary-empty" v-else>{{ $t('暂无生平介绍') }}</div>
             <!-- 直接编辑生平简介 -->
-            <span class="iconfont icon-bianji summary-inline-edit" v-if="isSpaceCreator" @click.stop="editSummary(user)" aria-label="编辑生平"></span>
+            <span class="iconfont icon-bianji summary-inline-edit" v-if="isSpaceCreator" @click.stop="editSummary(user)" :aria-label="$t('编辑生平')"></span>
           </div>
         </div>
       </div>
@@ -69,12 +69,12 @@
     <div class="story-list-section" v-if="!configHide('summary')">
       <!-- 生平文章：创建者可直接新增/编辑，不再走底部菜单 -->
       <div class="story-head" v-if="isSpaceCreator">
-        <span class="story-head-title">生平文章</span>
+        <span class="story-head-title">{{ $t('生平文章') }}</span>
         <!-- 生平文章可以有多篇，这里是「添加」：暂时隐藏（保留代码，去掉 v-if="false" 即可恢复） -->
-        <span class="story-head-add" v-if="false" @click.stop="goNewStory" aria-label="添加生平文章"><i></i></span>
+        <span class="story-head-add" v-if="false" @click.stop="goNewStory" :aria-label="$t('添加生平文章')"><i></i></span>
       </div>
       <template v-if="storyNoData">
-        <div class="story-empty">暂无生平文章</div>
+        <div class="story-empty">{{ $t('暂无生平文章') }}</div>
       </template>
       <template v-else>
         <div class="story-item" v-for="item in storyList" :key="item.id" @click="goStoryDetail(item)">
@@ -116,6 +116,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link} from '@/config/utils'
   import constant from '@/config/constant'
@@ -265,7 +267,7 @@
           this.updateSpaceUser({sid: this.space.id, user}).then(() => {
 
           }).catch(() => {
-            this.$toast('修改失败，请稍后重试')
+            this.$toast(t('修改失败，请稍后重试'))
           })
         },
         getStoryList(){
@@ -460,7 +462,7 @@
         },
         exitSpace(){
           this.$dialog.confirm({
-            message: `确认退出该纪念馆吗?`
+            message: t('确认退出该纪念馆吗?')
           }).then(() => {
             $API.space.exitSpace({sid:this.space.id,userId:this.user.id},rsp=>{
               eventHub.$emit(constant.EVENT_EXIT_SPACE_SUCCESS,this.space.id)

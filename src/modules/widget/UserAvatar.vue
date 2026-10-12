@@ -26,7 +26,7 @@ export default {
     },
     char(){
       const n = this.name || ''
-      return n ? n.slice(-1) : '客'
+      return n ? n.slice(-1) : this.$t('客').slice(0, 1)
     },
     color(){
       const colors = ['#E8A87C', '#83B5D1', '#A5C882', '#D6A2C8', '#F2C57C', '#8FCACA', '#C98BB9', '#7FB685']

@@ -1,20 +1,20 @@
 <template>
   <div class="space-content-container">
     <div class="space-content-body" :class="{'iphonex-height':isIPhoneX}">
-      <page-header :title="pageTitle"></page-header>
+      <page-header :title="$t(pageTitle)"></page-header>
       <template v-if="detail">
         <template v-if="0 === checkCanIn(detail)">
           <van-tabs v-model="activeTab" sticky color="#825621">
-            <van-tab title="留言" name="message">
+            <van-tab :title="$t('留言')" name="message">
               <message v-if="detail" :space="detail" type="PUBLIC"></message>
             </van-tab>
-            <van-tab v-if="showFriendsTab" title="亲属空间" name="friends">
+            <van-tab v-if="showFriendsTab" :title="$t('亲属空间')" name="friends">
               <friends v-if="detail" :space="detail" type="SPACE"></friends>
             </van-tab>
-            <van-tab title="私语" name="private">
+            <van-tab :title="$t('私语')" name="private">
               <private v-if="detail" :space="detail" type="PRIVATE"></private>
             </van-tab>
-            <van-tab title="生平" name="info" v-if="false">
+            <van-tab :title="$t('生平')" name="info" v-if="false">
               <user-summary v-if="detail"></user-summary>
             </van-tab>
           </van-tabs>
@@ -22,7 +22,7 @@
         <template v-else>
           <div class="tip-wrapper" @click="goBack">
             <i class="iconfont icon-warn"></i>
-            <div class="content">{{tipContent}}</div>
+            <div class="content">{{ $t(tipContent) }}</div>
           </div>
         </template>
       </template>

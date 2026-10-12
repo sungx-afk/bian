@@ -1,12 +1,12 @@
 <template>
   <div class="activity-list-wrapper">
-    <van-cell title="张三的祭奠仪式" clickable>
+    <van-cell :title="$t('张三的祭奠仪式')" clickable>
       <!-- 使用 right-icon 插槽来自定义右侧图标 -->
       <template #right-icon>
         <i class="iconfont icon-gengduo"></i>
       </template>
     </van-cell>
-    <van-cell title="张三的祭奠仪式" clickable>
+    <van-cell :title="$t('张三的祭奠仪式')" clickable>
       <!-- 使用 right-icon 插槽来自定义右侧图标 -->
       <template #right-icon>
         <i class="iconfont icon-gengduo"></i>

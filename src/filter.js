@@ -1,13 +1,19 @@
+import { t } from './i18n'
+import { formatMemorialDate } from './i18n/dates'
+import { formatSystemText } from './i18n/system-text'
 import {timesToDate} from './config/utils'
 
 export const filter = (Vue) => {
+  Vue.filter('memorialDate', formatMemorialDate)
+  Vue.filter('translate', t)
+  Vue.filter('systemText', formatSystemText)
 
   Vue.filter('timesToDate', (times,pattern) => {//时间戳转日期
     if(!pattern){
       pattern = 'yyyy-MM-dd HH:mm';
     }
     if(times){
-      return timesToDate(times,pattern);
+      return timesToDate(times,t(pattern));
     }else{
       return '';
     }
@@ -16,21 +22,18 @@ export const filter = (Vue) => {
   Vue.filter('timeAgo', (time) => {// 时间搓
 
     time = time / 1000
-    function pluralize(time, label) {
-      return time + label
-    }
 
     const between = Date.now() / 1000 - Number(time)
     if (between < 60) {
-      return '刚刚'
+      return t('刚刚')
     }else if (between < 3600) {
-      return pluralize(~~(between / 60), '分钟前')
+      return t('{count}分钟前', { count: ~~(between / 60) })
     } else if (between < 86400) {
-      return pluralize(~~(between / 3600), '小时前')
+      return t('{count}小时前', { count: ~~(between / 3600) })
     } else if (between < (86400 * 365)){
-      return pluralize(~~(between / 86400), '天前')
+      return t('{count}天前', { count: ~~(between / 86400) })
     } else {
-      return pluralize(~~(between / (86400 * 365)), '年前')
+      return t('{count}年前', { count: ~~(between / (86400 * 365)) })
     }
   })
 

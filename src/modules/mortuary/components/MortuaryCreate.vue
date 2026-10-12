@@ -2,12 +2,12 @@
   <div class="mortuary-create-container">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <van-icon name="arrow-left" /><span>返回</span>
+        <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
       </div>
     </div>
     <div class="info">
       <div class="info-container">
-        <van-field v-model="merchant.name"  :disabled="user && user.appId == 'wx502b2e237549374c'" label="殡仪馆名称:" placeholder="请填写殡仪馆名称" maxlength="20" input-align="right"></van-field>
+        <van-field v-model="merchant.name"  :disabled="user && user.appId == 'wx502b2e237549374c'" :label="$t('殡仪馆名称:')" :placeholder="$t('请填写殡仪馆名称')" maxlength="20" input-align="right"></van-field>
        <!-- <van-field v-model="merchant.pay_api_key" label="支付API_KEY:" placeholder="请填写支付API_KEY" maxlength="50" input-align="right"></van-field>
         <van-field v-model="merchant.pay_mch_id" label="支付商户ID:" placeholder="请填写支付商户ID" maxlength="50" input-align="right"></van-field>
         <van-field v-model="merchant.service_account_app_id" label="服务号应用ID:" placeholder="请填写服务号应用ID" maxlength="50" input-align="right"></van-field>
@@ -16,11 +16,13 @@
       </div>
     </div>
     <div class="bottom-button">
-      <van-button type="default" :disabled="user && user.appId == 'wx502b2e237549374c'" size="large" @click.tap="confirm">{{merchant.id?'修改':'创建'}}</van-button>
+      <van-button type="default" :disabled="user && user.appId == 'wx502b2e237549374c'" size="large" @click.tap="confirm">{{merchant.id?$t('修改'):$t('创建')}}</van-button>
     </div>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
 
@@ -61,7 +63,7 @@
     methods:{
       confirm(){
         if (!this.merchant.name) {
-          this.$toast('请填写殡仪馆名称');
+          this.$toast(t('请填写殡仪馆名称'));
           return;
         }
         // if (!this.merchant.pay_api_key) {
@@ -93,7 +95,7 @@
           }
           $API.mortuary.modifyMortuary(params, rsp => {
             this.$toast({
-              message:'修改成功',
+              message:t('修改成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -102,14 +104,14 @@
               }
             })
           }, error => {
-            this.$toast('修改失败，请稍后重试')
+            this.$toast(t('修改失败，请稍后重试'))
           })
         }else{
           let params = JSON.parse(JSON.stringify(this.merchant))
           delete params.id;
           $API.mortuary.createMortuary(params, rsp => {
             this.$toast({
-              message:'创建成功',
+              message:t('创建成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -117,7 +119,7 @@
               }
             })
           }, error => {
-            this.$toast('创建失败，请稍后重试')
+            this.$toast(t('创建失败，请稍后重试'))
           })
         }
 

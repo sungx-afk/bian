@@ -5,6 +5,7 @@ const config = require('../config')
 const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
@@ -49,6 +50,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
+    new CopyWebpackPlugin(require('./i18n-assets').concat([
+      { from: 'src/intro.html', to: 'intro.html' },
+      { from: 'src/bd.html', to: 'bd.html' },
+      { from: 'src/login.html', to: 'login.html' }
+    ])),
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
     }),

@@ -4,11 +4,11 @@
     <!-- 内测包临时登录：连点引导页 logo 5 次触发 -->
     <div class="debug-login-mask" v-if="showDebugLogin">
       <div class="debug-login-box">
-        <div class="debug-login-title">测试登录</div>
-        <input class="debug-login-input" v-model="debugUid" type="number" placeholder="请输入用户 ID" />
+        <div class="debug-login-title">{{ $t('测试登录') }}</div>
+        <input class="debug-login-input" v-model="debugUid" type="number" :placeholder="$t('请输入用户 ID')" />
         <div class="debug-login-btns">
-          <span @click="showDebugLogin = false">取消</span>
-          <span class="primary" @click="submitDebugLogin">登录</span>
+          <span @click="showDebugLogin = false">{{ $t('取消') }}</span>
+          <span class="primary" @click="submitDebugLogin">{{ $t('登录') }}</span>
         </div>
       </div>
     </div>
@@ -19,15 +19,16 @@
            @apple-login="authApple"
            @debug-login="debugLogin" />
     <div class="mortuary-container" v-if="user && user.merchant_manager && user.merchant_id">
-      <div class="name">{{user.merchant_name}} 殡仪馆</div>
+      <div class="name">{{user.merchant_name}} {{ $t('殡仪馆') }}</div>
       <div class="setting" @click="goMerchantSetting">
-        后台管理
+        {{ $t('后台管理') }}
       </div>
     </div>
+    <div class="list-language"><language-selector /></div>
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />
       <div class="text-area">
-        <div class="text">爱，永存</div>
+        <div class="text">{{ $t('爱，永存') }}</div>
       </div>
     </div>
     <div class="container-bottom">
@@ -41,7 +42,7 @@
         </div>
         <div class="list" v-if="visitedList.length > 0">
           <div class="list-header">
-            <div class="title">最近浏览的纪念馆</div>
+            <div class="title">{{ $t('最近浏览的纪念馆') }}</div>
             <i class="more iconfont icon-gengduo" @click="moreSpaceVisitedMenu"></i>
           </div>
           <item v-for="item in visitedList" :key="item.id" :item="item" :moreMenu="true"
@@ -51,7 +52,7 @@
         </div>
         <div class="list" v-if="publicList.length > 0 && showPublic">
           <div class="list-header">
-            <div class="title">样例纪念馆</div>
+            <div class="title">{{ $t('样例纪念馆') }}</div>
             <div class="close" @click.stop="closePublicSpace"><i class="iconfont icon-guanbi1"></i></div>
           </div>
           <item v-for="item in publicList" :key="item.id" :item="item"
@@ -63,11 +64,11 @@
         <div class="empty" v-if="listLoaded">
           <div class="text">
             <div class="note">
-              走了的人只是去了另外一个世界，他/她依然在看着你，感受你的爱。
+              {{ $t('走了的人只是去了另外一个世界，他/她依然在看着你，感受你的爱。') }}
             </div>
           </div>
           <div class="bottom-button">
-            <van-button type="default" size="large" @click.tap="createSpace">为他/她创建纪念馆</van-button>
+            <van-button type="default" size="large" @click.tap="createSpace">{{ $t('为他/她创建纪念馆') }}</van-button>
           </div>
         </div>
       </template>
@@ -76,11 +77,11 @@
       <img class="main-btn-image" src="~@/modules/images/main_btn.png" />
     </div>
     <van-popup v-model="isShowMoreMenu" close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click.stop="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click.stop="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
     <van-action-sheet
       v-model="showAction"
-      :actions="actions"
+      :actions="$localizeActions(actions)"
       close-on-popstate
       close-on-click-action
       @select="onActionSelect"
@@ -91,19 +92,19 @@
       closeOnClickOverlay
       show-cancel-button
       className='custom-delete-dialog'
-      confirmButtonText='取消'
-      cancelButtonText='删除'
+      :confirmButtonText="$t('取消')"
+      :cancelButtonText="$t('删除')"
       :beforeClose="beforeCloseHandler"
       @confirm="cancelDelete">
       <div class="delete-box">
-        <div class="tip">删除纪念馆会导致纪念馆所有数据丢失，请谨慎操作。请输入下面的四位数字后进行删除。</div>
+        <div class="tip">{{ $t('删除纪念馆会导致纪念馆所有数据丢失，请谨慎操作。请输入下面的四位数字后进行删除。') }}</div>
         <div class="random">{{ randomStr }}</div>
         <div class="confirm-input">
           <van-password-input
             :value="confirmValue"
             :length="4"
             :mask="false"
-            :error-info="errorInfo"
+            :error-info="$t(errorInfo)"
             :focused="showKeyboard"
             @focus="showKeyboard = true"
           />
@@ -117,6 +118,9 @@
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
+  import LanguageSelector from '@/modules/widget/LanguageSelector'
   import {mapGetters,mapActions} from 'vuex';
   import {Link, getLastSpaceId, clearLastSpaceId} from '@/config/utils'
   import {setPendingBackgroundId} from '@/modules/space/components/sacrifice/pendingSpace'
@@ -172,6 +176,7 @@
       }
     },
     components: {
+      LanguageSelector,
       Item,
       Guide
     },
@@ -499,7 +504,7 @@
             //复用现有事件：List 自身监听了该事件并会刷新列表，其他缓存页面（如祭拜页）也能同步感知
             eventHub.$emit(constant.EVENT_DELETE_SPACE_SUCCESS, space.id)
           }, error=>{
-            this.$toast('删除失败，请稍后重试')
+            this.$toast(t('删除失败，请稍后重试'))
             done(false)
           })
         }
@@ -516,7 +521,7 @@
             that.visitedList.splice(index,1)
           }
         }, error=>{
-            this.$toast('删除失败，请稍后重试')
+            this.$toast(t('删除失败，请稍后重试'))
         })
       },
       clearSpaceVisited(){
@@ -524,12 +529,12 @@
         $API.home.clearSpaceVisited(rsp=>{
             that.visitedList = []
           }, error=>{
-            this.$toast('操作失败，请稍后重试')
+            this.$toast(t('操作失败，请稍后重试'))
         })
       },
       closePublicSpace(){
         this.$dialog.confirm({
-          message: '确认关闭样例馆入口吗？'
+          message: t('确认关闭样例馆入口吗？')
         }).then(() => {
           this.setUserSetting({key:'public_space_close',value:'1'})
           this.showPublic = false
@@ -602,7 +607,7 @@
           console.log('apple login failed:', e)
           // 用户主动取消不打扰；其余情况给一次提示
           if (e && e.message && e.message.indexOf('不可用') > -1){
-            this.$toast && this.$toast(e.message)
+            this.$toast && this.$toast(t(e.message))
           }
         }
       },
@@ -1052,4 +1057,8 @@
     z-index: 999999 !important;
   }
 
+</style>
+
+<style scoped>
+.list-language { display: flex; justify-content: flex-end; padding: 0 16px; background: #fff; }
 </style>

@@ -2,23 +2,25 @@
   <div class="set-manager-container">
     <div class="info">
       <template v-for="(item,index) in ids">
-        <van-field v-model="item.id" label="用户id:" placeholder="请填写用户id" maxlength="20" input-align="right">
+        <van-field v-model="item.id" :label="$t('用户id:')" :placeholder="$t('请填写用户id')" maxlength="20" input-align="right">
           <template #button>
-              <van-button size="mini" type="danger" @click="goDel(index)">删除</van-button>
+              <van-button size="mini" type="danger" @click="goDel(index)">{{ $t('删除') }}</van-button>
             </template>
         </van-field>
       </template>
       <div class="add-user" @click="goAdd">
-        <van-icon name="plus" />添加用户
+        <van-icon name="plus" />{{ $t('添加用户') }}
       </div>
 
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="confirm">保存</van-button>
+      <van-button type="default" size="large" @click.tap="confirm">{{ $t('保存') }}</van-button>
     </div>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
 
@@ -52,13 +54,13 @@
       confirm(){
         let ids = this.ids.filter(a => a.id != '');
         if(ids.length == 0){
-          this.$toast('请填写用户id');
+          this.$toast(t('请填写用户id'));
           return;
         }
         ids = ids.map(a => {return a.id});
         $API.mortuary.setManager({id:this.id,ids}, rsp => {
           this.$toast({
-            message:'设置成功',
+            message:t('设置成功'),
             type:'success',
             duration:1500,
             onClose:()=>{
@@ -66,7 +68,7 @@
             }
           })
         }, error => {
-          this.$toast('设置失败，请稍后重试')
+          this.$toast(t('设置失败，请稍后重试'))
         })
 
 

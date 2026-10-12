@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "彼岸思念";
+"NSCameraUsageDescription" = "用於拍攝和上傳逝者照片、紀念館照片與頭像";
+"NSPhotoLibraryUsageDescription" = "用於從相簿選擇逝者照片、紀念館照片與頭像";
+"NSPhotoLibraryAddUsageDescription" = "用於將分享海報與紀念館圖片儲存到相簿";

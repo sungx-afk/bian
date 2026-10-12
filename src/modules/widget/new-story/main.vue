@@ -2,21 +2,21 @@
   <transition name="slide-fade" v-on:after-leave="afterLeave">
     <div class="new-story-container" v-show="show">
       <div class="new-story-box">
-        <page-header title="新增生平文章" @back="close"></page-header>
+        <page-header :title="$t('新增生平文章')" @back="close"></page-header>
         <div class="input-area">
           <van-field class="name-input"
             ref="name_input"
             v-model="name"
             size="large"
             required
-            placeholder="请输入文章标题"
+            :placeholder="$t('请输入文章标题')"
             maxlength="50">
           </van-field>
           <van-field
             v-model="content"
             required
             type="textarea"
-            placeholder="请输入文章内容"
+            :placeholder="$t('请输入文章内容')"
             rows="10"
             maxlength="5000"
             :autosize="{ maxHeight: 400, minHeight: 240 }">
@@ -32,13 +32,15 @@
         </div>
       </div>
       <div class="footer">
-        <van-button type="default" @click="confirm" size="large">确定</van-button>
+        <van-button type="default" @click="confirm" size="large">{{ $t('确定') }}</van-button>
       </div>
     </div>
   </transition>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
 
   import * as api from './api'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -78,7 +80,7 @@
       },
       confirm(){
         if (this.content.length === 0 && this.selectPhotos.length === 0){
-          this.$toast('请填写文章内容');
+          this.$toast(t('请填写文章内容'));
           return
         }
         if (this.name.length === 0){
@@ -91,7 +93,7 @@
           duration: 0,       // 持续展示 toast
           forbidClick: true, // 禁用背景点击
           loadingType: 'spinner',
-          message: '发布中...'
+          message: t('发布中...')
         })
         let files = this.selectPhotos.map(item=>{
           let file = {}
@@ -120,7 +122,7 @@
           })
           .catch((error) => {
             this.$toast.clear()
-            this.$toast("上传出错，请稍后重试")
+            this.$toast(t('上传出错，请稍后重试'))
           });
       },
       startUpload(file, index) {
@@ -184,7 +186,7 @@
           that.$toast.clear()
           that.close()
         }, error => {
-          this.$toast('发布失败，请稍后重试');
+          this.$toast(t('发布失败，请稍后重试'));
         });
       }
     },

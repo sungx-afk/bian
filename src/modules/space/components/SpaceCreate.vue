@@ -1,27 +1,27 @@
 <template>
   <div class="space-create-container">
-    <page-header :title="id ? '修改纪念馆' : '创建纪念馆'"></page-header>
+    <page-header :title="id ? $t('修改纪念馆') : $t('创建纪念馆')"></page-header>
     <div class="info">
       <van-cell class="type-cell" v-if="!id || true">
         <van-radio-group v-model="currentNumberType" class="type-radio-group" @change="numberTypeChanged">
-          <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+          <van-radio v-for="item in numberTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{ $t(item.name) }}</van-radio>
         </van-radio-group>
       </van-cell>
-      <van-field v-model="name" label="纪念馆名:" placeholder="请填写纪念馆名" maxlength="20" input-align="right"></van-field>
-      <van-cell title="纪念馆样式:" is-link :value="theme && theme.name" @click="goTheme"></van-cell>
+      <van-field v-model="name" :label="$t('纪念馆名:')" :placeholder="$t('请填写纪念馆名')" maxlength="20" input-align="right"></van-field>
+      <van-cell :title="$t('纪念馆样式:')" is-link :value="$t(theme && theme.name)" @click="goTheme"></van-cell>
       <van-field v-if="false"
         ref="input"
-        label="墓志铭:"
+        :label="$t('墓志铭:')"
         v-model="epitaph"
         type="textarea"
-        placeholder="请输入墓志铭"
+        :placeholder="$t('请输入墓志铭')"
         maxlength="120"
         rows="2"
         :autosize="{ maxHeight: 150, minHeight: 50 }">
       </van-field>
-      <van-cell title="遗 像:" :border="false">
+      <van-cell :title="$t('遗 像:')" :border="false">
         <van-radio-group v-model="avatarType" class="avatar-type-radio-group" @change="avatarTypeChanged" v-if="currentNumberType === 1">
-          <van-radio v-for="item in avatarTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+          <van-radio v-for="item in avatarTypeList" :key="item.value" :name="item.value" checked-color="#825621">{{ $t(item.name) }}</van-radio>
         </van-radio-group>
       </van-cell>
       <van-cell>
@@ -40,16 +40,18 @@
       </div>
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="confirm">{{id?'修改':'创建'}}</van-button>
+      <van-button type="default" size="large" @click.tap="confirm">{{id?$t('修改'):$t('创建')}}</van-button>
     </div>
     <div class="agreement" v-if="!id">
       <van-checkbox custom-class="agreement-icon" checked-color="#825621" shape="square" v-model="isAgreementChecked"></van-checkbox>
-      <span class="text">我已详细阅读并同意</span>
-      <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">《服务协议》</span>
+      <span class="text">{{ $t('我已详细阅读并同意') }}</span>
+      <span class="text" style="margin-left: 0px;color: #825621" @click.stop="readAgreement">{{ $t('《服务协议》') }}</span>
     </div>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid} from '@/config/utils'
   import constant from '@/config/constant'
@@ -136,7 +138,7 @@
           that.detail = rsp
           that.initSpaceData()
         }, error=>{
-          that.$toast('获取纪念馆信息失败，请稍后重试')
+          that.$toast(t('获取纪念馆信息失败，请稍后重试'))
         })
       },
       initSpaceData(){
@@ -268,11 +270,11 @@
             that.avatarUrls.splice(index,1,{url:rsp.url})
             that.loading = false
           },error=>{
-            this.$toast("上传失败，请稍后重试")
+            this.$toast(t('上传失败，请稍后重试'))
             that.loading = false
           })
         },error=>{
-          this.$toast("上传失败，请稍后重试")
+          this.$toast(t('上传失败，请稍后重试'))
           that.loading = false
         })
       },
@@ -298,16 +300,16 @@
         if (clearLocalStorage){
           let key = getLocalTokenKey();
           window.localStorage.removeItem(key);
-          this.$toast('清空本地缓存成功')
+          this.$toast(t('清空本地缓存成功'))
           return
         }
         if (empty) {
-          this.$toast('请填写逝者姓名');
+          this.$toast(t('请填写逝者姓名'));
           return;
         }
 
         if (!this.isAgreementChecked) {
-          this.$toast('请先阅读服务协议');
+          this.$toast(t('请先阅读服务协议'));
           return;
         }
 
@@ -319,7 +321,7 @@
           }
         })
         if (invalidAvatar) {
-          this.$toast('遗像未正确上传，请重新选择');
+          this.$toast(t('遗像未正确上传，请重新选择'));
           return;
         }
 
@@ -330,20 +332,14 @@
 
         let spaceName = this.name
         if (!spaceName){
-          this.users.forEach((item,index)=>{
-            spaceName += item.name
-            if (index !== this.users.length - 1){
-              spaceName += '和'
-            }
-          })
-          spaceName += '的纪念馆'
+          spaceName = t('纪念馆名称默认', { name: this.users.map(item => item.name).join(t('纪念馆姓名连接符')) })
         }
 
         this.$toast.loading({
           duration: 0,       // 持续展示 toast
           forbidClick: true, // 禁用背景点击
           loadingType: 'spinner',
-          message: '提交中...'
+          message: t('提交中...')
         })
         if (this.id){
           let p1 = new Promise((resolve, reject) => {
@@ -422,7 +418,7 @@
               eventHub.$emit(constant.EVENT_MODIFY_SPACE_SUCCESS, this.id)
               this.$toast.clear()
               this.$toast({
-                message:'修改成功',
+                message:t('修改成功'),
                 type:'success',
                 duration:1500,
                 onClose:()=>{
@@ -430,9 +426,9 @@
                 }
               })
             })
-            .catch((error) => {
-              this.$toast('修改失败，请稍后重试')
-            });
+            .catch(t((error) => {
+              this.$toast(t('修改失败，请稍后重试'))
+            }));
         }else{
           let params = {
             type:this.type,
@@ -461,10 +457,10 @@
             // 创建成功后直接进入新馆的祭拜页
             let space = rsp
             setPendingBackgroundId(space)
-            this.$toast({message:'创建成功', type:'success', duration:1200})
+            this.$toast({message:t('创建成功'), type:'success', duration:1200})
             Link(`/space/sacrifice/${space.id}`, {}, true)
           }, error => {
-            this.$toast('创建失败，请稍后重试')
+            this.$toast(t('创建失败，请稍后重试'))
           })
         }
       },

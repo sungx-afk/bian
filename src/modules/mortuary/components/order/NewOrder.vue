@@ -2,16 +2,16 @@
   <div class="new-product-container">
     <div class="back-home">
       <div class="left-btn" @click="goHome">
-        <van-icon name="arrow-left" /><span>返回</span>
+        <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
       </div>
       <div class="right-btn" @click="goViewMyOrder">
-        <span>历史订单</span>
+        <span>{{ $t('历史订单') }}</span>
       </div>
     </div>
     <div class="info">
       <div class="select-product" @click="goSelectProduct" v-if="order.products.length == 0">
         <div class="add-icon">+</div>
-        <div class="add-text">点击添加商品</div>
+        <div class="add-text">{{ $t('点击添加商品') }}</div>
       </div>
       <div class="product-wrapper" v-if="order.products.length > 0">
         <div class="product" v-for="item in order.products">
@@ -30,10 +30,10 @@
           </div>
         </div>
         <div class="add-more-dashed" @click="goSelectProduct">
-          <span class="icon">+</span> <span>添加更多商品</span>
+          <span class="icon">+</span> <span>{{ $t('添加更多商品') }}</span>
         </div>
         <div class="total-bar">
-          <span>商品小计</span>
+          <span>{{ $t('商品小计') }}</span>
           <span class="total-price">¥ {{filterTotal | filterMoney}}</span>
         </div>
 
@@ -43,21 +43,23 @@
 
 
       <div class="other-info">
-        <van-field v-model="order.spaceUserName" label="逝者姓名:" placeholder="请填写逝者姓名" input-align="right"></van-field>
-        <van-field v-model="order.spaceName" label="告别厅:" placeholder="请填写告别厅" input-align="right"></van-field>
-        <van-field v-model="order.senderName" label="赠送人:" placeholder="请填写赠送人" input-align="right"></van-field>
-        <van-field v-model="order.senderPhone" label="联系电话:" placeholder="请填写联系电话" input-align="right"></van-field>
-        <van-field v-model="order.summary" label="挽联内容:" placeholder="请填写挽联内容" type="textarea" input-align="right"></van-field>
+        <van-field v-model="order.spaceUserName" :label="$t('逝者姓名:')" :placeholder="$t('请填写逝者姓名')" input-align="right"></van-field>
+        <van-field v-model="order.spaceName" :label="$t('告别厅:')" :placeholder="$t('请填写告别厅')" input-align="right"></van-field>
+        <van-field v-model="order.senderName" :label="$t('赠送人:')" :placeholder="$t('请填写赠送人')" input-align="right"></van-field>
+        <van-field v-model="order.senderPhone" :label="$t('联系电话:')" :placeholder="$t('请填写联系电话')" input-align="right"></van-field>
+        <van-field v-model="order.summary" :label="$t('挽联内容:')" :placeholder="$t('请填写挽联内容')" type="textarea" input-align="right"></van-field>
 
       </div>
 
     </div>
     <div class="bottom-button">
-      <van-button type="default" size="large" @click.tap="confirm">{{order.id?'修改':'创建'}}</van-button>
+      <van-button type="default" size="large" @click.tap="confirm">{{order.id?$t('修改'):$t('创建')}}</van-button>
     </div>
   </div>
 </template>
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import {Link,gUuid,accAdd,accMul} from '@/config/utils'
   import constant from '@/config/constant'
@@ -119,34 +121,34 @@
       },
       confirm(){
         if (!this.order.products || this.order.products && this.order.products.length == 0) {
-          this.$toast('请选择商品');
+          this.$toast(t('请选择商品'));
           return;
         }
         if(!this.order.spaceUserName){
-          this.$toast('请填写逝者姓名');
+          this.$toast(t('请填写逝者姓名'));
           return;
         }
         if(!this.order.spaceName){
-          this.$toast('请填写告别厅');
+          this.$toast(t('请填写告别厅'));
           return;
         }
         if(!this.order.senderName){
-          this.$toast('请填写赠送人');
+          this.$toast(t('请填写赠送人'));
           return;
         }
         if(!this.order.senderPhone){
-          this.$toast('请填写联系电话');
+          this.$toast(t('请填写联系电话'));
           return;
         }
         if(!this.order.summary){
-          this.$toast('请填写挽联内容');
+          this.$toast(t('请填写挽联内容'));
           return;
         }
 
         if(this.order.id){
           $API.mortuary.modifyOrder(this.order, rsp => {
             this.$toast({
-              message:'修改成功',
+              message:t('修改成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -154,7 +156,7 @@
               }
             })
           }, error => {
-            this.$toast('修改失败，请稍后重试')
+            this.$toast(t('修改失败，请稍后重试'))
           })
         }else{
           let params = JSON.parse(JSON.stringify(this.order))
@@ -171,7 +173,7 @@
 
           $API.mortuary.createOrder(params, rsp => {
             this.$toast({
-              message:'创建成功',
+              message:t('创建成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -179,7 +181,7 @@
               }
             })
           }, error => {
-            this.$toast('创建失败，请稍后重试')
+            this.$toast(t('创建失败，请稍后重试'))
           })
         }
 
@@ -195,13 +197,13 @@
         this.paying = true
         let orderId = item.id;
         // 取支付信息（下单网络请求）期间显示 loading，拿到订单后关闭再唤起系统支付弹窗
-        this.$toast.loading({ message: '正在准备支付…', forbidClick: true, duration: 0 })
+        this.$toast.loading({ message: t('正在准备支付…'), forbidClick: true, duration: 0 })
         $API.mortuary.getPayOrderInfo({orderId},rsp=>{
           this.$toast.clear()
           this.paying = false
           this.wechatPay(rsp).then((res)=>{
             if (res === 0){
-              this.$toast("支付成功")
+              this.$toast(t('支付成功'))
               if(this.showBack){
                 this.goHome();
               }else{
@@ -209,7 +211,7 @@
               }
             }
           }).catch(error=>{
-            this.$toast(error.errMsg)
+            this.$toast(t(error.errMsg))
             if(this.showBack){
               this.goHome();
             }else{
@@ -218,7 +220,7 @@
           })
         },error=>{
           this.paying = false
-          this.$toast("获取订单失败，请稍后重试")
+          this.$toast(t('获取订单失败，请稍后重试'))
         })
       },
       goViewMyOrder(){

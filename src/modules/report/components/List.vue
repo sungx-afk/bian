@@ -1,7 +1,7 @@
 <template>
   <div class="report-container">
     <van-tabs v-model="status" @change="onTabChange" color="#825621">
-      <van-tab :title="item.label" v-for="item in statusList" :key="item.id" :name="item.id">
+      <van-tab :title="$t(item.label)" v-for="item in statusList" :key="item.id" :name="item.id">
         <template v-if="status === item.id">
           <div class="report-list-container" v-bind:style="{ 'height': containerHeight + 'px' }">
             <template v-if="noData">
@@ -12,7 +12,7 @@
                 <van-list
                   v-model="loading"
                   :finished="finished"
-                  :finished-text="finishedText"
+                  :finished-text="$t(finishedText)"
                   @load="onLoadMoreData">
                   <van-cell
                     v-for="item in list"
@@ -22,16 +22,16 @@
                     @click.stop="goReportDetail(item)">
                     <div class="report-card">
                       <div class="cell" v-if="item.creator">
-                        <span class="label">举报人:</span>
+                        <span class="label">{{ $t('举报人:') }}</span>
                         {{ item.creator.name }} - {{item.creator.id}}
                       </div>
                       <div class="cell">
-                        <span class="label">举报类型:</span>
-                        {{reportType(item)}}
+                        <span class="label">{{ $t('举报类型:') }}</span>
+                        {{ $t(reportType(item)) }}
                       </div>
                       <div class="cell">
-                        <span class="label">举报原因:</span>
-                        {{ item.reason | filterReason }}</div>
+                        <span class="label">{{ $t('举报原因:') }}</span>
+                        {{ item.reason | filterReason | translate }}</div>
                     </div>
                   </van-cell>
                 </van-list>

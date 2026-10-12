@@ -1,17 +1,19 @@
 <template>
   <div class="edit-user-container">
-    <page-header title="逝者信息"></page-header>
+    <page-header :title="$t('逝者信息')"></page-header>
     <template v-if="user">
       <user-info :user.sync="user" :show-avatar="avatarType === 0"></user-info>
       <div class="bottom-button">
-        <van-button @click.stop="cancel">取消</van-button>
-        <van-button class="confirm" type="default" @click.stop="confirm">确定</van-button>
+        <van-button @click.stop="cancel">{{ $t('取消') }}</van-button>
+        <van-button class="confirm" type="default" @click.stop="confirm">{{ $t('确定') }}</van-button>
       </div>
     </template>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {mapGetters,mapActions} from 'vuex';
   import constant from '@/config/constant'
 
@@ -43,18 +45,18 @@
         },
         confirm(){
           if (!this.user){
-            this.$toast("参数异常")
+            this.$toast(t('参数异常'))
             return
           }
           if (!this.user.name) {
-            this.$toast("请填写逝者姓名")
+            this.$toast(t('请填写逝者姓名'))
             return;
           }
           let user = JSON.parse(JSON.stringify(this.user))
           this.updateSpaceUser({sid:this.spaceId, user:user}).then(()=>{
             this.$router.go(-1)
           }).catch(()=>{
-            this.$toast("修改失败，请稍后重试")
+            this.$toast(t('修改失败，请稍后重试'))
           })
         },
         cancel(){

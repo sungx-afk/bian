@@ -1,9 +1,9 @@
 <template>
   <div class="transfer-container">
-    <page-header title="移交纪念馆"></page-header>
+    <page-header :title="$t('移交纪念馆')"></page-header>
     <div class="transfer-member-list-area" v-if="transferMember.length > 0">
       <div class="transfer-title-area">
-        <div class="transfer-title">移交给亲属</div>
+        <div class="transfer-title">{{ $t('移交给亲属') }}</div>
       </div>
       <van-list class="transfer-member-list">
         <van-cell
@@ -19,20 +19,22 @@
       </van-list>
     </div>
     <div class="transfer-copy-link">
-      <div class="transfer-title" v-if="transferMember.length > 0">移交的人不在亲属里？</div>
+      <div class="transfer-title" v-if="transferMember.length > 0">{{ $t('移交的人不在亲属里？') }}</div>
       <span class="copy-link-tip">
-        请点击复制移交链接按钮，然后直接发送给好友，好友点击链接后该纪念馆创建信息会变为该好友信息。请不要将该链接发到聊天群，以免出现多人点击的情况。（链接48小时过期）
+        {{ $t('请点击复制移交链接按钮，然后直接发送给好友，好友点击链接后该纪念馆创建信息会变为该好友信息。请不要将该链接发到聊天群，以免出现多人点击的情况。（链接48小时过期）') }}
       </span>
-      <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">复制移交链接</button>
+      <button class="copy-link" :data-clipboard-text="copyContent" @click="copyLink">{{ $t('复制移交链接') }}</button>
     </div>
     <div class="transfer-bottom">
       <img src="~@/modules/images/logo_gray.png" class="header">
-      <span class="text">爱，永存</span>
+      <span class="text">{{ $t('爱，永存') }}</span>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {mapGetters,mapActions} from 'vuex';
 
@@ -77,7 +79,7 @@
         transferToMember(item){
           let that = this
           this.$dialog.confirm({
-            message: `确认移交该纪念馆吗?`
+            message: t('确认移交该纪念馆吗?')
           }).then(() => {
             $API.space.transferSpace({
               sid:that.spaceId,
@@ -86,7 +88,7 @@
               eventHub.$emit(constant.EVENT_TRANSFER_SPACE_SUCCESS,that.spaceId)
               this.$router.go(-2)
             }, error=>{
-              this.$toast('移交失败，请稍后重试')
+              this.$toast(t('移交失败，请稍后重试'))
             })
           }).catch(() => {
 
@@ -106,7 +108,7 @@
           clipboard.on('success', (e)=> {
             this.$notify({
               type:'info',
-              message: '已复制到剪贴板',
+              message: t('已复制到剪贴板'),
               color: '#ffffff',
               background: '#825621'
             });

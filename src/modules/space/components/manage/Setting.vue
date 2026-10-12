@@ -1,53 +1,53 @@
 <template>
   <div class="setting-container">
     <van-cell-group v-if="space && isSpaceCreator">
-      <van-cell title="自定义墓志铭" :is-link="true" @click.stop="enterEpitaph"></van-cell>
-      <van-cell title="自定义挽联" :is-link="true" @click.stop="enterCouplets"></van-cell>
-      <van-cell title="自定义主题" :is-link="true" @click.stop="goSwitchTheme"></van-cell>
-      <van-cell title="自定义相框" :is-link="true" @click.stop="goSwitchFrame"></van-cell>
+      <van-cell :title="$t('自定义墓志铭')" :is-link="true" @click.stop="enterEpitaph"></van-cell>
+      <van-cell :title="$t('自定义挽联')" :is-link="true" @click.stop="enterCouplets"></van-cell>
+      <van-cell :title="$t('自定义主题')" :is-link="true" @click.stop="goSwitchTheme"></van-cell>
+      <van-cell :title="$t('自定义相框')" :is-link="true" @click.stop="goSwitchFrame"></van-cell>
     </van-cell-group>
     <div class="menu-divider" v-if="space && isSpaceCreator"></div>
     <van-cell-group>
       <template v-if="space && space.type === 0">
         <van-switch-cell
-          title="仅亲属成员访问"
+          :title="$t('仅亲属成员访问')"
           active-color="#825621"
           v-model="viewScopeCheck"
           @change="viewScopeChanged">
         </van-switch-cell>
       </template>
 
-      <van-cell v-if="space && isSpaceCreator" title="修改纪念馆" :is-link="true" @click.stop="goModifySpace"></van-cell>
+      <van-cell v-if="space && isSpaceCreator" :title="$t('修改纪念馆')" :is-link="true" @click.stop="goModifySpace"></van-cell>
       <van-switch-cell
-        title="关闭访客留言/评论"
+        :title="$t('关闭访客留言/评论')"
         active-color="#825621"
         v-model="commentScopeCheck"
         @change="commentScopeChanged">
       </van-switch-cell>
-      <van-cell title="背景音乐" is-link @click.stop="goBgmSetting"></van-cell>
-      <van-cell title="黑名单" is-link @click.stop="goBlackList"></van-cell>
-      <van-cell title="云追悼会（讣告）" is-link @click.stop="goMemorialMeeting"></van-cell>
-      <van-cell title="移交纪念馆" is-link @click.stop="goTransferSpace"></van-cell>
-      <van-cell title="删除纪念馆" clickable @click.stop="deleteSpace"></van-cell>
+      <van-cell :title="$t('背景音乐')" is-link @click.stop="goBgmSetting"></van-cell>
+      <van-cell :title="$t('黑名单')" is-link @click.stop="goBlackList"></van-cell>
+      <van-cell :title="$t('云追悼会（讣告）')" is-link @click.stop="goMemorialMeeting"></van-cell>
+      <van-cell :title="$t('移交纪念馆')" is-link @click.stop="goTransferSpace"></van-cell>
+      <van-cell :title="$t('删除纪念馆')" clickable @click.stop="deleteSpace"></van-cell>
     </van-cell-group>
     <van-dialog 
       v-model="showDeleteDialog" 
       closeOnClickOverlay
       show-cancel-button
       className='custom-delete-dialog'
-      confirmButtonText='取消'
-      cancelButtonText='删除'
+      :confirmButtonText="$t('取消')"
+      :cancelButtonText="$t('删除')"
       :beforeClose="beforeCloseHandler"
       @confirm="cancelDelete">
       <div class="delete-box">
-        <div class="tip">删除纪念馆会导致纪念馆所有数据丢失，请谨慎操作。请输入下面的四位数字后进行删除。</div>
+        <div class="tip">{{ $t('删除纪念馆会导致纪念馆所有数据丢失，请谨慎操作。请输入下面的四位数字后进行删除。') }}</div>
         <div class="random">{{ randomStr }}</div>
         <div class="confirm-input">
           <van-password-input
             :value="confirmValue"
             :length="4"
             :mask="false"
-            :error-info="errorInfo"
+            :error-info="$t(errorInfo)"
             :focused="showKeyboard"
             @focus="showKeyboard = true"
           />
@@ -63,10 +63,10 @@
       position="bottom"
       @click.stop=""
       :style="{ height: '100%' }">
-      <page-header title="选择背景" @back="showThemes = false"></page-header>
+      <page-header :title="$t('选择背景')" @back="showThemes = false"></page-header>
       <div class="info">
         <van-icon name="info"/>
-        请选择一个背景
+        {{ $t('请选择一个背景') }}
       </div>
       <div class="theme-wrapper">
         <div class="theme" v-for="(img, index) in backgrounds" :key="img.id">
@@ -80,7 +80,7 @@
         </div>
       </div>
       <div class="button-area">
-        <van-button type="danger" block @click="changeThemeId">应用</van-button>
+        <van-button type="danger" block @click="changeThemeId">{{ $t('应用') }}</van-button>
       </div>
     </van-popup>
     <van-popup
@@ -88,27 +88,29 @@
       position="bottom"
       @click.stop=""
       :style="{ height: '100%' }">
-      <page-header title="选择相框" @back="showFrames = false"></page-header>
+      <page-header :title="$t('选择相框')" @back="showFrames = false"></page-header>
       <div class="info">
         <van-icon name="info"/>
-        请选择一个相框
+        {{ $t('请选择一个相框') }}
       </div>
       <div class="frame-wrapper">
         <div class="frame" v-for="frame in frames" :key="frame.id" @click="frameId = frame.id">
           <div class="frame-preview" :class="{'active':frameId === frame.id}"
                :style="{'background-image':`url(${frame.image})`}">
           </div>
-          <div class="frame-title" :class="{'active':frameId === frame.id}">{{frame.title}}</div>
+          <div class="frame-title" :class="{'active':frameId === frame.id}">{{ $t(frame.title) }}</div>
         </div>
       </div>
       <div class="button-area">
-        <van-button type="danger" block @click="changeFrameId">应用</van-button>
+        <van-button type="danger" block @click="changeFrameId">{{ $t('应用') }}</van-button>
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {Link} from '@/config/utils'
 
   import constant from '@/config/constant'
@@ -229,7 +231,7 @@
             })
             that.$router.go(-1);
           }, error => {
-            that.$toast("设置失败，请稍后重试")
+            that.$toast(t('设置失败，请稍后重试'))
           })
         },
         changeFrameId(){
@@ -247,7 +249,7 @@
             })
             that.$router.go(-1);
           }, error => {
-            that.$toast("设置失败，请稍后重试")
+            that.$toast(t('设置失败，请稍后重试'))
           })
         },
         getSpaceConfig(){
@@ -346,7 +348,7 @@
               //直接返回到列表上去
               Link(`/list`,{},true)
               }, error=>{
-                this.$toast('删除失败，请稍后重试')
+                this.$toast(t('删除失败，请稍后重试'))
             })
           }
         },

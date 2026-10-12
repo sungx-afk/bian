@@ -1,6 +1,6 @@
 <template>
   <div class="issue-create-container">
-    <page-header :title="pageTitle"></page-header>
+    <page-header :title="$t(pageTitle)"></page-header>
     <!-- 公共 | 亲属 | 私语 切换：header 标题随当前类型联动 -->
     <div class="type-tabs">
       <div
@@ -9,7 +9,7 @@
         class="type-tab"
         :class="{active: type === t.value}"
         @click="type = t.value">
-        {{ t.label }}
+        {{ $t(t.label) }}
       </div>
     </div>
     <div class="issue-create-body">
@@ -18,7 +18,7 @@
         <van-field
           v-model="content"
           type="textarea"
-          :placeholder="contentPlaceholder"
+          :placeholder="$t(contentPlaceholder)"
           rows="5"
           :autosize="{ maxHeight: 200, minHeight: 100 }">
         </van-field>
@@ -33,15 +33,17 @@
       </div>
     </div>
 
-    <div class="tip">尊重逝者，请谨慎留言</div>
+    <div class="tip">{{ $t('尊重逝者，请谨慎留言') }}</div>
     <div class="bottom-button">
-      <van-button type="default" @click="clickConfirm" size="large">确定</van-button>
+      <van-button type="default" @click="clickConfirm" size="large">{{ $t('确定') }}</van-button>
     </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import PageHeader from '@/modules/widget/PageHeader'
 
@@ -91,7 +93,7 @@
         },
         clickConfirm(){
           if (this.content.length === 0 && this.selectPhotos.length === 0){
-            this.$toast('请填写内容');
+            this.$toast(t('请填写内容'));
             return
           }
           this.postIssueHandler()
@@ -101,7 +103,7 @@
             duration: 0,       // 持续展示 toast
             forbidClick: true, // 禁用背景点击
             loadingType: 'spinner',
-            message: '发布中...'
+            message: t('发布中...')
           })
           let files = this.selectPhotos.map(item=>{
             let file = {}
@@ -130,7 +132,7 @@
             })
             .catch((error) => {
               this.$toast.clear()
-              this.$toast("上传出错，请稍后重试")
+              this.$toast(t('上传出错，请稍后重试'))
             });
         },
         startUpload(file, index) {
@@ -204,7 +206,7 @@
             // 直接返回上层的留言列表（沿用已有历史，不再重复压栈），列表会刷新并切换对应 Tab
             that.$router.go(-1)
           }, error => {
-            this.$toast('发布失败，请稍后重试');
+            this.$toast(t('发布失败，请稍后重试'));
           });
         },
       },

@@ -4,7 +4,7 @@
       <div class="item-box">
         <div class="back-home">
           <div class="left-btn" @click="goHome">
-            <van-icon name="arrow-left" /><span>返回</span>
+            <van-icon name="arrow-left" /><span>{{ $t('返回') }}</span>
           </div>
         </div>
         <div class="list-wrapper">
@@ -24,8 +24,8 @@
           </div>
         </div>
         <div class="bottom-button">
-          <van-button type="default" @click.tap="cancel">取消</van-button>
-          <van-button type="default" @click.tap="confirm">确定</van-button>
+          <van-button type="default" @click.tap="cancel">{{ $t('取消') }}</van-button>
+          <van-button type="default" @click.tap="confirm">{{ $t('确定') }}</van-button>
         </div>
       </div>
     </div>

@@ -1,25 +1,25 @@
 <template>
   <div class="couplets-container">
-    <page-header title="挽联"></page-header>
+    <page-header :title="$t('挽联')"></page-header>
     <div class="wanlian-area">
       <van-field
         v-model="coupletsLeft"
         label-width="30"
-        label="上联"
+        :label="$t('上联')"
         maxlength="15"
-        placeholder="请输入上联，最多15个字"
+        :placeholder="$t('请输入上联，最多15个字')"
       ></van-field>
 
       <van-field
         v-model="coupletsRight"
         label-width="30"
-        label="下联"
+        :label="$t('下联')"
         maxlength="15"
-        placeholder="请输入下联，最多15个字">
+        :placeholder="$t('请输入下联，最多15个字')">
       </van-field>
 
       <van-switch-cell
-          title="显示挽联"
+          :title="$t('显示挽联')"
           active-color="#825621"
           v-model="showCouplet"
           :active-value="1" 
@@ -27,13 +27,15 @@
         </van-switch-cell>
     </div>
     <div class="bottom-button">
-      <van-button @click.stop="cancel">取消</van-button>
-      <van-button class="confirm" type="default" @click.stop="confirm">确定</van-button>
+      <van-button @click.stop="cancel">{{ $t('取消') }}</van-button>
+      <van-button class="confirm" type="default" @click.stop="confirm">{{ $t('确定') }}</van-button>
     </div>
   </div>
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {mapGetters} from 'vuex'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -80,7 +82,7 @@
         },
         confirm(){
           if (!this.coupletsLeft || !this.coupletsRight){
-            this.$toast("请输入挽联内容")
+            this.$toast(t('请输入挽联内容'))
             return
           }
           let p1 = new Promise((resolve, reject) => {
@@ -114,7 +116,7 @@
             eventHub.$emit(constant.EVENT_UPDATE_COUPLETS_SUCCESS,{left:this.coupletsLeft,right:this.coupletsRight,showCouplet:this.showCouplet})
             
             this.$toast({
-              message:'修改成功',
+              message:t('修改成功'),
               type:'success',
               duration:1500,
               onClose:()=>{
@@ -123,7 +125,7 @@
               }
             })
           }).catch((error) => {
-            this.$toast("修改失败，请稍后重试")
+            this.$toast(t('修改失败，请稍后重试'))
           });
         }
       },

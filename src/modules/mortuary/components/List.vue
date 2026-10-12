@@ -14,7 +14,7 @@
 
     <van-action-sheet
       v-model="showAction"
-      :actions="actions"
+      :actions="$localizeActions(actions)"
       close-on-popstate
       close-on-click-action
       @select="onActionSelect"
@@ -25,6 +25,8 @@
 </template>
 
 <script>
+  import { t } from '@/i18n'
+
   import {Link,gUuid} from '@/config/utils'
   export default{
     data(){
@@ -72,13 +74,13 @@
             Link('/mortuary/create?id='+this.opt_obj.id);
           }else if(item.id == 'del'){
             this.$dialog.confirm({
-              title: '提示',
-              message: '确定要删除吗？',
+              title: t('提示'),
+              message: t('确定要删除吗？'),
             })
             .then(() => {
               $API.mortuary.deleteMortuary({sid:this.opt_obj.id}, rsp => {
                 this.$toast({
-                  message:'删除成功',
+                  message:t('删除成功'),
                   type:'success',
                   duration:1500,
                   onClose:()=>{
@@ -86,7 +88,7 @@
                   }
                 })
               }, error => {
-                this.$toast('操作失败，请稍后重试')
+                this.$toast(t('操作失败，请稍后重试'))
               })
             })
             .catch(() => {

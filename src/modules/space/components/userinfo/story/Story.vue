@@ -1,6 +1,6 @@
 <template>
   <div class="story-container">
-    <div class="sub-title">生平文章</div>
+    <div class="sub-title">{{ $t('生平文章') }}</div>
     <template v-if="noData">
       <no-data></no-data>
     </template>
@@ -8,7 +8,7 @@
       <van-list class="story-list"
         v-model="loading"
         :finished="finished"
-        :finished-text="finishedText"
+        :finished-text="$t(finishedText)"
         @load="onLoadMoreData">
         <van-cell
           v-for="item in list"
@@ -35,12 +35,14 @@
     <van-popup
       v-model="isShowMoreMenu"
       close-on-popstate>
-      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{menu.name}}</div>
+      <div v-for="menu in menuList" :key="menu.id" @click="moreMenuPressed(menu)" class="menu">{{ $t(menu.name) }}</div>
     </van-popup>
   </div>
 </template>
 
 <script>
+import { t } from '@/i18n'
+
  const LIMIT = 20 
  import constant from '@/config/constant'
 
@@ -185,7 +187,7 @@ export default {
     deleteStory(){
       let that = this
       this.$dialog.confirm({
-        message: `确认删除该文章吗?`
+        message: t('确认删除该文章吗?')
       }).then(() => {
         $API.space.deleteSpaceStory({sid:this.space.id,cid:this.currentItem.id},rsp=>{
           that.getDataList()

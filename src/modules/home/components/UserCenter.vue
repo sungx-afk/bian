@@ -1,7 +1,8 @@
 <template>
   <div class="user-center-container" v-if="user">
-    <page-header title="账号设置"></page-header>
+    <page-header :title="$t('账号设置')"></page-header>
     <div class="user-center-wrapper">
+      <van-cell><language-selector /></van-cell>
       <van-cell class="user-cell">
         <van-uploader :after-read="afterSelectPhoto">
           <div class="avatar-box">
@@ -13,7 +14,7 @@
             <van-field class="name-input"
               ref="name_input"
               v-model="name"
-              placeholder="请输入昵称"
+              :placeholder="$t('请输入昵称')"
               maxlength="10"
               @blur="nameChanged">
             </van-field>
@@ -24,7 +25,7 @@
             <i class="iconfont icon-bianji" @click="goModifyName"></i>
           </template>
         </div>
-        <van-button size="small" class="logout-btn" @click="logout">退出登录</van-button>
+        <van-button size="small" class="logout-btn" @click="logout">{{ $t('退出登录') }}</van-button>
       </van-cell>
       <!-- 尊贵会员：账号级订阅卡片。
            user.vip=1 为已开通，vipEndDate 为到期时间（毫秒时间戳，iOS 订阅续期后后端更新） -->
@@ -33,48 +34,51 @@
           <div class="vip-logo">VIP</div>
           <div class="vip-info">
             <div class="vip-title">
-              <span>尊贵会员</span>
-              <span class="vip-state" :class="{'is-active': user.vip == 1}">{{ user.vip == 1 ? '已开通' : '未开通' }}</span>
+              <span>{{ $t('尊贵会员') }}</span>
+              <span class="vip-state" :class="{'is-active': user.vip == 1}">{{ user.vip == 1 ? $t('已开通') : $t('未开通') }}</span>
             </div>
             <div class="vip-desc">
-              <template v-if="user.vip == 1 && user.vipEndDate">有效期至 {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}</template>
-              <template v-else-if="user.vip == 1">尊贵特权已生效，感谢支持</template>
-              <template v-else>开通后可享专属纪念特权</template>
+              <template v-if="user.vip == 1 && user.vipEndDate">{{ $t('有效期至') }} {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}</template>
+              <template v-else-if="user.vip == 1">{{ $t('尊贵特权已生效，感谢支持') }}</template>
+              <template v-else>{{ $t('开通后可享专属纪念特权') }}</template>
             </div>
           </div>
-          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">立即开通</van-button>
+          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">{{ $t('立即开通') }}</van-button>
         </div>
         <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
-        <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">恢复购买</div>
+        <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">{{ $t('恢复购买') }}</div>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
-        <div class="charge-remain-wrapper">账号余额：<span class="charge-remain">{{user.point }}</span>&nbsp;云币</div>
+        <div class="charge-remain-wrapper">{{ $t('账号余额：') }}<span class="charge-remain">{{user.point }}</span>&nbsp;{{ $t('云币') }}</div>
         <div class="charge-btn-wrapper">
-          <van-button size="small" class="charge-btn" @click="charge">充值（1 元 = 10 云币）</van-button>
+          <van-button size="small" class="charge-btn" @click="charge">{{ $t('充值（1 元 = 10 云币）') }}</van-button>
         </div>
       </van-cell>
       <van-cell class="log-cell" v-if="supportPay && supportPoint" :is-link="true" @click.stop="goLogs">
-        <span>充值和扣费记录</span>
+        <span>{{ $t('充值和扣费记录') }}</span>
       </van-cell>
       <van-cell class="account-cell" v-if="showOrder" @click="goViewMyOrder" :is-link="true">
-        <span>我的订单</span>
+        <span>{{ $t('我的订单') }}</span>
       </van-cell>
       <!-- 上架必填：App 内必须能访问隐私政策与订阅条款 -->
       <van-cell class="doc-cell" @click="goPrivacy" :is-link="true">
-        <span>隐私政策</span>
+        <span>{{ $t('隐私政策') }}</span>
       </van-cell>
       <van-cell class="doc-cell" @click="goTerms" :is-link="true">
-        <span>服务条款（自动续期订阅）</span>
+        <span>{{ $t('服务条款（自动续期订阅）') }}</span>
       </van-cell>
       <!-- 审核 5.1.1(v)：App 内必须提供注销账号入口 -->
       <van-cell class="delete-cell">
-        <div class="delete-btn" @click="goDeleteAccount">注销账号</div>
+        <div class="delete-btn" @click="goDeleteAccount">{{ $t('注销账号') }}</div>
       </van-cell>
     </div>
   </div>
 </template>
 
 <script>
+import { t } from '@/i18n'
+
+import LanguageSelector from '@/modules/widget/LanguageSelector'
 import constant from '@/config/constant'
 import {mapGetters, mapActions} from 'vuex';
 import {Link,gUuid} from '@/config/utils'
@@ -86,6 +90,7 @@ import * as iap from '@/native/iap'
 export default {
   name: 'UserCenter',
   components: {
+    LanguageSelector,
     PageHeader,
     UserAvatar
   },
@@ -141,19 +146,19 @@ export default {
     // 注销账号：后端脱敏并标记删除，本地清 token 后回到首页
     goDeleteAccount(){
       this.$dialog.confirm({
-        title: '注销账号',
-        message: '注销后账号内的个人信息将被清除且无法恢复，已创建的纪念馆将保留。确认注销吗？'
+        title: t('注销账号'),
+        message: t('注销后账号内的个人信息将被清除且无法恢复，已创建的纪念馆将保留。确认注销吗？')
       }).then(() => {
         $API.user.deleteAccount({}, rsp => {
           if (rsp && (rsp.result === 0 || rsp.result === '0')){
             this.clearLocalLogin()
-            this.$toast && this.$toast('账号已注销')
+            this.$toast && this.$toast(t('账号已注销'))
             Link(`/home`)
           }else{
-            this.$toast && this.$toast((rsp && rsp.msg) || '注销失败，请稍后重试')
+            this.$toast && this.$toast(t((rsp && rsp.msg) || t('注销失败，请稍后重试')))
           }
         }, error => {
-          this.$toast && this.$toast('注销失败，请稍后重试')
+          this.$toast && this.$toast(t('注销失败，请稍后重试'))
         })
       }).catch(()=>{})
     },
@@ -165,11 +170,11 @@ export default {
     // 退出登录：清登录态后跳到登录页
     logout(){
       this.$dialog.confirm({
-        title: '退出登录',
-        message: '确定要退出当前账号吗？'
+        title: t('退出登录'),
+        message: t('确定要退出当前账号吗？')
       }).then(() => {
         this.clearLocalLogin()
-        this.$toast && this.$toast('已退出登录')
+        this.$toast && this.$toast(t('已退出登录'))
         Link('/login')
       }).catch(() => {})
     },
@@ -220,15 +225,15 @@ export default {
             user.avatarUrl = that.avatarUrl
             that.updateUserInfo(user)
           },error=>{
-            this.$toast("修改失败，请稍后重试")
+            this.$toast(t('修改失败，请稍后重试'))
           })
           that.loading = false
         },error=>{
-          this.$toast("上传失败，请稍后重试")
+          this.$toast(t('上传失败，请稍后重试'))
           that.loading = false
         })
       },error=>{
-        this.$toast("上传失败，请稍后重试")
+        this.$toast(t('上传失败，请稍后重试'))
         that.loading = false
       })
     },
@@ -253,7 +258,7 @@ export default {
         user.name = this.name
         this.updateUserInfo(user)
       },error=>{
-        this.$toast("修改失败，请稍后重试")
+        this.$toast(t('修改失败，请稍后重试'))
       })
     },
     registerEvent(){
@@ -273,11 +278,11 @@ export default {
       if (this.vipBusy) return
       try {
         this.vipBusy = true
-        this.$toast && this.$toast('正在唤起 App Store…')
+        this.$toast && this.$toast(t('正在唤起 App Store…'))
         const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
         if (!result || !result.transactionId){
           this.vipBusy = false
-          this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
+          this.$toast && this.$toast(t('未取到 Apple 交易 ID，请稍后重试'))
           return
         }
         this.verifyAndDeliver(result, '尊贵会员已开通')
@@ -287,7 +292,7 @@ export default {
         const msg = e && e.message ? e.message : '购买失败'
         // 用户主动取消不提示
         if (msg.indexOf('取消') < 0){
-          this.$toast && this.$toast(msg)
+          this.$toast && this.$toast(t(msg))
         }
       }
     },
@@ -296,11 +301,11 @@ export default {
       if (this.vipBusy) return
       try {
         this.vipBusy = true
-        this.$toast && this.$toast('正在向 App Store 恢复购买…')
+        this.$toast && this.$toast(t('正在向 App Store 恢复购买…'))
         const result = await iap.restore()
         if (!result || !result.transactionId){
           this.vipBusy = false
-          this.$toast && this.$toast('未取到 Apple 交易 ID，请稍后重试')
+          this.$toast && this.$toast(t('未取到 Apple 交易 ID，请稍后重试'))
           return
         }
         this.verifyAndDeliver(result, '尊贵会员已恢复')
@@ -309,7 +314,7 @@ export default {
         console.log('iap restore error:', e)
         const msg = e && e.message ? e.message : '恢复购买失败'
         if (msg.indexOf('取消') < 0){
-          this.$toast && this.$toast(msg)
+          this.$toast && this.$toast(t(msg))
         }
       }
     },
@@ -319,7 +324,7 @@ export default {
       const tip = (okMsg && okMsg.indexOf('恢复') >= 0) ? '正在恢复会员…' : '正在开通会员…'
       this.vipBusy = true
       // forbidClick + duration:0：持续遮罩，禁止用户操作，直到下方用普通 toast 覆盖/关闭
-      this.$toast.loading({ message: tip, forbidClick: true, duration: 0 })
+      this.$toast.loading({ message: t(tip), forbidClick: true, duration: 0 })
       const payload = {
         transaction_id: result.transactionId
       }
@@ -333,17 +338,17 @@ export default {
           // 只有后端确认发货后才 finish，否则交易一直挂着，下次启动还会再回调
           // 按 ID 结束「这一笔」，多笔并发时互相不覆盖
           iap.finish(result.transactionId)
-          this.$toast(okMsg) // 覆盖 loading，给出成功提示
+          this.$toast(t(okMsg)) // 覆盖 loading，给出成功提示
           // 用户级 VIP 记在 user 上，必须刷新它，页面上的会员状态才跟着变
           this.refreshUser()
         }else{
           console.warn('[iap] 后端未通过：' + (rsp && rsp.msg))
-          this.$toast((rsp && rsp.msg) || '开通失败，请联系客服')
+          this.$toast(t((rsp && rsp.msg) || t('开通失败，请联系客服')))
         }
         this.vipBusy = false
       }, error => {
         console.warn('[iap] 请求异常 ' + JSON.stringify({status: error && error.status, msg: error && (error.msg || error.message)}))
-        this.$toast('校验失败，请联系客服')
+        this.$toast(t('校验失败，请联系客服'))
         this.vipBusy = false
       })
     },

@@ -1,30 +1,30 @@
 <template>
   <div class="users-info" v-if="user">
-    <van-field v-model="user.name" label="逝者姓名:" placeholder="请输入逝者姓名" maxlength="25" input-align="right"></van-field>
-    <van-cell title="性 别:">
+    <van-field v-model="user.name" :label="$t('逝者姓名:')" :placeholder="$t('请输入逝者姓名')" maxlength="25" input-align="right"></van-field>
+    <van-cell :title="$t('性 别:')">
       <van-radio-group v-model="user.sex" class="sex-radio-group">
-        <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{item.name}}</van-radio>
+        <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{ $t(item.name) }}</van-radio>
       </van-radio-group>
     </van-cell>
-    <van-cell class="date-wrapper" title="生 卒:" is-link :value="userDate" @click.stop="goSelectDate"></van-cell>
-    <van-field v-model="user.birthAddress" label="出生地:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
-    <van-field v-if="false" v-model="user.dieAddress" label="安葬地:" placeholder="未填写" maxlength="100" input-align="right"></van-field>
+    <van-cell class="date-wrapper" :title="$t('生 卒:')" is-link :value="userDate" @click.stop="goSelectDate"></van-cell>
+    <van-field v-model="user.birthAddress" :label="$t('出生地:')" :placeholder="$t('未填写')" maxlength="100" input-align="right"></van-field>
+    <van-field v-if="false" v-model="user.dieAddress" :label="$t('安葬地:')" :placeholder="$t('未填写')" maxlength="100" input-align="right"></van-field>
     <van-cell v-if="showDelete">
-      <div class="delete-btn" @click="deleteUser">删除</div>
+      <div class="delete-btn" @click="deleteUser">{{ $t('删除') }}</div>
     </van-cell>
     <template v-if="showAvatar">
-      <van-cell title="遗 像:" is-link>
+      <van-cell :title="$t('遗 像:')" is-link>
         <van-uploader :after-read="afterSelectPhoto">
           <div style="width: 250px;">
-            <span v-if="user.avatarUrl">已选择</span>
-            <span v-else>请选择</span>
+            <span v-if="user.avatarUrl">{{ $t('已选择') }}</span>
+            <span v-else>{{ $t('请选择') }}</span>
           </div>
         </van-uploader>
       </van-cell>
       <div class="avatar-preview" v-if="user.avatarUrl">
         <van-uploader :after-read="afterSelectPhoto">
           <div v-if="loading" class="loading-wrapper">
-            <van-loading class="loading" vertical>上传中...</van-loading>
+            <van-loading class="loading" vertical>{{ $t('上传中...') }}</van-loading>
           </div>
           <img :src="user.avatarUrl" />
         </van-uploader>
@@ -34,6 +34,9 @@
 </template>
 
 <script>
+import { formatMemorialDate } from '@/i18n/dates'
+  import { t } from '@/i18n'
+
   import constant from '@/config/constant'
   import {timesToDate,Link,gUuid} from '@/config/utils'
   import SelectDate from '@/modules/widget/select-date'
@@ -67,35 +70,35 @@
       },
       computed:{
         userDate(){
-          let birthday = '出生日期'
-          let dieDay = '逝世日期'
+          let birthday = t('出生日期')
+          let dieDay = t('逝世日期')
           let split = ' - '
           if (this.user.birthdayStr){
-            birthday = this.user.birthdayStr
+            birthday = formatMemorialDate(this.user.birthdayStr)
           }else{
             if (this.user.birthday){
               birthday = this.dateText(this.user.birthday)
             }
           }
           if (this.user.dieDayStr){
-             dieDay = this.user.dieDayStr
+             dieDay = formatMemorialDate(this.user.dieDayStr)
           }else{
             if (this.user.dieDay){
               dieDay = this.dateText(this.user.dieDay)
             }
           }
           let calType = ''
-          if (this.calType === 0){
-            calType = '公历:'
-          }else if (this.calType === 1){
-            calType = '阴历:'
+          if (this.user.calType === 0){
+            calType = t('公历:')
+          }else if (this.user.calType === 1){
+            calType = t('阴历:')
           }
           return `${calType}${birthday}${split}${dieDay}`
         }
       },
       methods:{
         dateText(timestamp){
-          return timesToDate(timestamp,'yyyy年MM月dd日')
+          return formatMemorialDate(timesToDate(timestamp,'yyyy年MM月dd日'))
         },
         goSelectDate(){
           SelectDate({
@@ -156,11 +159,11 @@
               that.user.avatarUrl = rsp.url
               that.loading = false
             },error=>{
-              this.$toast("上传失败，请稍后重试")
+              this.$toast(t('上传失败，请稍后重试'))
               that.loading = false
             })
           },error=>{
-            this.$toast("上传失败，请稍后重试")
+            this.$toast(t('上传失败，请稍后重试'))
             that.loading = false
           })
         },
