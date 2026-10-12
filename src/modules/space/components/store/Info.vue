@@ -24,7 +24,7 @@
             </div>
             <!-- 价格来自 App Store（StoreKit 本地化价格），取不到时回退兜底价 -->
             <div class="product-bottom">
-              <span class="product-tip">按年支付，{{vipPriceText || '199'}}/年</span>
+              <span class="product-tip">按年支付，{{vipPriceText || '99'}}/年</span>
             </div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
