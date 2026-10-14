@@ -14,7 +14,11 @@
         "/tmp/bian-mobile-background-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-background.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-01c234f9-bf6e-41ff-ab48-617c30a07425.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-01c234f9-bf6e-41ff-ab48-617c30a07425.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/background-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-background.webp"
+      ]
     },
     {
       "key": "chineseTable",
@@ -25,7 +29,11 @@
         "/tmp/bian-mobile-table-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-a31d27b8-825e-4532-a03f-e94cfee0cd57.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-a31d27b8-825e-4532-a03f-e94cfee0cd57.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/table-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table.webp"
+      ]
     },
     {
       "key": "westernBackground",
@@ -36,7 +44,11 @@
         "/tmp/bian-mobile-background-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-western-background.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-f2dbb46f-287c-4e52-8775-2dec9f789743.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-f2dbb46f-287c-4e52-8775-2dec9f789743.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/background-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-western-background.webp"
+      ]
     },
     {
       "key": "westernTable",
@@ -47,7 +59,11 @@
         "/tmp/bian-mobile-table-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table-western.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-f5f8cd29-6b22-47f3-b1d4-1f6e56cfaee7.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-f5f8cd29-6b22-47f3-b1d4-1f6e56cfaee7.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/table-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table-western.webp"
+      ]
     },
     {
       "key": "japaneseBackground",
@@ -58,7 +74,11 @@
         "/tmp/bian-mobile-background-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-japanese-background.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-6b11312d-6f00-47e9-bf8d-b6a3a7906258.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-6b11312d-6f00-47e9-bf8d-b6a3a7906258.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/background-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-japanese-background.webp"
+      ]
     },
     {
       "key": "japaneseTable",
@@ -69,7 +89,11 @@
         "/tmp/bian-mobile-table-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table-japanese.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-16b0c811-91b3-4b06-970a-b0201faae597.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-16b0c811-91b3-4b06-970a-b0201faae597.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/table-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table-japanese.webp"
+      ]
     },
     {
       "key": "koreanBackground",
@@ -80,7 +104,11 @@
         "/tmp/bian-mobile-background-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-korean-background.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-e1aaf923-ec5a-426c-b47f-89f52923162b.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-e1aaf923-ec5a-426c-b47f-89f52923162b.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/background-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/memorial-hall-korean-background.webp"
+      ]
     },
     {
       "key": "koreanTable",
@@ -91,7 +119,11 @@
         "/tmp/bian-mobile-table-layout.png",
         "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table-korean.webp"
       ],
-      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-8617718f-c4a4-49a4-b66d-833fac9d1684.png"
+      "source": "/Users/lenxeon/.codex/generated_images/01a12ffc-a82e-77a3-8dbf-8aae841a5ed6/exec-8617718f-c4a4-49a4-b66d-833fac9d1684.png",
+      "preservedInputCopies": [
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/mobile-theme1/references/table-layout.png",
+        "/Volumes/data/workspace/bian/src/modules/space/components/sacrifice/images/generated/altar-table-korean.webp"
+      ]
     }
   ]
 }
