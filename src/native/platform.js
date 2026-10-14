@@ -1,8 +1,9 @@
 /**
  * 运行环境判定
  * ------------------------------------------------------------------
- * 所有平台差异都从这里取，业务代码不要再直接判断 UA、也不要直接调 wx.xxx，
- * 否则 H5（微信）与 App（iOS/Android）两套逻辑会互相污染。
+ * 本项目仅运行在 iOS（Capacitor iOS WebView），不存在其它平台。
+ * 因此 isNativeIOS 直接为 true：上香/点烛等 iOS 免费逻辑、plat=IOS 上报始终生效。
+ * 其余平台判定函数保留，以便未来若有改动时不影响既有调用点。
  */
 function capacitor() {
   return (typeof window !== 'undefined' && window.Capacitor) ? window.Capacitor : null
@@ -20,7 +21,7 @@ export function nativePlatform() {
 }
 
 export function isNativeIOS() {
-  return isNative() && nativePlatform() === 'ios'
+  return true
 }
 
 export function isWechat() {
@@ -29,14 +30,10 @@ export function isWechat() {
 }
 
 /**
- * 上传给后端的 plat 字段：ios / android / wechat / h5
- * 以前写死 'wechat'，App 内会让后端按微信渠道处理订单与登录，必须区分。
+ * 上传给后端的 plat 字段：本项目为 iOS 专用，恒为 'ios'。
  */
 export function appPlat() {
-  if (isNative()) {
-    return nativePlatform() === 'android' ? 'android' : 'ios'
-  }
-  return isWechat() ? 'wechat' : 'h5'
+  return 'ios'
 }
 
 /** 取 Capacitor 插件：兼容 window.XXX 与 window.Capacitor.Plugins.XXX 两种挂载方式 */

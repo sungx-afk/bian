@@ -2,7 +2,7 @@
   <div class="setting-container">
     <van-cell-group v-if="space && isSpaceCreator">
       <van-cell :title="$t('自定义墓志铭')" :is-link="true" @click.stop="enterEpitaph"></van-cell>
-      <van-cell :title="$t('自定义挽联')" :is-link="true" @click.stop="enterCouplets"></van-cell>
+      <van-cell v-if="showCouplets" :title="$t('自定义挽联')" :is-link="true" @click.stop="enterCouplets"></van-cell>
       <van-cell :title="$t('自定义主题')" :is-link="true" @click.stop="goSwitchTheme"></van-cell>
       <van-cell :title="$t('自定义相框')" :is-link="true" @click.stop="goSwitchFrame"></van-cell>
     </van-cell-group>
@@ -119,7 +119,11 @@
   import PageHeader from '@/modules/widget/PageHeader'
 
   import {getFrames, DEFAULT_FRAME_ID} from '@/config/frame'
-  import themeBackground1 from '../sacrifice/images/generated/memorial-hall-background.webp'
+  import {getMemorialStyle, getMemorialThemeVariant} from '@/config/memorial-style'
+  import themeBackground1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-chinese.webp'
+  import themeBackgroundWestern1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-western.webp'
+  import themeBackgroundJapanese1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-japanese.webp'
+  import themeBackgroundKorean1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-korean.webp'
   import themeBackground2 from '../sacrifice/images/generated/memorial-lakeside-background.webp'
   import themeBackground3 from '../sacrifice/images/generated/memorial-celestial-background.webp'
   import themeBackground4 from '../sacrifice/images/generated/memorial-moonlit-mountains-background.webp'
@@ -169,6 +173,9 @@
         ...mapGetters({
           user: 'userStore/user',
         }),
+        showCouplets(){
+          return getMemorialStyle(this.$locale) === 'chinese'
+        },
         isSpaceCreator(){
           let result = false
           if (this.space && this.user && this.user.id === this.space.creatorId){
@@ -178,7 +185,7 @@
         },
         backgrounds() {
           return [
-            {id: 1, url: themeBackground1},
+            {id: 1, url: {chinese: themeBackground1, western: themeBackgroundWestern1, japanese: themeBackgroundJapanese1, korean: themeBackgroundKorean1}[getMemorialThemeVariant(this.$locale)]},
             {id: 2, url: themeBackground2},
             {id: 3, url: themeBackground3},
             {id: 4, url: themeBackground4},
@@ -199,7 +206,7 @@
           Link(`/space/epitaph/${this.space.id}`)
         },
         enterCouplets(){
-          if (!this.isSpaceCreator){
+          if (!this.isSpaceCreator || !this.showCouplets){
             return
           }
           Link(`/space/couplets/${this.space.id}`)

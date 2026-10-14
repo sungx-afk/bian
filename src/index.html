@@ -25,6 +25,34 @@
 
   <link href="//at.alicdn.com/t/font_502412_oo7ck0x0f8.css" rel="stylesheet" type="text/css">
 
+  <script>
+  /* 隐藏 CodeBuddy 内置预览注入的 "Send errors (N)" 悬浮按钮。
+     该按钮只存在于 IDE 预览环境，真实用户环境(App/线上 H5)不会注入，
+     这里按文本匹配隐藏即可，不影响正常功能。 */
+  (function () {
+    var pending = false
+    function hideSendErrors() {
+      var els = document.querySelectorAll('button, a, div, span')
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i]
+        if (el.style.display === 'none') continue
+        var text = (el.textContent || '').trim()
+        if (/^Send errors(\s*\(\d+\))?$/.test(text)) {
+          el.style.setProperty('display', 'none', 'important')
+        }
+      }
+    }
+    function schedule() {
+      if (pending) return
+      pending = true
+      setTimeout(function () { pending = false; hideSendErrors() }, 200)
+    }
+    document.addEventListener('DOMContentLoaded', hideSendErrors)
+    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true })
+  })()
+  </script>
+
+
 
   <script id="flame-frag" type="x-shader/x-vertex">
   varying vec2 vTextureCoord;

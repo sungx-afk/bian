@@ -510,8 +510,10 @@ export default {
     });
   },
 
-  buy({spaceId, productId}, successCb, errorCb) {
-    $axios.post(`/buy`, JSON.stringify({spaceId, productId})).then(response => {
+  buy({spaceId, productId, memorialStyle}, successCb, errorCb) {
+    const params = {spaceId, productId};
+    if (memorialStyle) params.memorialStyle = memorialStyle;
+    $axios.post(`/buy`, JSON.stringify(params)).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

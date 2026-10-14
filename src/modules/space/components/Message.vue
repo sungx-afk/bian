@@ -114,17 +114,34 @@
       .footer{
         display: flex;
         align-items: center;
+        flex-wrap: wrap; /* 空间不足时按钮整体换到下一行右对齐，而不是按钮各自换行错位 */
         flex-shrink: 0;
         justify-content: flex-end;
         padding: 12px;
         border-top: 1px solid #eeeeee;
         .type{
           margin-right: auto;
+          min-width: 0;
+          .type-radio-group{
+            flex-wrap: nowrap; /* 留言/私语保持一行，英文等长文案不再被挤换行 */
+          }
+          .van-radio{
+            margin-right: 12px;
+            white-space: nowrap;
+            &:last-child{
+              margin-right: 0;
+            }
+          }
+        }
+        .btn{
+          display: flex;
+          align-items: center;
+          flex-shrink: 0; /* 取消/确定始终并排，不拆行 */
         }
         .van-button{
           color: white;
           background-color: @MAIN_THEME_COLOR;
-          margin: 0px 8px;
+          margin: 0px 0px 0px 8px;
         }
       }
     }

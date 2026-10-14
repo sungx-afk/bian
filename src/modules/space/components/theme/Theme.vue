@@ -68,8 +68,12 @@
   import constant from '@/config/constant'
   import {gUuid} from '@/config/utils'
   import PageHeader from '@/modules/widget/PageHeader'
+  import {getMemorialThemeVariant} from '@/config/memorial-style'
   // 与 manage/Setting.vue 共用同一套新主题图（在 sacrifice/images/generated 下生成）
-  import themeBackground1 from '../sacrifice/images/generated/memorial-hall-background.webp'
+  import themeBackground1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-chinese.webp'
+  import themeBackgroundWestern1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-western.webp'
+  import themeBackgroundJapanese1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-japanese.webp'
+  import themeBackgroundKorean1 from '../sacrifice/images/generated/mobile-theme1/memorial-hall-korean.webp'
   import themeBackground2 from '../sacrifice/images/generated/memorial-lakeside-background.webp'
   import themeBackground3 from '../sacrifice/images/generated/memorial-celestial-background.webp'
   import themeBackground4 from '../sacrifice/images/generated/memorial-moonlit-mountains-background.webp'
@@ -102,7 +106,7 @@
       // 与 manage/Setting.vue 一致的新主题列表（backgroundId 1~10 对应 sacrifice 渲染）
       presetBackgrounds(){
         return [
-          {id: 1, uuid: 1, name: '纪念堂', url: themeBackground1},
+          {id: 1, uuid: 1, name: '纪念堂', url: {chinese: themeBackground1, western: themeBackgroundWestern1, japanese: themeBackgroundJapanese1, korean: themeBackgroundKorean1}[getMemorialThemeVariant(this.$locale)]},
           {id: 2, uuid: 2, name: '湖畔', url: themeBackground2},
           {id: 3, uuid: 3, name: '天界', url: themeBackground3},
           {id: 4, uuid: 4, name: '月夜山', url: themeBackground4},

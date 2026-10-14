@@ -118,10 +118,10 @@ class FlameLayer {
     });
   }
 
-  addFlame(el) {
+  addFlame(el, clipEl = null) {
     if (!el) return null;
     this.ensureApp();
-    const flame = { el: el, sprite: null, filter: null };
+    const flame = { el: el, clipEl: clipEl, sprite: null, filter: null };
     this.flames.push(flame);
     if (this.noise) {
       this.createSprite(flame);
@@ -147,6 +147,7 @@ class FlameLayer {
     flame.sprite = null;
     flame.filter = null;
     flame.el = null;
+    flame.clipEl = null;
     this.syncTicker();
   }
 
@@ -180,6 +181,14 @@ class FlameLayer {
       if (!rect.width || !rect.height) {
         flame.sprite.visible = false;
         continue;
+      }
+      // 多烛横向滑动时，裁切区外的锚点不能把火苗画到其他祭品或按钮上。
+      if (flame.clipEl) {
+        const clip = flame.clipEl.getBoundingClientRect();
+        if (rect.left < clip.left || rect.right > clip.right || rect.top < clip.top || rect.bottom > clip.bottom) {
+          flame.sprite.visible = false;
+          continue;
+        }
       }
       flame.sprite.visible = true;
       flame.sprite.position.set(rect.left + rect.width / 2, rect.top + rect.height / 2);

@@ -34,19 +34,21 @@ module.exports = function ({ Vue, i18n, dates, systemText }) {
   const previousHandler = Vue.config.errorHandler
   Vue.config.errorHandler = err => { renderErrors.push(err) }
 
-  function renderSource(file, overrides = {}) {
+  function renderSource(file, overrides = {}, inspect, dependencies = {}) {
     const filename = path.join(root, file)
     const parts = compiler.parseComponent(fs.readFileSync(filename, 'utf8'))
     const instance = new Module(filename, module)
     instance.filename = filename
     instance.paths = Module._nodeModulePaths(path.dirname(filename))
     instance.require = id => {
+      if (Object.prototype.hasOwnProperty.call(dependencies, id)) return dependencies[id]
       if (id === '@/i18n') return i18n
       if (id === '@/i18n/dates') return dates
       if (id === 'vue' || id === 'vuex' || id === 'qs') return require(id)
       if (id === 'vant') return new Proxy({}, { get: () => ({ install() {} }) })
       if (id === '@/config/utils') return { timesToDate: timeToDate, isIphone: () => false, accAdd: (a, b) => a + b, accMul: (a, b) => a * b }
       if (id === '@/config/constant') return {}
+      if (id === '@/config/memorial-style') return require('../src/config/memorial-style')
       if (id === '@/config/frame') return { getFrame: () => ({ slice: [80, 120, 90, 110] }), getFrameImage: () => '', getFrameCombineImage: () => '' }
       if (id.indexOf('@/native/') === 0) return { isNative: () => false, isNativeIOS: () => false }
       if (/\.(webp|png|jpg|jpeg|svg)$/.test(id)) return '/fixture-image'
@@ -68,6 +70,7 @@ module.exports = function ({ Vue, i18n, dates, systemText }) {
     Object.assign(options, compiler.compileToFunctions(parts.template.content))
     const vm = new Vue({ ...options, propsData: fixtureProps })
     const output = vm._render()
+    if (inspect) inspect(vm, output)
     vm.$destroy()
     return output
   }
@@ -109,6 +112,7 @@ module.exports = function ({ Vue, i18n, dates, systemText }) {
     }
   }
   Vue.config.errorHandler = previousHandler
+  require('./check-memorial-candles')({ renderSource, i18n })
   assert.deepStrictEqual(renderErrors, [], 'Real component rendering failed')
   assert.strictEqual(user.name, 'Alexander')
   assert.strictEqual(space.logs[0], 'Alexander上香', 'Stored log mutated')

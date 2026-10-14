@@ -9,12 +9,31 @@
     <div class="content">
       <div class="charge-area">
         <van-cell-group :title="$t(chargeTitle)">
-          <!-- 账号ID：右侧放「恢复购买」（App 内必须提供，审核 3.1.2） -->
-          <van-cell class="account-cell">
-            <span>{{ $t('账号ID：') }}</span><span>{{space && space.currentUser && space.currentUser.id}}</span>
-            <van-button size="small" class="restore-btn" v-if="nativeApp" :loading="vipBusy" @click="restorePurchases">{{ $t('恢复购买') }}</van-button>
+          <!-- 用户信息：与「账号设置」页一致 —— 头像（点击可更换）、昵称(ID)、退出登录 -->
+          <van-cell class="account-cell user-cell" v-if="user">
+            <van-uploader :after-read="afterSelectPhoto">
+              <div class="avatar-box">
+                <user-avatar :url="avatarUrl" :name="user.name" :uid="user.id" :size="50"></user-avatar>
+              </div>
+            </van-uploader>
+            <div class="name-wrapper">
+              <template v-if="isModifyName">
+                <van-field class="name-input"
+                  ref="name_input"
+                  v-model="name"
+                  :placeholder="$t('请输入昵称')"
+                  maxlength="10"
+                  @blur="nameChanged">
+                </van-field>
+              </template>
+              <template v-else>
+                <span class="name">{{ user.name }}</span>
+                <span class="user-id">({{ user.id }})</span>
+                <i class="iconfont icon-bianji" @click="goModifyName"></i>
+              </template>
+            </div>
           </van-cell>
-          <!-- 开通会员：整行紧贴账号ID 下方 -->
+          <!-- 开通会员：整行紧贴用户信息 下方 -->
           <van-cell class="product-cell vip-cell" v-for="product in vipProducts" :key="product.id">
             <!-- 会员权益说明：放在「会员」标题上方 -->
             <div class="product-head">{{ $t('开通会员后，创建的纪念馆所有人员均可使用全部祭品') }}</div>
@@ -26,6 +45,8 @@
             <div class="product-bottom">
               <span class="product-tip">{{ $t('按年支付，') }}{{vipPriceText || '99'}}{{ $t('/年') }}</span>
             </div>
+            <!-- 审核 3.1.2：App 内必须提供「恢复购买」，从原账号ID行移到会员行 -->
+            <div class="vip-restore" v-if="nativeApp && !isVipSpace" @click="restorePurchases">{{ $t('恢复购买') }}</div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
             <div class="charge-remain-wrapper">{{ $t('账号余额：') }}<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;{{ $t('云币') }}</div>
@@ -82,10 +103,11 @@
 
   import constant from '@/config/constant'
   import {mapGetters, mapActions} from 'vuex';
-  import {Link} from '@/config/utils'
+  import {Link, gUuid} from '@/config/utils'
   import { isNative } from '@/native/platform'
   import * as iap from '@/native/iap'
   import PageHeader from '@/modules/widget/PageHeader'
+  import UserAvatar from '@/modules/widget/UserAvatar'
 
   // App Store 真实价格的本地缓存 key：页面加载时直接用缓存展示真价，
   // 既不初始化 StoreKit，也不会把上次未结束的交易重新投递（不会自动发起购买）
@@ -94,7 +116,8 @@
     export default {
       name: "Info",
       components:{
-        PageHeader
+        PageHeader,
+        UserAvatar
       },
       data(){
         return{
@@ -107,6 +130,10 @@
           vipBusy:false,    // 会员开通/恢复购买 loading 态
           buyBusy:false,    // 祭品（云币）购买进行中标记，仅用于防重复点击
           vipPriceText:'',  // 会员年费：App Store 本地化价格（如 ¥199.00），取自 StoreKit
+          name:'',          // 昵称编辑（与「账号设置」页一致）
+          avatarUrl:'',     // 用户头像
+          oldName:'',
+          isModifyName:false,
         }
       },
       computed: {
@@ -168,7 +195,7 @@
           return result;
         },
         filterName(){
-          let result = '彼岸思念';
+          let result = t('彼岸思念');
           if(this.user && this.user.appId == 'wx502b2e237549374c'){
             if(this.user.merchant_name){
               result = this.user.merchant_name;
@@ -180,6 +207,7 @@
       methods:{
         ...mapActions({
           updateSpaceDetail: 'spaceStore/updateSpaceDetail',
+          updateUserInfo: 'userStore/updateUserInfo',
         }),
         charge(){
           Link(`/store/charge`)
@@ -561,8 +589,81 @@
         tipPopupClosed(){
           this.showVisitedTip = false
         },
+        // ============ 用户信息：与「账号设置」页同一套逻辑 ============
+        // 头像：选图后进裁剪页，裁剪完成事件回来上传七牛并更新用户资料
+        afterSelectPhoto(photo,detail){
+          let data = {}
+          data.identifier = gUuid()
+          data.content = photo.content
+          data.name = photo.file.name
+          data.size = photo.file.size
+          data.type = photo.file.type
+          data.lastModified = photo.file.lastModified
+          global.jumpData = data
+          this.$nextTick(()=>{
+            Link(`/cropper?avatar_type=normal`)
+          })
+        },
+        updateAvatarData(result){
+          let that = this
+          let info = result.info
+          let cropperData = result.cropperData
+          $API.space.filesQiniuUploadTicket({
+            reqType: 'general_file',
+            name: info.name,
+            expand: info.name.replace(/.+\./, ''),
+            size: info.size,
+          }, resp => {
+            $API.space.filesQiniuUpload({
+              data:cropperData,
+              token:resp.uptoken,
+              key:resp.key
+            },rsp=>{
+              that.avatarUrl = rsp.url
+              $API.home.updateUserInfo({
+                avatarUrl:this.avatarUrl
+              },rsp=>{
+                let user = that.user
+                user.avatarUrl = that.avatarUrl
+                that.updateUserInfo(user)
+              },error=>{
+                this.$toast(t('修改失败，请稍后重试'))
+              })
+            },error=>{
+              this.$toast(t('上传失败，请稍后重试'))
+            })
+          },error=>{
+            this.$toast(t('上传失败，请稍后重试'))
+          })
+        },
+        // 昵称：点编辑图标进入输入态，失焦保存
+        goModifyName(){
+          this.oldName = this.name
+          this.isModifyName = true
+          setTimeout(() => {
+            this.$refs.name_input && this.$refs.name_input.focus()
+          }, 200);
+        },
+        nameChanged(){
+          this.isModifyName = false
+          //和原来一致就返回
+          if (this.oldName == this.name){
+            this.oldName = ''
+            return
+          }
+          $API.home.updateUserInfo({
+            nickName:this.name
+          },rsp=>{
+            let user = this.user
+            user.name = this.name
+            this.updateUserInfo(user)
+          },error=>{
+            this.$toast(t('修改失败，请稍后重试'))
+          })
+        },
         registerEvent(){
           eventHub.$on(constant.EVENT_PAY_SUCCESS,this.updateInfo)
+          eventHub.$on(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
         },
         getProductsList(){
           return new Promise((resolve, reject) => {
@@ -578,6 +679,10 @@
         }
       },
       created() {
+        if (this.user){
+          this.name = this.user.name
+          this.avatarUrl = this.user.avatarUrl
+        }
         let query = this.$route.query
         if(query){
           if (query.space_id){
@@ -599,6 +704,7 @@
       },
       beforeDestroy() {
         eventHub.$off(constant.EVENT_PAY_SUCCESS,this.updateInfo)
+        eventHub.$off(constant.EVENT_IMAGE_CROP_COMPLETE,this.updateAvatarData)
       }
     }
 </script>
@@ -638,12 +744,38 @@
           padding: 20px 15px;
         }
         .account-cell{
-          /* 恢复购买按钮：贴在账号ID 右侧 */
-          .restore-btn{
-            margin-left: auto;
-            color: @FONT_WHITE_COLOR;
-            background: @SECOND_THEME_COLOR;
-            border-color: @SECOND_THEME_COLOR;
+          /* 用户信息行：头像 + 昵称(ID) + 退出登录，与「账号设置」页一致 */
+          .avatar-box{
+            flex-shrink: 0;
+            .avatar{
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+            }
+          }
+          .name-wrapper{
+            margin-left: 12px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            .name{
+              font-size: 14px;
+              color: @FONT_THIRD_COLOR;
+            }
+            /* 用户名后的 ID（替代原独立"账号ID"行） */
+            .user-id{
+              margin-left: 4px;
+              font-size: 12px;
+              color: @FONT_FOUR_COLOR;
+            }
+            .iconfont{
+              margin-left: 8px;
+              font-size: 14px;
+              color: @FONT_THIRD_COLOR;
+            }
+            .name-input{
+              padding-left: 0;
+            }
           }
         }
         .vip-cell{
@@ -704,6 +836,15 @@
               font-size: 12px;
               font-weight: bold;
               color: @FONT_THIRD_COLOR;
+            }
+          }
+          /* 恢复购买：会员行内的文字链（审核 3.1.2） */
+          .vip-restore{
+            margin-top: 10px;
+            font-size: 13px;
+            color: @SECOND_THEME_COLOR;
+            &:active{
+              opacity: 0.6;
             }
           }
         }

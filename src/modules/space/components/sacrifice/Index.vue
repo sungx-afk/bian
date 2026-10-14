@@ -1,5 +1,5 @@
 <template>
-  <div class="sacrifice" :class="checkResult === 0 ? theme : 'no-theme'">
+  <div class="sacrifice" :class="[checkResult === 0 ? theme : 'no-theme', 'memorial-style-' + memorialStyle, 'memorial-theme-' + memorialThemeVariant]">
     <template v-if="checkResult === 0">
     <div class="sacrifice-back-btn" @click="backToList" :aria-label="$t('返回')">
       <img src="~@/modules/images/back.svg" :alt="$t('返回')" />
@@ -39,7 +39,7 @@
       {{space.epitaph}}
     </div>
 
-    <div id="dui_lian_box" v-if="space && space.showCouplet">
+    <div id="dui_lian_box" v-if="memorialStyle === 'chinese' && space && space.showCouplet">
       <div class="inner" style="padding: 9vh 15px 0px;" v-if="space && space.id>0">
         <div class="dui_lian" style="float: left;">{{space &&space.couplets && space.couplets.left}}</div>
         <div class="dui_lian" style="float: right;">{{space &&space.couplets && space.couplets.right}}</div>
@@ -84,7 +84,10 @@
           <div id="item_zuo_zi_box_inner_2">
             <div id="item_zuo_zi_2">
               <div class="inner">
-                <template v-for="(item, index) in item02" v-if="index<3">
+                <div class="offering-row">
+                <div class="offering-side offering-side-left" :tabindex="memorialStyle === 'western' ? 0 : null" :aria-label="memorialStyle === 'western' ? $t('点烛') : null">
+                <div class="offering-side-items">
+                <template v-for="(item, index) in item02" v-if="index<3 && (memorialStyle === 'chinese' || item.id)">
                   <div
                     :key="index"
                     :class="`${item.id}`"
@@ -93,8 +96,15 @@
                   ></div>
                   <change-ming-deng v-else></change-ming-deng>
                 </template>
-                <div class="item item-la-zu">
+                <div class="item item-la-zu" v-if="memorialStyle === 'chinese'">
                   <div id="zu-huo-1" class="zu-huo-anchor"></div>
+                </div>
+                <template v-if="memorialStyle === 'western'">
+                  <div class="item item-la-zu" v-for="index in westernLeftCandleIds" :key="'western-candle-' + index">
+                    <div :id="'western-candle-' + index" class="zu-huo-anchor western-candle-anchor"></div>
+                  </div>
+                </template>
+                </div>
                 </div>
                 <div class="item item-xiang-lu">
                   <div class="item-xiang-lu-box" :style="{'visibility': showXiangCanvas?'visible':'hidden'}">
@@ -105,10 +115,17 @@
                     </div>
                   </div>
                 </div>
-                <div class="item item-la-zu">
+                <div class="offering-side offering-side-right" :tabindex="memorialStyle === 'western' ? 0 : null" :aria-label="memorialStyle === 'western' ? $t('点烛') : null">
+                <div class="offering-side-items">
+                <div class="item item-la-zu" v-if="memorialStyle === 'chinese'">
                   <div id="zu-huo-2" class="zu-huo-anchor"></div>
                 </div>
-                <template v-for="(item, index) in item02" v-if="index>=6 && index <=8">
+                <template v-if="memorialStyle === 'western'">
+                  <div class="item item-la-zu" v-for="index in westernRightCandleIds" :key="'western-candle-' + index">
+                    <div :id="'western-candle-' + index" class="zu-huo-anchor western-candle-anchor"></div>
+                  </div>
+                </template>
+                <template v-for="(item, index) in item02" v-if="index>=6 && index <=8 && (memorialStyle === 'chinese' || item.id)">
                   <div
                     :key="index"
                     :class="`${item.id}`"
@@ -117,6 +134,9 @@
                   ></div>
                   <change-ming-deng v-else></change-ming-deng>
                 </template>
+                </div>
+                </div>
+                </div>
               </div>
             </div>
           </div>
@@ -142,10 +162,12 @@
         <canvas id="smoke-box"></canvas>
 
         <div class="buttons">
-          <div class="button" @click="jibai()">{{ $t('上香') }}</div>
-          <div class="button" @click="dianlazu()">{{ $t('点烛') }}</div>
-          <div class="button" @click="shaozhi()">{{ $t('纸钱') }}</div>
-          <div class="button" @click="goMoreOperate()">{{ $t('更多') }}</div>
+          <div class="main-buttons">
+            <div class="button" @click="jibai()">{{ $t('上香') }}</div>
+            <div class="button" @click="dianlazu()">{{ $t('点烛') }}</div>
+            <div class="button" @click="shaozhi()">{{ $t('纸钱') }}</div>
+            <div class="button" @click="goMoreOperate()">{{ $t('更多') }}</div>
+          </div>
           <div class="side-buttons">
             <div class="button" @click="goSacrifice" v-if="false">
               <img src="~@/modules/images/jibai.svg" :alt="$t('祭拜')" />
@@ -157,7 +179,7 @@
               <img src="~@/modules/images/music.svg" :alt="$t('音乐')" />
             </div>
             <div class="button" @click="goSurvey">
-              <img src="~@/modules/images/shengping.svg" :alt="$t('生平')" />
+              <img src="~@/modules/images/lifestory.svg" :alt="$t('生平')" />
             </div>
             <div class="button" @click="goSetting">
               <img src="~@/modules/images/setting.svg" :alt="$t('设置')" />
@@ -238,6 +260,7 @@
   import constant from '@/config/constant';
   import {consumePendingBackgroundId} from './pendingSpace';
   import {getFrameImage, getFrame, getFrameCombineImage} from '@/config/frame';
+  import {getMemorialStyle, getMemorialThemeVariant} from '@/config/memorial-style';
 
   //合影横版图（竖版旋转90°后 993x850）铺满 244x130 的显示缩放
   const COMBINE_SCALE_X = 244 / 993
@@ -284,6 +307,7 @@
         item_02: new Array(9).fill({}),
         spaceId: 0,
         space: null,
+        spaceDetailRequestId: 0,
         // 列表点击进馆时由列表项透传的 backgroundId，首帧即可应用正确主题，避免闪默认主题
         pendingBackgroundId: 1,
         checkResult: 0,
@@ -355,6 +379,27 @@
         // 回退到列表项透传的 pendingBackgroundId，避免先闪默认主题(theme_1)再切到设置的主题。
         const themeId = (this.space && this.space.backgroundId) || this.pendingBackgroundId || 1
         return 'theme_' + themeId;
+      },
+      memorialStyle(){
+        // 产品规则：简中、繁中使用中式；日语、英语、韩语使用西式。
+        return getMemorialStyle(this.$locale);
+      },
+      memorialThemeVariant(){
+        return getMemorialThemeVariant(this.$locale);
+      },
+      westernCandleCount(){
+        return this.space && Array.isArray(this.space.products)
+          ? this.space.products.filter(id => id === 'item-la-zu').length : 0;
+      },
+      westernCandleSlots(){
+        // 尚未点烛时展示一支未燃的白烛；每条有效记录对应一支已燃蜡烛。
+        return Math.max(1, this.westernCandleCount);
+      },
+      westernLeftCandleIds(){
+        return Array.from({length: Math.ceil(this.westernCandleSlots / 2)}, (_, index) => index * 2 + 1);
+      },
+      westernRightCandleIds(){
+        return Array.from({length: Math.floor(this.westernCandleSlots / 2)}, (_, index) => index * 2 + 2);
       },
       //合影横版相框：用旋转90°的横版图铺满显示，相框完整不被截
       combineFrameStyle(){
@@ -453,6 +498,14 @@
         return isNativeIOS()
       },
     },
+    watch: {
+      memorialStyle(){
+        this.showLaZuHuo();
+      },
+      westernCandleCount(){
+        this.showLaZuHuo();
+      }
+    },
     methods: {
       ...mapActions({
         setUserSetting: 'userStore/setUserSetting',
@@ -481,7 +534,9 @@
         }
         // 祭品（云币）购买：纯网络请求，不加 loading 遮罩（buyBusy 仅用于防重复点击）
         this.buyBusy = true
-        $API.space.buy({spaceId: that.spaceId, productId: productId}, (resp) => {
+        const params = {spaceId: that.spaceId, productId: productId};
+        if (productId === 'item-la-zu') params.memorialStyle = this.memorialStyle;
+        $API.space.buy(params, (resp) => {
           this.buyBusy = false
           if (resp && !resp.error) {
             if (callback && typeof callback == 'function') {
@@ -537,6 +592,7 @@
 
       doDianlazu(){
         let that = this;
+        const createsCandle = this.memorialStyle === 'western';
         this.buy('item-la-zu', () => {
           if (this.space.type !== 2 && this.supportPay && this.supportPoint && !this.isFreeHall && !this.isAppleFree('item-la-zu')) {
             this.$notify({
@@ -546,23 +602,38 @@
               background: '#ffffff'
             });
           }
+          // 请求成功后才增加蜡烛；随后用详情接口的有效记录校准并支持刷新恢复。
+          if (this.space && Array.isArray(this.space.products)
+            && (createsCandle || this.space.products.indexOf('item-la-zu') < 0)) {
+            this.space.products.push('item-la-zu');
+          }
           this.showLaZuHuo();
           that.getSpaceDetail();
         });
       },
 
       showLaZuHuo() {
-        // 把两支蜡烛的火苗挂到统一渲染层；同一个锚点只注册一次，避免重复点烛后叠加多个 sprite
         if (!this.laZuFlames) {
           this.laZuFlames = {};
         }
         this.$nextTick(() => {
-          ['zu-huo-1', 'zu-huo-2'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el && !this.laZuFlames[id]) {
-              this.laZuFlames[id] = flameLayer.addFlame(el);
+          if (this._isDestroyed || !this.$el) return;
+          const western = this.memorialStyle === 'western';
+          const anchors = this.westernCandleCount > 0
+            ? Array.from(this.$el.querySelectorAll(western ? '.western-candle-anchor' : '#zu-huo-1, #zu-huo-2')) : [];
+          const activeIds = anchors.map(el => el.id);
+          Object.keys(this.laZuFlames).forEach(id => {
+            if (activeIds.indexOf(id) < 0) {
+              flameLayer.removeFlame(this.laZuFlames[id]);
+              delete this.laZuFlames[id];
             }
           });
+          anchors.forEach(el => {
+            if (!this.laZuFlames[el.id]) {
+              this.laZuFlames[el.id] = flameLayer.addFlame(el, western ? el.closest('.offering-side') : null);
+            }
+          });
+          flameLayer.updatePositions();
         });
       },
 
@@ -843,25 +914,21 @@
       goBack() {
         this.$router.go(-1)
       },
-      //左上角"返回"按钮：
-      // - 从 /list 自动跳进来（?auto=1）：清掉当前馆的"最后访问"记录，避免被 /list 自动带回来；
-      //   用 replace 回到 /list，按返回即退出 WebView（与自动进馆行为保持一致）
-      // - 其他入口（详情页等）：优先返回上一页；无历史（如分享链接直开）时兜底回 /list
+      //左上角"返回"按钮：固定返回列表页 /list，不依赖 history
+      //（从详情页、分享链接等任何入口进来都统一回 /list，行为可预期）
+      // - 从 /list 自动跳进来（?auto=1）：额外清掉当前馆的"最后访问"记录，避免被 /list 自动带回来
+      // - 用 replace 回 /list，浏览器返回即退出 WebView，不会在 /list 和祭拜页之间来回
       backToList() {
         if (this.isAutoEntered) {
           this.clearLastSpaceOfCurrent();
-          this.$router.replace('/list');
-          return
         }
-        if (window.history.length > 1) {
-          this.$router.go(-1);
-        } else {
-          this.$router.replace('/list');
-        }
+        this.$router.replace('/list');
       },
       getSpaceDetail() {
         let that = this;
+        const requestId = ++this.spaceDetailRequestId;
         $API.space.getSpaceDetail({sid: that.spaceId}, (resp) => {
+          if (requestId !== this.spaceDetailRequestId) return;
           if (resp.id && resp.id > 0) {
             //权限校验，与纪念馆详情页保持一致
             that.checkResult = that.checkCanIn(resp);
@@ -879,9 +946,7 @@
               that.bgmInited = true;
               that.tryHandleBgm(that.space);
             }
-            if (that.space.products.indexOf('item-la-zu') >= 0) {
-              this.showLaZuHuo();
-            }
+            this.showLaZuHuo();
             if (that.space.products.indexOf('item-xiang') >= 0) {
               // let dom = document.querySelector('.item-xiang-lu-box');
               // dom.style.visibility = 'visible';
@@ -898,8 +963,6 @@
             let items = that.space.products.filter((item) => noItems.indexOf(item) >= 0);
             let changeMingDeng = items.filter((item)=>item === 'item-zhang-min-ding');
             let other = items.filter((item)=>item !== 'item-zhang-min-ding');
-            console.log(JSON.stringify(changeMingDeng));
-            console.log(JSON.stringify(other));
             items = changeMingDeng.concat(changeMingDeng);
             items = items.concat(other);
             items.forEach((item, index) => {
@@ -1883,6 +1946,7 @@
       }
     },
     beforeDestroy() {
+      this.spaceDetailRequestId++;
       this.stopBgm(true)
       this.clearSpaceDetail()
       // 销毁统一火焰层：释放唯一的 WebGL 上下文、ticker 和全屏画布，防止来回进页反复累积
@@ -1970,10 +2034,19 @@
   }
 
   .sacrifice.theme_1 {
-    background-image: url("./images/generated/memorial-hall-background.webp") !important;
+    background-image: url("./images/generated/mobile-theme1/memorial-hall-chinese.webp") !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
     background-position: center center !important;
+  }
+  .sacrifice.theme_1.memorial-style-western {
+    background-image: url("./images/generated/mobile-theme1/memorial-hall-western.webp") !important;
+  }
+  .sacrifice.theme_1.memorial-theme-japanese {
+    background-image: url("./images/generated/mobile-theme1/memorial-hall-japanese.webp") !important;
+  }
+  .sacrifice.theme_1.memorial-theme-korean {
+    background-image: url("./images/generated/mobile-theme1/memorial-hall-korean.webp") !important;
   }
   .sacrifice.theme_1 #item_hua_bg {
     background: url("./images/generated/memorial-flower-wall.webp") center top / 100% auto no-repeat !important;
@@ -2020,6 +2093,17 @@
     text-overflow: ellipsis;
     text-shadow: 0 1px 0 #6b3e11, 0 2px 5px rgba(0, 0, 0, 0.75);
     white-space: nowrap;
+  }
+  .sacrifice.theme_1.memorial-style-western .memorial-plaque {
+    background-image: none;
+    padding: 0 4vw;
+  }
+  .sacrifice.theme_1.memorial-style-western .memorial-plaque-title {
+    color: #49372b;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
   }
   .sacrifice.theme_1 .yi-xiang-box.single,
   .sacrifice.theme_1 .yi-xiang-box.double,
@@ -2512,6 +2596,21 @@
   .sacrifice.theme_6 .memorial-altar-table {
     background-image: url("./images/generated/altar-table-cloud-palace.webp");
   }
+  .sacrifice.memorial-style-western .memorial-altar-table {
+    background-image: url("./images/generated/altar-table-western.webp");
+  }
+  .sacrifice.theme_1.memorial-theme-japanese .memorial-altar-table {
+    background-image: url("./images/generated/mobile-theme1/altar-table-japanese.webp");
+  }
+  .sacrifice.theme_1.memorial-theme-korean .memorial-altar-table {
+    background-image: url("./images/generated/mobile-theme1/altar-table-korean.webp");
+  }
+  .sacrifice.theme_1.memorial-theme-chinese .memorial-altar-table {
+    background-image: url("./images/generated/mobile-theme1/altar-table-chinese.webp");
+  }
+  .sacrifice.theme_1.memorial-theme-western .memorial-altar-table {
+    background-image: url("./images/generated/mobile-theme1/altar-table-western.webp");
+  }
 
   .sacrifice.theme_1 #item_zuo_zi_box,
   .sacrifice.theme_1 #item_zuo_zi_box_2,
@@ -2644,6 +2743,53 @@
     align-items: center;
   }
 
+  #item_zuo_zi_2 .offering-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  #item_zuo_zi_2 .offering-side {
+    flex: 0 0 auto;
+  }
+  #item_zuo_zi_2 .offering-side-items {
+    display: flex;
+    align-items: center;
+  }
+
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .inner {
+    width: 90vw;
+  }
+  // 香炉留在原来的中央槽位，只有左右两侧的蜡烛与祭品各自横向滚动。
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .offering-side {
+    position: absolute;
+    top: -110px;
+    width: ~"calc(50% - 5vw)";
+    padding-top: 110px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .offering-side-left {
+    left: 0;
+  }
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .offering-side-right {
+    right: 0;
+  }
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .offering-side-items {
+    width: max-content;
+    min-width: 100%;
+  }
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .offering-side-left .offering-side-items {
+    justify-content: flex-end;
+  }
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .offering-side-right .offering-side-items {
+    justify-content: flex-start;
+  }
+  .sacrifice.memorial-style-western #item_zuo_zi_2 .item {
+    flex: 0 0 10vw;
+  }
+
   #item_zuo_zi_box_2 {
     position: absolute;
     margin: 0 auto;
@@ -2717,6 +2863,10 @@
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-size: 100% 100% !important;
+  }
+
+  .sacrifice.memorial-style-western .item-la-zu {
+    background-image: url("./images/generated/memorial-candle-western-unlit.webp") !important;
   }
 
   .item-zhang-min-ding{
@@ -2795,6 +2945,12 @@
     pointer-events: none;
   }
 
+  // 白烛杯的烛芯约在方形素材的 (49.2%, 26%)，保持两种素材相同的落桌位置。
+  .sacrifice.memorial-style-western .item-la-zu .zu-huo-anchor {
+    left: 49.2%;
+    top: -1.4vw;
+  }
+
   .item-zhang-min-ding .ming-deng-anchor {
     position: absolute;
     left: 0px;
@@ -2817,19 +2973,30 @@
     padding: 5px;
     z-index: 9;
 
-    > .button {
-      background: #C58233;
-      padding: 6px 2px;
-      margin-right: 4px;
-      -webkit-box-flex: 1;
-      -ms-flex: 1;
+    /* 四个文字按钮单独成行，等高布局：中文一行、其他语言两行时高度一致 */
+    .main-buttons {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
       flex: 1;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      text-align: center;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
+
+      > .button {
+        background: #C58233;
+        padding: 6px 2px;
+        margin-right: 4px;
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+      }
     }
   }
 

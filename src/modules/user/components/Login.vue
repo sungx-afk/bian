@@ -23,6 +23,22 @@
       <p class="login-tip">
         {{ $t('Apple 登录同时用于注册账号。') }}
       </p>
+
+      <div class="login-divider"><span>{{ $t('其他登录方式') }}</span></div>
+
+      <div class="login-uid">
+        <input
+          v-model.trim="uid"
+          class="login-uid-input"
+          type="text"
+          inputmode="numeric"
+          :placeholder="$t('请输入用户 ID')"
+          @keyup.enter="doUidLogin"
+        />
+        <button class="login-btn login-btn--uid" :disabled="!uid" @click="doUidLogin">
+          {{ $t('UID 登录') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +54,9 @@ export default {
     components: { LanguageSelector },
   name: 'Login',
   data () {
-    return {}
+    return {
+      uid: ''
+    }
   },
   computed: {
     ...mapGetters({ user: 'userStore/user' })
@@ -69,6 +87,15 @@ export default {
         } else if (e && e.message && e.message.indexOf('取消') === -1) {
           this.$toast && this.$toast(t('Apple 登录失败，请重试'))
         }
+      }
+    },
+    async doUidLogin () {
+      if (!this.uid) return
+      try {
+        await this.$store.dispatch('userStore/loginWithUid', { uid: this.uid })
+        this.goAfterLogin()
+      } catch (e) {
+        this.$toast && this.$toast(t('UID 登录失败，请重试'))
       }
     }
   }
@@ -203,5 +230,66 @@ export default {
   color: rgba(244, 237, 227, 0.65);
   text-align: center;
   max-width: 300px;
+}
+
+.login-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 18px;
+  color: rgba(244, 237, 227, 0.45);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(232, 176, 107, 0), rgba(232, 176, 107, 0.35), rgba(232, 176, 107, 0));
+}
+
+.login-uid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.login-uid-input {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  border: 1px solid rgba(232, 176, 107, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f4ede3;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.login-uid-input::placeholder {
+  color: rgba(244, 237, 227, 0.4);
+}
+.login-uid-input:focus {
+  border-color: rgba(232, 176, 107, 0.8);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* UID 登录：沉静暖金描边款，与 Apple 黑形成对比但仍克制 */
+.login-btn--uid {
+  background: transparent;
+  border: 1px solid rgba(232, 176, 107, 0.7);
+  color: #e8b06b;
+}
+.login-btn--uid:active {
+  background: rgba(232, 176, 107, 0.12);
+}
+.login-btn--uid:disabled {
+  opacity: 0.4;
+  border-color: rgba(232, 176, 107, 0.3);
+  color: rgba(232, 176, 107, 0.5);
+  cursor: not-allowed;
 }
 </style>
