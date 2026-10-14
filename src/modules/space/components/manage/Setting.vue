@@ -73,6 +73,7 @@
           <van-image
             width="50vw"
             height="65vw"
+            :fit="img.id === 1 ? 'contain' : 'fill'"
             :key="img.id"
             @click="themeId = img.id"
             :class="{'right':index % 2 === 1, 'active':themeId == img.id}"

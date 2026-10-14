@@ -7,7 +7,7 @@
           <div class="preset-theme-container">
             <div class="theme-group" v-for="(group,index) in themes" :key="index">
               <div v-for="theme in group" :key="theme.uuid" class="theme-wrapper" @click="goSelectTheme(theme)">
-                <img class="image" :src="theme.url" />
+                <img class="image" :class="{'mobile-theme-image': theme.id === 1}" :src="theme.url" />
                 <div class="name">
                   {{ $t(theme.name) }}
                 </div>
@@ -292,6 +292,10 @@
           .image{
             width: 100px;
             height: 120px;
+            &.mobile-theme-image {
+              object-fit: contain;
+              background-color: #f3eee6;
+            }
           }
           .name{
             font-size: 15px;
