@@ -148,6 +148,9 @@ const mutations = {
       $axios.defaults.params = param;//重新修改全局联网配置
     }
   },
+  [types.UPDATE_USER_INFO] (state, user) {
+    state.user = Object.assign({}, state.user, user)
+  },
   [types.SET_USER_SETTING] (state,data){
     state.user_setting[data.key] = data.value
   },

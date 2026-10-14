@@ -8,12 +8,17 @@
       <router-view></router-view>
     </navigation>
     <audio id="bgMusic" preload hidden loop="loop"></audio>
+    <set-username-modal />
   </div>
 </template>
 
 <script>
+  import SetUsernameModal from '@/modules/user/components/SetUsernameModal'
   export default {
     name: 'app',
+    components: {
+      SetUsernameModal
+    },
     data() {
       return {
 
