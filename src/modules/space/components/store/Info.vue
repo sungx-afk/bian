@@ -856,7 +856,7 @@
         padding: 8px 16px;
         color: @FONT_SECOND_COLOR;
         p{
-          height: 24px;
+          min-height: 24px;
           line-height: 24px;
           .num{
             font-weight: bold;
@@ -864,6 +864,7 @@
         }
         .label{
           font-size: 16px;
+          line-height: 22px;
           margin-bottom: 12px;
         }
         .iconfont{
