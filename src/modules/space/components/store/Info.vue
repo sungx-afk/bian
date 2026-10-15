@@ -4,7 +4,7 @@
     <page-header :title="$t('祭奠物品')" @click.native="onTitleTap"></page-header>
     <div class="header">
       <img src="~@/modules/images/index_header_2.png" class="header-bg" />
-      <div class="header-text">{{filterName}}{{ $t('意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思') }}</div>
+      <div class="header-text">{{ filterName ? filterName + ' ' : '' }}{{ $t('意在提供一个免费在线祭奠平台供大家追思逝去的亲友，寄托哀思') }}</div>
     </div>
     <div class="content">
       <div class="charge-area">
