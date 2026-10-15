@@ -157,16 +157,13 @@
       }
       .date-select-wrapper{
         .date-input-wrapper{
-          display: flex;
-          align-items: center;
-          min-height: 66px;
+          display: block;
           padding: 8px 16px;
           box-sizing: border-box;
-          label { flex: 0 0 110px; padding-right: 8px; line-height: 1.4; }
+          /* label 在上，输入框占满下方整行 */
+          label { display: block; width: 100%; margin-bottom: 6px; line-height: 1.4; }
           .date-input{
-            flex: 1;
-            width: 0;
-            min-width: 0;
+            width: 100%;
             height: 48px;
           }
            border-bottom: 1px solid #ebedf0;
