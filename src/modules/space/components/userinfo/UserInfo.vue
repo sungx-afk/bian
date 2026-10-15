@@ -189,8 +189,11 @@ import { formatMemorialDate } from '@/i18n/dates'
   .users-info{
     margin-bottom:10px;
     /* 表单改为 label 在上的纵向布局（vant 内部元素需 /deep/ 穿透 scoped） */
+    /* cell 用可换行 flex：title 占满一行，value 与右侧箭头同行 */
     .van-cell{
-      display: block;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
     }
     /deep/.van-cell__title{
       width: 100% !important;
@@ -198,7 +201,11 @@ import { formatMemorialDate } from '@/i18n/dates'
       margin-bottom: 6px;
     }
     /deep/.van-cell__value{
+      flex: 1;
       text-align: left;
+    }
+    /deep/.van-cell__right-icon{
+      margin-left: 8px;
     }
     /deep/.van-field__label{
       width: 100% !important;
