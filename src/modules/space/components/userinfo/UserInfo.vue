@@ -1,13 +1,13 @@
 <template>
   <div class="users-info" v-if="user">
-    <van-field v-model="user.name" :label="$t('逝者姓名:')" :placeholder="$t('请输入逝者姓名')" maxlength="25" input-align="right"></van-field>
+    <van-field v-model="user.name" :label="$t('逝者姓名:')" :placeholder="$t('请输入逝者姓名')" maxlength="25"></van-field>
     <van-cell :title="$t('性 别:')">
       <van-radio-group v-model="user.sex" class="sex-radio-group">
         <van-radio v-for="item in sexList" :key="item.value" :name="item.value" checked-color="#825621">{{ $t(item.name) }}</van-radio>
       </van-radio-group>
     </van-cell>
     <van-cell class="date-wrapper" :title="$t('生 卒:')" is-link :value="userDate" @click.stop="goSelectDate"></van-cell>
-    <van-field v-model="user.birthAddress" :label="$t('出生地:')" :placeholder="$t('未填写')" maxlength="100" input-align="right"></van-field>
+    <van-field v-model="user.birthAddress" :label="$t('出生地:')" :placeholder="$t('未填写')" maxlength="100"></van-field>
     <van-field v-if="false" v-model="user.dieAddress" :label="$t('安葬地:')" :placeholder="$t('未填写')" maxlength="100" input-align="right"></van-field>
     <van-cell v-if="showDelete">
       <div class="delete-btn" @click="deleteUser">{{ $t('删除') }}</div>
@@ -188,18 +188,26 @@ import { formatMemorialDate } from '@/i18n/dates'
 
   .users-info{
     margin-bottom:10px;
+    /* 表单改为 label 在上的纵向布局 */
+    .van-cell{
+      display: block;
+    }
+    .van-cell__title{
+      width: auto !important;
+      flex: none;
+      margin-bottom: 6px;
+    }
+    .van-cell__value{
+      text-align: left;
+    }
+    .van-field__label{
+      width: 100%;
+    }
     .van-cell{
       .van-uploader{
         width: 100%;
         display: flex;
-        justify-content: flex-end;
-      }
-      &.date-wrapper{
-        .van-cell__title{
-          flex-shrink: 0;
-          flex-grow: 0;
-          flex-basis: 40px;
-        }
+        justify-content: flex-start;
       }
       .delete-btn{
         text-align: center;
@@ -228,9 +236,9 @@ import { formatMemorialDate } from '@/i18n/dates'
     }
     .sex-radio-group{
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
       .van-radio{
-        margin-left: 8px;
+        margin-right: 24px;
       }
     }
   }
