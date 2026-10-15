@@ -207,6 +207,15 @@ import { formatMemorialDate } from '@/i18n/dates'
     /deep/.van-cell__right-icon{
       margin-left: 8px;
     }
+    /* 日期行：固定高度，长值单行省略，避免纵向布局被撑高 */
+    /deep/.date-wrapper{
+      height: 48px;
+      .van-cell__value{
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
     /deep/.van-field__label{
       width: 100% !important;
     }
