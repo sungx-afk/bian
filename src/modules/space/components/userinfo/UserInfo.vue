@@ -188,20 +188,20 @@ import { formatMemorialDate } from '@/i18n/dates'
 
   .users-info{
     margin-bottom:10px;
-    /* 表单改为 label 在上的纵向布局 */
+    /* 表单改为 label 在上的纵向布局（vant 内部元素需 /deep/ 穿透 scoped） */
     .van-cell{
       display: block;
     }
-    .van-cell__title{
-      width: auto !important;
+    /deep/.van-cell__title{
+      width: 100% !important;
       flex: none;
       margin-bottom: 6px;
     }
-    .van-cell__value{
+    /deep/.van-cell__value{
       text-align: left;
     }
-    .van-field__label{
-      width: 100%;
+    /deep/.van-field__label{
+      width: 100% !important;
     }
     .van-cell{
       .van-uploader{
