@@ -2,7 +2,8 @@
   <div class="user-center-container" v-if="user">
     <page-header :title="$t('账号设置')"></page-header>
     <div class="user-center-wrapper">
-      <van-cell><language-selector /></van-cell>
+      <!-- 语言切换暂时隐藏（代码保留）：恢复时把 v-if 改为 true -->
+      <van-cell v-if="false"><language-selector /></van-cell>
       <van-cell class="user-cell">
         <van-uploader :after-read="afterSelectPhoto">
           <div class="avatar-box">
@@ -45,8 +46,17 @@
           </div>
           <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">{{ $t('立即开通') }}</van-button>
         </div>
-        <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
-        <div class="vip-restore" v-if="nativeApp && user.vip != 1" @click="restorePurchases">{{ $t('恢复购买') }}</div>
+        <!-- 未开通：价格（最醒目）、权益说明、自动续订披露，与 store/Info.vue 保持同一套 3.1.2(c) 规范 -->
+        <template v-if="nativeApp && user.vip != 1">
+          <div class="vip-price">
+            <span class="price-amount">{{ vipPriceText || '99' }}</span>
+            <span class="price-unit">{{ $t('/年') }}</span>
+          </div>
+          <div class="vip-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
+          <div class="vip-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
+          <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
+          <div class="vip-restore" @click="restorePurchases">{{ $t('恢复购买') }}</div>
+        </template>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
         <div class="charge-remain-wrapper">{{ $t('账号余额：') }}<span class="charge-remain">{{user.point }}</span>&nbsp;{{ $t('云币') }}</div>
@@ -87,6 +97,10 @@ import UserAvatar from '@/modules/widget/UserAvatar'
 import { isNative } from '@/native/platform'
 import * as iap from '@/native/iap'
 
+// App Store 真实价格的本地缓存 key：与 store/Info.vue 共用，页面加载时直接展示真价，
+// 既不初始化 StoreKit，也不会把上次未结束的交易重新投递（不会自动发起购买）
+const VIP_PRICE_CACHE_KEY = 'bian.vip.yearly.price'
+
 export default {
   name: 'UserCenter',
   components: {
@@ -103,7 +117,9 @@ export default {
       isModifyName:false,
       // 会员开通/恢复购买过程中的 loading 态：点击按钮到后端校验发货结束期间为 true，
       // 既驱动按钮 loading 防重复点击，也由 verifyAndDeliver 用来显示页面级 Toast.loading 遮罩
-      vipBusy:false
+      vipBusy:false,
+      // 会员年费：App Store 本地化价格（如 ¥199.00），取自 StoreKit / 本地缓存
+      vipPriceText:''
     }
   },
   computed: {
@@ -278,6 +294,8 @@ export default {
       if (this.vipBusy) return
       try {
         this.vipBusy = true
+        // 点击「立即开通」时才初始化 StoreKit，顺带刷新 App Store 真实价格
+        await this.loadVipPrice()
         this.$toast && this.$toast(t('正在唤起 App Store…'))
         const result = await iap.order(iap.IAP_PRODUCTS.VIP_YEARLY)
         if (!result || !result.transactionId){
@@ -363,6 +381,9 @@ export default {
       this.name = this.user.name
       this.avatarUrl = this.user.avatarUrl
     }
+    // 先用缓存的真价兜底，再只读刷新一次真价（不初始化内购、不会自动发起购买）
+    this.vipPriceText = this.readCachedVipPrice()
+    this.loadVipPriceOnly()
     this.registerEvent()
     // 上次付款后没 finish 的交易，进本页时自动补一次校验发货
     iap.setApprovedHandler(payload => {
@@ -499,6 +520,36 @@ export default {
           border: none;
           background: linear-gradient(135deg, #dda94f 0%, @SECOND_THEME_COLOR 100%);
           box-shadow: 0 2px 8px rgba(196, 130, 44, 0.3);
+        }
+        /* 价格：Apple 3.1.2(c) 要求为最醒目元素（大字、金色、加粗） */
+        .vip-price{
+          margin-top: 12px;
+          display: flex;
+          align-items: baseline;
+          .price-amount{
+            font-size: 30px;
+            font-weight: 700;
+            color: @SECOND_THEME_COLOR;
+          }
+          .price-unit{
+            margin-left: 2px;
+            font-size: 14px;
+            color: #9a8663;
+          }
+        }
+        /* 权益说明：明确花钱能得到什么 */
+        .vip-benefits{
+          margin-top: 8px;
+          font-size: 13px;
+          line-height: 1.5;
+          color: #9a8663;
+        }
+        /* 自动续订披露（小字、浅色，Apple 3.1.2(c) 强制要求） */
+        .vip-renew{
+          margin-top: 6px;
+          font-size: 11px;
+          line-height: 1.4;
+          color: #b7a582;
         }
         .vip-restore{
           margin-top: 14px;

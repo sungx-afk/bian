@@ -4,7 +4,8 @@
     <div class="login-ambient" aria-hidden="true"></div>
 
     <div class="login-card">
-      <language-selector light class="login-language" />
+      <!-- 语言切换暂时隐藏（代码保留）：恢复时把 v-if 改为 true 或删掉该属性 -->
+      <language-selector v-if="false" light class="login-language" />
       <div class="login-brand">
         <img class="login-brand-logo" src="~@/modules/images/index_header.jpg" :alt="$t('彼岸思念')" />
         <h1 class="login-brand-title">{{ $t('彼岸思念') }}</h1>
