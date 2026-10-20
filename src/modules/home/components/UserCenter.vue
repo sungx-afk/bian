@@ -49,7 +49,7 @@
         <!-- 未开通：价格（最醒目）、权益说明、自动续订披露，与 store/Info.vue 保持同一套 3.1.2(c) 规范 -->
         <template v-if="nativeApp && user.vip != 1">
           <div class="vip-price">
-            <span class="price-amount">{{ vipPriceDisplay }}</span>
+            <span class="price-amount">{{ vipPriceText || '99' }}</span>
             <span class="price-unit">{{ $t('/年') }}</span>
           </div>
           <div class="vip-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
@@ -560,8 +560,6 @@ export default {
         /* 价格：Apple 3.1.2(c) 要求为最醒目元素（大字、金色、加粗） */
         .vip-price{
           margin-top: 12px;
-          /* 加 ¥ 符号后整体略右移，避免紧贴卡片左侧显得拥挤 */
-          padding-left: 6px;
           display: flex;
           align-items: baseline;
           .price-amount{
