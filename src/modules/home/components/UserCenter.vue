@@ -374,6 +374,42 @@ export default {
     refreshUser(){
       const token = this.$store.getters['userStore/token']
       this.$store.dispatch('userStore/fetchMyInfo', {token}).catch(() => {})
+    },
+    // 页面加载阶段取 App Store 真价：走原生只读商品查询插件（BianProductPrice），
+    // 不初始化内购插件、不注册交易观察者，因此不会发起购买（与 store/Info.vue 同逻辑）
+    loadVipPriceOnly(){
+      if (!isNative()) return
+      iap.getPriceOnly(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
+        if (text){
+          this.vipPriceText = text
+          this.writeCachedVipPrice(text)
+        }
+      })
+    },
+    // 读缓存的 App Store 价格：页面加载阶段用它展示，不触碰 StoreKit
+    readCachedVipPrice(){
+      try {
+        return localStorage.getItem(VIP_PRICE_CACHE_KEY) || ''
+      } catch (e) {
+        return ''
+      }
+    },
+    writeCachedVipPrice(text){
+      try {
+        if (text) localStorage.setItem(VIP_PRICE_CACHE_KEY, text)
+      } catch (e) {}
+    },
+    // 会员年费：价格取自 App Store 的本地化价格（App Store Connect 调价 / 不同区域货币自动跟随）。
+    // 只在用户点击「立即开通」时调用：页面加载阶段不初始化 StoreKit，避免自动发起购买；
+    // 取到的真价写进缓存，之后进页面就能直接展示真价，且仍不碰 StoreKit。
+    loadVipPrice(){
+      if (!isNative()) return Promise.resolve()
+      return iap.getPrice(iap.IAP_PRODUCTS.VIP_YEARLY).then(text => {
+        if (text){
+          this.vipPriceText = text
+          this.writeCachedVipPrice(text)
+        }
+      }).catch(() => {})
     }
   },
   created () {
