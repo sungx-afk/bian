@@ -25,9 +25,11 @@
         {{ $t('Apple 登录同时用于注册账号。') }}
       </p>
 
-      <div class="login-divider"><span>{{ $t('其他登录方式') }}</span></div>
+      <!-- 暂时隐藏其他登录方式（UID 登录等），只保留 Apple 登录/注册：恢复时把 v-if 改为 true -->
+      <div class="login-divider" v-if="false"><span>{{ $t('其他登录方式') }}</span></div>
 
-      <div class="login-uid">
+      <!-- 暂时隐藏 UID 登录（其他登录方式），只保留 Apple 登录/注册：恢复时把 v-if 改为 true -->
+      <div class="login-uid" v-if="false">
         <input
           v-model.trim="uid"
           class="login-uid-input"
