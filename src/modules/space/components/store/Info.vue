@@ -39,9 +39,11 @@
               <span class="vip-product">{{ $t(product.name) }}</span>
               <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{ $t(buyProductBtnText(product)) }}</van-button>
             </div>
+            <!-- 审核 3.1.2：必须在购买按钮同屏明确披露「订阅周期（长度）」 -->
+            <div class="product-period">{{ $t('订阅周期：12 个月（1 年），到期自动续期') }}</div>
             <!-- 价格：Apple 3.1.2(c) 要求为布局中最醒目元素（大字、主题色、加粗），置于权益上方 -->
             <div class="product-price">
-              <span class="price-amount">{{vipPriceText || '99'}}</span>
+              <span class="price-amount">{{vipPriceText || '¥99'}}</span>
               <span class="price-unit">{{ $t('/年') }}</span>
             </div>
             <!-- 权益说明：明确花钱能得到什么 -->
@@ -50,6 +52,12 @@
             <div class="product-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
             <!-- 审核 3.1.2：App 内必须提供「恢复购买」 -->
             <div class="vip-restore" v-if="nativeApp && !isVipSpace" @click="restorePurchases">{{ $t('恢复购买') }}</div>
+            <!-- 审核 3.1.2：购买按钮同屏必须提供「隐私政策」与「使用条款(EULA)」的可点击链接 -->
+            <div class="product-legal">
+              <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
+              <span class="split">|</span>
+              <span @click="goTerms">{{ $t('使用条款(EULA)') }}</span>
+            </div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
             <div class="charge-remain-wrapper">{{ $t('账号余额：') }}<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;{{ $t('云币') }}</div>
@@ -848,12 +856,28 @@
             line-height: 1.5;
             color: @FONT_SECOND_COLOR;
           }
+          /* 订阅周期：审核 3.1.2 要求明确披露订阅长度 */
+          .product-period{
+            margin-top: 8px;
+            font-size: 13px;
+            color: @FONT_SECOND_COLOR;
+          }
           /* 自动续订披露（小字、浅色，Apple 3.1.2(c) 强制要求） */
           .product-renew{
             margin-top: 6px;
             font-size: 11px;
             line-height: 1.4;
             color: @FONT_FOUR_COLOR;
+          }
+          /* 隐私政策 / 使用条款(EULA)：审核 3.1.2 要求购买同屏的功能性链接 */
+          .product-legal{
+            margin-top: 10px;
+            font-size: 12px;
+            color: @SECOND_THEME_COLOR;
+            .split{
+              margin: 0 6px;
+              color: @FONT_FOUR_COLOR;
+            }
           }
           /* 恢复购买：会员行内的文字链（审核 3.1.2） */
           .vip-restore{

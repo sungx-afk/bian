@@ -48,14 +48,22 @@
         </div>
         <!-- 未开通：价格（最醒目）、权益说明、自动续订披露，与 store/Info.vue 保持同一套 3.1.2(c) 规范 -->
         <template v-if="nativeApp && user.vip != 1">
+          <!-- 审核 3.1.2：明确披露订阅周期（长度） -->
+          <div class="vip-period">{{ $t('订阅周期：12 个月（1 年），到期自动续期') }}</div>
           <div class="vip-price">
-            <span class="price-amount">{{ vipPriceText || '99' }}</span>
+            <span class="price-amount">{{ vipPriceText || '¥99' }}</span>
             <span class="price-unit">{{ $t('/年') }}</span>
           </div>
           <div class="vip-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
           <div class="vip-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
           <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
           <div class="vip-restore" @click="restorePurchases">{{ $t('恢复购买') }}</div>
+          <!-- 审核 3.1.2：同屏提供「隐私政策」与「使用条款(EULA)」的可点击链接 -->
+          <div class="vip-legal">
+            <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
+            <span class="split">|</span>
+            <span @click="goTerms">{{ $t('使用条款(EULA)') }}</span>
+          </div>
         </template>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
@@ -557,6 +565,12 @@ export default {
           background: linear-gradient(135deg, #dda94f 0%, @SECOND_THEME_COLOR 100%);
           box-shadow: 0 2px 8px rgba(196, 130, 44, 0.3);
         }
+        /* 订阅周期：审核 3.1.2 要求明确披露订阅长度 */
+        .vip-period{
+          margin-top: 10px;
+          font-size: 13px;
+          color: #9a8663;
+        }
         /* 价格：Apple 3.1.2(c) 要求为最醒目元素（大字、金色、加粗） */
         .vip-price{
           margin-top: 12px;
@@ -571,6 +585,16 @@ export default {
             margin-left: 2px;
             font-size: 14px;
             color: #9a8663;
+          }
+        }
+        /* 隐私政策 / 使用条款(EULA)：审核 3.1.2 要求购买同屏的功能性链接 */
+        .vip-legal{
+          margin-top: 10px;
+          font-size: 12px;
+          color: @SECOND_THEME_COLOR;
+          .split{
+            margin: 0 6px;
+            color: #b7a582;
           }
         }
         /* 权益说明：明确花钱能得到什么 */
