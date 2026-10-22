@@ -35,17 +35,20 @@
           </van-cell>
           <!-- 开通会员：整行紧贴用户信息 下方 -->
           <van-cell class="product-cell vip-cell" v-for="product in vipProducts" :key="product.id">
-            <!-- 会员权益说明：放在「会员」标题上方 -->
-            <div class="product-head">{{ $t('开通会员后，创建的纪念馆所有人员均可使用全部祭品') }}</div>
             <div class="product-top">
               <span class="vip-product">{{ $t(product.name) }}</span>
               <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{ $t(buyProductBtnText(product)) }}</van-button>
             </div>
-            <!-- 价格来自 App Store（StoreKit 本地化价格），取不到时回退兜底价 -->
-            <div class="product-bottom">
-              <span class="product-tip">{{ $t('按年支付，') }}{{vipPriceText || '99'}}{{ $t('/年') }}</span>
+            <!-- 价格：Apple 3.1.2(c) 要求为布局中最醒目元素（大字、主题色、加粗），置于权益上方 -->
+            <div class="product-price">
+              <span class="price-amount">{{vipPriceText || '99'}}</span>
+              <span class="price-unit">{{ $t('/年') }}</span>
             </div>
-            <!-- 审核 3.1.2：App 内必须提供「恢复购买」，从原账号ID行移到会员行 -->
+            <!-- 权益说明：明确花钱能得到什么 -->
+            <div class="product-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
+            <!-- 自动续订披露（Apple 3.1.2(c) 强制要求） -->
+            <div class="product-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
+            <!-- 审核 3.1.2：App 内必须提供「恢复购买」 -->
             <div class="vip-restore" v-if="nativeApp && !isVipSpace" @click="restorePurchases">{{ $t('恢复购买') }}</div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
@@ -813,14 +816,6 @@
             flex-direction: column;
             align-items: flex-start;
           }
-          /* 会员行的权益说明：独占一行，位于「会员」标题上方 */
-          .product-head{
-            width: 100%;
-            margin-bottom: 12px;
-            font-size: 13px;
-            line-height: 1.5;
-            color: @FONT_SECOND_COLOR;
-          }
           .product-top{
             width: 100%;
             display: flex;
@@ -830,13 +825,35 @@
               font-weight: bold;
             }
           }
-          .product-bottom{
-            margin-top: 4px;
-            .product-tip{
-              font-size: 12px;
+          /* 价格：最醒目元素（大字、主题色、加粗），Apple 3.1.2(c) 要求 */
+          .product-price{
+            margin-top: 8px;
+            display: flex;
+            align-items: baseline;
+            .price-amount{
+              font-size: 24px;
               font-weight: bold;
-              color: @FONT_THIRD_COLOR;
+              color: @SECOND_THEME_COLOR;
             }
+            .price-unit{
+              margin-left: 2px;
+              font-size: 14px;
+              color: @FONT_SECOND_COLOR;
+            }
+          }
+          /* 权益说明：明确花钱能得到什么 */
+          .product-benefits{
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: @FONT_SECOND_COLOR;
+          }
+          /* 自动续订披露（小字、浅色，Apple 3.1.2(c) 强制要求） */
+          .product-renew{
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: @FONT_FOUR_COLOR;
           }
           /* 恢复购买：会员行内的文字链（审核 3.1.2） */
           .vip-restore{
