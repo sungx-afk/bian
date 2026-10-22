@@ -58,11 +58,11 @@
           <div class="vip-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
           <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
           <div class="vip-restore" @click="restorePurchases">{{ $t('恢复购买') }}</div>
-          <!-- 审核 3.1.2：同屏提供「隐私政策」与「使用条款(EULA)」的可点击链接 -->
+          <!-- 审核 3.1.2：同屏提供「隐私政策」与「用户协议」的可点击链接（App 内打开官网页面，可返回） -->
           <div class="vip-legal">
             <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
             <span class="split">|</span>
-            <span @click="goTerms">{{ $t('使用条款(EULA)') }}</span>
+            <span @click="goTerms">{{ $t('用户协议') }}</span>
           </div>
         </template>
       </van-cell>
@@ -78,12 +78,12 @@
       <van-cell class="account-cell" v-if="showOrder" @click="goViewMyOrder" :is-link="true">
         <span>{{ $t('我的订单') }}</span>
       </van-cell>
-      <!-- 上架必填：App 内必须能访问隐私政策与订阅条款 -->
+      <!-- 上架必填：App 内必须能访问隐私政策与用户协议（App 内打开官网页面，可返回） -->
       <van-cell class="doc-cell" @click="goPrivacy" :is-link="true">
         <span>{{ $t('隐私政策') }}</span>
       </van-cell>
       <van-cell class="doc-cell" @click="goTerms" :is-link="true">
-        <span>{{ $t('服务条款（自动续期订阅）') }}</span>
+        <span>{{ $t('用户协议') }}</span>
       </van-cell>
       <!-- 审核 5.1.1(v)：App 内必须提供注销账号入口 -->
       <van-cell class="delete-cell">
@@ -99,7 +99,7 @@ import { t } from '@/i18n'
 import LanguageSelector from '@/modules/widget/LanguageSelector'
 import constant from '@/config/constant'
 import {mapGetters, mapActions} from 'vuex';
-import {Link,gUuid} from '@/config/utils'
+import {Link,gUuid,openLegalDoc} from '@/config/utils'
 import PageHeader from '@/modules/widget/PageHeader'
 import UserAvatar from '@/modules/widget/UserAvatar'
 import { isNative } from '@/native/platform'
@@ -161,11 +161,12 @@ export default {
     goLogs(){
       Link(`/store/logs`)
     },
+    // 隐私政策 / 用户协议：在 App 内打开官网文档页（容器页自带返回按钮）
     goPrivacy(){
-      Link(`/privacy`)
+      openLegalDoc('privacy', '隐私政策')
     },
     goTerms(){
-      Link(`/terms`)
+      openLegalDoc('agreement', '用户协议')
     },
     // 注销账号：后端脱敏并标记删除，本地清 token 后回到首页
     goDeleteAccount(){
@@ -587,7 +588,7 @@ export default {
             color: #9a8663;
           }
         }
-        /* 隐私政策 / 使用条款(EULA)：审核 3.1.2 要求购买同屏的功能性链接 */
+        /* 隐私政策 / 用户协议：审核 3.1.2 要求购买同屏的功能性链接（App 内打开官网页面） */
         .vip-legal{
           margin-top: 10px;
           font-size: 12px;

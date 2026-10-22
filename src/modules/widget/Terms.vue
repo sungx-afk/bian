@@ -2,7 +2,7 @@
   <div class="doc-page">
     <div class="doc-header">
       <i class="iconfont icon-fanhui back" @click="goBack"></i>
-      <span>{{ $t('使用条款(EULA)') }} · {{ $t('服务条款（自动续期订阅）') }}</span>
+      <span>{{ $t('服务条款（自动续期订阅）') }}</span>
     </div>
     <div class="doc-body">
       <p class="update">{{ $t('更新日期：2026-09-22 生效日期：2026-09-22') }}</p>

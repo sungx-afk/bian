@@ -52,11 +52,11 @@
             <div class="product-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
             <!-- 审核 3.1.2：App 内必须提供「恢复购买」 -->
             <div class="vip-restore" v-if="nativeApp && !isVipSpace" @click="restorePurchases">{{ $t('恢复购买') }}</div>
-            <!-- 审核 3.1.2：购买按钮同屏必须提供「隐私政策」与「使用条款(EULA)」的可点击链接 -->
+            <!-- 审核 3.1.2：购买按钮同屏必须提供「隐私政策」与「用户协议」的可点击链接（App 内打开官网页面，可返回） -->
             <div class="product-legal">
               <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
               <span class="split">|</span>
-              <span @click="goTerms">{{ $t('使用条款(EULA)') }}</span>
+              <span @click="goTerms">{{ $t('用户协议') }}</span>
             </div>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
@@ -92,9 +92,9 @@
         <p>{{ $t('长明灯次数：') }}<span class="num">{{space.dengTimes || 0}}</span></p>
         <p class="create-info">{{ $t('纪念馆创建者', { creator: space.creator.name, date: $options.filters.timesToDate(space.createDate, 'yyyy-MM-dd HH:mm') }) }}</p>
       </div>
-      <!-- 审核 3.1.2：付费/订阅页面必须能直接打开服务条款与隐私政策 -->
+      <!-- 审核 3.1.2：付费/订阅页面必须能直接打开用户协议与隐私政策 -->
       <div class="view-history doc-links">
-        <span @click="goTerms">{{ $t('服务条款（自动续期订阅）') }}</span>
+        <span @click="goTerms">{{ $t('用户协议') }}</span>
         <span class="split">|</span>
         <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
       </div>
@@ -114,7 +114,7 @@
 
   import constant from '@/config/constant'
   import {mapGetters, mapActions} from 'vuex';
-  import {Link, gUuid} from '@/config/utils'
+  import {Link, gUuid, openLegalDoc} from '@/config/utils'
   import { isNative } from '@/native/platform'
   import * as iap from '@/native/iap'
   import PageHeader from '@/modules/widget/PageHeader'
@@ -562,11 +562,12 @@
         goLogs(){
           Link(`/store/logs`)
         },
+        // 用户协议 / 隐私政策：在 App 内打开官网文档页（容器页自带返回按钮）
         goTerms(){
-          Link(`/terms`)
+          openLegalDoc('agreement', '用户协议')
         },
         goPrivacy(){
-          Link(`/privacy`)
+          openLegalDoc('privacy', '隐私政策')
         },
         goViewVisitedLog(){
           Link(`/space/manage/${this.spaceId}`)
@@ -869,7 +870,7 @@
             line-height: 1.4;
             color: @FONT_FOUR_COLOR;
           }
-          /* 隐私政策 / 使用条款(EULA)：审核 3.1.2 要求购买同屏的功能性链接 */
+          /* 隐私政策 / 用户协议：审核 3.1.2 要求购买同屏的功能性链接（App 内打开官网页面） */
           .product-legal{
             margin-top: 10px;
             font-size: 12px;
