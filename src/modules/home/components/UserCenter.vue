@@ -44,10 +44,11 @@
               <template v-else>{{ $t('开通后可享专属纪念特权') }}</template>
             </div>
           </div>
-          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">{{ $t('立即开通') }}</van-button>
+          <van-button v-if="user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">{{ $t('立即开通') }}</van-button>
         </div>
         <!-- 未开通：价格（最醒目）、权益说明、自动续订披露，与 store/Info.vue 保持同一套 3.1.2(c) 规范 -->
-        <template v-if="nativeApp && user.vip != 1">
+        <!-- 不再按运行环境（是否原生 App）判断是否展示：账号设置里始终提供开通入口 -->
+        <template v-if="user.vip != 1">
           <!-- 审核 3.1.2：明确披露订阅周期（长度） -->
           <div class="vip-period">{{ $t('订阅周期：12 个月（1 年），到期自动续期') }}</div>
           <div class="vip-price">
@@ -58,12 +59,7 @@
           <div class="vip-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
           <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
           <div class="vip-restore" @click="restorePurchases">{{ $t('恢复购买') }}</div>
-          <!-- 审核 3.1.2：同屏提供「隐私政策」与「用户协议」的可点击链接（App 内打开官网页面，可返回） -->
-          <div class="vip-legal">
-            <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
-            <span class="split">|</span>
-            <span @click="goTerms">{{ $t('用户协议') }}</span>
-          </div>
+          <!-- 隐私政策 / 用户协议：不在此重复放置，统一走下方列表项（App 内打开官网页面，可返回） -->
         </template>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
@@ -147,10 +143,6 @@ export default {
         return true
       }
       return false
-    },
-    // 是否 iOS 原生 App：会员（尊贵会员）开通走 App Store 内购，仅原生 App 展示入口
-    nativeApp(){
-      return isNative()
     }
   },
   watch: {},
@@ -586,16 +578,6 @@ export default {
             margin-left: 2px;
             font-size: 14px;
             color: #9a8663;
-          }
-        }
-        /* 隐私政策 / 用户协议：审核 3.1.2 要求购买同屏的功能性链接（App 内打开官网页面） */
-        .vip-legal{
-          margin-top: 10px;
-          font-size: 12px;
-          color: @SECOND_THEME_COLOR;
-          .split{
-            margin: 0 6px;
-            color: #b7a582;
           }
         }
         /* 权益说明：明确花钱能得到什么 */
