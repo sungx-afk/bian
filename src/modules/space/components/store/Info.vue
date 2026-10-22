@@ -33,40 +33,48 @@
               </template>
             </div>
           </van-cell>
-          <!-- 开通会员：整行紧贴用户信息 下方 -->
-          <van-cell class="product-cell vip-cell" v-for="product in vipProducts" :key="product.id">
-            <div class="product-top">
-              <span class="vip-product">{{ $t(product.name) }}</span>
-              <van-button size="small" class="purchase-btn" :loading="vipBusy" :icon="product.point > 0?iconMoney:''" @click="buyProduct(product)">{{ $t(buyProductBtnText(product)) }}</van-button>
+          <!-- 尊贵会员卡片：与「账号设置」页（UserCenter）同一套 UI 与布局 -->
+          <van-cell class="vip-card" v-if="showVipCard" :border="false">
+            <div class="vip-head">
+              <div class="vip-logo">VIP</div>
+              <div class="vip-info">
+                <div class="vip-title">
+                  <span>{{ $t('尊贵会员') }}</span>
+                  <span class="vip-state" :class="{'is-active': isVipSpace}">{{ isVipSpace ? $t('已开通') : $t('未开通') }}</span>
+                </div>
+                <div class="vip-desc">
+                  <template v-if="isVipSpace && user && user.vip == 1 && user.vipEndDate">{{ $t('有效期至') }} {{ user.vipEndDate | timesToDate('yyyy-MM-dd') }}</template>
+                  <template v-else-if="isVipSpace">{{ $t('尊贵特权已生效，感谢支持') }}</template>
+                  <template v-else>{{ $t('开通后可享专属纪念特权') }}</template>
+                </div>
+              </div>
+              <van-button v-if="!isVipSpace && vipProducts.length" round size="small" class="vip-btn" :loading="vipBusy" @click="buyProduct(vipProducts[0])">{{ $t('立即开通') }}</van-button>
             </div>
-            <!-- 审核 3.1.2：必须在购买按钮同屏明确披露「订阅周期（长度）」 -->
-            <div class="product-period">{{ $t('订阅周期：12 个月（1 年），到期自动续期') }}</div>
-            <!-- 价格：Apple 3.1.2(c) 要求为布局中最醒目元素（大字、主题色、加粗），置于权益上方 -->
-            <div class="product-price">
-              <span class="price-amount">{{vipPriceText || '¥99'}}</span>
-              <span class="price-unit">{{ $t('/年') }}</span>
-            </div>
-            <!-- 权益说明：明确花钱能得到什么 -->
-            <div class="product-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
-            <!-- 自动续订披露（Apple 3.1.2(c) 强制要求） -->
-            <div class="product-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
-            <!-- 审核 3.1.2：App 内必须提供「恢复购买」 -->
-            <div class="vip-restore" v-if="nativeApp && !isVipSpace" @click="restorePurchases">{{ $t('恢复购买') }}</div>
-            <!-- 审核 3.1.2：购买按钮同屏必须提供「隐私政策」与「用户协议」的可点击链接（App 内打开官网页面，可返回） -->
-            <div class="product-legal">
-              <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
-              <span class="split">|</span>
-              <span @click="goTerms">{{ $t('用户协议') }}</span>
-            </div>
+            <!-- 未开通：价格（最醒目）、权益说明、自动续订披露，与「账号设置」页同一套 3.1.2(c) 规范 -->
+            <template v-if="!isVipSpace">
+              <!-- 审核 3.1.2：明确披露订阅周期（长度） -->
+              <div class="vip-period">{{ $t('订阅周期：12 个月（1 年），到期自动续期') }}</div>
+              <div class="vip-price">
+                <span class="price-amount">{{vipPriceText || '¥99'}}</span>
+                <span class="price-unit">{{ $t('/年') }}</span>
+              </div>
+              <div class="vip-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
+              <div class="vip-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
+              <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
+              <div class="vip-restore" @click="restorePurchases">{{ $t('恢复购买') }}</div>
+              <!-- 审核 3.1.2：购买按钮同屏必须提供「隐私政策」与「用户协议」的可点击链接（App 内打开官网页面，可返回） -->
+              <div class="vip-legal">
+                <span @click="goPrivacy">{{ $t('隐私政策') }}</span>
+                <span class="split">|</span>
+                <span @click="goTerms">{{ $t('用户协议') }}</span>
+              </div>
+            </template>
           </van-cell>
           <van-cell class="charge-cell" v-if="supportPay && supportPoint">
             <div class="charge-remain-wrapper">{{ $t('账号余额：') }}<span class="charge-remain">{{space && space.currentUser && space.currentUser.point }}</span>&nbsp;{{ $t('云币') }}</div>
             <div class="charge-btn-wrapper">
               <van-button size="small" class="charge-btn" @click="charge">{{ $t('充值（1 元 = 10 云币）') }}</van-button>
             </div>
-          </van-cell>
-          <van-cell class="vip-cell" v-if="supportPay && isVipSpace">
-            <span style="color: #825621;">{{ $t('当前已开通会员，各种祭奠物品免费') }}</span>
           </van-cell>
           <van-cell class="product-cell" v-for="product in itemProducts" :key="product.id">
             <div class="product-top">
@@ -163,8 +171,12 @@
         isVipSpace(){
           return (this.space && this.space.vip == 1) || (this.user && this.user.vip == 1)
         },
-        nativeApp(){
-          return isNative()
+        // 会员卡片显示条件：与「账号设置」页同一张卡片。
+        // 未开通 → 有可售会员商品时显示（含价格与订阅披露）；已开通 → 显示状态与有效期
+        showVipCard(){
+          if (!this.space || this.space.type == 2) return false
+          if (this.isVipSpace) return !!this.supportPay
+          return this.vipProducts.length > 0
         },
         // 开通会员行（馆级 VIP 商品 item-space-vip）：单独渲染在账号ID 下方
         vipProducts(){
@@ -752,7 +764,7 @@
           color: @FONT_SECOND_COLOR;
         }
 
-        .account-cell,.charge-cell,.vip-cell{
+        .account-cell,.charge-cell{
           padding: 20px 15px;
         }
         .account-cell{
@@ -790,9 +802,137 @@
             }
           }
         }
-        .vip-cell{
-          border-top: 12px solid #eee;
-          border-bottom: 12px solid #eee;
+        /* 尊贵会员卡片：与「账号设置」页（UserCenter）同一套样式 */
+        .vip-card{
+          /* 通栏整条：去掉左右外边距与圆角，横向铺满、与上下行左右对齐 */
+          margin: 12px 0;
+          padding: 16px;
+          border-radius: 0;
+          background: linear-gradient(135deg, #fdf7ec 0%, #f8ecd7 100%);
+          box-shadow: 0 2px 10px rgba(196, 130, 44, 0.12);
+          /deep/.van-cell__value{
+            display: block;
+          }
+          .vip-head{
+            display: flex;
+            align-items: center;
+          }
+          .vip-logo{
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: @FONT_WHITE_COLOR;
+            background: linear-gradient(135deg, #e9c483 0%, @SECOND_THEME_COLOR 100%);
+            box-shadow: 0 2px 6px rgba(196, 130, 44, 0.35);
+          }
+          .vip-info{
+            flex: 1;
+            min-width: 0;
+            margin-left: 12px;
+          }
+          .vip-title{
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: @FONT_SECOND_COLOR;
+          }
+          .vip-state{
+            margin-left: 8px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 400;
+            color: @FONT_THIRD_COLOR;
+            background: rgba(0, 0, 0, 0.06);
+            &.is-active{
+              color: @FONT_WHITE_COLOR;
+              background: @SECOND_THEME_COLOR;
+            }
+          }
+          .vip-desc{
+            margin-top: 5px;
+            font-size: 12px;
+            color: #9a8663;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .vip-btn{
+            flex-shrink: 0;
+            margin-left: 12px;
+            height: 30px;
+            padding: 0 16px;
+            font-size: 13px;
+            color: @FONT_WHITE_COLOR;
+            border: none;
+            background: linear-gradient(135deg, #dda94f 0%, @SECOND_THEME_COLOR 100%);
+            box-shadow: 0 2px 8px rgba(196, 130, 44, 0.3);
+          }
+          /* 订阅周期：审核 3.1.2 要求明确披露订阅长度 */
+          .vip-period{
+            margin-top: 10px;
+            font-size: 13px;
+            color: #9a8663;
+          }
+          /* 价格：Apple 3.1.2(c) 要求为最醒目元素（大字、金色、加粗） */
+          .vip-price{
+            margin-top: 12px;
+            display: flex;
+            align-items: baseline;
+            .price-amount{
+              font-size: 30px;
+              font-weight: 700;
+              color: @SECOND_THEME_COLOR;
+            }
+            .price-unit{
+              margin-left: 2px;
+              font-size: 14px;
+              color: #9a8663;
+            }
+          }
+          /* 权益说明：明确花钱能得到什么 */
+          .vip-benefits{
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #9a8663;
+          }
+          /* 自动续订披露（小字、浅色，Apple 3.1.2(c) 强制要求） */
+          .vip-renew{
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #b7a582;
+          }
+          .vip-restore{
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(196, 130, 44, 0.18);
+            text-align: center;
+            font-size: 13px;
+            color: @SECOND_THEME_COLOR;
+            &:active{
+              opacity: 0.6;
+            }
+          }
+          /* 隐私政策 / 用户协议：审核 3.1.2 要求购买同屏的功能性链接（App 内打开官网页面） */
+          .vip-legal{
+            margin-top: 10px;
+            font-size: 12px;
+            color: @SECOND_THEME_COLOR;
+            .split{
+              margin: 0 6px;
+              color: #b7a582;
+            }
+          }
         }
         .van-cell__value{
           display: flex;
@@ -829,65 +969,6 @@
             width: 100%;
             display: flex;
             align-items: center;
-            .vip-product{
-              font-size: 15px;
-              font-weight: bold;
-            }
-          }
-          /* 价格：最醒目元素（大字、主题色、加粗），Apple 3.1.2(c) 要求 */
-          .product-price{
-            margin-top: 8px;
-            display: flex;
-            align-items: baseline;
-            .price-amount{
-              font-size: 24px;
-              font-weight: bold;
-              color: @SECOND_THEME_COLOR;
-            }
-            .price-unit{
-              margin-left: 2px;
-              font-size: 14px;
-              color: @FONT_SECOND_COLOR;
-            }
-          }
-          /* 权益说明：明确花钱能得到什么 */
-          .product-benefits{
-            margin-top: 8px;
-            font-size: 13px;
-            line-height: 1.5;
-            color: @FONT_SECOND_COLOR;
-          }
-          /* 订阅周期：审核 3.1.2 要求明确披露订阅长度 */
-          .product-period{
-            margin-top: 8px;
-            font-size: 13px;
-            color: @FONT_SECOND_COLOR;
-          }
-          /* 自动续订披露（小字、浅色，Apple 3.1.2(c) 强制要求） */
-          .product-renew{
-            margin-top: 6px;
-            font-size: 11px;
-            line-height: 1.4;
-            color: @FONT_FOUR_COLOR;
-          }
-          /* 隐私政策 / 用户协议：审核 3.1.2 要求购买同屏的功能性链接（App 内打开官网页面） */
-          .product-legal{
-            margin-top: 10px;
-            font-size: 12px;
-            color: @SECOND_THEME_COLOR;
-            .split{
-              margin: 0 6px;
-              color: @FONT_FOUR_COLOR;
-            }
-          }
-          /* 恢复购买：会员行内的文字链（审核 3.1.2） */
-          .vip-restore{
-            margin-top: 10px;
-            font-size: 13px;
-            color: @SECOND_THEME_COLOR;
-            &:active{
-              opacity: 0.6;
-            }
           }
         }
       }
