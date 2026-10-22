@@ -1,0 +1,56 @@
+{
+  "format": "transparent PNG",
+  "localeVariantClasses": {
+    "ja": "memorial-theme-japanese",
+    "ko": "memorial-theme-korean",
+    "en": "memorial-theme-western"
+  },
+  "sharedOfferings": ["item_shuiguo", "item-xuan-hua"],
+  "localizedProducts": {
+    "item-wu-liang-ye": "alcohol.png",
+    "item-05": "alcohol.png",
+    "item-mao-tai": "alcohol.png",
+    "item_pk_jiuxi_maotai": "alcohol.png",
+    "item-yue-bing": "dessert.png",
+    "item_mantou": "staple.png",
+    "item_pk_jiuxi_mantou": "staple.png",
+    "item_pk_jiuxi_hongsaorou": "pork.png",
+    "item_pk_jiuxi_ji": "chicken.png",
+    "item-kao-ya": "duck.png",
+    "item_pk_jiuxi_ya": "duck.png",
+    "item_pk_jiuxi_mifan": "rice.png",
+    "item_pk_jiuxi_yu": "fish.png"
+  },
+  "assetsByLocale": {
+    "ja": {
+      "alcohol.png": "Japanese sake in a tokkuri and cup",
+      "dessert.png": "sakura mochi",
+      "staple.png": "Japanese manju",
+      "pork.png": "tonkatsu",
+      "chicken.png": "yakitori",
+      "duck.png": "Japanese-style roast duck",
+      "rice.png": "Japanese steamed rice bowl",
+      "fish.png": "grilled sea bream"
+    },
+    "ko": {
+      "alcohol.png": "Korean soju bottle and shot glass",
+      "dessert.png": "songpyeon",
+      "staple.png": "garaetteok rice cakes",
+      "pork.png": "Korean bulgogi pork",
+      "chicken.png": "Korean soy-garlic chicken",
+      "duck.png": "Korean grilled duck",
+      "rice.png": "Korean rice in a brass bowl",
+      "fish.png": "grilled Korean mackerel"
+    },
+    "en": {
+      "alcohol.png": "Western red wine bottle and glass",
+      "dessert.png": "Western fruit tart",
+      "staple.png": "Western dinner rolls",
+      "pork.png": "herb-roasted pork",
+      "chicken.png": "herb-roasted chicken",
+      "duck.png": "Western roast duck",
+      "rice.png": "Western rice pilaf",
+      "fish.png": "roast salmon"
+    }
+  }
+}

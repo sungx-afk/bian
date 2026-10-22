@@ -1,0 +1,97 @@
+{
+  "generator": "built-in image_gen",
+  "version": 1,
+  "canvas": "512x512 PNG, transparent RGBA",
+  "renderStandard": {
+    "style": "cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges, three-quarter view",
+    "plateOfferings": "center near bottom; reduced within the transparent square canvas",
+    "flowerBouquet": "center near bottom; reduced within the transparent square canvas",
+    "fruitOffering": "center near bottom; reduced within the transparent square canvas",
+    "uprightBottles": "center near bottom; reduced within the transparent square canvas",
+    "constraints": "genuinely transparent background; complete subject; subtle contact shadow; no extra props, readable text, logos, watermark, colored background or cropping"
+  },
+  "assets": [
+    {
+      "file": "item_hua_01.png",
+      "source": "../item_hua_01.png",
+      "subject": "the same compact bouquet of yellow and white chrysanthemums with green foliage and wrapping; no vase",
+      "prompt": "Redraw Image 1 recognizably as a compact bouquet of yellow and white chrysanthemums with green foliage and wrapping. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete bouquet centered near bottom, about 60% of the altar slot width. Preserve the flower type and yellow-white palette. No vase, extra props, text, watermark, colored background, cropping or oversized bouquet."
+    },
+    {
+      "file": "item_jiu_01.png",
+      "source": "../item_jiu_01.png",
+      "subject": "traditional Chinese white ceramic liquor flask with gold and muted red accents",
+      "prompt": "Redraw Image 1 as the same traditional Chinese white ceramic liquor flask with gold and muted red accents, without readable lettering. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; full upright bottle centered near bottom; bottle about 38% of altar slot width. Preserve the original white-and-gold silhouette. No extra props, text, logo, watermark, background, crop or oversized bottle."
+    },
+    {
+      "file": "item_jiu_02.png",
+      "source": "../item_jiu_02.png",
+      "subject": "traditional Chinese liquor bottle with red cap, pale ceramic body and red label accents",
+      "prompt": "Redraw Image 1 as the same upright traditional Chinese liquor bottle with a red cap, pale ceramic body and red label accents, without readable lettering. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; full bottle centered near bottom; bottle about 38% of altar slot width. Preserve the silhouette and red accents. No extra props, text, logo, watermark, background, crop or oversized bottle."
+    },
+    {
+      "file": "item_mantou.png",
+      "source": "../item_mantou.png",
+      "alsoUsedBy": "item_pk_jiuxi_mantou",
+      "subject": "a small serving of white steamed buns on an orange plate",
+      "prompt": "Redraw Image 1's steamed buns and orange serving plate recognizably. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete plate near bottom center, subtle contact shadow; buns and plate appear small, about 68% of the altar slot width. Preserve the offering's identity and color. No extra props, text, labels, watermark, background, crop or oversized food."
+    },
+    {
+      "file": "item_pan_bing.png",
+      "source": "../item_pan_bing.png",
+      "subject": "a small stack of golden mooncakes on a white plate with red-gold stamped tops, no text",
+      "prompt": "Redraw Image 1 as a small stack of round golden mooncakes on a white plate, with subtle red-gold stamped tops but no text. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete plate near bottom center, subtle contact shadow; dish appears small, about 68% of the altar slot width. Preserve the mooncake color and plate. No extra props, text, watermark, background, crop or oversized serving."
+    },
+    {
+      "file": "item_pan_ya.png",
+      "source": "../item_pan_ya.png",
+      "subject": "a small whole golden roast duck on a white oval platter with modest green garnish",
+      "prompt": "Redraw Image 1 as the same small whole golden roast duck on a simple white oval platter with a little green garnish. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete duck and plate near bottom center, subtle contact shadow; about 68% of altar slot width. Preserve the roasted duck as focal subject. No extra props, text, watermark, background, crop or oversized food."
+    },
+    {
+      "file": "item_pk_jiuxi_hongsaorou.png",
+      "source": "../item_pk_jiuxi_hongsaorou.png",
+      "subject": "a small serving of braised pork belly cubes in dark caramel sauce on a white oval plate",
+      "prompt": "Redraw Image 1 as a small serving of glossy braised pork belly cubes in dark caramel sauce on a simple white oval plate. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete dish near bottom center, subtle contact shadow; about 68% of altar slot width. Preserve recognizable cubed pork and rich brown sauce. No extra props, text, watermark, background, crop or oversized serving."
+    },
+    {
+      "file": "item_pk_jiuxi_ji.png",
+      "source": "../item_pk_jiuxi_ji.png",
+      "subject": "a small whole golden roasted chicken on a white oval platter with modest garnish",
+      "prompt": "Redraw Image 1 as a small whole golden roasted chicken on a clean white oval platter with modest green garnish. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete chicken and plate near bottom center, subtle contact shadow; about 68% of altar slot width. Preserve the original whole chicken silhouette and white plate. No extra props, text, watermark, background, crop or oversized food."
+    },
+    {
+      "file": "item_pk_jiuxi_maotai.png",
+      "source": "../item_pk_jiuxi_maotai.png",
+      "subject": "a traditional Chinese baijiu bottle with white ceramic body, red cap and red-gold label shapes, no legible lettering",
+      "prompt": "Redraw Image 1 as the same recognizable traditional Chinese baijiu bottle: white ceramic body, red cap and red-gold label shapes, but no legible brand name or lettering. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; upright full bottle centered near bottom, subtle contact shadow; about 38% of altar slot width. Preserve bottle silhouette and classic red-white-gold palette. No extra props, readable text, logos, watermark, background, crop or oversized bottle."
+    },
+    {
+      "file": "item_pk_jiuxi_mifan.png",
+      "source": "../item_pk_jiuxi_mifan.png",
+      "subject": "a small yellow-gold patterned bowl filled with white rice",
+      "prompt": "Redraw Image 1 as the same small gold patterned bowl filled with white rice. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; bowl near bottom center, subtle contact shadow; bowl and rice about 68% of altar slot width. Preserve the yellow-gold bowl and white rice. No chopsticks, extra props, text, watermark, background, crop or oversized serving."
+    },
+    {
+      "file": "item_pk_jiuxi_ya.png",
+      "source": "../item_pk_jiuxi_ya.png",
+      "subject": "a small whole golden roast duck on a white oval platter with modest garnish",
+      "prompt": "Redraw Image 1 as a small whole golden roast duck on a simple white oval platter with a little green garnish. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; whole duck and plate near bottom center, subtle contact shadow; about 68% of altar slot width. Preserve roast duck as focal subject. No extra props, text, watermark, background, crop or oversized serving."
+    },
+    {
+      "file": "item_pk_jiuxi_yu.png",
+      "source": "../item_pk_jiuxi_yu.png",
+      "subject": "a small whole braised fish with orange-brown sauce and green scallion garnish on a white oval plate",
+      "prompt": "Redraw Image 1 as a small whole braised fish, orange-brown with green scallion garnish and a little sauce, on a simple white oval serving plate. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete fish and plate near bottom center, subtle contact shadow; about 68% of altar slot width. Preserve recognizable whole fish, plate and garnish. No extra props, text, watermark, background, crop or oversized serving."
+    },
+    {
+      "file": "item_shuiguo.png",
+      "source": "../item_shuiguo.png",
+      "subject": "a gold pedestal bowl holding assorted red and green apples, grapes and citrus",
+      "prompt": "Redraw Image 1 as the same brass-gold pedestal fruit bowl with assorted colorful apples, grapes, citrus and other fruit. No scene, genuinely transparent. Cohesive realistic 3D cutout art for a mobile memorial altar, warm soft studio light, clean edges. Square 1:1 artboard; complete pedestal bowl centered near bottom with subtle contact shadow; about 64% of altar slot width. Preserve a gold bowl and colorful fruit. No extra props, text, watermark, background, crop or oversized fruit."
+    }
+  ],
+  "layoutAliases": {
+    "item_pk_jiuxi_mantou": "item_mantou.png"
+  }
+}

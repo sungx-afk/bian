@@ -1,0 +1,17 @@
+{
+  "canvas": "512x512 PNG, transparent RGBA",
+  "assets": {
+    "ja/alcohol.png": {
+      "meaning": "Japanese sake offering",
+      "prompt": "A small white ceramic tokkuri sake flask with a subtle navy blue Japanese floral pattern and a matching ochoko cup, compact complete silhouette, warm gentle studio lighting, realistic 3D product art, transparent background, square canvas, no Chinese symbols, no readable text, no logo, no watermark."
+    },
+    "ko/alcohol.png": {
+      "meaning": "Korean soju offering",
+      "prompt": "A classic small green glass soju bottle with a tiny clear shot glass, understated Korean tableware styling, compact complete silhouette, warm gentle studio lighting, realistic 3D product art, transparent background, square canvas, no brand label, no Hangul text, no Chinese symbols, no logo, no watermark."
+    },
+    "en/alcohol.png": {
+      "meaning": "Western red wine offering",
+      "prompt": "An elegant dark green bottle of red wine with a small stemmed glass partly filled with red wine, understated classic European table style, compact complete silhouette, warm gentle studio lighting, realistic 3D product art, transparent background, square canvas, no brand label, no readable text, no Chinese symbols, no logo, no watermark."
+    }
+  }
+}
