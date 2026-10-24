@@ -20,7 +20,22 @@ export default {
   name: 'LanguageSelector',
   props: { light: Boolean },
   data() { return { languages } },
-  methods: { changeLanguage(event) { setLocale(event.target.value) } }
+  methods: {
+    changeLanguage(event) {
+      const code = event.target.value
+      setLocale(code)
+      this.$emit('change', code)
+      if (this.$store && this.$store.getters['userStore/user']) {
+        const user = this.$store.getters['userStore/user']
+        if (window.$API && window.$API.home && window.$API.home.updateUserInfo) {
+          window.$API.home.updateUserInfo({ language: code }, () => {
+            const updated = Object.assign({}, user, { language: code })
+            this.$store.dispatch('userStore/updateUserInfo', updated)
+          })
+        }
+      }
+    }
+  }
 }
 </script>
 

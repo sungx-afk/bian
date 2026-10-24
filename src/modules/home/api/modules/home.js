@@ -46,8 +46,12 @@ export default {
       errorCb && errorCb(error)
     })
   },
-  updateUserInfo({nickName,avatarUrl},successCb,errorCb){
-    $axios.patch(`/users/my`, {nickName,avatarUrl}).then(response => {
+  updateUserInfo({nickName,avatarUrl,language},successCb,errorCb){
+    let payload = {}
+    if (nickName !== undefined) payload.nickName = nickName
+    if (avatarUrl !== undefined) payload.avatarUrl = avatarUrl
+    if (language !== undefined) payload.language = language
+    $axios.patch(`/users/my`, payload).then(response => {
       successCb && successCb(response.data)
     }).catch(error => {
       errorCb && errorCb(error)

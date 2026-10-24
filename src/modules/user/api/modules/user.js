@@ -4,19 +4,33 @@ export default {
 
   // Apple 登录：App 内拿到 identityToken 后交给后端校验并换取本站 token
   // 后端需实现 /users/oauth2/apple/service/login_by_token（校验 JWT、建号/绑号、下发 token）
-  loginWithApple({identityToken,authorizationCode,email,fullName,appleUserId},successCb, errorCb){
+  loginWithApple({identityToken,authorizationCode,email,fullName,appleUserId,language},successCb, errorCb){
+    let savedLocale = ''
+    try { savedLocale = localStorage.getItem('bian_language') || '' } catch (e) {}
     let param = {
       identity_token: identityToken,
       authorization_code: authorizationCode,
       email,
       full_name: fullName,
-      apple_user_id: appleUserId
+      apple_user_id: appleUserId,
+      language: language || savedLocale
     }
     $axios.post(`/users/oauth2/apple/service/login_by_token`,JSON.stringify(param)).then(function (response) {
       successCb && successCb(response.data)
     }).catch(function (error) {
       errorCb &&  errorCb(error)
     });
+  },
+  updateUserInfo({nickName,avatarUrl,language},successCb,errorCb){
+    let payload = {}
+    if (nickName !== undefined) payload.nickName = nickName
+    if (avatarUrl !== undefined) payload.avatarUrl = avatarUrl
+    if (language !== undefined) payload.language = language
+    $axios.patch(`/users/my`, payload).then(response => {
+      successCb && successCb(response.data)
+    }).catch(error => {
+      errorCb && errorCb(error)
+    })
   },
   // 微信登录：App 内拿到 authorization code 后交给后端，由后端用 AppSecret 换取 openid/unionid 与本站 token
   // 后端需实现 /users/oauth2/wechat/service/login_by_code（校验 code、建号/绑号、下发 token）

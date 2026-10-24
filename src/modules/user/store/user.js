@@ -1,5 +1,6 @@
 import * as types from './mutation-types'
 import { setPageTitle } from '@/config/utils'
+import { setLocale } from '@/i18n'
 
 // initial state
 const state = {
@@ -146,6 +147,13 @@ const mutations = {
       param.app_id = app_id;
       localStorage.setItem(key,JSON.stringify(param))
       $axios.defaults.params = param;//重新修改全局联网配置
+    }
+    if (data.user && data.user.language) {
+      try {
+        if (!localStorage.getItem('bian_language')) {
+          setLocale(data.user.language)
+        }
+      } catch (e) {}
     }
   },
   [types.UPDATE_USER_INFO] (state, user) {

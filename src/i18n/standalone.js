@@ -3,7 +3,7 @@
   var core = window.BianLocale
   var storage
   try { storage = window.localStorage } catch (e) {}
-  var preferred = window.navigator.languages || [window.navigator.language]
+  var preferred = (window.navigator.languages && window.navigator.languages.length) ? window.navigator.languages : [window.navigator.language]
   var current = core.detectLocale(storage, preferred)
   var catalogs = { 'zh-CN': {} }
   var requests = {}

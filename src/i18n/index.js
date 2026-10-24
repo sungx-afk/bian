@@ -19,7 +19,9 @@ const vantNames = { ja: 'ja-JP', en: 'en-US', ko: 'ko-KR' }
 
 let storage
 try { storage = typeof window !== 'undefined' ? window.localStorage : null } catch (e) {}
-const preferred = typeof navigator !== 'undefined' ? (navigator.languages || [navigator.language]) : []
+const preferred = typeof navigator !== 'undefined'
+  ? ((navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language]).filter(Boolean)
+  : []
 export const state = Vue.observable({ locale: detectLocale(storage, preferred) })
 
 // Keys are original interface text, so Simplified Chinese is also a readable fallback.

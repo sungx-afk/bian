@@ -20,10 +20,9 @@
     return /^(ja|en|ko)(?:-|$)/.test(locale) ? locale.split('-')[0] : null
   }
   // 是否跟随系统语言：
-  //   false（当前）= 不跟随，固定默认中文（除非用户手动切换并写入了 localStorage）
-  //   true        = 跟随浏览器/系统语言
-  // 后续需要恢复「跟随系统语言」时，把这里改成 true 即可，无需动其它代码。
-  var FOLLOW_SYSTEM_LOCALE = false
+  //   false = 不跟随，固定默认中文（除非用户手动切换并写入了 localStorage）
+  //   true  = 跟随浏览器/系统语言
+  var FOLLOW_SYSTEM_LOCALE = true
   function detectLocale(storage, preferredLanguages) {
     try {
       var saved = normalizeLocale(storage && storage.getItem(STORAGE_KEY))

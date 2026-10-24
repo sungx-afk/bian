@@ -2,8 +2,6 @@
   <div class="user-center-container" v-if="user">
     <page-header :title="$t('账号设置')"></page-header>
     <div class="user-center-wrapper">
-      <!-- 语言切换暂时隐藏（代码保留）：恢复时把 v-if 改为 true -->
-      <van-cell v-if="false"><language-selector /></van-cell>
       <van-cell class="user-cell">
         <van-uploader :after-read="afterSelectPhoto">
           <div class="avatar-box">
@@ -70,6 +68,11 @@
       <van-cell class="account-cell" v-if="showOrder" @click="goViewMyOrder" :is-link="true">
         <span>{{ $t('我的订单') }}</span>
       </van-cell>
+      <!-- 语言切换 -->
+      <van-cell class="lang-cell" :is-link="true" @click="showLanguageSheet = true">
+        <span class="lang-title">{{ $t('语言') }}</span>
+        <span class="lang-current">{{ currentLanguageName }}</span>
+      </van-cell>
       <!-- 上架必填：App 内必须能访问隐私政策与订阅条款 -->
       <van-cell class="doc-cell" @click="goPrivacy" :is-link="true">
         <span>{{ $t('隐私政策') }}</span>
@@ -82,11 +85,19 @@
         <div class="delete-btn" @click="goDeleteAccount">{{ $t('注销账号') }}</div>
       </van-cell>
     </div>
+    <!-- 语言切换面板 -->
+    <van-action-sheet
+      v-model="showLanguageSheet"
+      :actions="showLanguageSheet ? languageActions : []"
+      :cancel-text="$t('取消')"
+      close-on-click-action
+      @select="onSelectLanguage"
+    />
   </div>
 </template>
 
 <script>
-import { t } from '@/i18n'
+import { t, languages, setLocale } from '@/i18n'
 
 import LanguageSelector from '@/modules/widget/LanguageSelector'
 import constant from '@/config/constant'
@@ -115,6 +126,7 @@ export default {
       avatarUrl:'',
       oldName:'',
       isModifyName:false,
+      showLanguageSheet: false,
       // 会员开通/恢复购买过程中的 loading 态：点击按钮到后端校验发货结束期间为 true，
       // 既驱动按钮 loading 防重复点击，也由 verifyAndDeliver 用来显示页面级 Toast.loading 遮罩
       vipBusy:false,
@@ -143,6 +155,17 @@ export default {
     // 是否 iOS 原生 App：会员（尊贵会员）开通走 App Store 内购，仅原生 App 展示入口
     nativeApp(){
       return isNative()
+    },
+    currentLanguageName() {
+      const cur = languages.find(item => item.code === this.$locale)
+      return cur ? cur.name : '简体中文'
+    },
+    languageActions() {
+      return languages.map(item => ({
+        name: item.name,
+        code: item.code,
+        color: item.code === this.$locale ? '#c4822c' : '#333333'
+      }))
     }
   },
   watch: {},
@@ -283,6 +306,21 @@ export default {
     },
     goViewMyOrder(){
       Link('/mortuary/order_list?scope=my')
+    },
+    onSelectLanguage(action) {
+      if (!action || !action.code) return
+      if (action.code === this.$locale) return
+      const code = action.code
+      setLocale(code)
+      $API.home.updateUserInfo({
+        language: code
+      }, rsp => {
+        let user = Object.assign({}, this.user, { language: code })
+        this.updateUserInfo(user)
+        this.$toast && this.$toast(t('修改成功'))
+      }, error => {
+        console.warn('更新用户语言失败:', error)
+      })
     },
     // ============ 账号级会员（尊贵会员）开通：参照 store/Info.vue 的 iOS 内购流程 ============
     // 会员是用户级的（user.vip），不绑定具体纪念馆，所以不传 space_id（后端 /pay/ios/verify 该参数可选）
@@ -618,6 +656,24 @@ export default {
             color: @FONT_WHITE_COLOR;
             background: @SECOND_THEME_COLOR;
           }
+        }
+      }
+      .lang-cell{
+        margin-top: 12px;
+        /deep/.van-cell__value{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        }
+        .lang-title{
+          font-size: 14px;
+          color: @FONT_SECOND_COLOR;
+        }
+        .lang-current{
+          font-size: 14px;
+          color: @FONT_THIRD_COLOR;
+          margin-right: 4px;
         }
       }
       .doc-cell{
