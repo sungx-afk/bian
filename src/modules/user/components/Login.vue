@@ -5,7 +5,7 @@
 
     <div class="login-card">
       <!-- 语言切换：默认跟随系统，未登录也可手动切换 -->
-      <language-selector light class="login-language" />
+      <language-selector v-if="false" light class="login-language" />
       <div class="login-brand">
         <img class="login-brand-logo" src="~@/modules/images/index_header.jpg" :alt="$t('彼岸思念')" />
         <h1 class="login-brand-title">{{ $t('彼岸思念') }}</h1>
@@ -26,10 +26,10 @@
       </p>
 
       <!-- 调试：临时放开「其他登录方式」，便于用测试账号 UID 登录。上线前把 v-if 改回 false -->
-      <div class="login-divider" v-if="true"><span>{{ $t('其他登录方式') }}</span></div>
+      <div class="login-divider" v-if="false"><span>{{ $t('其他登录方式') }}</span></div>
 
       <!-- 调试：临时放开 UID 登录，直接输入测试账号 ID 即可登录。上线前把 v-if 改回 false -->
-      <div class="login-uid" v-if="true">
+      <div class="login-uid" v-if="false">
         <input
           v-model.trim="uid"
           class="login-uid-input"

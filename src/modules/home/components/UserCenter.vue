@@ -3,7 +3,7 @@
     <page-header :title="$t('账号设置')"></page-header>
     <div class="user-center-wrapper">
       <!-- 语言切换：默认跟随系统，用户可在此手动切换（写入 localStorage 后以手动选择为准） -->
-      <van-cell class="language-cell"><language-selector /></van-cell>
+      <van-cell class="language-cell" v-if="false"><language-selector /></van-cell>
       <van-cell class="user-cell">
         <van-uploader :after-read="afterSelectPhoto">
           <div class="avatar-box">
