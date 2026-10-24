@@ -24,7 +24,7 @@
         {{ $t('后台管理') }}
       </div>
     </div>
-    <!-- 语言切换暂时隐藏（代码保留）：恢复时把 v-if 改为 true -->
+    <!-- 语言切换：默认跟随系统，用户可在此手动切换 -->
     <div class="list-language" v-if="false"><language-selector /></div>
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />

@@ -20,6 +20,18 @@ export const Link = (url, query,replace) => {
   }
 }
 
+/*官方隐私政策与用户协议地址：改由 App 内网页容器（/webdoc）打开，页面自带返回按钮*/
+export const LEGAL_DOC_URLS = {
+  privacy: 'https://web-ba.yugusoft.com/bian_legal/privacy_policy.html',
+  agreement: 'https://web-ba.yugusoft.com/bian_legal/user_agreement.html'
+}
+
+// 打开 App 内网页容器页
+// type: privacy（隐私政策）| agreement（用户协议）；title 为 i18n key，作为页面标题
+export const openLegalDoc = (type, title) => {
+  Link('/webdoc', {url: LEGAL_DOC_URLS[type], title})
+}
+
 
 /**
 *初始化弹出组件通用方法

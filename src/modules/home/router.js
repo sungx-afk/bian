@@ -5,8 +5,7 @@ const Error = () => import(/* webpackChunkName: "error" */ './components/Error')
 const Notice = () => import(/* webpackChunkName: "notice" */ './components/Notice');
 const MeetingIntro = () => import(/* webpackChunkName: "meeting_intro" */ './components/MeetingIntro');
 const UserCenter = () => import(/* webpackChunkName: "user-center" */ './components/UserCenter');
-const Privacy = () => import(/* webpackChunkName: "doc" */ '@/modules/widget/Privacy');
-const Terms = () => import(/* webpackChunkName: "doc" */ '@/modules/widget/Terms');
+const WebDoc = () => import(/* webpackChunkName: "webdoc" */ '@/modules/widget/WebDoc');
 
 const routes = [
 	{
@@ -30,12 +29,9 @@ const routes = [
   {
     path: '/user_center', component: UserCenter
   },
-  // 上架必填：隐私政策与自动续期订阅条款（App Store Connect 审核信息里要填这两个链接）
+  // 隐私政策 / 用户协议：统一在 App 内打开官网文档页（/webdoc），页面自带返回按钮
   {
-    path: '/privacy', component: Privacy
-  },
-  {
-    path: '/terms', component: Terms
+    path: '/webdoc', component: WebDoc
   },
 ]
 

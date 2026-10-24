@@ -21,7 +21,7 @@
   }
   // 是否跟随系统语言：
   //   false = 不跟随，固定默认中文（除非用户手动切换并写入了 localStorage）
-  //   true  = 跟随浏览器/系统语言
+  //   true  = 跟随浏览器/系统语言（用户手动切换后以 localStorage 为准）
   var FOLLOW_SYSTEM_LOCALE = true
   function detectLocale(storage, preferredLanguages) {
     try {

@@ -2,7 +2,7 @@
   <transition name="guide-fade">
     <div class="guide-mask">
       <div class="guide-content">
-        <!-- 语言切换暂时隐藏（代码保留）：恢复时把 v-if 改为 true -->
+        <!-- 语言切换：默认跟随系统，用户可在此手动切换 -->
         <language-selector v-if="false" light />
         <!-- 连点 5 次 logo：App 内临时登录入口（iOS 自签包没有 Apple 登录/微信，用它进应用测试） -->
         <img class="guide-logo" :src="logo" @click.stop="onLogoClick" />

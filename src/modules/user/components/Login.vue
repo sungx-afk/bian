@@ -4,7 +4,7 @@
     <div class="login-ambient" aria-hidden="true"></div>
 
     <div class="login-card">
-      <!-- 语言切换暂时隐藏（代码保留）：恢复时把 v-if 改为 true 或删掉该属性 -->
+      <!-- 语言切换：默认跟随系统，未登录也可手动切换 -->
       <language-selector v-if="false" light class="login-language" />
       <div class="login-brand">
         <img class="login-brand-logo" src="~@/modules/images/index_header.jpg" :alt="$t('彼岸思念')" />
@@ -25,10 +25,10 @@
         {{ $t('Apple 登录同时用于注册账号。') }}
       </p>
 
-      <!-- 暂时隐藏其他登录方式（UID 登录等），只保留 Apple 登录/注册：恢复时把 v-if 改为 true -->
+      <!-- 调试：临时放开「其他登录方式」，便于用测试账号 UID 登录。上线前把 v-if 改回 false -->
       <div class="login-divider" v-if="false"><span>{{ $t('其他登录方式') }}</span></div>
 
-      <!-- 暂时隐藏 UID 登录（其他登录方式），只保留 Apple 登录/注册：恢复时把 v-if 改为 true -->
+      <!-- 调试：临时放开 UID 登录，直接输入测试账号 ID 即可登录。上线前把 v-if 改回 false -->
       <div class="login-uid" v-if="false">
         <input
           v-model.trim="uid"

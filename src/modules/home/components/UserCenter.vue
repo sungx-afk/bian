@@ -42,18 +42,22 @@
               <template v-else>{{ $t('开通后可享专属纪念特权') }}</template>
             </div>
           </div>
-          <van-button v-if="nativeApp && user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">{{ $t('立即开通') }}</van-button>
+          <van-button v-if="user.vip != 1" round size="small" class="vip-btn" :loading="vipBusy" @click="buyVip">{{ $t('立即开通') }}</van-button>
         </div>
         <!-- 未开通：价格（最醒目）、权益说明、自动续订披露，与 store/Info.vue 保持同一套 3.1.2(c) 规范 -->
-        <template v-if="nativeApp && user.vip != 1">
+        <!-- 不再按运行环境（是否原生 App）判断是否展示：账号设置里始终提供开通入口 -->
+        <template v-if="user.vip != 1">
+          <!-- 审核 3.1.2：明确披露订阅周期（长度） -->
+          <div class="vip-period">{{ $t('订阅周期：12 个月（1 年），到期自动续期') }}</div>
           <div class="vip-price">
-            <span class="price-amount">{{ vipPriceText || '99' }}</span>
+            <span class="price-amount">{{ vipPriceText || '¥99' }}</span>
             <span class="price-unit">{{ $t('/年') }}</span>
           </div>
           <div class="vip-benefits">{{ $t('会员权益：纪念馆内全部祭奠物品（送花、瓜果贡品、酒席、花圈、长明灯等）免费无限使用，无广告打扰。') }}</div>
           <div class="vip-renew">{{ $t('订阅将自动续订，除非在当前周期结束前至少 24 小时于「设置 → Apple ID → 订阅」中取消。续订费用将从您的 iTunes 账户扣除，到期前不会涨价。') }}</div>
           <!-- 审核 3.1.2：App 内必须提供「恢复购买」，换设备/重装后取回已购订阅 -->
           <div class="vip-restore" @click="restorePurchases">{{ $t('恢复购买') }}</div>
+          <!-- 隐私政策 / 用户协议：不在此重复放置，统一走下方列表项（App 内打开官网页面，可返回） -->
         </template>
       </van-cell>
       <van-cell class="charge-cell" v-if="supportPay && supportPoint">
@@ -73,12 +77,12 @@
         <span class="lang-title">{{ $t('语言') }}</span>
         <span class="lang-current">{{ currentLanguageName }}</span>
       </van-cell>
-      <!-- 上架必填：App 内必须能访问隐私政策与订阅条款 -->
+      <!-- 上架必填：App 内必须能访问隐私政策与用户协议（App 内打开官网页面，可返回） -->
       <van-cell class="doc-cell" @click="goPrivacy" :is-link="true">
         <span>{{ $t('隐私政策') }}</span>
       </van-cell>
       <van-cell class="doc-cell" @click="goTerms" :is-link="true">
-        <span>{{ $t('服务条款（自动续期订阅）') }}</span>
+        <span>{{ $t('用户协议') }}</span>
       </van-cell>
       <!-- 审核 5.1.1(v)：App 内必须提供注销账号入口 -->
       <van-cell class="delete-cell">
@@ -102,7 +106,7 @@ import { t, languages, setLocale } from '@/i18n'
 import LanguageSelector from '@/modules/widget/LanguageSelector'
 import constant from '@/config/constant'
 import {mapGetters, mapActions} from 'vuex';
-import {Link,gUuid} from '@/config/utils'
+import {Link,gUuid,openLegalDoc} from '@/config/utils'
 import PageHeader from '@/modules/widget/PageHeader'
 import UserAvatar from '@/modules/widget/UserAvatar'
 import { isNative } from '@/native/platform'
@@ -150,11 +154,6 @@ export default {
       if(appid && appid == 'wx502b2e237549374c'){
         return true
       }
-      return false
-    },
-    // 是否 iOS 原生 App：会员（尊贵会员）开通走 App Store 内购，仅原生 App 展示入口
-    nativeApp(){
-      return isNative()
     },
     currentLanguageName() {
       const cur = languages.find(item => item.code === this.$locale)
@@ -176,11 +175,12 @@ export default {
     goLogs(){
       Link(`/store/logs`)
     },
+    // 隐私政策 / 用户协议：在 App 内打开官网文档页（容器页自带返回按钮）
     goPrivacy(){
-      Link(`/privacy`)
+      openLegalDoc('privacy', '隐私政策')
     },
     goTerms(){
-      Link(`/terms`)
+      openLegalDoc('agreement', '用户协议')
     },
     // 注销账号：后端脱敏并标记删除，本地清 token 后回到首页
     goDeleteAccount(){
@@ -594,6 +594,12 @@ export default {
           border: none;
           background: linear-gradient(135deg, #dda94f 0%, @SECOND_THEME_COLOR 100%);
           box-shadow: 0 2px 8px rgba(196, 130, 44, 0.3);
+        }
+        /* 订阅周期：审核 3.1.2 要求明确披露订阅长度 */
+        .vip-period{
+          margin-top: 10px;
+          font-size: 13px;
+          color: #9a8663;
         }
         /* 价格：Apple 3.1.2(c) 要求为最醒目元素（大字、金色、加粗） */
         .vip-price{
