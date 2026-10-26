@@ -1,9 +1,9 @@
 // Canvas2D port of the memorial incense ribbon used in the memery Pixi scene.
 // Keep only the smoke: the parallel incense sticks are supplied by the page asset.
 const STREAMS = [
-  { x: 15, speed: 0.72, width: 2.5, densityPhase: 0.2 },
-  { x: 21, speed: 0.76, width: 3.3, densityPhase: 1.5 },
-  { x: 27, speed: 0.74, width: 2.7, densityPhase: 2.7 }
+  { x: 15, speed: 0.34, width: 2.5, densityPhase: 0.2 },
+  { x: 21, speed: 0.38, width: 3.3, densityPhase: 1.5 },
+  { x: 27, speed: 0.36, width: 2.7, densityPhase: 2.7 }
 ]
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
@@ -59,11 +59,11 @@ export default class IncenseSmoke {
           vx: 0,
           vy: -stream.speed,
           age: 0,
-          maxAge: 148 + (index === 1 ? 12 : 0),
+          maxAge: 300 + (index === 1 ? 30 : 0),
           width: 0.55,
-          widthFactor: 0.88 + Math.random() * 0.24,
-          densityFactor: 0.68 + Math.random() * 0.52,
-          phase: Math.random() * Math.PI * 2,
+          widthFactor: 0.9 + Math.random() * 0.2,
+          // 变化固定在每个粒子上，随烟粒向上移动；不让整根烟柱同步闪烁。
+          densityFactor: 0.65 + Math.random() * 0.7,
           alpha: 0
         })
       })
@@ -84,20 +84,13 @@ export default class IncenseSmoke {
         node.x = stream.x
 
         const life = node.age / node.maxAge
-        if (life < 0.2) {
-          const t = life / 0.2
-          node.width = (1.0 + t * (stream.width - 1.0)) * node.widthFactor
-          node.alpha = 0.32 + t * 0.4
-        } else if (life < 0.72) {
-          node.width = stream.width * node.widthFactor * (0.82 + 0.08 * Math.sin(life * 11 + stream.densityPhase))
-          node.alpha = 0.68 - ((life - 0.2) / 0.52) * 0.14
-        } else {
-          const t = (life - 0.72) / 0.28
-          node.width = Math.max(0.18, stream.width * Math.pow(1 - t, 0.5))
-          node.alpha = 0.62 * Math.pow(1 - t, 1.25)
-        }
-        // 每个烟粒有轻微的浓淡差异，并在上升中缓慢呼吸，避免烟柱看起来像固定透明贴图。
-        node.alpha *= node.densityFactor * (0.9 + 0.1 * Math.sin(this.time * 2.4 + node.phase))
+        const riseProgress = clamp((this.height - node.y) / this.height, 0, 1)
+        const fillIn = clamp(life / 0.1, 0, 1)
+        const fadeOut = 1 - clamp((life - 0.68) / 0.32, 0, 1)
+        // 烟从细根逐渐扩散，随后在上方减淡；直线上升，不横向弯折。
+        node.width = stream.width * (0.52 + 0.48 * Math.sqrt(riseProgress)) * node.widthFactor
+        // 浓淡差异由各自粒子携带并向上移动，轻微呼吸只作辅助，避免闪烁感。
+        node.alpha = (0.22 + 0.46 * fillIn) * fadeOut * node.densityFactor
       }
     })
   }
@@ -135,7 +128,7 @@ export default class IncenseSmoke {
 
       const bottomY = trail[0].y
       const topY = tip.y
-      const density = 0.9 + Math.sin(this.time * 1.3 + STREAMS[streamIndex].densityPhase) * 0.1
+      const density = 0.97 + Math.sin(this.time * 0.7 + STREAMS[streamIndex].densityPhase) * 0.03
       const alphaAt = (progress, weight) => {
         const node = trail[Math.min(trail.length - 1, Math.round(progress * (trail.length - 1)))]
         return clamp(node.alpha * density * weight, 0, 0.48)
