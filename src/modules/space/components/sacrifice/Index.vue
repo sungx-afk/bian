@@ -109,9 +109,7 @@
                 <div class="item item-xiang-lu">
                   <div class="item-xiang-lu-box" :style="{'visibility': showXiangCanvas?'visible':'hidden'}">
                     <div class="item-xiang">
-                      <canvas id="a" width="30" height="30"></canvas>
-                      <canvas id="b" width="30" height="30"></canvas>
-                      <canvas id="c" width="30" height="30"></canvas>
+                      <canvas ref="incenseSmokeCanvas" class="incense-smoke-canvas" aria-hidden="true"></canvas>
                     </div>
                   </div>
                 </div>
@@ -271,6 +269,7 @@
   import { isNativeIOS } from '@/native/platform';
   // 全页烛火共用一个 PIXI 应用（见 flameLayer.js），避免每个烛火各占一个 WebGL 上下文
   import flameLayer from './flameLayer';
+  import IncenseSmoke from './incenseSmoke';
 
   const noItems = [
     'item-xuan-hua',
@@ -499,6 +498,10 @@
       },
     },
     watch: {
+      showXiangCanvas(visible){
+        if (visible) this.$nextTick(this.initIncenseSmoke);
+        else this.destroyIncenseSmoke();
+      },
       memorialStyle(){
         this.showLaZuHuo();
       },
@@ -507,6 +510,16 @@
       }
     },
     methods: {
+      initIncenseSmoke() {
+        if (!this.showXiangCanvas || !this.$refs.incenseSmokeCanvas) return;
+        this.destroyIncenseSmoke();
+        this._incenseSmokeRenderer = new IncenseSmoke(this.$refs.incenseSmokeCanvas);
+      },
+      destroyIncenseSmoke() {
+        if (!this._incenseSmokeRenderer) return;
+        this._incenseSmokeRenderer.destroy();
+        this._incenseSmokeRenderer = null;
+      },
       ...mapActions({
         setUserSetting: 'userStore/setUserSetting',
         // 离开祭拜页时清空 spaceStore 的详情数据（beforeDestroy 里调用）
@@ -1569,141 +1582,6 @@
         $.init();
       },
 
-      initXiangHuo(){
-        let arr = {
-          a: 'a',
-          b: 'b',
-          c: 'c',
-        };
-
-        var init = function (dom) {
-          var c = document.getElementById(dom),
-            ctx = c.getContext('2d'),
-            cw = c.width = 300,
-            ch = c.height = 300,
-            parts = [],
-            partCount = 200,
-            partsFull = false,
-            hueRange = 50,
-            globalTick = 0,
-            rand = function(min, max){
-              return Math.floor( (Math.random() * (max - min + 1) ) + min);
-            };
-
-          var Part = function(){
-            this.reset();
-          };
-
-          Part.prototype.reset = function(){
-            this.startRadius = rand(1, 25);
-            this.radius = this.startRadius;
-            this.x = cw/2 + (rand(0, 6) - 3);
-            this.y = 250;
-            this.vx = 0;
-            this.vy = 0;
-            this.hue = rand(globalTick - hueRange, globalTick + hueRange);
-            this.saturation = rand(50, 100);
-            this.lightness = rand(20, 70);
-            this.startAlpha = rand(1, 10) / 100;
-            this.alpha = this.startAlpha;
-            this.decayRate = .1;
-            this.startLife = 7;
-            this.life = this.startLife;
-            this.lineWidth = rand(1, 3);
-          }
-
-          Part.prototype.update = function(){
-            this.vx += (rand(0, 200) - 100) / 1500;
-            this.vy -= this.life/50;
-            this.x += this.vx;
-            this.y += this.vy;
-            this.alpha = this.startAlpha * (this.life / this.startLife);
-            this.radius = this.startRadius * (this.life / this.startLife);
-            this.life -= this.decayRate;
-            if(
-              this.x > cw + this.radius ||
-              this.x < -this.radius ||
-              this.y > ch + this.radius ||
-              this.y < -this.radius ||
-              this.life <= this.decayRate
-            ){
-              this.reset();
-            }
-          };
-
-          Part.prototype.render = function(){
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-            ctx.fillStyle = ctx.strokeStyle = 'hsla('+(this.hue%30)+', '+this.saturation+'%, '+this.lightness+'%, '+this.alpha+')';
-            ctx.lineWidth = this.lineWidth;
-            ctx.fill();
-            ctx.stroke();
-          };
-
-          var createParts = function(){
-            if(!partsFull){
-              if(parts.length > partCount){
-                partsFull = true;
-              } else {
-                parts.push(new Part());
-              }
-            }
-          };
-
-          var updateParts = function(){
-            var i = parts.length;
-            while(i--){
-              parts[i].update();
-            }
-          };
-
-          var renderParts = function(){
-            var i = parts.length;
-            while(i--){
-              parts[i].render();
-            }
-          };
-
-          var clear = function(){
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'hsla(0, 0%, 0%, .3)';
-            ctx.fillRect(0, 0, cw, ch);
-            ctx.globalCompositeOperation = 'lighter';
-          };
-
-          var loop = function(){
-            window.requestAnimFrame(loop, c);
-            clear();
-            createParts();
-            updateParts();
-            renderParts();
-            globalTick++;
-          };
-
-          window.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(a){window.setTimeout(a,1E3/60)}}();
-
-          loop();
-          c.style.width = '30px';
-          c.style.height = '30px';
-          c.style.position = 'absolute';
-          return c;
-        };
-
-        Object.keys(arr).forEach(function (key) {
-          arr[key] = init(arr[key]);
-        })
-        arr.a.style.left = '-7px';
-        arr.a.style.top = '-19px';
-
-        arr.b.style.left = '9px';
-        arr.b.style.top = '-19px';
-
-        arr.c.style.left = '22px';
-        arr.c.style.top = '-17px';
-
-      },
-
-
       initYan() {
 
         var canvas;
@@ -1925,7 +1803,6 @@
     mounted() {
       this.initBigFire();
       this.initSmoke();
-      this.initXiangHuo();
       // this.initYan();
       // 烛火不再自建 PIXI：flameLayer 在第一次 addFlame 时懒初始化（点烛/长明灯挂载时）
     },
@@ -1935,6 +1812,7 @@
         this.bgmPausedOnLeave = false
         this.playBgm()
       }
+      if (this.showXiangCanvas) this.$nextTick(this.initIncenseSmoke)
     },
     deactivated() {
       //离开祭拜页进入其他页面（留言、详情、设置等）时暂停音乐，避免页面间声音混着响
@@ -1944,10 +1822,12 @@
       } else {
         this.bgmPausedOnLeave = false
       }
+      this.destroyIncenseSmoke()
     },
     beforeDestroy() {
       this.spaceDetailRequestId++;
       this.stopBgm(true)
+      this.destroyIncenseSmoke()
       this.clearSpaceDetail()
       // 销毁统一火焰层：释放唯一的 WebGL 上下文、ticker 和全屏画布，防止来回进页反复累积
       flameLayer.destroy()
@@ -2918,18 +2798,32 @@
     position: relative;
     .item-xiang-lu-box {
       position: absolute;
-      left: 0px;
-      right: 0px;
-      bottom: 8vw;
+      left: 50%;
+      right: auto;
+      width: 42px;
+      transform: translateX(-50%);
+      // 以香炉口为落点：缩小 bottom 间距，让三支香的红色末端插入炉口而不是悬在炉口上方。
+      bottom: 6.5vw;
       visibility: hidden;
-      margin-left: 1vw;
+      margin-left: 0;
       .item-xiang {
         position: relative;
-        background-image: url("./images/item_xiang.png") !important;
-        background-size: cover;
+        background-image: url("./images/item_xiang_parallel_violet.png") !important;
+        background-size: auto 122%;
+        background-position: center center;
+        background-repeat: no-repeat;
         width: 42px;
         height: 82px;
         margin: 0 auto;
+        .incense-smoke-canvas {
+          position: absolute;
+          bottom: 100%;
+          left: 0;
+          width: 42px;
+          height: 112px;
+          z-index: 2;
+          pointer-events: none;
+        }
       }
     }
   }

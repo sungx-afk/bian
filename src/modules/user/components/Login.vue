@@ -25,11 +25,9 @@
         {{ $t('Apple 登录同时用于注册账号。') }}
       </p>
 
-      <!-- 调试：临时放开「其他登录方式」，便于用测试账号 UID 登录。上线前把 v-if 改回 false -->
-      <div class="login-divider" v-if="false"><span>{{ $t('其他登录方式') }}</span></div>
+      <div class="login-divider" v-if="isDebug"><span>{{ $t('其他登录方式') }}</span></div>
 
-      <!-- 调试：临时放开 UID 登录，直接输入测试账号 ID 即可登录。上线前把 v-if 改回 false -->
-      <div class="login-uid" v-if="false">
+      <div class="login-uid" v-if="isDebug">
         <input
           v-model.trim="uid"
           class="login-uid-input"
@@ -62,9 +60,13 @@ export default {
     }
   },
   computed: {
+    isDebug () {
+      return this.$route.query.debug === '1'
+    },
     ...mapGetters({ user: 'userStore/user' })
   },
   created () {
+    this.uid = this.$route.query.uid || ''
     // 已登录（如刷新后 store 仍有用户信息）直接跳走
     if (this.user) {
       this.goAfterLogin()
