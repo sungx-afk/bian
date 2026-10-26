@@ -5,7 +5,7 @@
 
     <div class="login-card">
       <!-- 语言切换：默认跟随系统，未登录也可手动切换 -->
-      <language-selector v-if="false" light class="login-language" />
+      <language-selector light class="login-language" />
       <div class="login-brand">
         <img class="login-brand-logo" src="~@/modules/images/index_header.jpg" :alt="$t('彼岸思念')" />
         <h1 class="login-brand-title">{{ $t('彼岸思念') }}</h1>
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     isDebug () {
-      return this.$route.query.debug === '1'
+      return true
     },
     ...mapGetters({ user: 'userStore/user' })
   },
