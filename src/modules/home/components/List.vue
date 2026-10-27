@@ -25,7 +25,7 @@
       </div>
     </div>
     <!-- 语言切换：默认跟随系统，用户可在此手动切换 -->
-    <div class="list-language" v-if="false"><language-selector /></div>
+    <div class="list-language"><language-selector /></div>
     <div class="container-top">
       <img src="~@/modules/images/index_header.jpg" class="header-image" />
       <div class="text-area">
