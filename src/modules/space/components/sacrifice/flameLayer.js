@@ -14,6 +14,7 @@
 const NOISE_URL = '/static/bian-mobile/images/noise-texture-11.png?v=9';
 // fixed 全屏画布：低于 .messages(6) / .buttons(9)，高于祭拜台
 const OVERLAY_Z_INDEX = 5;
+const FLAME_SCALE = 0.8;
 
 function createWhiteTexture() {
   const canvas = document.createElement('canvas');
@@ -192,8 +193,8 @@ class FlameLayer {
       }
       flame.sprite.visible = true;
       flame.sprite.position.set(rect.left + rect.width / 2, rect.top + rect.height / 2);
-      flame.sprite.width = rect.width;
-      flame.sprite.height = rect.height;
+      flame.sprite.width = rect.width * FLAME_SCALE;
+      flame.sprite.height = rect.height * FLAME_SCALE;
     }
   }
 
@@ -204,7 +205,8 @@ class FlameLayer {
       this.dirty = false;
       this.updatePositions();
     }
-    const step = 0.1 * delta;
+    // 烛焰整体降速，减轻高频跳跃感，保留柔和摇曳。
+    const step = 0.07 * delta;
     for (let i = 0; i < this.flames.length; i++) {
       if (this.flames[i].filter) {
         this.flames[i].filter.time += step;

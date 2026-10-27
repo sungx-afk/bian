@@ -41,7 +41,7 @@
                 v-on:menu-press="showMoreMenu">
           </item>
         </div>
-        <div class="list" v-if="visitedList.length > 0">
+        <div class="list" v-if="visitedList.length > 0 && showRecentVisited">
           <div class="list-header">
             <div class="title">{{ $t('最近浏览的纪念馆') }}</div>
             <i class="more iconfont icon-gengduo" @click="moreSpaceVisitedMenu"></i>
@@ -160,6 +160,7 @@
         actions:[],
         needRefreshList:false,
         showPublic:false,
+        showRecentVisited:true,
         listLoaded:false,
         merchant:null,
         showDeleteDialog:false,
@@ -213,6 +214,10 @@
         if (this.showPublic){
           this.getSpacesPublic()
         }
+        this.initShowRecentVisited()
+        if (this.showRecentVisited){
+          this.getSpacesVisited()
+        }
       }
     },
     methods:{
@@ -226,6 +231,17 @@
           result = false
         }
         this.showPublic = result
+      },
+      // 最近浏览的纪念馆开关：setting 不存在或为 '0' 时显示，'1' 时隐藏
+      initShowRecentVisited(){
+        let result = true
+        if (this.userSetting && this.userSetting['recent_visited_close'] === '1'){
+          result = false
+        }
+        this.showRecentVisited = result
+        if (!result){
+          this.visitedList = []
+        }
       },
       /**
        * 引导页"进入纪念馆"回调：用户主动触发 -> 走微信授权
@@ -258,6 +274,10 @@
         })
       },
       getSpacesVisited(){
+        if (!this.showRecentVisited){
+          this.visitedList = []
+          return
+        }
         let that = this
         $API.home.getSpacesVisited({start:0,limit:3},(rsp)=>{
           that.visitedList = rsp.map(item=>{

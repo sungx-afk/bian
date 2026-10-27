@@ -42,7 +42,7 @@ function clearRequestToken () {
 const state = {
   token: '',
   user:null,
-  user_setting_keys:['bgm_play_state','bgm_key','public_space_close'],
+  user_setting_keys:['bgm_play_state','bgm_key','public_space_close','recent_visited_close'],
   user_setting:null,
   expire:false,
   merchant:null,//殡仪馆数据
@@ -136,6 +136,8 @@ const actions = {
       $API.user.setUserSetting({ key,value }, rsp => {
         commit(types.SET_USER_SETTING, {key,value})
         resolve(rsp);
+      }, error => {
+        reject(error);
       })
     })
   },
@@ -196,7 +198,8 @@ const mutations = {
     state.user = Object.assign({}, state.user, user)
   },
   [types.SET_USER_SETTING] (state,data){
-    state.user_setting[data.key] = data.value
+    // 用新对象替换引用，确保依赖 userSetting 的 watcher（首页 List、账号设置开关）能触发
+    state.user_setting = Object.assign({}, state.user_setting || {}, { [data.key]: data.value })
   },
   [types.GET_USER_SETTING] (state,rsp){
     state.user_setting = rsp

@@ -188,8 +188,8 @@
           </div>
         </div>
 
-        <!-- 右上角转发入口：暂时隐藏（保留功能与相关代码，去掉 v-if="false" 即可恢复） -->
-        <div class="share-button" v-if="false" @click="goShare">
+        <!-- 右上角转发入口：点击后拉起微信，选好友/群直接发送纪念馆链接 -->
+        <div class="share-button" @click="goShare">
           <img class="share-icon" src="~@/modules/images/share.svg" :alt="$t('转发')" />
         </div>
       </div>
@@ -267,6 +267,7 @@
   import Message from '../Message';
   import ChangeMingDeng from './ChangeMingDeng.vue';
   import { isNativeIOS } from '@/native/platform';
+  import { shareToWechat, buildWechatShareLink } from '@/native/wechat';
   // 全页烛火共用一个 PIXI 应用（见 flameLayer.js），避免每个烛火各占一个 WebGL 上下文
   import flameLayer from './flameLayer';
   import IncenseSmoke from './incenseSmoke';
@@ -839,9 +840,17 @@
         extra.invite_user_id = this.user.id
         extra.space_id = this.space.id
         extra.space_name = this.space.name
-        extra = JSON.stringify(extra)
-        localStorage.setItem(constant.KEY_EXTRA_DATA, extra)
-        Link(`/share`)
+        // 直接拉起微信，选好友/群发送网页卡片（好友点开走 H5 服务号授权登录后直达纪念馆）
+        shareToWechat({
+          title: t('彼岸思念'),
+          desc: t('逝者已矣，生者如斯。来自 {0}', { 0: this.space.name }),
+          link: buildWechatShareLink(extra)
+        }).catch((e) => {
+          // 拉微信失败（原生插件未就绪/环境不支持）：回退到原"/share"页（复制链接+二维码）
+          if (console && console.warn) console.warn('wechat share fallback:', e)
+          localStorage.setItem(constant.KEY_EXTRA_DATA, JSON.stringify(extra))
+          Link(`/share`)
+        })
       },
       //音乐（与纪念馆详情页音乐按钮逻辑一致）
       goBgmAction() {
@@ -2809,7 +2818,8 @@
       .item-xiang {
         position: relative;
         background-image: url("./images/item_xiang_parallel_violet.png") !important;
-        background-size: auto 122%;
+        // Keep the new ember/ash tip inside the sprite box instead of cropping it off.
+        background-size: auto 100%;
         background-position: center center;
         background-repeat: no-repeat;
         width: 42px;
@@ -2817,7 +2827,7 @@
         margin: 0 auto;
         .incense-smoke-canvas {
           position: absolute;
-          bottom: 100%;
+          bottom: calc(100% - 5px);
           left: 0;
           width: 42px;
           height: 112px;

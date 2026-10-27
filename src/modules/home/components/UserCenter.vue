@@ -77,6 +77,13 @@
         <span class="lang-title">{{ $t('语言') }}</span>
         <span class="lang-current">{{ currentLanguageName }}</span>
       </van-cell>
+      <!-- 首页“最近浏览的纪念馆”开关：关闭后首页不展示，可在此随时重新开启 -->
+      <van-switch-cell
+        :title="$t('显示最近浏览的纪念馆')"
+        active-color="#825621"
+        v-model="showRecentVisited"
+        @change="onToggleRecentVisited">
+      </van-switch-cell>
       <!-- 上架必填：App 内必须能访问隐私政策与用户协议（App 内打开官网页面，可返回） -->
       <van-cell class="doc-cell" @click="goPrivacy" :is-link="true">
         <span>{{ $t('隐私政策') }}</span>
@@ -140,7 +147,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'userStore/user'
+      user: 'userStore/user',
+      userSetting: 'userStore/userSetting'
     }),
     supportPay(){
       return config_server.supportPay
@@ -167,13 +175,32 @@ export default {
       }))
     }
   },
-  watch: {},
+  watch: {
+    // 设置从后端拉回/更新时，同步开关显示状态
+    userSetting(){
+      this.syncRecentVisitedSwitch()
+    }
+  },
   methods: {
     ...mapActions({
       updateUserInfo: 'userStore/updateUserInfo',
+      setUserSetting: 'userStore/setUserSetting',
     }),
     goLogs(){
       Link(`/store/logs`)
+    },
+    // 最近浏览开关：与首页 List.vue 的 initShowRecentVisited 共用同一 setting key
+    syncRecentVisitedSwitch(){
+      this.showRecentVisited = !(this.userSetting && this.userSetting['recent_visited_close'] === '1')
+    },
+    onToggleRecentVisited(value){
+      this.setUserSetting({key:'recent_visited_close', value: value ? '0' : '1'}).then(() => {
+        this.$toast(t('设置已保存'))
+      }).catch(() => {
+        this.$toast(t('设置失败，请稍后重试'))
+        // 接口失败：还原到真实状态，避免开关与实际不符
+        this.syncRecentVisitedSwitch()
+      })
     },
     // 隐私政策 / 用户协议：在 App 内打开官网文档页（容器页自带返回按钮）
     goPrivacy(){
@@ -455,6 +482,7 @@ export default {
       this.name = this.user.name
       this.avatarUrl = this.user.avatarUrl
     }
+    this.syncRecentVisitedSwitch()
     // 先用缓存的真价兜底，再只读刷新一次真价（不初始化内购、不会自动发起购买）
     this.vipPriceText = this.readCachedVipPrice()
     this.loadVipPriceOnly()
