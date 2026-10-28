@@ -811,23 +811,9 @@
         Link(`/store/info?space_id=${this.spaceId}`)
       },
       //转发（与纪念馆详情页转发逻辑一致）
+      //按需求：跳过"发送给亲属/发送给朋友"中间弹窗，点击即拉起微信
       goShare() {
-        this.shareActions = []
-        if (this.canShareFriend) {
-          this.shareActions.push({
-            name: '发送给亲属',
-            id: 'add_friends'
-          })
-        }
-        this.shareActions.push({
-          name: '发送给朋友',
-          id: 'space_detail'
-        })
-        if (this.shareActions.length > 1) {
-          this.showShareAction = true
-        } else {
-          this.shareSpace('space_detail')
-        }
+        this.shareSpace('space_detail')
       },
       onShareSelect(item) {
         if (item.id === 'add_friends' || item.id === 'space_detail') {
@@ -841,15 +827,19 @@
         extra.space_id = this.space.id
         extra.space_name = this.space.name
         // 直接拉起微信，选好友/群发送网页卡片（好友点开走 H5 服务号授权登录后直达纪念馆）
+        // 无论发送成功、用户取消还是失败，都停留在当前祭拜页，不再跳转任何分享页
         shareToWechat({
           title: t('彼岸思念'),
           desc: t('逝者已矣，生者如斯。来自 {0}', { 0: this.space.name }),
           link: buildWechatShareLink(extra)
         }).catch((e) => {
-          // 拉微信失败（原生插件未就绪/环境不支持）：回退到原"/share"页（复制链接+二维码）
-          if (console && console.warn) console.warn('wechat share fallback:', e)
-          localStorage.setItem(constant.KEY_EXTRA_DATA, JSON.stringify(extra))
-          Link(`/share`)
+          let msg = (e && e.message) || ''
+          // 用户在微信/系统面板里主动取消：静默返回祭拜页，不提示
+          if (/cancel/i.test(msg)) {
+            return
+          }
+          if (console && console.warn) console.warn('wechat share failed:', e)
+          this.$toast && this.$toast(t('分享未完成，请重试'))
         })
       },
       //音乐（与纪念馆详情页音乐按钮逻辑一致）

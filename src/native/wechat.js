@@ -15,8 +15,18 @@ import { share as systemShare } from './share'
  *   区别仅是微信里以普通链接消息呈现，无自定义卡片标题/缩略图。
  */
 
-/** 好友在微信内点开的 H5 入口：/home 转 /list，走服务号网页授权登录后按 copylink 直达纪念馆 */
-const WECHAT_SHARE_PATH = '/home'
+/**
+ * 好友在微信内点开的 H5 入口：/list（List.vue 负责授权登录并按 copylink 直达纪念馆）
+ * 注意：这里不走 /home，也不走 /ios-app-share —— 前者会多一次中转，后者是给 Universal Link 拉起 App 用的，
+ *       在微信内置浏览器里 Universal Link 会被屏蔽，好友会卡在"在 Safari 中打开"。
+ */
+const WECHAT_SHARE_PATH = '/list'
+
+/**
+ * direct_to=web：告诉分享中转页"直接用网页浏览"，
+ * 不再弹"打开 App / 下载"让用户选（H5 里 List.vue 的 showOpenAppTip 会据此跳过）。
+ */
+const DIRECT_TO_WEB = 'web'
 
 /**
  * 生成微信分享链接
@@ -30,7 +40,8 @@ export function buildWechatShareLink(extra) {
   const encoded = base64.Base64.encode(qs.stringify(content, { indices: false }))
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
-  return `${config_server.domain}${WECHAT_SHARE_PATH}?app_id=${config_server.wechatAppId}&copylink=${encoded}`
+  return `${config_server.domain}${WECHAT_SHARE_PATH}?app_id=${config_server.wechatAppId}`
+    + `&direct_to=${DIRECT_TO_WEB}&copylink=${encoded}`
 }
 
 /**
