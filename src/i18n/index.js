@@ -24,6 +24,14 @@ const preferred = typeof navigator !== 'undefined'
   : []
 export const state = Vue.observable({ locale: detectLocale(storage, preferred) })
 
+/**
+ * 当前是否为中文语言（zh-CN 简体 / zh-TW 繁体）
+ * 云追悼会（讣告）属中文语境功能，非中文语言（ja/en/ko）下隐藏入口。
+ */
+export function isChineseLocale() {
+  return /^zh/i.test(state.locale)
+}
+
 // Keys are original interface text, so Simplified Chinese is also a readable fallback.
 export function t(key, params = {}) {
   if (typeof key !== 'string') return key
@@ -53,7 +61,10 @@ export function setLocale(value) {
 export function installI18n(VueConstructor) {
   VueConstructor.prototype.$t = t
   VueConstructor.mixin({
-    computed: { $locale() { return state.locale } },
+    computed: {
+      $locale() { return state.locale },
+      $isChineseLocale() { return isChineseLocale() }
+    },
     methods: {
       $localizeActions(actions) {
         return (actions || []).map(action => ({ ...action, name: t(action.name), subname: t(action.subname) }))

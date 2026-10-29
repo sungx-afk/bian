@@ -322,11 +322,14 @@
           //   id:'space_detail',
           // })
           if (this.isSpaceCreator){
-            this.actions.push({
-              name: '发起云追悼会（讣告）',
-              id:'meeting',
-              data:user
-            })
+            // 云追悼会（讣告）属中文语境功能，非中文语言（ja/en/ko）下隐藏入口
+            if (this.$isChineseLocale){
+              this.actions.push({
+                name: '发起云追悼会（讣告）',
+                id:'meeting',
+                data:user
+              })
+            }
             this.actions.push({
               name: '纪念馆样式',
               id:'style',

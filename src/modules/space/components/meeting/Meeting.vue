@@ -72,9 +72,8 @@ import { t } from '@/i18n'
 
   import constant from '@/config/constant'
 
-  import base64 from 'js-base64'
   import PageHeader from '@/modules/widget/PageHeader'
-  import { share } from '@/native/share'
+  import { shareToWechat, buildWechatShareLink } from '@/native/wechat'
   import { saveImageToAlbum } from '@/native/media'
 
   const MAIN_COLOR = '#FFFFFF' //#000000
@@ -492,7 +491,9 @@ import { t } from '@/i18n'
           //let scene = `meeting_${this.spaceId}_${this.user.id}`
           //let url = `${config_server.domain}/api/v1/wx/qrcode/create?scene=${scene}&with_image=1&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
           let shareUrl = this.buildShareUrl()
-          let url = `${config_server.domain}/api/v1/qrcode?content=${shareUrl}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
+          // 分享链接本身带 ?app_id=&direct_to=&copylink= ，必须整体编码后再作为 content 传入，
+          // 否则 & 会被当成 qrcode 接口自身的参数分隔符，二维码内容被截断（扫码拿不到 copylink）
+          let url = `${config_server.domain}/api/v1/qrcode?content=${encodeURIComponent(shareUrl)}&plat=${param.plat}&build=${param.build}&token=${param.token}&platVersion=${param.platVersion}`
 
           url = url + "&v=" + new Date().getTime()
           console.log(url)
@@ -518,20 +519,30 @@ import { t } from '@/i18n'
             image.src = canvas.toDataURL("image/png");
           })
         },
-        // 讣告分享链接：H5 页（与海报二维码同源，扫码/点链接都可打开祭奠）
+        // 讣告分享链接：与祭拜页完全同源（/list + app_id + direct_to=web + copylink），
+        // 好友点开或扫码后：H5 -> 服务号授权登录 -> 解析 copylink(origin_from=meeting) -> 直达纪念馆。
+        // 注意：不能再用 /ios-app-share（Universal Link，微信内置浏览器会被屏蔽，会卡在"在 Safari 中打开"）
         buildShareUrl(){
-          let shareContent = `origin_from=meeting&space_id=${this.spaceId}&invite_user_id=${this.user.id}`
-          shareContent = base64.Base64.encode(shareContent)
-          return `${config_server.domain}/ios-app-share?copylink=${shareContent}`
+          return buildWechatShareLink({
+            origin_from: 'meeting',
+            invite_user_id: this.user.id,
+            space_id: this.spaceId
+          })
         },
-        // App 内分享：iOS 唤起系统分享面板（可发微信/短信/邮件/拷贝），无需微信 SDK
+        // 分享给亲友：与祭拜页一致（优先原生微信插件直发卡片，未就绪时降级系统分享面板）
         shareNotice(){
-          share({
+          shareToWechat({
             title: t('讣告'),
             desc: t('点击链接可在线祭奠'),
             link: this.buildShareUrl()
           }).catch(e => {
-            this.$toast(t((e && e.message) || t('分享失败，请长按海报保存后发送')))
+            let msg = (e && e.message) || ''
+            // 用户主动取消：静默返回讣告页，不提示
+            if (/cancel/i.test(msg)) {
+              return
+            }
+            if (console && console.warn) console.warn('wechat share failed:', e)
+            this.$toast(t('分享未完成，请重试'))
           })
         },
         // 保存海报到手机：App 直接入相册（@capacitor-community/media），H5 走 a[download]

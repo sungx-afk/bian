@@ -351,13 +351,18 @@
         this.menuList = [ {
           id:'create',
           name: '创建纪念馆',
-        }, {
-          id:'meeting',
-          name: '云追悼会（讣告）',
-        },{
+        }]
+        // 云追悼会（讣告）属中文语境功能，非中文语言（ja/en/ko）下隐藏入口
+        if (this.$isChineseLocale){
+          this.menuList.push({
+            id:'meeting',
+            name: '云追悼会（讣告）',
+          })
+        }
+        this.menuList.push({
           id:'user_center',
           name: '个人信息',
-        }]
+        })
         let appid = window.app_id || config_server.wechatAppId
         if(appid && appid == 'wx502b2e237549374c'){
           this.menuList.push({

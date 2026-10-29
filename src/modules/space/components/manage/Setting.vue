@@ -26,7 +26,8 @@
       </van-switch-cell>
       <van-cell :title="$t('背景音乐')" is-link @click.stop="goBgmSetting"></van-cell>
       <van-cell :title="$t('黑名单')" is-link @click.stop="goBlackList"></van-cell>
-      <van-cell :title="$t('云追悼会（讣告）')" is-link @click.stop="goMemorialMeeting"></van-cell>
+      <!-- 云追悼会（讣告）属中文语境功能，非中文语言（ja/en/ko）下隐藏入口 -->
+      <van-cell v-if="$isChineseLocale" :title="$t('云追悼会（讣告）')" is-link @click.stop="goMemorialMeeting"></van-cell>
       <van-cell :title="$t('移交纪念馆')" is-link @click.stop="goTransferSpace"></van-cell>
       <van-cell :title="$t('删除纪念馆')" clickable @click.stop="deleteSpace"></van-cell>
     </van-cell-group>

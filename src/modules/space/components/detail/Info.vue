@@ -157,6 +157,10 @@
             if (!this.isSpaceCreator){
               return show
             }
+            // 云追悼会（讣告）属中文语境功能，非中文语言（ja/en/ko）下不展示追悼会入口
+            if (!this.$isChineseLocale){
+              return show
+            }
             show = true
             let value = localStorage.getItem(constant.KEY_MEMORIAL_MEETING_SHOW+this.space.id)
             if (value === 'false'){

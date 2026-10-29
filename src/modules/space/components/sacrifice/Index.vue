@@ -754,7 +754,10 @@
         let user = this.user
         this.settingActions = []
         if (this.isSpaceCreator) {
-          this.settingActions.push({ name: '发起云追悼会（讣告）', id: 'meeting', data: user })
+          // 云追悼会（讣告）属中文语境功能，非中文语言（ja/en/ko）下隐藏入口
+          if (this.$isChineseLocale) {
+            this.settingActions.push({ name: '发起云追悼会（讣告）', id: 'meeting', data: user })
+          }
           // this.settingActions.push({ name: '纪念馆样式', id: 'style', data: user })
           // this.settingActions.push({ name: '修改纪念馆', id: 'modify_space', data: user })
           this.settingActions.push({ name: '设置', id: 'setting', data: user })
